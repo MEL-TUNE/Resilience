@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>声の頁</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js" defer></script>
+<style>
+:root{--paper:#E7EBE8;--sheet:#F5F6F2;--ink:#23283A;--sub:#626976;--line:#C6CCC7;--ai:#33507A;--seal:#94662B;
+  --mincho:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;--gothic:"Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root{--paper:#171A21;--sheet:#20242D;--ink:#E6E8EC;--sub:#9AA1AD;--line:#363C48;--ai:#93ADD9;--seal:#D3A464}}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--gothic);font-size:16px;line-height:1.75}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{max-width:640px;margin:0 auto;padding:0 18px 48px}
+header{padding:28px 0 6px}
+h1{font-family:var(--mincho);font-size:30px;letter-spacing:.2em;margin:0}
+.lead{color:var(--sub);font-size:14px;margin:4px 0 0}
+.tabs{display:flex;gap:6px;margin:18px 0 0;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;padding:8px 14px;border-bottom:3px solid transparent;color:var(--sub)}
+.tabs button[aria-selected="true"]{border-bottom-color:var(--ai);color:var(--ink);font-weight:700}
+.btn{border:1px solid var(--line);background:var(--sheet);padding:10px 16px;border-radius:6px}
+.btn.main{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:500}
+.btn.small{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.hint{font-size:13px;color:var(--sub);margin:6px 0}
+.msg{font-size:13px;color:var(--sub);min-height:1.3em;margin:6px 0}
+.msg.err{color:var(--seal)}
+.box{background:var(--sheet);border:1px solid var(--line);padding:12px 16px;margin:14px 0}
+.box.warn{border-color:var(--seal);color:var(--seal)}
+label.f{display:block;font-size:14px;font-weight:500;margin:12px 0 4px}
+input[type=text],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper)}
+textarea{min-height:70px;resize:vertical}
+.prompt{font-family:var(--mincho);font-size:19px;line-height:1.8;border-left:4px solid var(--ai);padding:4px 0 4px 12px;margin:10px 0}
+.recbtn{width:96px;height:96px;border-radius:50%;border:2px solid var(--seal);background:var(--sheet);color:var(--seal);font-weight:700;font-size:15px}
+.recbtn.on{background:var(--seal);color:var(--paper)}
+.clock{font-family:var(--mincho);font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5em}
+.meter{height:6px;background:var(--line);border-radius:3px;overflow:hidden;flex:1;min-width:80px}
+.meter i{display:block;height:100%;width:0;background:var(--ai);transition:width .08s}
+audio{width:100%;margin:8px 0}
+.acct{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--line);margin-right:6px;vertical-align:middle}
+.dot.on{background:var(--ai)}
+.day{margin:22px 0 0}
+.day h3{font-family:var(--mincho);font-size:17px;margin:0 0 8px;color:var(--sub);font-weight:400}
+.page{background:var(--sheet);border:1px solid var(--line);padding:14px 16px 12px;margin:0 0 -6px;box-shadow:0 2px 0 var(--paper),0 3px 0 var(--line);position:relative}
+.page:nth-child(2n){transform:rotate(-.35deg)}
+.page:nth-child(3n){transform:rotate(.3deg)}
+.page .t{font-size:12px;color:var(--sub)}
+.page .p{font-family:var(--mincho);font-size:17px;line-height:1.75;margin:2px 0}
+.page .m{font-size:14px;margin:4px 0;white-space:pre-wrap}
+.page .fn{font-size:11px;color:var(--sub);word-break:break-all}
+.tag{font-size:11px;border:1px solid var(--seal);color:var(--seal);border-radius:999px;padding:0 7px;margin-left:6px}
+</style>
+</head>
+<body><div class="wrap">
+<header>
+  <h1>声の頁</h1>
+  <p class="lead">声で書く日記帳。録った声は、Googleドライブの PRIVATE-MEL ／ 声の頁 に一枚ずつ重なっていきます。</p>
+</header>
+
+<div class="box warn" id="envWarn" hidden></div>
+
+<div class="box acct">
+  <div><span class="dot" id="dot"></span><span id="acctTxt">ドライブに未接続</span></div>
+  <div class="row" style="margin:0"><button class="btn small" id="connBtn">ドライブにつなぐ</button></div>
+</div>
+
+<div class="box" id="pendBox" hidden>
+  <div id="pendTxt"></div>
+  <div class="row"><button class="btn small" id="pendSend">いま送る</button><button class="btn small" id="pendDl">端末に保存する</button></div>
+  <p class="msg" id="pendMsg"></p>
+</div>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-tab="rec">録る</button>
+  <button role="tab" aria-selected="false" data-tab="pages">頁をめくる</button>
+</nav>
+
+<section id="tab-rec">
+  <label class="f" for="pIn">今日のお題 <span class="hint">（任意。余白帖の「お題をコピー」から貼りつけられます）</span></label>
+  <input type="text" id="pIn" maxlength="200" placeholder="お題なしでも録れます">
+  <div class="row" style="margin-top:18px">
+    <button class="recbtn" id="recBtn">録音</button>
+    <div>
+      <div class="clock" id="clock">0:00</div>
+      <div class="row" style="margin:4px 0 0"><div class="meter"><i id="lvl"></i></div></div>
+    </div>
+  </div>
+  <div class="row"><button class="btn" id="pauseBtn" disabled>一時停止</button><button class="btn" id="stopBtn" disabled>終える</button></div>
+  <p class="msg" id="recMsg"></p>
+
+  <div class="box" id="afterBox" hidden>
+    <div class="prompt" id="afterPrompt"></div>
+    <audio id="preview" controls></audio>
+    <label class="f" for="memo">ひとこと <span class="hint">（任意）</span></label>
+    <textarea id="memo" maxlength="2000"></textarea>
+    <div class="row"><button class="btn main" id="saveBtn">頁にする</button><button class="btn" id="discardBtn">録り直す</button></div>
+    <p class="msg" id="saveMsg"></p>
+  </div>
+</section>
+
+<section id="tab-pages" hidden>
+  <div class="row"><button class="btn small" id="reload">読み直す</button></div>
+  <p class="msg" id="pagesMsg"></p>
+  <div id="pages"></div>
+  <div class="row"><button class="btn" id="more" hidden>さらに前の頁</button></div>
+</section>
+</div>
+
+<script>
+/* ===== 設定 ===== */
+const CLIENT_ID = "235660530148-aqrk1fjtf4cu6ufvgg8j7op6fqpr2l1v.apps.googleusercontent.com";
+const SCOPE = "https://www.googleapis.com/auth/drive.file";
+const ROOT_NAME = "PRIVATE-MEL", APP_KEY = "koe", APP_NAME = "声の頁";
+const FORMAT = "mel-koe-page", FORMAT_V = 1;
+const API = "https://www.googleapis.com/drive/v3", UP = "https://www.googleapis.com/upload/drive/v3";
+const FOLDER = "application/vnd.google-apps.folder";
+
+const $ = id => document.getElementById(id);
+const z = n => String(n).padStart(2,"0");
+const WD = ["日","月","火","水","木","金","土"];
+const LS = "mel-koe-v1";
+let L = (() => { try{ return JSON.parse(localStorage.getItem(LS)) || {}; }catch(e){ return {}; } })();
+L.folders ||= {};
+const saveL = () => { try{ localStorage.setItem(LS, JSON.stringify(L)); }catch(e){} };
+
+/* ===== 開き方の診断 ===== */
+(() => {
+  const w = [];
+  let framed = false; try{ framed = window.self !== window.top; }catch(e){ framed = true; }
+  if (framed) w.push("この画面は、別のページの中に埋め込まれた状態で開かれています。マイクやGoogleのログインが止められていることが多いので、アドレスを直接開くと使えます。");
+  if (!window.isSecureContext) w.push("https で始まるアドレスから開くと、マイクが使えます。");
+  if (location.protocol === "file:") w.push("ファイルとして直接開いているため、Googleドライブにはつながりません（Googleに登録した住所からだけ接続できます）。");
+  if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) w.push("このブラウザでは、マイクの機能が見当たりません。");
+  if (typeof MediaRecorder === "undefined") w.push("このブラウザでは録音の機能が見当たりません。");
+  if (w.length){ const b = $("envWarn"); b.hidden = false; b.innerHTML = w.map(t => `<p style="margin:4px 0;font-size:14px">${t}</p>`).join(""); }
+})();
+
+/* ===== 端末内の一時置き場（送れなかった録音） ===== */
+const idb = {
+  open(){ return new Promise((res, rej) => { const r = indexedDB.open("mel-koe", 1); r.onupgradeneeded = () => r.result.createObjectStore("pending", { keyPath:"name" }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  async all(){ const db = await this.open(); return new Promise(res => { const q = db.transaction("pending").objectStore("pending").getAll(); q.onsuccess = () => res(q.result || []); q.onerror = () => res([]); }); },
+  async put(v){ const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction("pending", "readwrite"); t.objectStore("pending").put(v); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); },
+  async del(k){ const db = await this.open(); return new Promise(res => { const t = db.transaction("pending", "readwrite"); t.objectStore("pending").delete(k); t.oncomplete = () => res(); t.onerror = () => res(); }); }
+};
+
+/* ===== Google ログイン ===== */
+let token = null, tokenExp = 0, tokenClient = null, pendingAuth = null;
+try{ const t = JSON.parse(sessionStorage.getItem("mel-token") || "null"); if (t && t.exp > Date.now() + 60000){ token = t.v; tokenExp = t.exp; } }catch(e){}
+function setAcct(){
+  const on = token && tokenExp > Date.now();
+  $("dot").classList.toggle("on", !!on);
+  $("acctTxt").textContent = on ? "ドライブにつながっています" : "ドライブに未接続";
+  $("connBtn").textContent = on ? "つなぎ直す" : "ドライブにつなぐ";
+}
+function initClient(){
+  if (tokenClient || !window.google?.accounts?.oauth2) return !!tokenClient;
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID, scope: SCOPE,
+    callback: r => {
+      if (r && r.access_token){
+        token = r.access_token; tokenExp = Date.now() + (Number(r.expires_in) || 3600) * 1000;
+        try{ sessionStorage.setItem("mel-token", JSON.stringify({ v:token, exp:tokenExp })); }catch(e){}
+        setAcct(); pendingAuth?.res(token);
+      } else pendingAuth?.rej(new Error(r?.error || "auth"));
+      pendingAuth = null;
+    },
+    error_callback: e => { pendingAuth?.rej(new Error(e?.type || "auth")); pendingAuth = null; }
+  });
+  return true;
+}
+function signIn(){
+  return new Promise((res, rej) => {
+    if (!initClient()){ rej(new Error("gsi")); return; }
+    pendingAuth = { res, rej };
+    tokenClient.requestAccessToken({ prompt: token ? "" : "" });
+  });
+}
+$("connBtn").onclick = async () => {
+  try{ await signIn(); onConnected(); }
+  catch(e){ $("recMsg").className = "msg err"; $("recMsg").textContent = e.message === "gsi" ? "Googleのログイン部品を読み込めませんでした。通信状態を確かめて、読み直せます。" : "ドライブにつなげませんでした。もう一度押すと試せます。"; }
+};
+const authed = () => token && tokenExp > Date.now() + 30000;
+async function needToken(){ if (authed()) return token; throw Object.assign(new Error("need-auth"), { code:"need-auth" }); }
+
+/* ===== Drive API ===== */
+async function api(path, opt = {}, raw){
+  const t = await needToken();
+  const r = await fetch((raw ? "" : API) + path, { ...opt, headers:{ ...(opt.headers || {}), Authorization:`Bearer ${t}` } });
+  if (r.status === 401){ token = null; setAcct(); throw Object.assign(new Error("need-auth"), { code:"need-auth" }); }
+  if (!r.ok){ let m = ""; try{ m = (await r.json()).error?.message || ""; }catch(e){} throw Object.assign(new Error(m || `HTTP ${r.status}`), { code:"http", status:r.status }); }
+  return r;
+}
+const q = s => encodeURIComponent(s);
+async function findFolder(props){
+  const cond = Object.entries(props).map(([k, v]) => `appProperties has { key='${k}' and value='${v}' }`).join(" and ");
+  const r = await api(`/files?q=${q(`mimeType='${FOLDER}' and trashed=false and ${cond}`)}&fields=files(id,name)&pageSize=10&spaces=drive`);
+  return (await r.json()).files?.[0] || null;
+}
+async function makeFolder(name, parent, props){
+  const r = await api(`/files?fields=id,name`, { method:"POST", headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ name, mimeType:FOLDER, parents: parent ? [parent] : undefined, appProperties: props }) });
+  return await r.json();
+}
+async function folderId(key, name, parent, props){
+  if (L.folders[key]){
+    try{ const r = await api(`/files/${L.folders[key]}?fields=id,trashed`); const j = await r.json(); if (!j.trashed) return j.id; }catch(e){ if (e.code === "need-auth") throw e; }
+  }
+  const f = (await findFolder(props)) || (await makeFolder(name, parent, props));
+  L.folders[key] = f.id; saveL(); return f.id;
+}
+async function monthFolder(ym){
+  const root = await folderId("root", ROOT_NAME, null, { mel:"root" });
+  const app = await folderId("app", APP_NAME, root, { mel:"app", app:APP_KEY });
+  return folderId("m" + ym, ym, app, { mel:"month", app:APP_KEY, ym });
+}
+async function upload(meta, blob){
+  const b = "mel" + Math.random().toString(36).slice(2);
+  const body = new Blob([
+    `--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`, JSON.stringify(meta),
+    `\r\n--${b}\r\nContent-Type: ${blob.type || "application/octet-stream"}\r\n\r\n`, blob, `\r\n--${b}--`
+  ]);
+  const r = await api(`${UP}/files?uploadType=multipart&fields=id,name`, { method:"POST", headers:{ "Content-Type":`multipart/related; boundary=${b}` }, body }, true);
+  return r.json();
+}
+
+/* ===== MP3 への変換 ===== */
+async function toMp3(blob){
+  if (!window.lamejs) throw new Error("no-lame");
+  const AC = window.AudioContext || window.webkitAudioContext, OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  const ac = new AC(); const ab = await blob.arrayBuffer();
+  const buf = await new Promise((res, rej) => ac.decodeAudioData(ab, res, rej)); try{ ac.close(); }catch(e){}
+  const rate = 22050, len = Math.max(1, Math.ceil(buf.duration * rate));
+  const off = new OAC(1, len, rate); const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start(0);
+  const out = await new Promise((res, rej) => { const p = off.startRendering(); if (p && p.then) p.then(res, rej); else off.oncomplete = e => res(e.renderedBuffer); });
+  const f = out.getChannelData(0), pcm = new Int16Array(f.length);
+  for (let i = 0; i < f.length; i++){ const s = Math.max(-1, Math.min(1, f[i])); pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF; }
+  const enc = new lamejs.Mp3Encoder(1, rate, 48), parts = [];
+  for (let i = 0; i < pcm.length; i += 1152){
+    const m = enc.encodeBuffer(pcm.subarray(i, i + 1152)); if (m.length) parts.push(new Int8Array(m));
+    if (i % (1152 * 400) === 0) await new Promise(r => setTimeout(r));
+  }
+  const e = enc.flush(); if (e.length) parts.push(new Int8Array(e));
+  return new Blob(parts, { type:"audio/mpeg" });
+}
+
+/* ===== 録る ===== */
+let stream = null, rec = null, chunks = [], startAt = 0, acc = 0, tId = null, ac = null, an = null, raf = null, blob = null, mime = "", recAt = null;
+const TYPES = ["audio/webm;codecs=opus","audio/webm","audio/mp4"];
+const cleanPrompt = t => t.trim().replace(/^\d{4}\/\d{1,2}\/\d{1,2}\s*　?\s*お題[：:]\s*/, "");
+function tick(){ const ms = acc + (rec && rec.state === "recording" ? Date.now() - startAt : 0), s = Math.floor(ms / 1000); $("clock").textContent = `${Math.floor(s/60)}:${z(s%60)}`; }
+function meter(){ if (!an) return; const a = new Uint8Array(an.fftSize); an.getByteTimeDomainData(a); let m = 0; for (const v of a) m = Math.max(m, Math.abs(v - 128)); $("lvl").style.width = Math.min(100, m / 128 * 260) + "%"; raf = requestAnimationFrame(meter); }
+const MERR = { NotAllowedError:"マイクの使用が許可されませんでした。ブラウザのアドレス欄の近くにある設定から許可できます。", NotFoundError:"マイクが見つかりませんでした。", NotReadableError:"マイクを開けませんでした。ほかのアプリが使っている可能性があります。", SecurityError:"この開き方ではマイクが使えませんでした。" };
+$("recBtn").onclick = async () => {
+  if (rec && rec.state !== "inactive") return stopRec();
+  $("recMsg").className = "msg"; $("recMsg").textContent = "";
+  try{ stream = await navigator.mediaDevices.getUserMedia({ audio:{ channelCount:1, echoCancellation:true, noiseSuppression:true } }); }
+  catch(e){ $("recMsg").className = "msg err"; $("recMsg").textContent = (MERR[e.name] || "マイクを使えませんでした。") + `（${e.name}）`; return; }
+  mime = TYPES.find(t => window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || "";
+  try{ rec = new MediaRecorder(stream, mime ? { mimeType:mime } : undefined); }
+  catch(e){ $("recMsg").className = "msg err"; $("recMsg").textContent = "このブラウザでは録音できませんでした。"; return; }
+  chunks = []; acc = 0; recAt = new Date();
+  rec.ondataavailable = ev => { if (ev.data && ev.data.size) chunks.push(ev.data); };
+  rec.onstop = finishRec; rec.start(1000); startAt = Date.now();
+  try{ ac = new (window.AudioContext || window.webkitAudioContext)(); an = ac.createAnalyser(); an.fftSize = 512; ac.createMediaStreamSource(stream).connect(an); meter(); }catch(e){}
+  tId = setInterval(tick, 250);
+  $("recBtn").classList.add("on"); $("recBtn").textContent = "終える";
+  $("pauseBtn").disabled = false; $("stopBtn").disabled = false; $("afterBox").hidden = true;
+};
+$("pauseBtn").onclick = () => {
+  if (!rec) return;
+  if (rec.state === "recording"){ rec.pause(); acc += Date.now() - startAt; $("pauseBtn").textContent = "再開"; $("recBtn").classList.remove("on"); $("recMsg").textContent = "一時停止中"; }
+  else if (rec.state === "paused"){ rec.resume(); startAt = Date.now(); $("pauseBtn").textContent = "一時停止"; $("recBtn").classList.add("on"); $("recMsg").textContent = ""; }
+};
+$("stopBtn").onclick = () => stopRec();
+function stopRec(){ if (rec && rec.state !== "inactive"){ if (rec.state === "recording") acc += Date.now() - startAt; rec.stop(); } }
+function finishRec(){
+  clearInterval(tId); cancelAnimationFrame(raf); $("lvl").style.width = "0";
+  try{ ac && ac.close(); }catch(e){} ac = an = null;
+  stream && stream.getTracks().forEach(t => t.stop()); stream = null;
+  blob = new Blob(chunks, { type:(rec.mimeType || mime || "audio/webm").split(";")[0] });
+  $("recBtn").classList.remove("on"); $("recBtn").textContent = "録音";
+  $("pauseBtn").disabled = true; $("pauseBtn").textContent = "一時停止"; $("stopBtn").disabled = true; $("recMsg").textContent = "";
+  if (!blob.size){ $("recMsg").className = "msg err"; $("recMsg").textContent = "録音が空でした。"; return; }
+  $("preview").src = URL.createObjectURL(blob);
+  $("afterPrompt").textContent = cleanPrompt($("pIn").value) || "お題なし"; $("memo").value = ""; $("saveMsg").textContent = "";
+  $("afterBox").hidden = false; $("afterBox").scrollIntoView({ behavior:"smooth", block:"start" });
+}
+$("discardBtn").onclick = () => { blob = null; $("afterBox").hidden = true; };
+
+function isoLocal(d){ const o = -d.getTimezoneOffset(), s = o >= 0 ? "+" : "-", a = Math.abs(o); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}${s}${z(Math.floor(a/60))}:${z(a%60)}`; }
+function baseName(d){ return `koe_${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}`; }
+const extOf = t => t.includes("mpeg") ? "mp3" : t.includes("mp4") ? "m4a" : "webm";
+
+$("saveBtn").onclick = async () => {
+  if (!blob) return;
+  const m = $("saveMsg"); $("saveBtn").disabled = true; $("discardBtn").disabled = true;
+  let audio = blob, conv = true;
+  m.className = "msg"; m.textContent = "MP3に変換しています……";
+  try{ audio = await toMp3(blob); }catch(e){ conv = false; audio = blob; }
+  const base = baseName(recAt);
+  const item = {
+    name: base, ym: `${recAt.getFullYear()}-${z(recAt.getMonth()+1)}`, audio, audioName: `${base}.${extOf(audio.type)}`,
+    page: { format:FORMAT, version:FORMAT_V, app:APP_NAME, audio:`${base}.${extOf(audio.type)}`, audioType:audio.type,
+      recordedAt: isoLocal(recAt), durationSec: Math.round(acc / 1000), prompt: cleanPrompt($("pIn").value), memo: $("memo").value.trim() }
+  };
+  try{ await idb.put(item); }catch(e){}
+  m.textContent = conv ? "ドライブへ送っています……" : "MP3に変換できなかったため、録音した形式のまま送っています……";
+  try{
+    await sendItem(item);
+    await idb.del(item.name);
+    m.textContent = `ドライブの ${ROOT_NAME} ／ ${APP_NAME} ／ ${item.ym} に保存しました。` + (conv ? "" : `（形式：${extOf(audio.type)}）`);
+    blob = null; $("pIn").value = "";
+    setTimeout(() => { $("afterBox").hidden = true; }, 2500);
+  }catch(e){
+    m.className = "msg err";
+    m.textContent = e.code === "need-auth" ? "ドライブにつながっていないため、この端末に一時保管しました。上の「ドライブにつなぐ」を押してから、「いま送る」で送れます。" : `ドライブに送れなかったため、この端末に一時保管しました（${e.message}）。あとで「いま送る」で送れます。`;
+  }finally{ $("saveBtn").disabled = false; $("discardBtn").disabled = false; refreshPending(); }
+};
+async function sendItem(item){
+  const parent = await monthFolder(item.ym);
+  const p = item.page;
+  const desc = `${p.recordedAt}\nお題：${p.prompt || "なし"}${p.memo ? "\nひとこと：" + p.memo : ""}`;
+  const props = { mel:"page", app:APP_KEY, ym:item.ym, base:item.name };
+  if (!item.audioId){
+    const a = await upload({ name:item.audioName, parents:[parent], description:desc, mimeType:item.audio.type, appProperties:{ ...props, kind:"audio" } }, item.audio);
+    item.audioId = a.id; try{ await idb.put(item); }catch(e){}
+  }
+  await upload({ name:`${item.name}.json`, parents:[parent], description:desc, mimeType:"application/json", appProperties:{ ...props, kind:"meta", audioId:item.audioId } },
+    new Blob([JSON.stringify(p, null, 2)], { type:"application/json" }));
+}
+
+/* ===== 一時保管 ===== */
+async function refreshPending(){
+  const list = await idb.all().catch(() => []);
+  $("pendBox").hidden = !list.length;
+  $("pendTxt").textContent = list.length ? `まだドライブに送れていない頁が ${list.length} 件、この端末に一時保管されています。` : "";
+}
+$("pendSend").onclick = async () => {
+  const m = $("pendMsg"); m.className = "msg"; m.textContent = "送っています……";
+  if (!authed()){ try{ await signIn(); onConnected(); }catch(e){ m.className = "msg err"; m.textContent = "ドライブにつなげませんでした。"; return; } }
+  let ok = 0, ng = 0;
+  for (const it of await idb.all()){ try{ await sendItem(it); await idb.del(it.name); ok++; }catch(e){ ng++; } }
+  m.className = ng ? "msg err" : "msg"; m.textContent = `${ok}件を送りました。` + (ng ? `${ng}件は送れませんでした。` : "");
+  refreshPending();
+};
+$("pendDl").onclick = async () => {
+  for (const it of await idb.all()){
+    for (const [b, n] of [[it.audio, it.audioName], [new Blob([JSON.stringify(it.page, null, 2)], { type:"application/json" }), `${it.name}.json`]]){
+      const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = n; document.body.append(a); a.click(); a.remove();
+      await new Promise(r => setTimeout(r, 400));
+    }
+  }
+  $("pendMsg").textContent = "端末に保存しました。一時保管はそのまま残しています。";
+};
+
+/* ===== 頁をめくる ===== */
+let nextToken = null, shown = [];
+async function loadPages(reset){
+  const msg = $("pagesMsg");
+  if (!authed()){ msg.className = "msg"; msg.textContent = "頁をめくるには、上の「ドライブにつなぐ」を押します。"; $("pages").innerHTML = ""; $("more").hidden = true; return; }
+  if (reset){ shown = []; nextToken = null; $("pages").innerHTML = ""; }
+  msg.className = "msg"; msg.textContent = "読み込んでいます……";
+  try{
+    const cond = `trashed=false and appProperties has { key='app' and value='${APP_KEY}' } and appProperties has { key='kind' and value='meta' }`;
+    const r = await api(`/files?q=${q(cond)}&orderBy=${q("name desc")}&pageSize=30&fields=${q("nextPageToken,files(id,name,appProperties)")}${nextToken ? "&pageToken=" + q(nextToken) : ""}&spaces=drive`);
+    const j = await r.json(); nextToken = j.nextPageToken || null;
+    const metas = await Promise.all((j.files || []).map(async f => {
+      try{ const t = await (await api(`/files/${f.id}?alt=media`)).json(); return { id:f.id, audioId:f.appProperties?.audioId, page:t }; }
+      catch(e){ return { id:f.id, audioId:f.appProperties?.audioId, page:null }; }
+    }));
+    shown = shown.concat(metas); render();
+    msg.textContent = shown.length ? "" : "まだ頁がありません。";
+    $("more").hidden = !nextToken;
+  }catch(e){ msg.className = "msg err"; msg.textContent = e.code === "need-auth" ? "ドライブとの接続が切れました。上の「つなぎ直す」を押すと続けられます。" : `読み込めませんでした（${e.message}）。`; }
+}
+function render(){
+  const box = $("pages"); box.innerHTML = ""; let cur = null, stack = null;
+  for (const it of shown){
+    const p = it.page || {}; const d = p.recordedAt ? new Date(p.recordedAt) : null;
+    const key = d ? `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）` : "日付不明";
+    if (key !== cur){ cur = key; const day = document.createElement("div"); day.className = "day"; day.innerHTML = "<h3></h3>"; day.querySelector("h3").textContent = key; stack = document.createElement("div"); day.append(stack); box.append(day); }
+    const pg = document.createElement("div"); pg.className = "page";
+    pg.innerHTML = '<div class="t"></div><div class="p"></div><div class="m"></div><div class="a"></div><div class="row" style="margin:6px 0 0"><button class="btn small play">再生</button><button class="btn small trash">ゴミ箱へ</button></div><div class="fn"></div>';
+    pg.querySelector(".t").textContent = d ? `${z(d.getHours())}:${z(d.getMinutes())}${p.durationSec ? `　${Math.floor(p.durationSec/60)}分${z(p.durationSec%60)}秒` : ""}` : "";
+    pg.querySelector(".p").textContent = p.prompt || "お題なし";
+    pg.querySelector(".m").textContent = p.memo || "";
+    pg.querySelector(".fn").textContent = p.audio || "";
+    const play = pg.querySelector(".play");
+    play.onclick = async () => {
+      if (!it.audioId) return;
+      play.disabled = true; play.textContent = "読み込み中……";
+      try{
+        const b = await (await api(`/files/${it.audioId}?alt=media`)).blob();
+        const au = document.createElement("audio"); au.controls = true; au.src = URL.createObjectURL(b);
+        pg.querySelector(".a").append(au); play.remove(); au.play().catch(() => {});
+      }catch(e){ play.disabled = false; play.textContent = "再生"; $("pagesMsg").className = "msg err"; $("pagesMsg").textContent = e.code === "need-auth" ? "接続が切れました。「つなぎ直す」で続けられます。" : "音声を読み込めませんでした。"; }
+    };
+    pg.querySelector(".trash").onclick = async () => {
+      if (!confirm("この頁（音声と控え）をドライブのゴミ箱へ移します。ドライブのゴミ箱から30日ほどは戻せます。移しますか？")) return;
+      try{
+        for (const id of [it.audioId, it.id].filter(Boolean)) await api(`/files/${id}`, { method:"PATCH", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ trashed:true }) });
+        shown = shown.filter(x => x !== it); render();
+      }catch(e){ $("pagesMsg").className = "msg err"; $("pagesMsg").textContent = "ゴミ箱へ移せませんでした。"; }
+    };
+    stack.append(pg);
+  }
+}
+$("reload").onclick = () => loadPages(true);
+$("more").onclick = () => loadPages(false);
+
+/* ===== 共通 ===== */
+function onConnected(){ setAcct(); refreshPending(); if (!$("tab-pages").hidden) loadPages(true); }
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", String(x === b)));
+  $("tab-rec").hidden = b.dataset.tab !== "rec"; $("tab-pages").hidden = b.dataset.tab !== "pages";
+  if (b.dataset.tab === "pages") loadPages(true);
+});
+setAcct(); refreshPending();
+</script>
+</body>
+</html>
