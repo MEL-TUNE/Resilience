@@ -89,7 +89,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-12 第5版）</span></p><nav class="tools"><button class="pill" id="exportBtn">設定を書き出す</button><button class="pill" id="importBtn">設定を読み込む</button><button class="pill danger" id="stopAll">■ 全音停止</button></nav></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-13 第6版）</span></p><nav class="tools"><button class="pill" id="exportBtn">設定を書き出す</button><button class="pill" id="importBtn">設定を読み込む</button><button class="pill danger" id="stopAll">■ 全音停止</button></nav></header>
 
 <div class="studio">
 <!-- 左：収録卓 -->
@@ -115,6 +115,7 @@
    <label><input type="checkbox" id="optMon">自分の声を聴く</label>
   </div>
   <p class="note">エコー除去などはブラウザの通話向け処理です。声質が変わるため初期値は切ってあります。BGMがマイクに回り込まないよう、ヘッドホンでの収録を想定しています。</p>
+  <p class="note" id="micHelp">開くたびにマイクの許可を求められる場合は、許可の画面で「このサイトにアクセスしているときは許可」（Chrome）を選ぶか、ブラウザのサイト設定でマイクを「許可」にすると、次回から自動でつながります。</p>
  </section>
 
  <section class="panel" aria-labelledby="mixTitle">
@@ -171,7 +172,7 @@
 <section class="section"><div class="section-title"><h2>BGM <span>各タブ10曲</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。</p></section>
 </div></main>
 </div>
-<p class="footer">設定・音源・録音はこのブラウザ内に保存されます。設定ファイルは「筋肉室効果音ポン出し」と同じ形式で、どちらのアプリでも読み込めます。</p>
+<p class="footer">設定・音源・録音はこのブラウザ内に保存されます。「設定を書き出す」で作ったファイルを別の端末で読み込むと、効果音・BGM・動画用サムネイルを引き継げます。<br>「筋肉室効果音ポン出し」用のファイルが必要なときは <button class="btn" type="button" id="exportJsonBtn">ポン出し用（JSON）で書き出す</button></p>
 </div>
 
 <div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
@@ -180,7 +181,7 @@
 <div class="modal-back" id="bgmTabsModal"><form class="modal" id="bgmTabsForm"><h2>BGM分類名の編集</h2><p class="category-note">6つのタブ名を編集できます。登録済みの曲は各タブに残ります。</p><div class="category-list" id="bgmTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="bgmTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back" id="textTabsModal"><form class="modal" id="textTabsForm"><h2>文字SE分類名の編集</h2><p class="category-note">6つのタブ名を編集できます。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="textTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="textTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back confirm-back" id="confirmModal"><div class="modal" role="alertdialog" aria-labelledby="confirmTitle" aria-describedby="confirmText"><h2 id="confirmTitle">確認</h2><p id="confirmText" class="confirm-text"></p><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" id="confirmNo">キャンセル</button><button type="button" class="btn danger" id="confirmYes">削除する</button></div></div></div></div>
-<input id="importFile" type="file" accept="application/json,.json" hidden><div class="notice" id="notice" role="status"></div>
+<input id="importFile" type="file" hidden><div class="notice" id="notice" role="status"></div>
 
 <script>
 'use strict';
@@ -846,22 +847,75 @@ document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.
 document.addEventListener('keydown',e=>{if(e.repeat||e.altKey||e.ctrlKey||e.metaKey||document.querySelector('.modal-back.open')||e.target.closest('input,select,textarea,[contenteditable]'))return;const key=e.key.length===1?e.key.toUpperCase():e.key;const s=cfg.sounds.find(x=>x.shortcut&&x.shortcut.toUpperCase()===key);if(s){e.preventDefault();playSound(s)}});
 window.addEventListener('beforeunload',e=>{if(rec.state!=='idle'){e.preventDefault();e.returnValue=''}});
 
-/* ===================== 設定の書き出し・読み込み（ポン出しと共通形式） ===================== */
+/* ===================== 設定の書き出し・読み込み ===================== */
+// 新形式（端末間の引き継ぎ用）：先頭8バイト "KNKRPACK" + 見出しJSONの長さ(4バイト) + 見出しJSON + 音源・画像をそのまま連結
+// 読み込み時はファイルを丸ごとメモリに載せず、音源ごとに切り出して保存する
+const PACK_MAGIC='KNKRPACK';
+async function exportPack(){
+ try{toast('書き出しています…',60000);
+  const conf=JSON.parse(JSON.stringify(cfg)),assets=[],blobs=[];let off=0;
+  const add=async(key,kind)=>{const b=kind==='cover'?await idbGet('assets','cover:'+key):await getAsset(key);if(!b)return false;assets.push({key,kind,offset:off,size:b.size,type:b.type||''});blobs.push(b);off+=b.size;return true};
+  for(const item of [...conf.sounds,...conf.bgms])if(item.assetId&&!await add(item.assetId,'audio'))item.assetId=null;
+  await add('default','cover');
+  const head=new TextEncoder().encode(JSON.stringify({format:'kinniku-radio-pack',version:1,app:'筋肉室ラジオ収録',created:new Date().toISOString(),config:conf,assets}));
+  const len=new Uint8Array(4);new DataView(len.buffer).setUint32(0,head.length,true);
+  download(new Blob([PACK_MAGIC,len,head,...blobs],{type:'application/octet-stream'}),'筋肉室ラジオ収録_設定.kinniku');
+  toast(`設定を書き出しました（音源${assets.filter(a=>a.kind==='audio').length}件・${(off/1048576).toFixed(1)}MB）`,4000);
+ }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
+}
 const blobData=blob=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(blob)});
-async function exportFile(){try{toast('書き出しています…',60000);const out=JSON.parse(JSON.stringify(cfg));for(const item of [...out.sounds,...out.bgms])if(item.assetId){const blob=await getAsset(item.assetId);item.audioData=blob?await blobData(blob):null}
- const file=new Blob([JSON.stringify({format:'kinniku-soundboard',version:6,config:out})],{type:'application/json'});download(file,'筋肉室ラジオ収録_設定.json');toast('音源を含む設定を書き出しました')
- }catch(e){console.error(e);toast('書き出しに失敗しました')}}
-$('#exportBtn').onclick=exportFile;$('#importBtn').onclick=()=>$('#importFile').click();
-$('#importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{
- toast('設定ファイルを読み込んでいます…',120000);const pack=JSON.parse(await file.text());if(pack.format!=='kinniku-soundboard'||!pack.config)throw Error('形式が違います');
- if(!await askConfirm('現在の効果音・BGMの設定を、読み込む内容で置き換えますか？\n録音したテイクは残ります。','置き換える','設定の読み込み')){toast('読み込みを取り消しました');return}
- const incoming=pack.config,items=[...(incoming.sounds||[]),...(incoming.bgms||[])];if(incoming.bgm)items.push(incoming.bgm);
- const oldAssets=[...cfg.sounds,...cfg.bgms].map(x=>x.assetId).filter(Boolean);let n=0;const total=items.filter(x=>x.audioData).length;
- for(const item of items){if(!item.audioData){item.assetId=null;continue}const blob=await (await fetch(item.audioData)).blob();item.assetId=id();await putAsset(item.assetId,blob);delete item.audioData;toast(`音源を取り込み中 ${++n}/${total}`,120000)}
+async function exportJson(){try{toast('書き出しています…',60000);const out=JSON.parse(JSON.stringify(cfg));for(const item of [...out.sounds,...out.bgms])if(item.assetId){const blob=await getAsset(item.assetId);item.audioData=blob?await blobData(blob):null}
+ download(new Blob([JSON.stringify({format:'kinniku-soundboard',version:6,config:out})],{type:'application/json'}),'筋肉室ラジオ収録_設定.json');toast('ポン出し用の設定ファイルを書き出しました')
+ }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}}
+function errText(e){if(!e)return '原因不明';if(e.name==='QuotaExceededError')return '端末の空き容量が足りません';if(e instanceof RangeError||/memory|allocation/i.test(e.message||''))return 'ファイルが大きく、この端末では一度に読み込めません';return e.userMessage||((e.name&&e.name!=='Error'?e.name+'：':'')+(e.message||String(e)))}
+function dataUrlToBlob(u){
+ const comma=u.indexOf(','),meta=u.slice(5,comma),type=meta.split(';')[0]||'',b64=meta.includes(';base64');const body=u.slice(comma+1);
+ if(!b64)return new Blob([decodeURIComponent(body)],{type});
+ const parts=[],STEP=1<<20;for(let i=0;i<body.length;i+=STEP){const bin=atob(body.slice(i,i+STEP));const a=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)a[j]=bin.charCodeAt(j);parts.push(a)}
+ return new Blob(parts,{type});
+}
+async function readPackHeader(file){
+ const first=new Uint8Array(await file.slice(0,12).arrayBuffer());
+ if(String.fromCharCode(...first.slice(0,8))!==PACK_MAGIC)return null;
+ const len=new DataView(first.buffer).getUint32(8,true);
+ const head=JSON.parse(new TextDecoder().decode(await file.slice(12,12+len).arrayBuffer()));
+ if(head.format!=='kinniku-radio-pack'||!head.config)throw Object.assign(Error(''),{userMessage:'設定ファイルの中身を読み取れませんでした'});
+ return {head,base:12+len};
+}
+async function applyImported(incoming,stored,coverBlob){
+ const oldAssets=[...cfg.sounds,...cfg.bgms].map(x=>x.assetId).filter(Boolean);
  const keepRec=cfg.rec;stopAll();cfg=normalize(incoming);if(!incoming.rec)cfg.rec=keepRec;emojiTab=0;textTab=0;bgmTab=0;save();renderVolumes();updateGains();
+ if(coverBlob){await setCover('default',coverBlob)}
  for(const assetId of oldAssets)await deleteAsset(assetId);updateStorage();
- toast(`設定を読み込みました（音源${total}件）`)
- }catch(err){console.error(err);toast('設定ファイルを読み込めませんでした')}finally{e.target.value=''}};
+ toast(`設定を読み込みました（音源${stored}件${coverBlob?'・サムネイル画像':''}）`,4000);
+}
+$('#exportBtn').onclick=exportPack;$('#exportJsonBtn').onclick=exportJson;$('#importBtn').onclick=()=>$('#importFile').click();
+$('#importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;const added=[];
+ try{
+  toast('設定ファイルを確認しています…',120000);
+  const pack=await readPackHeader(file);
+  if(pack){
+   if(!await askConfirm('現在の効果音・BGMの設定を、読み込む内容で置き換えますか？\n録音したテイクは残ります。','置き換える','設定の読み込み')){toast('読み込みを取り消しました');return}
+   const incoming=pack.head.config,map=new Map(),assets=pack.head.assets||[];let n=0,cover=null;const total=assets.filter(a=>a.kind==='audio').length;
+   for(const a of assets){
+    const blob=file.slice(pack.base+a.offset,pack.base+a.offset+a.size,a.type);
+    if(blob.size!==a.size)throw Object.assign(Error(''),{userMessage:'ファイルが途中で切れています。書き出し直したファイルでお試しください'});
+    if(a.kind==='cover'){cover=new Blob([await blob.arrayBuffer()],{type:a.type});continue}
+    const nid=id();added.push(nid);await putAsset(nid,new Blob([await blob.arrayBuffer()],{type:a.type}));map.set(a.key,nid);toast(`音源を取り込み中 ${++n}/${total}`,120000);
+   }
+   for(const item of [...(incoming.sounds||[]),...(incoming.bgms||[])])item.assetId=item.assetId&&map.get(item.assetId)||null;
+   await applyImported(incoming,n,cover);return;
+  }
+  // 以前のJSON形式（筋肉室効果音ポン出しと共通）
+  let pack2;try{pack2=JSON.parse(await file.text())}catch(err){throw Object.assign(err,{userMessage:err instanceof RangeError?'ファイルが大きく、この端末では一度に読み込めません。PCで読み込んでから「設定を書き出す」で新しい形式にすると、この端末でも読み込めます':'このアプリの設定ファイルではないか、ファイルが壊れています'})}
+  if(pack2.format!=='kinniku-soundboard'||!pack2.config)throw Object.assign(Error(''),{userMessage:'このアプリの設定ファイルではありません'});
+  if(!await askConfirm('現在の効果音・BGMの設定を、読み込む内容で置き換えますか？\n録音したテイクは残ります。','置き換える','設定の読み込み')){toast('読み込みを取り消しました');return}
+  const incoming=pack2.config,items=[...(incoming.sounds||[]),...(incoming.bgms||[])];if(incoming.bgm)items.push(incoming.bgm);
+  let n=0;const total=items.filter(x=>x.audioData).length;
+  for(const item of items){if(!item.audioData){item.assetId=null;continue}const blob=dataUrlToBlob(item.audioData);item.assetId=id();added.push(item.assetId);await putAsset(item.assetId,blob);delete item.audioData;toast(`音源を取り込み中 ${++n}/${total}`,120000)}
+  await applyImported(incoming,n,null);
+ }catch(err){console.error(err);for(const k of added)await deleteAsset(k);toast('設定ファイルを読み込めませんでした（'+errText(err)+'）',9000)}
+ finally{e.target.value=''}};
 
 /* ===================== 起動 ===================== */
 (async()=>{
