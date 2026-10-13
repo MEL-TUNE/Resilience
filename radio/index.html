@@ -98,6 +98,26 @@
 .meters .meter-row{grid-template-columns:34px minmax(0,1fr) 46px;gap:5px;font-size:10px}
 @media(min-height:640px){.recbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}}
 @media(max-width:420px){.meters{grid-template-columns:1fr}.recbar .timer{font-size:26px}}
+.transport{grid-template-columns:1.35fr 1fr 1fr 1fr}
+.recbar .tbtn{font-size:12.5px;padding:0 4px}
+.voice-warn{border:1px solid #e2b0a7;background:var(--rec-pale);color:#93362d;border-radius:10px;padding:6px 9px;font-size:11.5px;font-weight:700}
+.bgm-now{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:8px;align-items:center;border:1px solid #e4d7bd;border-radius:12px;padding:6px 8px;background:#fffcf5}
+.bgm-now-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:#efe6d3;color:#8b7a63;font-weight:700}
+.bgm-now-name{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bgm-now-track{height:5px;border-radius:3px;background:#efe6d3;overflow:hidden;margin-top:3px}.bgm-now-track i{display:block;height:100%;width:0;background:var(--leaf)}
+.bgm-now-time{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bgm-now .btn{padding:6px 9px}
+.bgm-now[data-state="idle"] .bgm-now-name{color:var(--muted);font-weight:400}
+.bgm-now[data-state="playing"]{border-color:#9dbb8f;background:#f2f8ee}.bgm-now[data-state="playing"] .bgm-now-icon{background:var(--leaf);color:#fff;animation:pulse 1.6s ease-in-out infinite}
+.bgm-now[data-state="low"]{border-color:#d8b56f;background:#fff7e6}.bgm-now[data-state="low"] .bgm-now-icon{background:#d9b55c;color:#fff}.bgm-now[data-state="low"] .bgm-now-track i{background:#d9b55c}
+.bgm-now[data-state="loading"] .bgm-now-icon{animation:pulse .8s ease-in-out infinite}
+.bgm-now[data-state="fading"]{border-color:#d8b56f}
+.bgm-now[data-state="error"]{border-color:#e2b0a7;background:var(--rec-pale)}.bgm-now[data-state="error"] .bgm-now-name{color:#93362d;white-space:normal}.bgm-now[data-state="error"] .bgm-now-icon{background:var(--rec);color:#fff}
+@keyframes pulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.bgm-now-icon{animation:none!important}}
+.bgm-play{min-height:50px;padding:6px 8px;gap:10px}.bgm-icon{width:38px;height:38px;border-radius:10px;font-size:16px}.bgm-name{font-size:13px}
+.bgm-card{min-height:auto;padding:5px 6px}.bgm-card.active{border-color:#6b9b63;box-shadow:0 0 0 2px #a5d290aa}
+.bgm-edit,.bgm-remove{padding:0 9px}
+@media(max-width:420px){.transport{grid-template-columns:1fr 1fr}.bgm-now{grid-template-columns:auto minmax(0,1fr) auto}.bgm-now-time{display:none}}
 .bgm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px}
 .bgm-low-state{font-size:10px;color:var(--muted)}
 .section-title .storage{font-size:10px}
@@ -106,7 +126,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-13 第7版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-14 第8版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -114,8 +134,11 @@
  <div class="transport">
   <button class="tbtn recbtn" id="recBtn">● 録音開始</button>
   <button class="tbtn" id="stopRecBtn" disabled>■ 停止・保存</button>
+  <button class="tbtn" id="retakeBtn" disabled title="今のテイク（または直前のテイク）を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button>
   <button class="tbtn" id="markBtn" disabled title="編集の目印を記録します">◆ マーカー</button>
  </div>
+ <div class="voice-warn" id="voiceWarn" role="alert" hidden></div>
+ <div class="bgm-now" id="bgmNow" data-state="idle"><span class="bgm-now-icon" aria-hidden="true">♪</span><div class="bgm-now-main"><div class="bgm-now-name" id="bgmNowName">BGM：なし</div><div class="bgm-now-track"><i id="bgmNowBar"></i></div></div><span class="bgm-now-time" id="bgmNowTime"></span><button class="btn" id="bgmNowStop" disabled>■ BGM停止</button></div>
  <div class="meters">
   <div class="meter-row"><span>マイク</span><div class="meter"><i id="micMeter"></i><b id="micPeak"></b></div><output id="micDb">-∞ dB</output></div>
   <div class="meter-row"><span>録音</span><div class="meter"><i id="mixMeter"></i><b id="mixPeak"></b></div><output id="mixDb">-∞ dB</output></div>
@@ -322,9 +345,27 @@ function updateGains(){
  else{limiter.threshold.value=0;limiter.knee.value=0;limiter.ratio.value=1}
  if(!r.duck){duckGain.gain.cancelScheduledValues(ctx.currentTime);duckGain.gain.setTargetAtTime(1,ctx.currentTime,.1);ducked=false;renderDuck()}
 }
-function release(inst){if(!inst||inst.released)return;inst.released=true;active.delete(inst);if(bgmPlaying===inst)bgmPlaying=null;try{inst.audio.pause();inst.audio.currentTime=0;inst.source.disconnect();inst.gain.disconnect();URL.revokeObjectURL(inst.url)}catch(_){}render()}
-function fadeStop(inst,duration=.34){if(!inst||inst.released||inst.fading)return Promise.resolve();inst.fading=true;active.delete(inst);if(bgmPlaying===inst)bgmPlaying=null;render();return new Promise(resolve=>{if(!ctx||ctx.state!=='running'){release(inst);resolve();return}const now=ctx.currentTime;inst.gain.gain.cancelScheduledValues(now);inst.gain.gain.setValueAtTime(inst.gain.gain.value,now);inst.gain.gain.linearRampToValueAtTime(0,now+duration);setTimeout(()=>{release(inst);resolve()},duration*1000+35)})}
-function createInstance(blob,volume,bus,meta){const url=URL.createObjectURL(blob),audio=new Audio(url),source=ctx.createMediaElementSource(audio),gain=ctx.createGain();gain.gain.value=volume/100;source.connect(gain);gain.connect(bus);const inst={audio,source,gain,url,...meta,released:false,fading:false};audio.addEventListener('ended',()=>release(inst));audio.addEventListener('error',()=>{release(inst);toast('音源を再生できませんでした')},{once:true});return inst}
+/* 再生は「音源を一度だけ解析して使い回す」方式（AudioBuffer）。
+   以前のaudio要素方式は、効果音を何度も鳴らすとブラウザの再生器の上限に達してBGMが鳴らなくなることがあった */
+const bufCache=new Map(),bgmLru=[];
+function decodeAsset(assetId,isBgm){
+ if(bufCache.has(assetId)){if(isBgm){const i=bgmLru.indexOf(assetId);if(i>=0)bgmLru.splice(i,1);bgmLru.push(assetId)}return bufCache.get(assetId)}
+ const pr=(async()=>{const blob=await getAsset(assetId);if(!blob)throw Object.assign(Error('missing'),{userMessage:'保存音源が見つかりません。再登録してください'});
+  const data=await blob.arrayBuffer();audioEngine();
+  try{return await new Promise((res,rej)=>{const r=ctx.decodeAudioData(data,res,rej);if(r&&r.then)r.then(res,rej)})}
+  catch(e){throw Object.assign(Error('decode'),{userMessage:'この音源の形式を読み込めませんでした（'+(blob.type||'形式不明')+'）。mp3かwavで登録し直すと鳴る可能性があります'})}})();
+ bufCache.set(assetId,pr);pr.catch(()=>bufCache.delete(assetId));
+ if(isBgm){bgmLru.push(assetId);while(bgmLru.length>3){const old=bgmLru.shift();if(old!==bgmPlaying?.assetId)bufCache.delete(old)}}
+ return pr;
+}
+function release(inst){if(!inst||inst.released)return;inst.released=true;active.delete(inst);if(bgmPlaying===inst)bgmPlaying=null;try{inst.source.onended=null;inst.source.stop()}catch(_){}try{inst.source.disconnect();inst.gain.disconnect()}catch(_){}render();renderBgmNow()}
+function fadeStop(inst,duration=.34){if(!inst||inst.released||inst.fading)return Promise.resolve();inst.fading=true;active.delete(inst);if(bgmPlaying===inst){bgmPlaying=null;bgmFading=inst}render();renderBgmNow();return new Promise(resolve=>{if(!ctx||ctx.state!=='running'){release(inst);if(bgmFading===inst)bgmFading=null;resolve();return}const now=ctx.currentTime;inst.gain.gain.cancelScheduledValues(now);inst.gain.gain.setValueAtTime(inst.gain.gain.value,now);inst.gain.gain.linearRampToValueAtTime(0,now+duration);setTimeout(()=>{release(inst);if(bgmFading===inst)bgmFading=null;renderBgmNow();resolve()},duration*1000+35)})}
+function startBuffer(buffer,volume,bus,meta,{loop=false,offset=0}={}){
+ const source=ctx.createBufferSource(),gain=ctx.createGain();source.buffer=buffer;source.loop=loop;gain.gain.value=volume/100;source.connect(gain);gain.connect(bus);
+ const inst={source,gain,buffer,...meta,released:false,fading:false,startedAt:ctx.currentTime-offset};
+ source.onended=()=>release(inst);source.start(0,offset%buffer.duration);return inst;
+}
+async function ensureRunning(){audioEngine();if(ctx.state!=='running'){try{await Promise.race([ctx.resume(),sleep(1500)])}catch(_){}}}
 async function playSound(s){
  if(!s.assetId){toast('このボタンの音源を長押しして登録してください');return}
  if(s.type==='text'){
@@ -333,30 +374,47 @@ async function playSound(s){
   if(pendingText.has(s.id)){soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);pendingText.delete(s.id);return}
   pendingText.add(s.id);
  }
- const serial=(soundSerial.get(s.id)||0)+1;soundSerial.set(s.id,serial);let inst=null;
- try{audioEngine();ctx.resume();const playing=[...active].filter(a=>a.soundId===s.id);
-  if(s.type==='emoji'&&cfg.playMode==='restart')playing.forEach(a=>release(a));
-  const blob=await getAsset(s.assetId);if(serial!==soundSerial.get(s.id)&&(s.type==='text'||cfg.playMode==='restart'))return;
-  if(!blob){toast('保存音源が見つかりません。再登録してください');return}
-  inst=createInstance(blob,s.volume,seBus,{soundId:s.id});active.add(inst);await inst.audio.play();render();
- }catch(e){if(inst)release(inst);console.error(e);toast('音を再生できませんでした。音源形式を確認してください')}
+ const serial=(soundSerial.get(s.id)||0)+1;soundSerial.set(s.id,serial);
+ try{await ensureRunning();
+  if(s.type==='emoji'&&cfg.playMode==='restart')[...active].filter(a=>a.soundId===s.id).forEach(a=>release(a));
+  const buf=await decodeAsset(s.assetId,false);if(serial!==soundSerial.get(s.id)&&(s.type==='text'||cfg.playMode==='restart'))return;
+  const inst=startBuffer(buf,s.volume,seBus,{soundId:s.id});active.add(inst);render();
+ }catch(e){console.error(e);toast(e.userMessage||'効果音を再生できませんでした',5000)}
  finally{if(s.type==='text'&&serial===soundSerial.get(s.id))pendingText.delete(s.id)}
 }
-async function playBgm(b){
- if(bgmPlaying?.trackId===b.id){bgmSerial++;addMarker('BGM停止：'+b.name,true);fadeStop(bgmPlaying);return}
- if(bgmPendingId===b.id){bgmSerial++;bgmPendingId=null;return}
+let bgmLoadingId=null,bgmError='',bgmFading=null;
+async function playBgm(b,{restart=false,quiet=false}={}){
+ if(!restart&&bgmPlaying?.trackId===b.id){bgmSerial++;addMarker('BGM停止：'+b.name,true);fadeStop(bgmPlaying);return}
+ if(!restart&&bgmPendingId===b.id){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;renderBgmNow();return}
  if(!b.assetId){toast('「設定」からBGM音源を登録してください');return}
- const serial=++bgmSerial,previous=bgmPlaying;bgmPendingId=b.id;
- try{audioEngine();ctx.resume()}catch(e){bgmPendingId=null;toast('音声機能を起動できませんでした');return}
- if(previous)await fadeStop(previous,.38);
- let inst=null;
- try{const blob=await getAsset(b.assetId);if(serial!==bgmSerial)return;if(!blob){toast('BGM音源が見つかりません。再登録してください');return}
-  inst=createInstance(blob,b.volume,bgmBus,{trackId:b.id});inst.audio.loop=true;bgmPlaying=inst;await inst.audio.play();addMarker('BGM開始：'+b.name,true);render();
- }catch(e){if(inst)release(inst);console.error(e);toast('BGMを再生できませんでした')}
- finally{if(serial===bgmSerial)bgmPendingId=null}
+ const serial=++bgmSerial,previous=bgmPlaying;bgmPendingId=b.id;bgmLoadingId=b.id;bgmError='';render();renderBgmNow();
+ try{
+  await ensureRunning();
+  const bufP=decodeAsset(b.assetId,true);
+  if(previous)await fadeStop(previous,restart?.12:.38);
+  const buf=await bufP;if(serial!==bgmSerial)return;
+  const inst=startBuffer(buf,b.volume,bgmBus,{trackId:b.id,assetId:b.assetId,name:b.name},{loop:true});
+  bgmPlaying=inst;addMarker('BGM開始：'+b.name,true);render();
+ }catch(e){console.error(e);if(serial===bgmSerial){bgmError=(b.name||'BGM')+'：'+(e.userMessage||'再生できませんでした');if(!quiet)toast(bgmError,6000)}}
+ finally{if(serial===bgmSerial){bgmPendingId=null;bgmLoadingId=null}renderBgmNow()}
 }
-function stopAll(){bgmSerial++;bgmPendingId=null;for(const s of cfg.sounds)soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);pendingText.clear();const sounds=[...active];if(bgmPlaying)sounds.push(bgmPlaying);sounds.forEach(x=>fadeStop(x,.42));toast('すべての音をフェードアウトしました')}
-
+function stopAll(){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;for(const s of cfg.sounds)soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);pendingText.clear();const sounds=[...active];if(bgmPlaying)sounds.push(bgmPlaying);sounds.forEach(x=>fadeStop(x,.42));toast('すべての音をフェードアウトしました')}
+// 録音欄のBGM表示
+let bgmAnalyser=null;const bgmBuf=new Float32Array(2048);
+function renderBgmNow(){
+ const el=document.getElementById('bgmNow');if(!el)return;
+ const name=$('#bgmNowName'),stopBtn=$('#bgmNowStop');let state='idle',label='BGM：なし';
+ if(bgmLoadingId){const b=cfg.bgms.find(x=>x.id===bgmLoadingId);state='loading';label='読み込み中：'+(b?.name||'')}
+ else if(bgmPlaying){state=bgmLow?'low':'playing';label=(bgmLow?'小さく再生中：':'再生中：')+bgmPlaying.name}
+ else if(bgmFading){state='fading';label='フェードアウト中：'+bgmFading.name}
+ else if(bgmError){state='error';label=bgmError}
+ el.dataset.state=state;name.textContent=label;stopBtn.disabled=!(bgmPlaying||bgmLoadingId);
+ if(state!=='playing'&&state!=='low'){$('#bgmNowTime').textContent='';$('#bgmNowBar').style.width='0%'}
+}
+function tickBgmNow(){
+ if(!bgmPlaying||!ctx)return;const d=bgmPlaying.buffer.duration,t=((ctx.currentTime-bgmPlaying.startedAt)%d+d)%d;
+ $('#bgmNowTime').textContent=fmtTime(t)+' / '+fmtTime(d);$('#bgmNowBar').style.width=(t/d*100).toFixed(2)+'%';
+}
 /* ===================== マイク・メーター・ダッキング ===================== */
 let micStream=null,micSource=null,ducked=false,forceDuck=false,lastVoiceAt=0;
 const micBuf=new Float32Array(2048),mixBuf=new Float32Array(2048);
@@ -369,7 +427,7 @@ async function enableMic(auto=false){
   micSource=ctx.createMediaStreamSource(micStream);
   if(!micGain){micGain=ctx.createGain();micGain.connect(voiceBus)}
   micSource.connect(micGain);updateGains();
-  const track=micStream.getAudioTracks()[0];track.addEventListener('ended',()=>{toast('マイクが切断されました');micStream=null;renderRecState()});
+  const track=micStream.getAudioTracks()[0];track.addEventListener('ended',()=>{toast('マイクが切断されました。つなぎ直しています…',4000);setTimeout(()=>{if(!micLive())enableMic(true)},600);renderRecState()});
   await listMics();$('#micInfo').textContent=(track.label||'マイク')+' · '+ctx.sampleRate/1000+'kHz';
   $('#micBtn').textContent='接続し直す';renderRecState();toast('マイクを有効にしました');
  }catch(e){console.error(e);
@@ -394,6 +452,7 @@ function drawMeter(name,db){
 function meterLoop(){
  if(ctx){drawMeter('mic',micStream?peakDb(micAnalyser,micBuf):-99);drawMeter('mix',peakDb(mixAnalyser,mixBuf))}
  if(rec.state!=='idle')renderTimer();
+ tickBgmNow();checkVoice();
  requestAnimationFrame(meterLoop);
 }
 function duckLoop(){
@@ -402,6 +461,18 @@ function duckLoop(){
  if(level>cfg.rec.duckThresh)lastVoiceAt=now;
  const want=now-lastVoiceAt<500;
  if(want!==ducked||forceDuck){ducked=want;forceDuck=false;const t=ctx.currentTime;duckGain.gain.cancelScheduledValues(t);duckGain.gain.setTargetAtTime(want?Math.pow(10,-cfg.rec.duckDepth/20):1,t,want?.06:.35);renderDuck()}
+}
+let silentSince=0;
+function checkVoice(){
+ const el=$('#voiceWarn');let msg='';
+ if(rec.state==='recording'){
+  const tr=micStream?.getAudioTracks?.()[0];
+  if(!tr)msg='マイクがつながっていません。声は録音されていません';
+  else if(tr.readyState!=='live')msg='マイクが止まりました。声は録音されていません（設定欄の「接続し直す」で戻せます）';
+  else if(tr.muted)msg='マイクがパソコン側で一時停止されています。声は録音されていません';
+  else{const db=peakHold.mic.v;const now=performance.now();if(db>-55)silentSince=0;else if(!silentSince)silentSince=now;if(silentSince&&now-silentSince>6000)msg='6秒以上マイクに音が入っていません。マイクのミュートや接続先を確かめてください'}
+ }else silentSince=0;
+ if(el.textContent!==msg){el.textContent=msg;el.hidden=!msg}
 }
 function renderDuck(){const el=$('#duckState');el.textContent=!cfg.rec.duck?'オフ':ducked?'BGMを下げています':'待機';el.classList.toggle('on',ducked&&cfg.rec.duck)}
 
@@ -450,14 +521,36 @@ function flushChunks(){
  return rec.flushChain;
 }
 function stamp(d=new Date()){const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
+let lastTakeId=null;
+function micLive(){const tr=micStream?.getAudioTracks?.()[0];return !!(tr&&tr.readyState==='live')}
+async function discardRec(){
+ const t=rec.take;rec.state='stopping';renderRecState();
+ if(rec.mode==='worklet'){await new Promise(resolve=>{rec.stopResolve=resolve;rec.node.port.postMessage('stop');setTimeout(resolve,1500)})}
+ rec.pending={mix:[],voice:[],prog:[]};rec.pendingFrames=0;await rec.flushChain;
+ rec.take=null;rec.state='idle';if(t)await deleteTakeData(t.id).catch(e=>console.error(e));
+}
+async function retake(btn){
+ if(!armButton(btn,'もう一度押すと録り直し'))return;
+ let startBgmId=null;
+ if(rec.state==='recording'||rec.state==='paused'){startBgmId=rec.take.startBgmId;await discardRec()}
+ else if(rec.state==='idle'&&lastTakeId){const t=await idbGet('takes',lastTakeId);startBgmId=t?.startBgmId||null;if(t)await deleteTakeData(t.id).catch(e=>console.error(e));lastTakeId=null}
+ else return;
+ if(bgmLow){bgmLow=false;bgmTrim.gain.cancelScheduledValues(ctx.currentTime);bgmTrim.gain.setValueAtTime(1,ctx.currentTime);renderBgmLow()}
+ if(bgmPlaying){bgmSerial++;await fadeStop(bgmPlaying,.12)}
+ await renderTakes();renderRecState();
+ const b=startBgmId&&cfg.bgms.find(x=>x.id===startBgmId&&x.assetId);
+ if(b)await decodeAsset(b.assetId,true).catch(()=>{});
+ await startRec();
+ if(rec.state==='recording'){rec.take.startBgmId=b?b.id:null;idbPut('takes',rec.take.id,{...rec.take}).catch(()=>{});if(b)await playBgm(b,{restart:true});toast(b?`録り直し中（BGM「${b.name}」を頭から）`:'録り直し中',3500)}
+}
 async function startRec(){
  try{
   audioEngine();await ctx.resume();await ensureRecorder();
-  if(!micStream)await enableMic();
-  if(!micStream)toast('マイクが未接続のため、BGMと効果音だけを録音します',3500);
+  if(!micLive())await enableMic();
+  if(!micLive()){toast('マイクがつながっていないため、録音を始めませんでした。マイクの許可や接続を確かめてから、もう一度「録音開始」を押してください',7000);return}
   navigator.storage?.persist?.().catch(()=>{});
   const tracks=['mix'];if(cfg.rec.keepVoice)tracks.push('voice');if(cfg.rec.keepProg)tracks.push('prog');
-  rec.take={id:id(),name:'収録 '+stamp(),created:Date.now(),sampleRate:ctx.sampleRate,frames:0,tracks,markers:[],status:'recording'};
+  rec.take={id:id(),name:'収録 '+stamp(),created:Date.now(),sampleRate:ctx.sampleRate,frames:0,tracks,markers:[],status:'recording',startBgmId:bgmPlaying?.trackId||bgmLoadingId||null};
   rec.pending={mix:[],voice:[],prog:[]};rec.pendingFrames=0;rec.idx={mix:0,voice:0,prog:0};rec.frames=0;
   await idbPut('takes',rec.take.id,{...rec.take});
   rec.state='recording';if(rec.mode==='worklet')rec.node.port.postMessage('start');
@@ -478,7 +571,7 @@ async function stopRec(){
  if(rec.mode==='worklet'){await new Promise(resolve=>{rec.stopResolve=resolve;rec.node.port.postMessage('stop');setTimeout(resolve,1500)})}
  await flushChunks();
  const t=rec.take;t.status='done';t.frames=rec.frames;await idbPut('takes',t.id,{...t});
- rec.take=null;rec.state='idle';if(bgmLow&&!bgmPlaying){bgmLow=false;bgmTrim.gain.setTargetAtTime(1,ctx.currentTime,.05);renderBgmLow()}renderRecState();await renderTakes();updateStorage();
+ lastTakeId=t.id;rec.take=null;rec.state='idle';if(bgmLow&&!bgmPlaying){bgmLow=false;bgmTrim.gain.setTargetAtTime(1,ctx.currentTime,.05);renderBgmLow()}renderRecState();await renderTakes();updateStorage();
  toast(`「${t.name}」を保存しました（${fmtTime(t.frames/t.sampleRate)}）`,3500);
 }
 function addMarker(label,auto=false){
@@ -490,10 +583,10 @@ function fmtTime(sec,tenths=false){sec=Math.max(0,sec);const h=Math.floor(sec/36
 function renderTimer(){const t=rec.take,sec=t?rec.frames/t.sampleRate:0,str=fmtTime(sec,true),i=str.lastIndexOf('.');$('#timer').innerHTML=esc(str.slice(0,i))+'<small>'+esc(str.slice(i))+'</small>'}
 function renderRecState(){
  const lamp=$('#recLamp'),txt=$('#recLampText'),st=rec.state;
- lamp.className='lamp '+(st==='recording'||st==='ending'?'rec':st==='paused'?'pause':micStream?'ready':'');
- txt.textContent=st==='ending'?'BGMフェードアウト中…':st==='recording'?'録音中':st==='paused'?'一時停止中':st==='stopping'?'保存中…':micStream?'待機中':'マイク未接続';
+ lamp.className='lamp '+(st==='recording'||st==='ending'?'rec':st==='paused'?'pause':micLive()?'ready':'');
+ txt.textContent=st==='ending'?'BGMフェードアウト中…':st==='recording'?'録音中':st==='paused'?'一時停止中':st==='stopping'?'保存中…':micLive()?'待機中':'マイク未接続';
  const rb=$('#recBtn');rb.textContent=st==='recording'?'‖ 一時停止':st==='paused'?'● 再開':'● 録音開始';rb.classList.toggle('on',st==='recording');rb.disabled=st==='stopping'||st==='ending';
- $('#stopRecBtn').disabled=!(st==='recording'||st==='paused');$('#markBtn').disabled=!(st==='recording'||st==='paused');
+ $('#stopRecBtn').disabled=!(st==='recording'||st==='paused');const rb2=$('#retakeBtn');rb2.disabled=!(st==='recording'||st==='paused'||(st==='idle'&&lastTakeId));if(rb2.dataset.armed!=='1')rb2.textContent='↺ 録り直し';$('#markBtn').disabled=!(st==='recording'||st==='paused');
  const busy=st!=='idle';for(const s of ['#micSelect','#optEc','#optNs','#optAgc','#micBtn','#importBtn','#keepVoice','#keepProg'])$(s).disabled=busy;
  if(st==='idle')$('#timer').innerHTML='00:00<small>.0</small>';
 }
@@ -747,12 +840,15 @@ async function listenTake(takeId,btn){
  try{const blob=await buildWav(t,'mix');const audio=document.createElement('audio');audio.controls=true;audio.dataset.take=takeId;audio.src=URL.createObjectURL(blob);btn.parentElement.replaceChildren(audio);audio.play().catch(()=>{})}
  catch(e){console.error(e);btn.disabled=false;btn.textContent='▶ 試聴する';toast('試聴を準備できませんでした')}
 }
+async function deleteTakeData(takeId){
+ for(const k of ['mix','voice','prog'])await idbDelStrict('chunks',chunkRange(takeId,k));
+ await idbDelStrict('takes',takeId);await idbDel('assets','cover:'+takeId);if(lastTakeId===takeId)lastTakeId=null;
+}
 async function deleteTake(takeId,btn){
  if(rec.take?.id===takeId){toast('録音中のテイクは削除できません');return}
  if(btn){btn.disabled=true;btn.textContent='削除中…'}
  try{
-  for(const k of ['mix','voice','prog'])await idbDelStrict('chunks',chunkRange(takeId,k));
-  await idbDelStrict('takes',takeId);await idbDel('assets','cover:'+takeId);
+  await deleteTakeData(takeId);
   if(await idbGet('takes',takeId))throw Error('削除後もデータが残っています');
   const a=document.querySelector(`audio[data-take="${CSS.escape(takeId)}"]`);if(a){a.pause();URL.revokeObjectURL(a.src)}
   document.querySelector(`.take[data-id="${CSS.escape(takeId)}"]`)?.remove();
@@ -786,7 +882,7 @@ function render(){
   $('#'+type+'Grid').innerHTML=list.map(s=>`<button class="${type}-pad ${s.assetId?'loaded':''} ${[...active].some(a=>a.soundId===s.id)?'playing':''}" data-sound="${esc(s.id)}" title="${esc(s.assetId?s.fileName+' · 長押しで編集':'空き枠 · 押して設定')}" aria-label="${esc(s.assetId?s.label||'効果音':'空き枠、押して設定')}">${s.assetId?esc(s.label||'♪'):''}${s.assetId&&s.shortcut?`<span class="shortcut">${esc(s.shortcut)}</span>`:''}</button>`).join('');
  }
  $('#bgmTabs').innerHTML=cfg.bgmTabs.map((name,i)=>`<button class="chip ${i===bgmTab?'active':''}" data-bgm-tab="${i}">${esc(name)}</button>`).join('');
- $('#bgmList').innerHTML=cfg.bgms.filter(b=>b.tabIndex===bgmTab).sort((a,b)=>a.slotIndex-b.slotIndex).map(b=>`<div class="bgm-card ${b.assetId?'':'unset'} ${bgmPlaying?.trackId===b.id?'active':''}" data-bgm-card="${esc(b.id)}"><div class="bgm-row"><button class="bgm-play" data-play-bgm="${esc(b.id)}" title="${esc(b.fileName||'空き枠・押して設定')}" aria-label="${esc(b.assetId?b.name:'空きBGM枠、押して設定')}"><span class="bgm-icon">${b.assetId?(bgmPlaying?.trackId===b.id?'■':'▶'):''}</span><span class="bgm-name">${b.assetId?esc(b.name):''}</span></button><button class="bgm-edit" data-edit-bgm="${esc(b.id)}">設定</button><button class="bgm-remove" data-reset-bgm="${esc(b.id)}" ${b.assetId||b.name?'':'disabled'}>選択リセット</button></div><div class="bgm-bottom"><label for="volume-${esc(b.id)}">曲音量</label><input id="volume-${esc(b.id)}" aria-label="${esc(b.name)}の音量" data-bgm-volume="${esc(b.id)}" type="range" min="0" max="100" value="${b.volume}"><output>${b.volume}%</output></div></div>`).join('');
+ $('#bgmList').innerHTML=cfg.bgms.filter(b=>b.tabIndex===bgmTab).sort((a,b)=>a.slotIndex-b.slotIndex).map(b=>`<div class="bgm-card ${b.assetId?'':'unset'} ${bgmPlaying?.trackId===b.id||bgmLoadingId===b.id?'active':''}" data-bgm-card="${esc(b.id)}"><div class="bgm-row"><button class="bgm-play" data-play-bgm="${esc(b.id)}" title="${esc(b.fileName||'空き枠・押して設定')}" aria-label="${esc(b.assetId?b.name:'空きBGM枠、押して設定')}"><span class="bgm-icon">${b.assetId?(bgmPlaying?.trackId===b.id?'■':bgmLoadingId===b.id?'…':'▶'):''}</span><span class="bgm-name">${b.assetId?esc(b.name):''}</span></button><button class="bgm-edit" data-edit-bgm="${esc(b.id)}">設定</button><button class="bgm-remove" data-reset-bgm="${esc(b.id)}" ${b.assetId||b.name?'':'disabled'}>選択リセット</button></div><div class="bgm-bottom"><label for="volume-${esc(b.id)}">曲音量</label><input id="volume-${esc(b.id)}" aria-label="${esc(b.name)}の音量" data-bgm-volume="${esc(b.id)}" type="range" min="0" max="100" value="${b.volume}"><output>${b.volume}%</output></div></div>`).join('');
 }
 function save(){persist();render()}
 function openSound(s,type){const del=$('#deleteSound');clearTimeout(del._armTimer);del.dataset.armed='';del.classList.remove('armed');del.textContent='削除';$('#soundForm').reset();$('#soundId').value=s?.id||'';$('#soundType').value=type;$('#soundHeading').textContent=s?'効果音の編集':'効果音を追加';const configured=!!(s?.assetId||s?.configured);$('#labelInput').value=configured?s.label||'':'';$('#labelInput').maxLength=type==='emoji'?12:20;$('#labelCaption').textContent=type==='emoji'?'ボタン名（絵文字1文字）':'ボタン名（最大4文字）';$('#labelHelp').textContent=type==='emoji'?'絵文字1文字を指定します。':'絵文字も1文字として数えます。';const volume=configured?s.volume??100:100;$('#soundVol').value=volume;$('#soundVolVal').textContent=volume+'%';$('#shortcutInput').value=configured?s.shortcut||'':'';$('#currentSoundFile').textContent=s?.fileName||'音源未登録';$('#soundFile').value='';$('#deleteSound').hidden=!s;$('#movePrev').disabled=!s;$('#moveNext').disabled=!s;openModal('soundModal')}
@@ -837,11 +933,12 @@ $('#mp3Rate').onchange=e=>{cfg.rec.mp3Rate=+e.target.value;persist()};
 $('#micSelect').onchange=e=>{cfg.rec.micId=e.target.value;persist();if(micStream)enableMic()};
 $('#micBtn').onclick=()=>enableMic();
 $('#recBtn').onclick=()=>{if(rec.state==='idle')startRec();else if(rec.state==='recording')pauseRec();else if(rec.state==='paused')resumeRec()};
-$('#stopRecBtn').onclick=stopRec;$('#markBtn').onclick=()=>addMarker();
+$('#stopRecBtn').onclick=stopRec;$('#retakeBtn').onclick=e=>retake(e.currentTarget);$('#markBtn').onclick=()=>addMarker();
 $('#bgmFadeBtn').onclick=()=>{if(!bgmPlaying){toast('再生中のBGMはありません');return}const b=cfg.bgms.find(x=>x.id===bgmPlaying.trackId);bgmSerial++;addMarker('BGMフェードアウト：'+(b?.name||''),true);fadeStop(bgmPlaying,cfg.rec.fadeSec)};
-function setBgmLow(on){audioEngine();bgmLow=on;const t=ctx.currentTime;bgmTrim.gain.cancelScheduledValues(t);bgmTrim.gain.setTargetAtTime(on?cfg.rec.bgmLowLevel/100:1,t,.6);addMarker(on?'BGMを小さく':'BGMを元の音量へ',true);renderBgmLow()}
+function setBgmLow(on){audioEngine();bgmLow=on;const t=ctx.currentTime;bgmTrim.gain.cancelScheduledValues(t);bgmTrim.gain.setTargetAtTime(on?cfg.rec.bgmLowLevel/100:1,t,.6);addMarker(on?'BGMを小さく':'BGMを元の音量へ',true);renderBgmLow();renderBgmNow()}
 function renderBgmLow(){$('#bgmLowBtn').classList.toggle('on',bgmLow);$('#bgmLowBtn').textContent=bgmLow?'BGMを元に戻す':'BGMを小さくする';$('#bgmLowState').textContent=bgmLow?'小さくしています（'+cfg.rec.bgmLowLevel+'%）':'通常の音量'}
 $('#bgmLowBtn').onclick=()=>setBgmLow(!bgmLow);
+$('#bgmNowStop').onclick=()=>{if(bgmLoadingId){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;render();renderBgmNow();return}if(bgmPlaying){bgmSerial++;addMarker('BGM停止：'+bgmPlaying.name,true);fadeStop(bgmPlaying,.6)}};
 $('#bgmLowLevel').oninput=e=>{cfg.rec.bgmLowLevel=+e.target.value;$('#bgmLowVal').textContent=cfg.rec.bgmLowLevel+'%';if(bgmLow&&ctx)bgmTrim.gain.setTargetAtTime(cfg.rec.bgmLowLevel/100,ctx.currentTime,.2);renderBgmLow();persist()};
 $('#fadeSec').onchange=e=>{cfg.rec.fadeSec=+e.target.value;persist()};
 $('#fadeOnStop').onchange=e=>{cfg.rec.fadeOnStop=e.target.checked;persist()};
@@ -954,6 +1051,8 @@ $('#importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return
  if(!navigator.mediaDevices?.getUserMedia){$('#micBtn').disabled=true;$('#micInfo').textContent='このブラウザではマイクを使えません'}
  else{try{const st=await navigator.permissions?.query?.({name:'microphone'});if(st?.state==='granted')enableMic(true)}catch(_){}}
  document.addEventListener('pointerdown',()=>{if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})});
+ navigator.mediaDevices?.addEventListener?.('devicechange',()=>{listMics();if(micStream&&!micLive())enableMic(true)});
+ renderBgmNow();
 })();
 </script>
 </body>
