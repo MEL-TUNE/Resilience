@@ -85,66 +85,54 @@
 .notice{position:fixed;z-index:20;bottom:14px;left:50%;width:max-content;max-width:92vw;transform:translate(-50%,15px);opacity:0;transition:.2s;background:#51483b;color:white;border-radius:999px;padding:9px 14px;box-shadow:var(--shadow);font-size:11px;pointer-events:none}.notice.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:390px){.emoji-head-controls{gap:3px}.emoji-mode select{max-width:86px}.section-title h2{font-size:13px}.timer{font-size:32px}}
 @media(max-width:360px){.app{padding-left:6px;padding-right:6px}.shell{padding-left:8px;padding-right:8px}.emoji-grid{gap:4px;height:261px;grid-auto-rows:49px}.emoji-pad{height:49px;font-size:22px}.text-grid{gap:4px}.text-pad{font-size:11px;padding:2px}}
+
+/* 縦一列の並び */
+.app{width:min(100%,560px);display:grid;gap:14px}
+.top{margin-bottom:0}
+.recbar{padding:10px 10px 10px}
+.recbar-in{display:grid;gap:8px;padding:4px 12px 4px}
+.rec-head{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px}
+.recbar .timer{font-size:30px;padding:0}
+.recbar .tbtn{height:46px}
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+.meters .meter-row{grid-template-columns:34px minmax(0,1fr) 46px;gap:5px;font-size:10px}
+@media(min-height:640px){.recbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}}
+@media(max-width:420px){.meters{grid-template-columns:1fr}.recbar .timer{font-size:26px}}
+.bgm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px}
+.bgm-low-state{font-size:10px;color:var(--muted)}
+.section-title .storage{font-size:10px}
+.end-row label{font-size:11px;font-weight:700}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-13 第6版）</span></p><nav class="tools"><button class="pill" id="exportBtn">設定を書き出す</button><button class="pill" id="importBtn">設定を読み込む</button><button class="pill danger" id="stopAll">■ 全音停止</button></nav></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-13 第7版）</span></p></header>
 
-<div class="studio">
-<!-- 左：収録卓 -->
-<div class="desk">
-<main class="shell"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content desk">
- <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><span class="storage" id="storageInfo"></span></div>
- <div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div>
+<!-- 1. 録音（画面上部に固定） -->
+<section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
+ <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><button class="pill danger" id="stopAll">■ 全音停止</button></div>
  <div class="transport">
   <button class="tbtn recbtn" id="recBtn">● 録音開始</button>
   <button class="tbtn" id="stopRecBtn" disabled>■ 停止・保存</button>
   <button class="tbtn" id="markBtn" disabled title="編集の目印を記録します">◆ マーカー</button>
  </div>
-
- <section class="panel" aria-labelledby="micTitle">
-  <h3 id="micTitle">マイク <span id="micInfo">未接続</span></h3>
-  <div class="mic-row"><select id="micSelect" aria-label="使うマイク"><option value="">既定のマイク</option></select><button class="btn primary" id="micBtn">マイクを有効にする</button></div>
+ <div class="meters">
   <div class="meter-row"><span>マイク</span><div class="meter"><i id="micMeter"></i><b id="micPeak"></b></div><output id="micDb">-∞ dB</output></div>
-  <div class="meter-row"><span>収録ミックス</span><div class="meter"><i id="mixMeter"></i><b id="mixPeak"></b></div><output id="mixDb">-∞ dB</output></div>
-  <div class="opts">
-   <label><input type="checkbox" id="optEc">エコー除去</label>
-   <label><input type="checkbox" id="optNs">ノイズ抑制</label>
-   <label><input type="checkbox" id="optAgc">自動音量調整</label>
-   <label><input type="checkbox" id="optMon">自分の声を聴く</label>
-  </div>
-  <p class="note">エコー除去などはブラウザの通話向け処理です。声質が変わるため初期値は切ってあります。BGMがマイクに回り込まないよう、ヘッドホンでの収録を想定しています。</p>
-  <p class="note" id="micHelp">開くたびにマイクの許可を求められる場合は、許可の画面で「このサイトにアクセスしているときは許可」（Chrome）を選ぶか、ブラウザのサイト設定でマイクを「許可」にすると、次回から自動でつながります。</p>
- </section>
+  <div class="meter-row"><span>録音</span><div class="meter"><i id="mixMeter"></i><b id="mixPeak"></b></div><output id="mixDb">-∞ dB</output></div>
+ </div>
+</div></section>
 
- <section class="panel" aria-labelledby="mixTitle">
-  <h3 id="mixTitle">ミキサー <span>ヘッドホン音量は録音に影響しません</span></h3>
-  <div class="volume-row"><label for="micVolume">マイク</label><input id="micVolume" type="range" min="0" max="300"><output id="micVal"></output></div>
-  <div class="volume-row"><label for="seVolume">効果音</label><input id="seVolume" type="range" min="0" max="100"><output id="seVal"></output></div>
-  <div class="volume-row"><label for="bgmVolume">BGM</label><input id="bgmVolume" type="range" min="0" max="100"><output id="bgmVal"></output></div>
-  <div class="volume-row"><label for="masterVolume">ヘッドホン</label><input id="masterVolume" type="range" min="0" max="100"><output id="masterVal"></output></div>
-  <div class="opts"><label><input type="checkbox" id="optLimiter">音割れ防止リミッター</label></div>
- </section>
-
- <section class="panel" aria-labelledby="endTitle">
-  <h3 id="endTitle">BGMの締め <span id="bgmLowState">通常の音量</span></h3>
-  <div class="end-row"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><select id="fadeSec" aria-label="フェードアウトの長さ"><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option><option value="12">12秒</option></select></div>
-  <div class="volume-row"><label for="bgmLowLevel">小さくした時</label><input id="bgmLowLevel" type="range" min="5" max="80"><output id="bgmLowVal"></output></div>
-  <div class="opts"><label><input type="checkbox" id="fadeOnStop">「停止・保存」でBGMをフェードアウトしてから録音を止める</label></div>
-  <p class="note">「BGMを小さくする」は約2秒かけて下げ、もう一度押すと元の音量へ戻します。締めの挨拶の下にBGMを残したい時向けです。</p>
- </section>
-
- <section class="panel" aria-labelledby="duckTitle">
-  <h3 id="duckTitle"><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" id="duckOn" style="accent-color:#809d73">話すとBGMを下げる</label><span class="duck-state" id="duckState">待機</span></h3>
-  <div class="volume-row"><label for="duckDepth">下げ幅</label><input id="duckDepth" type="range" min="3" max="30"><output id="duckDepthVal"></output></div>
-  <div class="volume-row"><label for="duckThresh">反応する声</label><input id="duckThresh" type="range" min="-65" max="-15"><output id="duckThreshVal"></output></div>
-  <p class="note">マイクの音が「反応する声」を超えるとBGMが下がり、話し終えて約0.5秒で戻ります。右へ動かすほど大きな声にだけ反応します。</p>
- </section>
+<!-- 2. 効果音・BGM -->
+<main class="shell"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content">
+<section class="section"><div class="section-title"><h2>絵文字の効果音 <span>6×5</span></h2><div class="emoji-head-controls"><label class="emoji-mode" for="playMode">連打 <select id="playMode"><option value="restart">鳴らし直す</option><option value="overlap">重ねる</option></select></label><button class="btn gold" type="button" id="editEmojiTabs">分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs"></div><div class="emoji-grid" id="emojiGrid"></div><p class="section-help">空欄を押して登録。登録後は長押し・右クリックで編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>文字の効果音 <span>最大4文字・4×3</span></h2><button class="btn gold" type="button" id="editTextTabs">分類名編集</button></div><div class="bgm-tabs" id="textTabs"></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。</p></section>
+<section class="section"><div class="section-title"><h2>BGM <span>各タブ10曲</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。</p></section>
 </div></main>
 
+<!-- 3. 収録したテイク -->
 <section class="shell"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content desk">
- <div class="section-title" style="margin:0"><h2>収録したテイク</h2></div>
+ <div class="section-title" style="margin:0"><h2>収録したテイク</h2><span class="storage" id="storageInfo"></span></div>
+ <div class="takes" id="takes"></div>
  <div class="export-opts">
   <label><input type="checkbox" id="optNormalize" style="accent-color:#809d73">書き出し時に音量を最大化（ピーク-1dB）</label>
   <label>MP3 <select id="mp3Rate"><option value="128">128kbps</option><option value="192">192kbps</option><option value="256">256kbps</option></select></label>
@@ -159,20 +147,58 @@
   </div>
  </div>
  <input type="file" id="coverFile" accept="image/*" hidden><input type="file" id="takeCoverFile" accept="image/*" hidden>
- <div class="opts"><span style="font-weight:700">同時に保存：</span><label><input type="checkbox" id="keepVoice">声だけ</label><label><input type="checkbox" id="keepProg">BGM＋効果音だけ</label></div>
- <div class="takes" id="takes"></div>
  <p class="note">録音は数秒ごとにブラウザ内へ保存されます。途中でタブが閉じても、そこまでの音声はテイク一覧に残ります。テイク名の左の四角を押すと、そのテイクだけ動画の画像を変えられます。</p>
 </div></section>
-</div>
 
-<!-- 右：ポン出し -->
-<main class="shell"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content">
-<section class="section"><div class="section-title"><h2>絵文字の効果音 <span>6×5</span></h2><div class="emoji-head-controls"><label class="emoji-mode" for="playMode">連打 <select id="playMode"><option value="restart">鳴らし直す</option><option value="overlap">重ねる</option></select></label><button class="btn gold" type="button" id="editEmojiTabs">分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs"></div><div class="emoji-grid" id="emojiGrid"></div><p class="section-help">空欄を押して登録。登録後は長押し・右クリックで編集できます。</p></section>
-<section class="section"><div class="section-title"><h2>文字の効果音 <span>最大4文字・4×3</span></h2><button class="btn gold" type="button" id="editTextTabs">分類名編集</button></div><div class="bgm-tabs" id="textTabs"></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。</p></section>
-<section class="section"><div class="section-title"><h2>BGM <span>各タブ10曲</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。</p></section>
-</div></main>
-</div>
-<p class="footer">設定・音源・録音はこのブラウザ内に保存されます。「設定を書き出す」で作ったファイルを別の端末で読み込むと、効果音・BGM・動画用サムネイルを引き継げます。<br>「筋肉室効果音ポン出し」用のファイルが必要なときは <button class="btn" type="button" id="exportJsonBtn">ポン出し用（JSON）で書き出す</button></p>
+<!-- 4. 設定（音量・マイクなど） -->
+<section class="shell"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content desk">
+ <div class="section-title" style="margin:0"><h2>音量・マイクの設定</h2></div>
+
+ <section class="panel" aria-labelledby="mixTitle">
+  <h3 id="mixTitle">音量 <span>ヘッドホン音量は録音に影響しません</span></h3>
+  <div class="volume-row"><label for="micVolume">マイク</label><input id="micVolume" type="range" min="0" max="300"><output id="micVal"></output></div>
+  <div class="volume-row"><label for="seVolume">効果音</label><input id="seVolume" type="range" min="0" max="100"><output id="seVal"></output></div>
+  <div class="volume-row"><label for="bgmVolume">BGM</label><input id="bgmVolume" type="range" min="0" max="100"><output id="bgmVal"></output></div>
+  <div class="volume-row"><label for="masterVolume">ヘッドホン</label><input id="masterVolume" type="range" min="0" max="100"><output id="masterVal"></output></div>
+  <div class="opts"><label><input type="checkbox" id="optLimiter">音割れ防止リミッター</label></div>
+ </section>
+
+ <section class="panel" aria-labelledby="endTitle">
+  <h3 id="endTitle">BGMの締め</h3>
+  <div class="volume-row"><label for="bgmLowLevel">小さくした時</label><input id="bgmLowLevel" type="range" min="5" max="80"><output id="bgmLowVal"></output></div>
+  <div class="end-row"><label for="fadeSec">フェードアウトの長さ</label><select id="fadeSec"><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option><option value="12">12秒</option></select></div>
+  <div class="opts"><label><input type="checkbox" id="fadeOnStop">「停止・保存」でBGMをフェードアウトしてから録音を止める</label></div>
+  <p class="note">BGM欄の「BGMを小さくする」は約2秒かけて下げ、もう一度押すと元の音量へ戻します。</p>
+ </section>
+
+ <section class="panel" aria-labelledby="duckTitle">
+  <h3 id="duckTitle"><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" id="duckOn" style="accent-color:#809d73">話すとBGMを下げる</label><span class="duck-state" id="duckState">待機</span></h3>
+  <div class="volume-row"><label for="duckDepth">下げ幅</label><input id="duckDepth" type="range" min="3" max="30"><output id="duckDepthVal"></output></div>
+  <div class="volume-row"><label for="duckThresh">反応する声</label><input id="duckThresh" type="range" min="-65" max="-15"><output id="duckThreshVal"></output></div>
+  <p class="note">マイクの音が「反応する声」を超えるとBGMが下がり、話し終えて約0.5秒で戻ります。右へ動かすほど大きな声にだけ反応します。</p>
+ </section>
+
+ <section class="panel" aria-labelledby="micTitle">
+  <h3 id="micTitle">マイク <span id="micInfo">未接続</span></h3>
+  <div class="mic-row"><select id="micSelect" aria-label="使うマイク"><option value="">既定のマイク</option></select><button class="btn primary" id="micBtn">マイクを有効にする</button></div>
+  <div class="opts">
+   <label><input type="checkbox" id="optEc">エコー除去</label>
+   <label><input type="checkbox" id="optNs">ノイズ抑制</label>
+   <label><input type="checkbox" id="optAgc">自動音量調整</label>
+   <label><input type="checkbox" id="optMon">自分の声を聴く</label>
+  </div>
+  <div class="opts"><span style="font-weight:700">録音と同時に保存：</span><label><input type="checkbox" id="keepVoice">声だけ</label><label><input type="checkbox" id="keepProg">BGM＋効果音だけ</label></div>
+  <p class="note">エコー除去などはブラウザの通話向け処理です。声質が変わるため初期値は切ってあります。BGMがマイクに回り込まないよう、ヘッドホンでの収録を想定しています。</p>
+  <p class="note" id="micHelp">開くたびにマイクの許可を求められる場合は、許可の画面で「サイトにアクセスしている間は許可する」（Chrome）を選ぶか、ブラウザのサイト設定でマイクを「許可」にすると、次回から自動でつながります。</p>
+ </section>
+
+ <section class="panel" aria-labelledby="fileTitle">
+  <h3 id="fileTitle">設定ファイル <span>別の端末への引き継ぎ用</span></h3>
+  <div class="end-row"><button class="btn" id="exportBtn">設定を書き出す</button><button class="btn" id="importBtn">設定を読み込む</button><button class="btn" type="button" id="exportJsonBtn">ポン出し用（JSON）で書き出す</button></div>
+  <p class="note">効果音・BGM・動画用サムネイルを1つのファイルにまとめます。録音したテイクは含まれません。</p>
+ </section>
+</div></section>
+<p class="footer">設定・音源・録音はこのブラウザ内に保存されます。</p>
 </div>
 
 <div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
