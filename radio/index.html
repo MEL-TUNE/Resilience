@@ -126,7 +126,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-14 第8版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-14 第9版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -987,9 +987,32 @@ async function exportPack(){
  }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
 }
 const blobData=blob=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(blob)});
-async function exportJson(){try{toast('書き出しています…',60000);const out=JSON.parse(JSON.stringify(cfg));for(const item of [...out.sounds,...out.bgms])if(item.assetId){const blob=await getAsset(item.assetId);item.audioData=blob?await blobData(blob):null}
- download(new Blob([JSON.stringify({format:'kinniku-soundboard',version:6,config:out})],{type:'application/json'}),'筋肉室ラジオ収録_設定.json');toast('ポン出し用の設定ファイルを書き出しました')
- }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}}
+// ポン出し用JSON：巨大な文字列を一度に作るとiPhoneなどでページが落ちるため、音源を少しずつ文字に変換してファイルへつなげる
+async function blobToDataUrlParts(blob){
+ const parts=[new Blob(['data:'+(blob.type||'application/octet-stream')+';base64,'])];
+ const STEP=3*262144;// 3の倍数ずつ変換すると、途中で区切ってもbase64として正しくつながる
+ for(let off=0;off<blob.size;off+=STEP){
+  const u=new Uint8Array(await blob.slice(off,off+STEP).arrayBuffer());let bin='';
+  for(let i=0;i<u.length;i+=8192)bin+=String.fromCharCode.apply(null,u.subarray(i,i+8192));
+  parts.push(new Blob([btoa(bin)]));
+ }
+ return parts;
+}
+async function exportJson(){
+ try{toast('書き出しています…',120000);
+  const out=JSON.parse(JSON.stringify(cfg)),assetIds=[];
+  for(const item of [...out.sounds,...out.bgms]){if(item.assetId){item.audioData='__KNKAUDIO_'+assetIds.length+'__';assetIds.push(item.assetId)}}
+  const text=JSON.stringify({format:'kinniku-soundboard',version:6,config:out});
+  const pieces=text.split(/"__KNKAUDIO_(\d+)__"/),parts=[];
+  for(let i=0;i<pieces.length;i++){
+   if(i%2===0){parts.push(new Blob([pieces[i]]));continue}
+   const blob=await getAsset(assetIds[+pieces[i]]);
+   if(blob){parts.push(new Blob(['"']),...await blobToDataUrlParts(blob),new Blob(['"']))}else parts.push(new Blob(['null']));
+   toast(`書き出しています… ${Math.ceil(i/2)}/${assetIds.length}`,120000);
+  }
+  download(new Blob(parts,{type:'application/octet-stream'}),'筋肉室ラジオ収録_設定.json');toast('ポン出し用の設定ファイルを書き出しました',4000);
+ }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
+}
 function errText(e){if(!e)return '原因不明';if(e.name==='QuotaExceededError')return '端末の空き容量が足りません';if(e instanceof RangeError||/memory|allocation/i.test(e.message||''))return 'ファイルが大きく、この端末では一度に読み込めません';return e.userMessage||((e.name&&e.name!=='Error'?e.name+'：':'')+(e.message||String(e)))}
 function dataUrlToBlob(u){
  const comma=u.indexOf(','),meta=u.slice(5,comma),type=meta.split(';')[0]||'',b64=meta.includes(';base64');const body=u.slice(comma+1);
