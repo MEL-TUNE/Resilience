@@ -118,6 +118,17 @@
 .bgm-card{min-height:auto;padding:5px 6px}.bgm-card.active{border-color:#6b9b63;box-shadow:0 0 0 2px #a5d290aa}
 .bgm-edit,.bgm-remove{padding:0 9px}
 @media(max-width:420px){.transport{grid-template-columns:1fr 1fr}.bgm-now{grid-template-columns:auto minmax(0,1fr) auto}.bgm-now-time{display:none}}
+.prog-row{display:flex;gap:6px;align-items:center;padding-right:2px}
+.prog-chips{display:flex;gap:4px;overflow-x:auto;flex:1;min-width:0;padding:2px 1px;scrollbar-width:thin}
+.prog-chip{border:1px solid #d8cab2;border-radius:999px;padding:6px 11px;background:#fffcf5;white-space:nowrap;font-size:12px}
+.prog-chip.active{background:#e4f0dc;border-color:#86aa79;color:#3f5a38;font-weight:800;box-shadow:0 0 0 2px #a5d29066}
+.prog-chip:disabled{opacity:.5}
+.head-btns{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+#monBtn.off{background:#fff3df;border-color:#d8b56f;color:#7a5520;font-weight:700}
+.prog-bgm{margin-bottom:8px}
+.prog-bgm .bgm-card{border-width:2px;border-color:#c9a263}
+.prog-bgm .prog-bgm-label{font-size:10px;color:#8a6a33;font-weight:700;margin:0 0 3px 4px}
+.prog-bgm .empty{padding:9px}
 .bgm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px}
 .bgm-low-state{font-size:10px;color:var(--muted)}
 .section-title .storage{font-size:10px}
@@ -126,11 +137,12 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-14 第9版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-14 第10版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
- <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><button class="pill danger" id="stopAll">■ 全音停止</button></div>
+ <div class="prog-row"><div class="prog-chips" id="progChips" role="tablist" aria-label="番組"></div><button class="btn gold" type="button" id="progEdit">番組の設定</button></div>
+ <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><div class="head-btns"><button class="pill" type="button" id="monBtn" title="ヘッドホン・スピーカーから出す音のオン／オフ（録音には影響しません）">モニター音：オン</button><button class="pill danger" id="stopAll">■ 全音停止</button></div></div>
  <div class="transport">
   <button class="tbtn recbtn" id="recBtn">● 録音開始</button>
   <button class="tbtn" id="stopRecBtn" disabled>■ 停止・保存</button>
@@ -149,7 +161,7 @@
 <main class="shell"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content">
 <section class="section"><div class="section-title"><h2>絵文字の効果音 <span>6×5</span></h2><div class="emoji-head-controls"><label class="emoji-mode" for="playMode">連打 <select id="playMode"><option value="restart">鳴らし直す</option><option value="overlap">重ねる</option></select></label><button class="btn gold" type="button" id="editEmojiTabs">分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs"></div><div class="emoji-grid" id="emojiGrid"></div><p class="section-help">空欄を押して登録。登録後は長押し・右クリックで編集できます。</p></section>
 <section class="section"><div class="section-title"><h2>文字の効果音 <span>最大4文字・4×3</span></h2><button class="btn gold" type="button" id="editTextTabs">分類名編集</button></div><div class="bgm-tabs" id="textTabs"></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。</p></section>
-<section class="section"><div class="section-title"><h2>BGM <span>各タブ10曲</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。</p></section>
+<section class="section"><div class="section-title"><h2>BGM <span>各タブ10曲</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。</p></section>
 </div></main>
 
 <!-- 3. 収録したテイク -->
@@ -184,6 +196,8 @@
   <div class="volume-row"><label for="bgmVolume">BGM</label><input id="bgmVolume" type="range" min="0" max="100"><output id="bgmVal"></output></div>
   <div class="volume-row"><label for="masterVolume">ヘッドホン</label><input id="masterVolume" type="range" min="0" max="100"><output id="masterVal"></output></div>
   <div class="opts"><label><input type="checkbox" id="optLimiter">音割れ防止リミッター</label></div>
+  <div class="end-row"><label for="monitorMode">録音中のモニター音</label><select id="monitorMode"><option value="auto">自動（イヤホンでなければ消す）</option><option value="muteRec">録音中は必ず消す</option><option value="always">消さない</option></select></div>
+  <p class="note" id="outputInfo">出力先を確認中…</p>
  </section>
 
  <section class="panel" aria-labelledby="endTitle">
@@ -211,7 +225,7 @@
    <label><input type="checkbox" id="optMon">自分の声を聴く</label>
   </div>
   <div class="opts"><span style="font-weight:700">録音と同時に保存：</span><label><input type="checkbox" id="keepVoice">声だけ</label><label><input type="checkbox" id="keepProg">BGM＋効果音だけ</label></div>
-  <p class="note">エコー除去などはブラウザの通話向け処理です。声質が変わるため初期値は切ってあります。BGMがマイクに回り込まないよう、ヘッドホンでの収録を想定しています。</p>
+  <p class="note">エコー除去などはブラウザの通話向け処理です。声質が変わるため初期値は切ってあります。スピーカーで収録するときは、BGMや効果音がマイクに回り込まないよう、録音中のモニター音が自動で消えます（上の「音量」欄で変更できます）。</p>
   <p class="note" id="micHelp">開くたびにマイクの許可を求められる場合は、許可の画面で「サイトにアクセスしている間は許可する」（Chrome）を選ぶか、ブラウザのサイト設定でマイクを「許可」にすると、次回から自動でつながります。</p>
  </section>
 
@@ -224,6 +238,13 @@
 <p class="footer">設定・音源・録音はこのブラウザ内に保存されます。</p>
 </div>
 
+<div class="modal-back" id="progModal"><form class="modal" id="progForm"><h2>番組の設定</h2>
+ <div class="field"><label for="progName">番組名</label><input id="progName" maxlength="30" required><small>テイク名の先頭にも使われます。</small></div>
+ <div class="field"><label for="progBgmSel">初期BGM</label><select id="progBgmSel"></select><small>BGM欄に登録した曲から選びます。BGM欄の一番上と、録音欄に表示されます。</small></div>
+ <div class="field"><label style="display:flex;gap:6px;align-items:center;font-weight:400"><input type="checkbox" id="progAuto" style="width:auto">録音開始と同時に初期BGMを頭から流す</label></div>
+ <div class="field"><label>この番組の動画用サムネイル</label><div class="cover-row" style="grid-template-columns:72px minmax(0,1fr)"><div class="cover-thumb" id="progCoverPreview" style="width:72px">共通</div><div class="cover-ctl"><div class="btns"><button type="button" class="btn" id="progCoverPick">画像を選ぶ</button><button type="button" class="btn danger" id="progCoverClear">共通に戻す</button></div><small style="font-size:10px;color:var(--muted)">設定しない場合は「動画用サムネイル」の共通画像を使います。</small></div></div></div>
+ <div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="progModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<input type="file" id="progCoverFile" accept="image/*" hidden>
 <div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back" id="bgmModal"><form class="modal" id="bgmForm"><h2 id="bgmHeading">BGMの設定</h2><input type="hidden" id="bgmId"><div class="field"><label for="bgmNameInput">表示名</label><input id="bgmNameInput" maxlength="80" required placeholder="例：筋肉室の午後"></div><div class="field"><label for="bgmFile">音源ファイル</label><div class="filebox"><input id="bgmFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentBgmFile"></small></div></div><div class="field"><label for="bgmVolModal">この曲の音量：<span id="bgmVolModalVal"></span></label><input id="bgmVolModal" type="range" min="0" max="100"></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="bgmMovePrev">← 前へ</button><button type="button" class="btn" id="bgmMoveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="resetBgm">選択リセット</button><div class="actions-right"><button type="button" class="btn" data-close="bgmModal">キャンセル</button><button type="submit" class="btn gold">保存</button></div></div></form></div>
 <div class="modal-back" id="emojiTabsModal"><form class="modal" id="emojiTabsForm"><h2>絵文字SE分類名の編集</h2><p class="category-note">6つのタブ名を編集できます。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="emojiTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="emojiTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
@@ -240,13 +261,14 @@ const KEY='kinniku-radio-studio-config-v1';
 const emojiLabels=Array(30).fill(''), textLabels=Array(12).fill('');
 const LEGACY_PRESET_LABELS=new Set(['👏','💖','😂','😢','💪','✨','🔔','✅','🌿','🦌','🍪','📚','🌟','🌸','📯','⭕','✖️','🎹','🫢','🪨','🪞','🥊','💥','🎉','📛取得','📛進化','長攻撃','吹雪','扉開け','扉閉じ','拍手','正解','退場']);
 const BGM_TAB_DEFAULTS=['標準','明','暗','1','2','その他'], TEXT_TAB_DEFAULTS=['標準','感謝','力業','1','2','その他'], EMOJI_TAB_DEFAULTS=[...TEXT_TAB_DEFAULTS];
-const REC_DEFAULTS={micVolume:100,micId:'',ec:false,ns:false,agc:false,monitor:false,limiter:true,duck:true,duckDepth:10,duckThresh:-42,keepVoice:true,keepProg:false,normalize:false,mp3Rate:192,bgmLowLevel:35,fadeSec:3,fadeOnStop:true,coverFit:'cover',videoSize:1080};
+const REC_DEFAULTS={micVolume:100,micId:'',ec:false,ns:false,agc:false,monitor:false,limiter:true,duck:true,duckDepth:10,duckThresh:-42,keepVoice:true,keepProg:false,normalize:false,mp3Rate:192,monitorMode:'auto',bgmLowLevel:35,fadeSec:3,fadeOnStop:true,coverFit:'cover',videoSize:1080};
 const id=()=>globalThis.crypto?.randomUUID?.()||'s'+Date.now().toString(36)+Math.random().toString(36).slice(2);
 const graphemes=s=>[...new Intl.Segmenter('ja',{granularity:'grapheme'}).segment(String(s))].map(x=>x.segment);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const newSound=(type,label,order)=>({id:id(),type,label,category:'全て',volume:100,assetId:null,fileName:'',shortcut:'',configured:false,order});
 const newBgm=(tabIndex,slotIndex)=>({id:id(),name:'',volume:100,assetId:null,fileName:'',tabIndex,slotIndex});
-const defaults=()=>({version:6,categories:[],sounds:[...EMOJI_TAB_DEFAULTS.flatMap((_,tab)=>emojiLabels.map((x,slot)=>({...newSound('emoji',x,slot),tabIndex:tab,slotIndex:slot}))),...TEXT_TAB_DEFAULTS.flatMap((_,tab)=>textLabels.map((x,slot)=>({...newSound('text',x,slot),tabIndex:tab,slotIndex:slot})))],emojiTabs:[...EMOJI_TAB_DEFAULTS],textTabs:[...TEXT_TAB_DEFAULTS],bgmTabs:[...BGM_TAB_DEFAULTS],bgms:BGM_TAB_DEFAULTS.flatMap((_,tab)=>Array.from({length:10},(_,slot)=>newBgm(tab,slot))),master:100,seVolume:100,bgmVolume:100,playMode:'restart',rec:{...REC_DEFAULTS}});
+const defaults=()=>({version:6,categories:[],sounds:[...EMOJI_TAB_DEFAULTS.flatMap((_,tab)=>emojiLabels.map((x,slot)=>({...newSound('emoji',x,slot),tabIndex:tab,slotIndex:slot}))),...TEXT_TAB_DEFAULTS.flatMap((_,tab)=>textLabels.map((x,slot)=>({...newSound('text',x,slot),tabIndex:tab,slotIndex:slot})))],emojiTabs:[...EMOJI_TAB_DEFAULTS],textTabs:[...TEXT_TAB_DEFAULTS],bgmTabs:[...BGM_TAB_DEFAULTS],bgms:BGM_TAB_DEFAULTS.flatMap((_,tab)=>Array.from({length:10},(_,slot)=>newBgm(tab,slot))),master:100,seVolume:100,bgmVolume:100,playMode:'restart',rec:{...REC_DEFAULTS},programs:defaultPrograms(),currentProgram:0});
+function defaultPrograms(){return [1,2,3,4,5].map(n=>({id:'prog'+n,name:'番組'+n,bgmId:null,autoBgm:true}))}
 let db,cfg,emojiTab=0,textTab=0,bgmTab=0,noticeTimer;
 let ctx,bgmTrim,bgmLow=false,seBus,bgmBus,masterBus,duckGain,programBus,progStereo,voiceBus,selfMon,recMix,limiter,limOut,micGain,micAnalyser,mixAnalyser,merger;
 let bgmPlaying=null,bgmSerial=0,bgmPendingId=null;
@@ -255,6 +277,8 @@ const soundSerial=new Map(), pendingText=new Set(), active=new Set();
 function normalize(raw){
  const base=defaults();if(!raw)return base;
  base.rec={...REC_DEFAULTS,...(raw.rec&&typeof raw.rec==='object'?raw.rec:{})};
+ if(Array.isArray(raw.programs)&&raw.programs.length===5)base.programs=raw.programs.map((x,i)=>({...defaultPrograms()[i],...x}));
+ base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=0&&raw.currentProgram<5?raw.currentProgram:0;
  if(Array.isArray(raw.sounds)&&raw.sounds.some(x=>x.emoji)&&!raw.sounds.some(x=>x.type)){
   const old=raw.sounds.map((s,i)=>({...newSound('emoji',s.emoji||'🔔',i),...s,label:s.emoji||'🔔',type:'emoji',category:s.assetId?s.category||'全て':'全て',order:i}));
   base.sounds=[...old,...emojiLabels.slice(old.length).map((x,i)=>newSound('emoji',x,old.length+i)),...textLabels.map((x,i)=>newSound('text',x,i))];
@@ -339,7 +363,7 @@ function audioEngine(){
 }
 function updateGains(){
  if(!ctx)return;const r=cfg.rec;
- masterBus.gain.value=cfg.master/100;seBus.gain.value=cfg.seVolume/100;bgmBus.gain.value=cfg.bgmVolume/100;
+ masterBus.gain.value=monitorMuted()?0:cfg.master/100;seBus.gain.value=cfg.seVolume/100;bgmBus.gain.value=cfg.bgmVolume/100;
  if(micGain)micGain.gain.value=r.micVolume/100;selfMon.gain.value=r.monitor?1:0;
  if(r.limiter){limiter.threshold.value=-2;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.002;limiter.release.value=.15}
  else{limiter.threshold.value=0;limiter.knee.value=0;limiter.ratio.value=1}
@@ -408,7 +432,10 @@ function renderBgmNow(){
  else if(bgmPlaying){state=bgmLow?'low':'playing';label=(bgmLow?'小さく再生中：':'再生中：')+bgmPlaying.name}
  else if(bgmFading){state='fading';label='フェードアウト中：'+bgmFading.name}
  else if(bgmError){state='error';label=bgmError}
- el.dataset.state=state;name.textContent=label;stopBtn.disabled=!(bgmPlaying||bgmLoadingId);
+ const pb=progBgm();
+ if((state==='idle'||state==='error')&&pb){if(state==='idle')label='待機中｜初期BGM：'+pb.name;stopBtn.textContent='▶ 初期BGM';stopBtn.disabled=false;stopBtn.dataset.mode='play'}
+ else{stopBtn.textContent='■ BGM停止';stopBtn.disabled=!(bgmPlaying||bgmLoadingId);stopBtn.dataset.mode='stop'}
+ el.dataset.state=state;name.textContent=label;
  if(state!=='playing'&&state!=='low'){$('#bgmNowTime').textContent='';$('#bgmNowBar').style.width='0%'}
 }
 function tickBgmNow(){
@@ -428,7 +455,7 @@ async function enableMic(auto=false){
   if(!micGain){micGain=ctx.createGain();micGain.connect(voiceBus)}
   micSource.connect(micGain);updateGains();
   const track=micStream.getAudioTracks()[0];track.addEventListener('ended',()=>{toast('マイクが切断されました。つなぎ直しています…',4000);setTimeout(()=>{if(!micLive())enableMic(true)},600);renderRecState()});
-  await listMics();$('#micInfo').textContent=(track.label||'マイク')+' · '+ctx.sampleRate/1000+'kHz';
+  await listMics();detectOutput();$('#micInfo').textContent=(track.label||'マイク')+' · '+ctx.sampleRate/1000+'kHz';
   $('#micBtn').textContent='接続し直す';renderRecState();toast('マイクを有効にしました');
  }catch(e){console.error(e);
   if(e.name==='OverconstrainedError'&&cfg.rec.micId){cfg.rec.micId='';persist();return enableMic()}
@@ -462,6 +489,57 @@ function duckLoop(){
  const want=now-lastVoiceAt<500;
  if(want!==ducked||forceDuck){ducked=want;forceDuck=false;const t=ctx.currentTime;duckGain.gain.cancelScheduledValues(t);duckGain.gain.setTargetAtTime(want?Math.pow(10,-cfg.rec.duckDepth/20):1,t,want?.06:.35);renderDuck()}
 }
+/* ===================== 番組プリセット ===================== */
+const curProgram=()=>cfg.programs?.[cfg.currentProgram];
+function progBgm(){const pr=curProgram();return pr?.bgmId?cfg.bgms.find(b=>b.id===pr.bgmId&&b.assetId):null}
+function renderPrograms(){
+ const busy=rec.state!=='idle';
+ $('#progChips').innerHTML=cfg.programs.map((pr,i)=>`<button class="prog-chip ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('');
+ const pb=progBgm(),box=$('#progBgm');
+ box.innerHTML=pb?`<p class="prog-bgm-label">「${esc(curProgram().name)}」の初期BGM</p><div class="bgm-card ${bgmPlaying?.trackId===pb.id||bgmLoadingId===pb.id?'active':''}"><div class="bgm-row" style="grid-template-columns:minmax(0,1fr)"><button class="bgm-play" data-play-bgm="${esc(pb.id)}"><span class="bgm-icon">${bgmPlaying?.trackId===pb.id?'■':bgmLoadingId===pb.id?'…':'▶'}</span><span class="bgm-name">${esc(pb.name)}</span></button></div></div>`
+  :`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。録音欄の「番組の設定」で選べます。</div>`;
+ renderBgmNow();
+}
+$('#progChips').onclick=e=>{const c=e.target.closest('[data-prog]');if(!c||rec.state!=='idle')return;cfg.currentProgram=+c.dataset.prog;persist();renderPrograms();toast('番組を「'+curProgram().name+'」に切り替えました')};
+$('#progBgm').onclick=e=>{const pbtn=e.target.closest('[data-play-bgm]');if(!pbtn)return;const b=cfg.bgms.find(x=>x.id===pbtn.dataset.playBgm);if(b)playBgm(b)};
+$('#progEdit').onclick=async()=>{
+ const pr=curProgram();$('#progName').value=pr.name;$('#progAuto').checked=!!pr.autoBgm;
+ const list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
+ $('#progBgmSel').innerHTML='<option value="">なし</option>'+list.map(b=>`<option value="${esc(b.id)}">${esc(cfg.bgmTabs[b.tabIndex]+'｜'+b.name)}</option>`).join('');
+ $('#progBgmSel').value=list.some(b=>b.id===pr.bgmId)?pr.bgmId:'';
+ await renderProgCover();openModal('progModal');
+};
+async function renderProgCover(){const url=await coverUrl('prog-'+curProgram().id),el=$('#progCoverPreview');el.style.backgroundImage=url?`url('${url}')`:'';el.classList.toggle('set',!!url);el.textContent=url?'':'共通';$('#progCoverClear').disabled=!url}
+$('#progCoverPick').onclick=()=>$('#progCoverFile').click();
+$('#progCoverFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;await setCover('prog-'+curProgram().id,f);await renderProgCover()};
+$('#progCoverClear').onclick=async()=>{await setCover('prog-'+curProgram().id,null);await renderProgCover()};
+$('#progForm').onsubmit=e=>{e.preventDefault();const pr=curProgram();pr.name=$('#progName').value.trim()||pr.name;pr.bgmId=$('#progBgmSel').value||null;pr.autoBgm=$('#progAuto').checked;persist();closeModal('progModal');renderPrograms();toast('番組の設定を保存しました')};
+
+/* ===================== モニター音（ヘッドホン・スピーカー） ===================== */
+let monitorManualOff=false,outputLabel='',outputKind='unknown';
+const HEAD_RE=/head|ヘッド|イヤ|ear|airpods|buds|bluetooth|hands-?free|headset/i,SPK_RE=/speaker|スピーカー|内蔵|built-?in|internal|macbook|display audio|hdmi/i;
+async function detectOutput(){
+ try{const ds=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='audiooutput');const d=ds.find(x=>x.deviceId==='default')||ds[0];outputLabel=d?.label||'';
+  outputKind=!outputLabel?'unknown':HEAD_RE.test(outputLabel)?'headphones':SPK_RE.test(outputLabel)?'speaker':'unknown'}catch(_){outputKind='unknown';outputLabel=''}
+ applyMonitor();
+}
+function monitorMuted(){
+ if(monitorManualOff)return true;const active=rec.state==='recording'||rec.state==='ending';if(!active)return false;
+ const m=cfg.rec.monitorMode;if(m==='always')return false;if(m==='muteRec')return true;return outputKind!=='headphones';
+}
+function applyMonitor(){if(ctx&&masterBus){const t=ctx.currentTime;masterBus.gain.cancelScheduledValues(t);masterBus.gain.setTargetAtTime(monitorMuted()?0:cfg.master/100,t,.02)}renderMonitor()}
+function renderMonitor(){
+ const btn=document.getElementById('monBtn');if(!btn||!cfg)return;const muted=monitorMuted();
+ btn.classList.toggle('off',muted);btn.textContent=muted?(monitorManualOff?'モニター音：オフ':'モニター音：オフ（自動）'):'モニター音：オン';
+ const kind={headphones:'イヤホン・ヘッドホンと判定',speaker:'スピーカーと判定',unknown:'判定できないため、スピーカーとして扱います'}[outputKind];
+ const info=document.getElementById('outputInfo');if(info)info.textContent=`出力先：${outputLabel||'（ブラウザから名前を取得できません）'} → ${kind}。モニター音を消しても、BGM・効果音は録音に入ります。`;
+}
+$('#monBtn').onclick=()=>{
+ if(monitorMuted()&&!monitorManualOff){toast('録音中のため自動で消しています。設定欄の「録音中のモニター音」で変えられます',5000);return}
+ monitorManualOff=!monitorManualOff;applyMonitor();
+};
+$('#monitorMode').onchange=e=>{cfg.rec.monitorMode=e.target.value;persist();applyMonitor()};
+
 let silentSince=0;
 function checkVoice(){
  const el=$('#voiceWarn');let msg='';
@@ -540,22 +618,23 @@ async function retake(btn){
  await renderTakes();renderRecState();
  const b=startBgmId&&cfg.bgms.find(x=>x.id===startBgmId&&x.assetId);
  if(b)await decodeAsset(b.assetId,true).catch(()=>{});
- await startRec();
+ await startRec({noAutoBgm:true});
  if(rec.state==='recording'){rec.take.startBgmId=b?b.id:null;idbPut('takes',rec.take.id,{...rec.take}).catch(()=>{});if(b)await playBgm(b,{restart:true});toast(b?`録り直し中（BGM「${b.name}」を頭から）`:'録り直し中',3500)}
 }
-async function startRec(){
+async function startRec(opts={}){
  try{
   audioEngine();await ctx.resume();await ensureRecorder();
   if(!micLive())await enableMic();
   if(!micLive()){toast('マイクがつながっていないため、録音を始めませんでした。マイクの許可や接続を確かめてから、もう一度「録音開始」を押してください',7000);return}
   navigator.storage?.persist?.().catch(()=>{});
   const tracks=['mix'];if(cfg.rec.keepVoice)tracks.push('voice');if(cfg.rec.keepProg)tracks.push('prog');
-  rec.take={id:id(),name:'収録 '+stamp(),created:Date.now(),sampleRate:ctx.sampleRate,frames:0,tracks,markers:[],status:'recording',startBgmId:bgmPlaying?.trackId||bgmLoadingId||null};
+  rec.take={id:id(),name:(curProgram()?.name||'収録')+' '+stamp(),programId:curProgram()?.id||null,created:Date.now(),sampleRate:ctx.sampleRate,frames:0,tracks,markers:[],status:'recording',startBgmId:bgmPlaying?.trackId||bgmLoadingId||null};
   rec.pending={mix:[],voice:[],prog:[]};rec.pendingFrames=0;rec.idx={mix:0,voice:0,prog:0};rec.frames=0;
   await idbPut('takes',rec.take.id,{...rec.take});
   rec.state='recording';if(rec.mode==='worklet')rec.node.port.postMessage('start');
   if(bgmPlaying){const b=cfg.bgms.find(x=>x.id===bgmPlaying.trackId);if(b)addMarker('BGM再生中：'+b.name,true)}
   renderRecState();renderTakes();
+  if(!opts.noAutoBgm){const pb=progBgm();if(curProgram()?.autoBgm&&pb&&!bgmPlaying&&!bgmLoadingId){rec.take.startBgmId=pb.id;idbPut('takes',rec.take.id,{...rec.take}).catch(()=>{});playBgm(pb,{restart:true})}}
  }catch(e){console.error(e);rec.state='idle';rec.take=null;renderRecState();toast('録音を開始できませんでした')}
 }
 function pauseRec(){if(rec.state!=='recording')return;rec.state='paused';if(rec.mode==='worklet')rec.node.port.postMessage('pause');addMarker('一時停止',true);renderRecState()}
@@ -581,7 +660,7 @@ function addMarker(label,auto=false){
 }
 function fmtTime(sec,tenths=false){sec=Math.max(0,sec);const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=Math.floor(sec)%60,p=n=>String(n).padStart(2,'0');return (h?h+':'+p(m):p(m))+':'+p(s)+(tenths?'.'+Math.floor(sec*10)%10:'')}
 function renderTimer(){const t=rec.take,sec=t?rec.frames/t.sampleRate:0,str=fmtTime(sec,true),i=str.lastIndexOf('.');$('#timer').innerHTML=esc(str.slice(0,i))+'<small>'+esc(str.slice(i))+'</small>'}
-function renderRecState(){
+function renderRecState(){applyMonitor();if(cfg?.programs)renderPrograms();
  const lamp=$('#recLamp'),txt=$('#recLampText'),st=rec.state;
  lamp.className='lamp '+(st==='recording'||st==='ending'?'rec':st==='paused'?'pause':micLive()?'ready':'');
  txt.textContent=st==='ending'?'BGMフェードアウト中…':st==='recording'?'録音中':st==='paused'?'一時停止中':st==='stopping'?'保存中…':micLive()?'待機中':'マイク未接続';
@@ -599,7 +678,7 @@ const busyTakes=new Map();
 async function loadTakes(){return (await idbAll('takes')).sort((a,b)=>b.created-a.created)}
 async function renderTakes(){
  const list=await loadTakes(),box=$('#takes');
- await coverUrl('default');for(const t of list)if(t.cover)await coverUrl(t.id);
+ await coverUrl('default');for(const pr of cfg.programs)await coverUrl('prog-'+pr.id);for(const t of list)if(t.cover)await coverUrl(t.id);
  const openState=new Map([...box.querySelectorAll('details[data-take]')].map(d=>[d.dataset.take,d.open]));
  const players=new Map([...box.querySelectorAll('audio[data-take]')].map(a=>[a.dataset.take,a]));
  if(!list.length){box.innerHTML='<div class="empty">まだ録音はありません。<br>「● 録音開始」を押すと、ここにテイクが並びます。</div>';return}
@@ -607,7 +686,7 @@ async function renderTakes(){
   const live=rec.take?.id===t.id,dur=fmtTime((live?rec.frames:t.frames)/t.sampleRate),broken=t.status==='recovered'||(t.status==='recording'&&!live);
   const mk=t.markers||[];
   return `<article class="take ${live?'live':''}" data-id="${esc(t.id)}">
-   <div class="take-top"><button class="take-cover ${t.cover?'own':coverUrls.get('default')?'inherit':''}" data-take-cover="${esc(t.id)}" title="このテイクの動画用画像（押して変更）" style="${coverStyle(t)}">${t.cover||coverUrls.get('default')?'':'画像'}</button><input class="take-name" data-rename="${esc(t.id)}" value="${esc(t.name)}" aria-label="テイク名" maxlength="60"><button class="btn danger" data-del="${esc(t.id)}" ${live?'disabled':''}>削除</button></div>
+   <div class="take-top"><button class="take-cover ${t.cover?'own':(t.programId&&coverUrls.get('prog-'+t.programId))||coverUrls.get('default')?'inherit':''}" data-take-cover="${esc(t.id)}" title="このテイクの動画用画像（押して変更）" style="${coverStyle(t)}">${t.cover||(t.programId&&coverUrls.get('prog-'+t.programId))||coverUrls.get('default')?'':'画像'}</button><input class="take-name" data-rename="${esc(t.id)}" value="${esc(t.name)}" aria-label="テイク名" maxlength="60"><button class="btn danger" data-del="${esc(t.id)}" ${live?'disabled':''}>削除</button></div>
    <div class="take-meta">${esc(stamp(new Date(t.created)))} · ${live?'録音中':dur} · ${t.sampleRate/1000}kHz · ${t.tracks.map(k=>TRACK_INFO[k].label).join('／')}${broken?' · <span class="warn">途中で閉じられたため、保存済みの部分まで復旧</span>':''}</div>
    ${live?'':`<div class="take-play" data-player="${esc(t.id)}"><button class="btn primary" data-listen="${esc(t.id)}">▶ 試聴する</button></div>`}
    ${live?'':`<div class="take-actions">${t.tracks.map(k=>`<button class="btn" data-wav="${esc(t.id)}" data-track="${k}">${TRACK_INFO[k].label} WAV</button>`).join('')}<button class="btn gold" data-mp3="${esc(t.id)}" data-track="mix">ミックス MP3</button><button class="btn primary" data-video="${esc(t.id)}">動画を書き出す</button>${t.cover?`<button class="btn" data-uncover="${esc(t.id)}">画像を共通に戻す</button>`:''}${t.tracks.includes('voice')?`<button class="btn" data-mp3="${esc(t.id)}" data-track="voice">声だけ MP3</button>`:''}</div>`}
@@ -735,7 +814,7 @@ const Mux=(()=>{
 /* ===================== サムネイルと動画書き出し ===================== */
 const coverUrls=new Map();let coverTarget=null;
 async function coverUrl(key){if(coverUrls.has(key))return coverUrls.get(key);const blob=db?await idbGet('assets','cover:'+key):null;const url=blob?URL.createObjectURL(blob):null;coverUrls.set(key,url);return url}
-function coverStyle(t){const url=t.cover?coverUrls.get(t.id):coverUrls.get('default');return url?`background-image:url('${url}')`:''}
+function coverStyle(t){const url=t.cover?coverUrls.get(t.id):(t.programId&&coverUrls.get('prog-'+t.programId))||coverUrls.get('default');return url?`background-image:url('${url}')`:''}
 async function renderCover(){const url=await coverUrl('default'),el=$('#coverPreview');el.style.backgroundImage=url?`url('${url}')`:'';el.style.backgroundSize=cfg.rec.coverFit==='contain'?'contain':'cover';el.classList.toggle('set',!!url);el.textContent=url?'':'画像なし';$('#coverClear').disabled=!url}
 async function setCover(key,file){
  if(coverUrls.get(key))URL.revokeObjectURL(coverUrls.get(key));coverUrls.delete(key);
@@ -768,7 +847,7 @@ async function pickVideoFormat(size,sr,forceWebm=false){
  return null;
 }
 async function buildVideo(t,progress,forceWebm=false){
- const blob=(t.cover&&await idbGet('assets','cover:'+t.id))||await idbGet('assets','cover:default');
+ const blob=(t.cover&&await idbGet('assets','cover:'+t.id))||(t.programId&&await idbGet('assets','cover:prog-'+t.programId))||await idbGet('assets','cover:default');
  if(!blob)throw Object.assign(Error('先に「動画用サムネイル」で画像を選んでください'),{user:true});
  const size=+cfg.rec.videoSize||1080,sr=t.sampleRate,fmt=await pickVideoFormat(size,sr,forceWebm);
  if(!fmt)throw Object.assign(Error('このブラウザは動画の書き出しに対応していません。最新のChromeかEdgeでお試しください'),{user:true});
@@ -872,9 +951,9 @@ function renderVolumes(){
  const r=cfg.rec;$('#micVolume').value=r.micVolume;$('#micVal').textContent=r.micVolume+'%';
  $('#duckDepth').value=r.duckDepth;$('#duckDepthVal').textContent='-'+r.duckDepth+'dB';$('#duckThresh').value=r.duckThresh;$('#duckThreshVal').textContent=r.duckThresh+'dB';
  for(const [sel,key] of [['#optEc','ec'],['#optNs','ns'],['#optAgc','agc'],['#optMon','monitor'],['#optLimiter','limiter'],['#duckOn','duck'],['#keepVoice','keepVoice'],['#keepProg','keepProg'],['#optNormalize','normalize']])$(sel).checked=!!r[key];
- $('#mp3Rate').value=String(r.mp3Rate);$('#bgmLowLevel').value=r.bgmLowLevel;$('#bgmLowVal').textContent=r.bgmLowLevel+'%';$('#fadeSec').value=String(r.fadeSec);$('#fadeOnStop').checked=!!r.fadeOnStop;$('#coverFit').value=r.coverFit;$('#videoSize').value=String(r.videoSize);if(typeof renderBgmLow==='function'&&$('#bgmLowBtn'))renderBgmLow();$('#playMode').value=cfg.playMode;renderDuck();
+ $('#mp3Rate').value=String(r.mp3Rate);$('#monitorMode').value=r.monitorMode||'auto';$('#bgmLowLevel').value=r.bgmLowLevel;$('#bgmLowVal').textContent=r.bgmLowLevel+'%';$('#fadeSec').value=String(r.fadeSec);$('#fadeOnStop').checked=!!r.fadeOnStop;$('#coverFit').value=r.coverFit;$('#videoSize').value=String(r.videoSize);if(typeof renderBgmLow==='function'&&$('#bgmLowBtn'))renderBgmLow();$('#playMode').value=cfg.playMode;renderDuck();
 }
-function render(){
+function render(){if(cfg?.programs&&document.getElementById('progChips'))queueMicrotask(renderPrograms);
  $('#emojiTabs').innerHTML=cfg.emojiTabs.map((name,i)=>`<button class="chip ${i===emojiTab?'active':''}" data-emoji-tab="${i}">${esc(name)}</button>`).join('');
  $('#textTabs').innerHTML=cfg.textTabs.map((name,i)=>`<button class="chip ${i===textTab?'active':''}" data-text-tab="${i}">${esc(name)}</button>`).join('');
  for(const type of ['emoji','text']){
@@ -938,7 +1017,7 @@ $('#bgmFadeBtn').onclick=()=>{if(!bgmPlaying){toast('再生中のBGMはありま
 function setBgmLow(on){audioEngine();bgmLow=on;const t=ctx.currentTime;bgmTrim.gain.cancelScheduledValues(t);bgmTrim.gain.setTargetAtTime(on?cfg.rec.bgmLowLevel/100:1,t,.6);addMarker(on?'BGMを小さく':'BGMを元の音量へ',true);renderBgmLow();renderBgmNow()}
 function renderBgmLow(){$('#bgmLowBtn').classList.toggle('on',bgmLow);$('#bgmLowBtn').textContent=bgmLow?'BGMを元に戻す':'BGMを小さくする';$('#bgmLowState').textContent=bgmLow?'小さくしています（'+cfg.rec.bgmLowLevel+'%）':'通常の音量'}
 $('#bgmLowBtn').onclick=()=>setBgmLow(!bgmLow);
-$('#bgmNowStop').onclick=()=>{if(bgmLoadingId){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;render();renderBgmNow();return}if(bgmPlaying){bgmSerial++;addMarker('BGM停止：'+bgmPlaying.name,true);fadeStop(bgmPlaying,.6)}};
+$('#bgmNowStop').onclick=e=>{if(e.currentTarget.dataset.mode==='play'){const pb=progBgm();if(pb)playBgm(pb,{restart:true});return}if(bgmLoadingId){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;render();renderBgmNow();return}if(bgmPlaying){bgmSerial++;addMarker('BGM停止：'+bgmPlaying.name,true);fadeStop(bgmPlaying,.6)}};
 $('#bgmLowLevel').oninput=e=>{cfg.rec.bgmLowLevel=+e.target.value;$('#bgmLowVal').textContent=cfg.rec.bgmLowLevel+'%';if(bgmLow&&ctx)bgmTrim.gain.setTargetAtTime(cfg.rec.bgmLowLevel/100,ctx.currentTime,.2);renderBgmLow();persist()};
 $('#fadeSec').onchange=e=>{cfg.rec.fadeSec=+e.target.value;persist()};
 $('#fadeOnStop').onchange=e=>{cfg.rec.fadeOnStop=e.target.checked;persist()};
@@ -979,7 +1058,7 @@ async function exportPack(){
   const conf=JSON.parse(JSON.stringify(cfg)),assets=[],blobs=[];let off=0;
   const add=async(key,kind)=>{const b=kind==='cover'?await idbGet('assets','cover:'+key):await getAsset(key);if(!b)return false;assets.push({key,kind,offset:off,size:b.size,type:b.type||''});blobs.push(b);off+=b.size;return true};
   for(const item of [...conf.sounds,...conf.bgms])if(item.assetId&&!await add(item.assetId,'audio'))item.assetId=null;
-  await add('default','cover');
+  await add('default','cover');for(const pr of conf.programs||[])await add('prog-'+pr.id,'cover');
   const head=new TextEncoder().encode(JSON.stringify({format:'kinniku-radio-pack',version:1,app:'筋肉室ラジオ収録',created:new Date().toISOString(),config:conf,assets}));
   const len=new Uint8Array(4);new DataView(len.buffer).setUint32(0,head.length,true);
   download(new Blob([PACK_MAGIC,len,head,...blobs],{type:'application/octet-stream'}),'筋肉室ラジオ収録_設定.kinniku');
@@ -1028,10 +1107,12 @@ async function readPackHeader(file){
  if(head.format!=='kinniku-radio-pack'||!head.config)throw Object.assign(Error(''),{userMessage:'設定ファイルの中身を読み取れませんでした'});
  return {head,base:12+len};
 }
-async function applyImported(incoming,stored,coverBlob){
+async function applyImported(incoming,stored,coverBlob,progCovers={}){
  const oldAssets=[...cfg.sounds,...cfg.bgms].map(x=>x.assetId).filter(Boolean);
  const keepRec=cfg.rec;stopAll();cfg=normalize(incoming);if(!incoming.rec)cfg.rec=keepRec;emojiTab=0;textTab=0;bgmTab=0;save();renderVolumes();updateGains();
  if(coverBlob){await setCover('default',coverBlob)}
+ for(const [k,b] of Object.entries(progCovers))await setCover(k,b);
+ renderPrograms();
  for(const assetId of oldAssets)await deleteAsset(assetId);updateStorage();
  toast(`設定を読み込みました（音源${stored}件${coverBlob?'・サムネイル画像':''}）`,4000);
 }
@@ -1042,15 +1123,15 @@ $('#importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return
   const pack=await readPackHeader(file);
   if(pack){
    if(!await askConfirm('現在の効果音・BGMの設定を、読み込む内容で置き換えますか？\n録音したテイクは残ります。','置き換える','設定の読み込み')){toast('読み込みを取り消しました');return}
-   const incoming=pack.head.config,map=new Map(),assets=pack.head.assets||[];let n=0,cover=null;const total=assets.filter(a=>a.kind==='audio').length;
+   const incoming=pack.head.config,map=new Map(),assets=pack.head.assets||[],progCovers={};let n=0,cover=null;const total=assets.filter(a=>a.kind==='audio').length;
    for(const a of assets){
     const blob=file.slice(pack.base+a.offset,pack.base+a.offset+a.size,a.type);
     if(blob.size!==a.size)throw Object.assign(Error(''),{userMessage:'ファイルが途中で切れています。書き出し直したファイルでお試しください'});
-    if(a.kind==='cover'){cover=new Blob([await blob.arrayBuffer()],{type:a.type});continue}
+    if(a.kind==='cover'){const cb=new Blob([await blob.arrayBuffer()],{type:a.type});if(a.key==='default')cover=cb;else progCovers[a.key]=cb;continue}
     const nid=id();added.push(nid);await putAsset(nid,new Blob([await blob.arrayBuffer()],{type:a.type}));map.set(a.key,nid);toast(`音源を取り込み中 ${++n}/${total}`,120000);
    }
    for(const item of [...(incoming.sounds||[]),...(incoming.bgms||[])])item.assetId=item.assetId&&map.get(item.assetId)||null;
-   await applyImported(incoming,n,cover);return;
+   await applyImported(incoming,n,cover,progCovers);return;
   }
   // 以前のJSON形式（筋肉室効果音ポン出しと共通）
   let pack2;try{pack2=JSON.parse(await file.text())}catch(err){throw Object.assign(err,{userMessage:err instanceof RangeError?'ファイルが大きく、この端末では一度に読み込めません。PCで読み込んでから「設定を書き出す」で新しい形式にすると、この端末でも読み込めます':'このアプリの設定ファイルではないか、ファイルが壊れています'})}
@@ -1075,7 +1156,7 @@ $('#importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return
  else{try{const st=await navigator.permissions?.query?.({name:'microphone'});if(st?.state==='granted')enableMic(true)}catch(_){}}
  document.addEventListener('pointerdown',()=>{if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})});
  navigator.mediaDevices?.addEventListener?.('devicechange',()=>{listMics();if(micStream&&!micLive())enableMic(true)});
- renderBgmNow();
+ renderBgmNow();renderPrograms();detectOutput();navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
 })();
 </script>
 </body>
