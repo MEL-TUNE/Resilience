@@ -137,7 +137,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-14 第10版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-14 第11版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -196,6 +196,8 @@
   <div class="volume-row"><label for="bgmVolume">BGM</label><input id="bgmVolume" type="range" min="0" max="100"><output id="bgmVal"></output></div>
   <div class="volume-row"><label for="masterVolume">ヘッドホン</label><input id="masterVolume" type="range" min="0" max="100"><output id="masterVal"></output></div>
   <div class="opts"><label><input type="checkbox" id="optLimiter">音割れ防止リミッター</label></div>
+  <div class="opts"><label><input type="checkbox" id="previewFull">録音していないときは、効果音とBGMを端末の音量いっぱいで鳴らす（比率はそのまま）</label></div>
+  <p class="note" id="previewInfo"></p>
   <div class="end-row"><label for="monitorMode">録音中のモニター音</label><select id="monitorMode"><option value="auto">自動（イヤホンでなければ消す）</option><option value="muteRec">録音中は必ず消す</option><option value="always">消さない</option></select></div>
   <p class="note" id="outputInfo">出力先を確認中…</p>
  </section>
@@ -261,7 +263,7 @@ const KEY='kinniku-radio-studio-config-v1';
 const emojiLabels=Array(30).fill(''), textLabels=Array(12).fill('');
 const LEGACY_PRESET_LABELS=new Set(['👏','💖','😂','😢','💪','✨','🔔','✅','🌿','🦌','🍪','📚','🌟','🌸','📯','⭕','✖️','🎹','🫢','🪨','🪞','🥊','💥','🎉','📛取得','📛進化','長攻撃','吹雪','扉開け','扉閉じ','拍手','正解','退場']);
 const BGM_TAB_DEFAULTS=['標準','明','暗','1','2','その他'], TEXT_TAB_DEFAULTS=['標準','感謝','力業','1','2','その他'], EMOJI_TAB_DEFAULTS=[...TEXT_TAB_DEFAULTS];
-const REC_DEFAULTS={micVolume:100,micId:'',ec:false,ns:false,agc:false,monitor:false,limiter:true,duck:true,duckDepth:10,duckThresh:-42,keepVoice:true,keepProg:false,normalize:false,mp3Rate:192,monitorMode:'auto',bgmLowLevel:35,fadeSec:3,fadeOnStop:true,coverFit:'cover',videoSize:1080};
+const REC_DEFAULTS={micVolume:100,micId:'',ec:false,ns:false,agc:false,monitor:false,limiter:true,duck:true,duckDepth:10,duckThresh:-42,keepVoice:true,keepProg:false,normalize:false,mp3Rate:192,monitorMode:'auto',previewFull:true,bgmLowLevel:35,fadeSec:3,fadeOnStop:true,coverFit:'cover',videoSize:1080};
 const id=()=>globalThis.crypto?.randomUUID?.()||'s'+Date.now().toString(36)+Math.random().toString(36).slice(2);
 const graphemes=s=>[...new Intl.Segmenter('ja',{granularity:'grapheme'}).segment(String(s))].map(x=>x.segment);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -270,7 +272,7 @@ const newBgm=(tabIndex,slotIndex)=>({id:id(),name:'',volume:100,assetId:null,fil
 const defaults=()=>({version:6,categories:[],sounds:[...EMOJI_TAB_DEFAULTS.flatMap((_,tab)=>emojiLabels.map((x,slot)=>({...newSound('emoji',x,slot),tabIndex:tab,slotIndex:slot}))),...TEXT_TAB_DEFAULTS.flatMap((_,tab)=>textLabels.map((x,slot)=>({...newSound('text',x,slot),tabIndex:tab,slotIndex:slot})))],emojiTabs:[...EMOJI_TAB_DEFAULTS],textTabs:[...TEXT_TAB_DEFAULTS],bgmTabs:[...BGM_TAB_DEFAULTS],bgms:BGM_TAB_DEFAULTS.flatMap((_,tab)=>Array.from({length:10},(_,slot)=>newBgm(tab,slot))),master:100,seVolume:100,bgmVolume:100,playMode:'restart',rec:{...REC_DEFAULTS},programs:defaultPrograms(),currentProgram:0});
 function defaultPrograms(){return [1,2,3,4,5].map(n=>({id:'prog'+n,name:'番組'+n,bgmId:null,autoBgm:true}))}
 let db,cfg,emojiTab=0,textTab=0,bgmTab=0,noticeTimer;
-let ctx,bgmTrim,bgmLow=false,seBus,bgmBus,masterBus,duckGain,programBus,progStereo,voiceBus,selfMon,recMix,limiter,limOut,micGain,micAnalyser,mixAnalyser,merger;
+let ctx,monProg,bgmTrim,bgmLow=false,seBus,bgmBus,masterBus,duckGain,programBus,progStereo,voiceBus,selfMon,recMix,limiter,limOut,micGain,micAnalyser,mixAnalyser,merger;
 let bgmPlaying=null,bgmSerial=0,bgmPendingId=null;
 const soundSerial=new Map(), pendingText=new Set(), active=new Set();
 
@@ -351,7 +353,7 @@ function audioEngine(){
  masterBus=ctx.createGain();seBus=ctx.createGain();bgmBus=ctx.createGain();duckGain=ctx.createGain();programBus=stereoGain();
  voiceBus=ctx.createGain();selfMon=ctx.createGain();recMix=stereoGain();limiter=ctx.createDynamicsCompressor();limOut=stereoGain();
  bgmTrim=ctx.createGain();seBus.connect(programBus);bgmBus.connect(bgmTrim);bgmTrim.connect(duckGain);duckGain.connect(programBus);
- programBus.connect(masterBus);voiceBus.connect(selfMon);selfMon.connect(masterBus);masterBus.connect(ctx.destination);
+ monProg=ctx.createGain();programBus.connect(monProg);monProg.connect(masterBus);voiceBus.connect(selfMon);selfMon.connect(masterBus);masterBus.connect(ctx.destination);
  programBus.connect(recMix);voiceBus.connect(recMix);recMix.connect(limiter);limiter.connect(limOut);
  micAnalyser=ctx.createAnalyser();micAnalyser.fftSize=2048;voiceBus.connect(micAnalyser);
  mixAnalyser=ctx.createAnalyser();mixAnalyser.fftSize=2048;limOut.connect(mixAnalyser);
@@ -363,7 +365,7 @@ function audioEngine(){
 }
 function updateGains(){
  if(!ctx)return;const r=cfg.rec;
- masterBus.gain.value=monitorMuted()?0:cfg.master/100;seBus.gain.value=cfg.seVolume/100;bgmBus.gain.value=cfg.bgmVolume/100;
+ masterBus.gain.value=monitorMuted()?0:cfg.master/100;monProg.gain.value=previewBoost();seBus.gain.value=cfg.seVolume/100;bgmBus.gain.value=cfg.bgmVolume/100;
  if(micGain)micGain.gain.value=r.micVolume/100;selfMon.gain.value=r.monitor?1:0;
  if(r.limiter){limiter.threshold.value=-2;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.002;limiter.release.value=.15}
  else{limiter.threshold.value=0;limiter.knee.value=0;limiter.ratio.value=1}
@@ -523,15 +525,21 @@ async function detectOutput(){
   outputKind=!outputLabel?'unknown':HEAD_RE.test(outputLabel)?'headphones':SPK_RE.test(outputLabel)?'speaker':'unknown'}catch(_){outputKind='unknown';outputLabel=''}
  applyMonitor();
 }
+function previewBoost(){
+ // 録音していないときだけ、効果音・BGMを端末の音量いっぱいで聴けるよう持ち上げる（効果音とBGMの比率は変えない・録音には影響しない）
+ if(!cfg.rec.previewFull)return 1;const active=rec.state==='recording'||rec.state==='ending';if(active)return 1;
+ const top=Math.max(cfg.seVolume,cfg.bgmVolume,1);return Math.min(20,100/top);
+}
 function monitorMuted(){
  if(monitorManualOff)return true;const active=rec.state==='recording'||rec.state==='ending';if(!active)return false;
  const m=cfg.rec.monitorMode;if(m==='always')return false;if(m==='muteRec')return true;return outputKind!=='headphones';
 }
-function applyMonitor(){if(ctx&&masterBus){const t=ctx.currentTime;masterBus.gain.cancelScheduledValues(t);masterBus.gain.setTargetAtTime(monitorMuted()?0:cfg.master/100,t,.02)}renderMonitor()}
+function applyMonitor(){if(ctx&&masterBus){const t=ctx.currentTime;monProg.gain.cancelScheduledValues(t);monProg.gain.setTargetAtTime(previewBoost(),t,.05);masterBus.gain.cancelScheduledValues(t);masterBus.gain.setTargetAtTime(monitorMuted()?0:cfg.master/100,t,.02)}renderMonitor()}
 function renderMonitor(){
  const btn=document.getElementById('monBtn');if(!btn||!cfg)return;const muted=monitorMuted();
  btn.classList.toggle('off',muted);btn.textContent=muted?(monitorManualOff?'モニター音：オフ':'モニター音：オフ（自動）'):'モニター音：オン';
  const kind={headphones:'イヤホン・ヘッドホンと判定',speaker:'スピーカーと判定',unknown:'判定できないため、スピーカーとして扱います'}[outputKind];
+ const pi=document.getElementById('previewInfo');if(pi){const k=previewBoost(),top=Math.max(cfg.seVolume,cfg.bgmVolume,1);pi.textContent=!cfg.rec.previewFull?'効果音・BGMは、録音されるのと同じ音量で聞こえます。':(k>1?`今は効果音とBGMを約${k.toFixed(1)}倍にして鳴らしています（大きい方の${top}%を100%として、比率はそのまま）。録音中は録音と同じ音量に戻ります。録音される音量は変わりません。`:'録音中は、録音されるのと同じ音量で聞こえます。')}
  const info=document.getElementById('outputInfo');if(info)info.textContent=`出力先：${outputLabel||'（ブラウザから名前を取得できません）'} → ${kind}。モニター音を消しても、BGM・効果音は録音に入ります。`;
 }
 $('#monBtn').onclick=()=>{
@@ -539,6 +547,7 @@ $('#monBtn').onclick=()=>{
  monitorManualOff=!monitorManualOff;applyMonitor();
 };
 $('#monitorMode').onchange=e=>{cfg.rec.monitorMode=e.target.value;persist();applyMonitor()};
+$('#previewFull').onchange=e=>{cfg.rec.previewFull=e.target.checked;persist();applyMonitor()};
 
 let silentSince=0;
 function checkVoice(){
@@ -951,7 +960,7 @@ function renderVolumes(){
  const r=cfg.rec;$('#micVolume').value=r.micVolume;$('#micVal').textContent=r.micVolume+'%';
  $('#duckDepth').value=r.duckDepth;$('#duckDepthVal').textContent='-'+r.duckDepth+'dB';$('#duckThresh').value=r.duckThresh;$('#duckThreshVal').textContent=r.duckThresh+'dB';
  for(const [sel,key] of [['#optEc','ec'],['#optNs','ns'],['#optAgc','agc'],['#optMon','monitor'],['#optLimiter','limiter'],['#duckOn','duck'],['#keepVoice','keepVoice'],['#keepProg','keepProg'],['#optNormalize','normalize']])$(sel).checked=!!r[key];
- $('#mp3Rate').value=String(r.mp3Rate);$('#monitorMode').value=r.monitorMode||'auto';$('#bgmLowLevel').value=r.bgmLowLevel;$('#bgmLowVal').textContent=r.bgmLowLevel+'%';$('#fadeSec').value=String(r.fadeSec);$('#fadeOnStop').checked=!!r.fadeOnStop;$('#coverFit').value=r.coverFit;$('#videoSize').value=String(r.videoSize);if(typeof renderBgmLow==='function'&&$('#bgmLowBtn'))renderBgmLow();$('#playMode').value=cfg.playMode;renderDuck();
+ $('#mp3Rate').value=String(r.mp3Rate);$('#previewFull').checked=r.previewFull!==false;$('#monitorMode').value=r.monitorMode||'auto';$('#bgmLowLevel').value=r.bgmLowLevel;$('#bgmLowVal').textContent=r.bgmLowLevel+'%';$('#fadeSec').value=String(r.fadeSec);$('#fadeOnStop').checked=!!r.fadeOnStop;$('#coverFit').value=r.coverFit;$('#videoSize').value=String(r.videoSize);if(typeof renderBgmLow==='function'&&$('#bgmLowBtn'))renderBgmLow();$('#playMode').value=cfg.playMode;renderDuck();
 }
 function render(){if(cfg?.programs&&document.getElementById('progChips'))queueMicrotask(renderPrograms);
  $('#emojiTabs').innerHTML=cfg.emojiTabs.map((name,i)=>`<button class="chip ${i===emojiTab?'active':''}" data-emoji-tab="${i}">${esc(name)}</button>`).join('');
@@ -1002,7 +1011,7 @@ $('#bgmList').onclick=e=>{const edit=e.target.closest('[data-edit-bgm]'),reset=e
 function moveBgm(direction){const b=cfg.bgms.find(x=>x.id===$('#bgmId').value);if(!b)return;const target=b.slotIndex+direction,other=cfg.bgms.find(x=>x.tabIndex===b.tabIndex&&x.slotIndex===target);if(!other)return;[b.slotIndex,other.slotIndex]=[other.slotIndex,b.slotIndex];persist();render();$('#bgmMovePrev').disabled=b.slotIndex===0;$('#bgmMoveNext').disabled=b.slotIndex===9}
 $('#bgmMovePrev').onclick=()=>moveBgm(-1);$('#bgmMoveNext').onclick=()=>moveBgm(1);
 $('#bgmList').oninput=e=>{const slider=e.target.closest('[data-bgm-volume]');if(!slider)return;const b=cfg.bgms.find(x=>x.id===slider.dataset.bgmVolume);if(!b)return;b.volume=+slider.value;slider.nextElementSibling.textContent=b.volume+'%';if(bgmPlaying?.trackId===b.id)bgmPlaying.gain.gain.value=b.volume/100;persist()};
-for(const [selector,key] of [['masterVolume','master'],['seVolume','seVolume'],['bgmVolume','bgmVolume']])$('#'+selector).oninput=e=>{cfg[key]=+e.target.value;$('#'+selector.replace('Volume','Val')).textContent=cfg[key]+'%';updateGains();persist()};
+for(const [selector,key] of [['masterVolume','master'],['seVolume','seVolume'],['bgmVolume','bgmVolume']])$('#'+selector).oninput=e=>{queueMicrotask(renderMonitor);cfg[key]=+e.target.value;$('#'+selector.replace('Volume','Val')).textContent=cfg[key]+'%';updateGains();persist()};
 $('#micVolume').oninput=e=>{cfg.rec.micVolume=+e.target.value;$('#micVal').textContent=cfg.rec.micVolume+'%';updateGains();persist()};
 $('#duckDepth').oninput=e=>{cfg.rec.duckDepth=+e.target.value;$('#duckDepthVal').textContent='-'+cfg.rec.duckDepth+'dB';forceDuck=true;persist()};
 $('#duckThresh').oninput=e=>{cfg.rec.duckThresh=+e.target.value;$('#duckThreshVal').textContent=cfg.rec.duckThresh+'dB';persist()};
