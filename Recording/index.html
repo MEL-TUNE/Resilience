@@ -25,7 +25,7 @@
 .emoji-pad:not(.loaded),.text-pad:not(.loaded){background:#fffdfa;border-style:dashed;box-shadow:inset 0 1px 3px #735b3510}
 .section-help{margin:6px 0 0;color:#918476;font-size:10px;line-height:1.45}
 .bgm-list{display:grid;gap:5px}.bgm-card{border:1px solid #d3b476;border-radius:11px;padding:3px 4px;min-height:60px;background:linear-gradient(120deg,#fff9e9,#f3e5c4 55%,#faf5e8);box-shadow:0 2px 5px #73512612}.bgm-card.active{border-color:#86aa79;background:linear-gradient(120deg,#f9fff4,#e7f2df)}
-.bgm-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:4px;align-items:stretch}.bgm-play{width:100%;min-height:34px;border:0;border-radius:8px;background:#fffaf0c9;display:flex;align-items:center;gap:6px;text-align:left;padding:2px 5px}.bgm-icon{width:25px;height:25px;flex:none;display:grid;place-items:center;border:1px solid #c4a267;border-radius:7px;background:#f1d9a2;color:#665031;font-size:12px}.bgm-card.active .bgm-icon{background:#c4deb8;border-color:#82a276}.bgm-name{font-size:11px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bgm-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:stretch}.bgm-play{width:100%;min-height:34px;border:0;border-radius:8px;background:#fffaf0c9;display:flex;align-items:center;gap:6px;text-align:left;padding:2px 5px}.bgm-icon{width:25px;height:25px;flex:none;display:grid;place-items:center;border:1px solid #c4a267;border-radius:7px;background:#f1d9a2;color:#665031;font-size:12px}.bgm-card.active .bgm-icon{background:#c4deb8;border-color:#82a276}.bgm-name{font-size:11px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bgm-edit,.bgm-remove{border:1px solid #d5bd8c;border-radius:8px;background:#fffcf4;padding:0 7px;font-size:10px}.bgm-remove{color:#91564c;border-color:#dfc2b8}
 .bgm-bottom{display:flex;align-items:center;gap:6px;margin:2px 5px 0;font-size:10px;height:18px}.bgm-bottom input{flex:1;min-width:50px;accent-color:#a98048}.bgm-bottom output{min-width:30px;text-align:right;font-variant-numeric:tabular-nums}
 .bgm-card.unset{border-style:dashed;background:#fffdfa;box-shadow:none}.bgm-card.unset .bgm-play{background:transparent}.bgm-card.unset .bgm-bottom{visibility:hidden}.bgm-card.unset .bgm-icon{visibility:hidden;width:0;border:0}
@@ -133,6 +133,14 @@
 .prog-bgm .empty{padding:9px}
 .db-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.db-steps .btn{padding:6px 2px;font-size:10.5px}
 @media(max-width:420px){.db-steps{grid-template-columns:1fr 1fr}}
+.pc-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.pc-slot{position:relative;aspect-ratio:1;max-width:100%;border:1px dashed #cfbb91;border-radius:9px;background:#fbf6ea center/cover no-repeat;font-size:16px;color:#b8a888;padding:0;display:grid;place-items:center}
+.pc-slot.set{border-style:solid;border-color:#d7c49e;color:transparent}
+.pc-slot.use{border:2px solid var(--leaf);box-shadow:0 0 0 2px #a5d29099}
+.pc-slot.use::after{content:"使用中";position:absolute;left:2px;right:2px;bottom:2px;background:#78946dE6;color:#fff;font-size:8.5px;border-radius:5px;text-align:center;line-height:1.5}
+.pc-slot .pc-n{position:absolute;top:1px;left:4px;font-size:9px;color:#8a7a62;text-shadow:0 0 3px #fff}
+.pc-actions{display:flex;flex-wrap:wrap;gap:5px}
+@media(max-width:420px){.pc-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .bgm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px}
 .bgm-low-state{font-size:10px;color:var(--muted)}
 .section-title .storage{font-size:10px}
@@ -141,7 +149,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第13版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第14版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -251,7 +259,11 @@
  <div class="field"><label for="progName">番組名</label><input id="progName" maxlength="30" required><small>テイク名の先頭にも使われます。</small></div>
  <div class="field"><label for="progBgmSel">初期BGM</label><select id="progBgmSel"></select><small>BGM欄に登録した曲から選びます。BGM欄の一番上と、録音欄に表示されます。</small></div>
  <div class="field"><label style="display:flex;gap:6px;align-items:center;font-weight:400"><input type="checkbox" id="progAuto" style="width:auto">録音開始と同時に初期BGMを頭から流す</label></div>
- <div class="field"><label>この番組の動画用サムネイル</label><div class="cover-row" style="grid-template-columns:72px minmax(0,1fr)"><div class="cover-thumb" id="progCoverPreview" style="width:72px">共通</div><div class="cover-ctl"><div class="btns"><button type="button" class="btn" id="progCoverPick">画像を選ぶ</button><button type="button" class="btn danger" id="progCoverClear">共通に戻す</button></div><small style="font-size:10px;color:var(--muted)">設定しない場合は「動画用サムネイル」の共通画像を使います。</small></div></div></div>
+ <div class="field"><label>この番組の動画用サムネイル（7枚まで）</label>
+  <div class="pc-grid" id="progCovers"></div>
+  <div class="pc-actions"><button type="button" class="btn" id="pcReplace" disabled>選んだ画像を差し替え</button><button type="button" class="btn danger" id="pcRemove" disabled>選んだ画像を外す</button><button type="button" class="btn" id="pcUseDefault">共通の画像を使う</button></div>
+  <small>空き枠を押すと画像を登録できます。登録済みの画像を押すと、それが動画に使われます（緑の枠）。どれも選ばない場合は「動画用サムネイル」の共通画像を使います。</small></div>
+ <div class="field"><label>番組の並び順</label><div class="move-row"><button type="button" class="btn" id="progMovePrev">← 前へ</button><button type="button" class="btn" id="progMoveNext">次へ →</button></div></div>
  <div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="progModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <input type="file" id="progCoverFile" accept="image/*" hidden>
 <div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
@@ -280,7 +292,7 @@ const defaults=()=>({version:6,categories:[],sounds:[...EMOJI_TAB_DEFAULTS.flatM
 const dbGain=db=>db<=-60?0:Math.pow(10,db/20);
 const pctToDb=p=>p<=0?-60:Math.max(-60,Math.min(0,Math.round(20*Math.log10(p/100)*2)/2));
 const fmtDb=db=>db<=-60?'消音':(db>0?'+':'')+(+db).toFixed(1)+'dB';
-function defaultPrograms(){return [1,2,3,4,5].map(n=>({id:'prog'+n,name:'番組'+n,bgmId:null,autoBgm:true}))}
+function defaultPrograms(){return [1,2,3,4,5].map(n=>({id:'prog'+n,name:'番組'+n,bgmId:null,autoBgm:true,coverIdx:-1}))}
 let db,cfg,emojiTab=0,textTab=0,bgmTab=0,noticeTimer;
 let ctx,monProg,bgmTrim,bgmLow=false,seBus,bgmBus,masterBus,duckGain,programBus,progStereo,voiceBus,selfMon,recMix,limiter,limOut,micGain,micAnalyser,mixAnalyser,merger;
 let bgmPlaying=null,bgmSerial=0,bgmPendingId=null;
@@ -523,12 +535,38 @@ $('#progEdit').onclick=async()=>{
  const list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
  $('#progBgmSel').innerHTML='<option value="">なし</option>'+list.map(b=>`<option value="${esc(b.id)}">${esc(cfg.bgmTabs[b.tabIndex]+'｜'+b.name)}</option>`).join('');
  $('#progBgmSel').value=list.some(b=>b.id===pr.bgmId)?pr.bgmId:'';
- await renderProgCover();openModal('progModal');
+ pcSel=-1;await renderProgCover();updateProgMoveBtns();openModal('progModal');
 };
-async function renderProgCover(){const url=await coverUrl('prog-'+curProgram().id),el=$('#progCoverPreview');el.style.backgroundImage=url?`url('${url}')`:'';el.classList.toggle('set',!!url);el.textContent=url?'':'共通';$('#progCoverClear').disabled=!url}
-$('#progCoverPick').onclick=()=>$('#progCoverFile').click();
-$('#progCoverFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;await setCover('prog-'+curProgram().id,f);await renderProgCover()};
-$('#progCoverClear').onclick=async()=>{await setCover('prog-'+curProgram().id,null);await renderProgCover()};
+// 番組ごとの動画用サムネイル：7枠（保存名 cover:prog-<番組ID>-<0〜6>）。coverIdx が使う枠（-1は共通画像）
+const PC_SLOTS=7;let pcSel=-1,pcTarget=-1;
+const progCoverKey=(pid,n)=>'prog-'+pid+'-'+n;
+function activeProgCoverKey(pid){const pr=cfg.programs.find(x=>x.id===pid);if(!pr||!(pr.coverIdx>=0))return null;return progCoverKey(pid,pr.coverIdx)}
+async function migrateProgCovers(){
+ // 第10〜13版の「1番組1枚」を1枠目へ移す
+ for(const pr of cfg.programs){const old=await idbGet('assets','cover:prog-'+pr.id);if(!old)continue;
+  if(!await idbGet('assets','cover:'+progCoverKey(pr.id,0)))await idbPut('assets','cover:'+progCoverKey(pr.id,0),old);
+  await idbDel('assets','cover:prog-'+pr.id);if(!(pr.coverIdx>=0))pr.coverIdx=0}
+ persist();
+}
+async function renderProgCover(){
+ const pr=curProgram(),box=$('#progCovers');const cells=[];
+ for(let n=0;n<PC_SLOTS;n++){const url=await coverUrl(progCoverKey(pr.id,n));cells.push(`<button type="button" class="pc-slot ${url?'set':''} ${pr.coverIdx===n&&url?'use':''}" data-pc="${n}" ${url?`style="background-image:url('${url}')"`:''} aria-label="${n+1}枚目${url?(pr.coverIdx===n?'（使用中）':''):'（空き・押して登録）'}"><span class="pc-n">${n+1}</span>${url?'':'＋'}</button>`)}
+ box.innerHTML=cells.join('');
+ const hasSel=pcSel>=0&&!!coverUrls.get(progCoverKey(pr.id,pcSel));
+ $('#pcReplace').disabled=!hasSel;$('#pcRemove').disabled=!hasSel;$('#pcUseDefault').disabled=!(pr.coverIdx>=0);
+ box.querySelectorAll('.pc-slot').forEach(b=>{if(+b.dataset.pc===pcSel)b.style.outline='2px dashed #c9a263'});
+}
+$('#progCovers').onclick=async e=>{const b=e.target.closest('[data-pc]');if(!b)return;const n=+b.dataset.pc,pr=curProgram();
+ if(!coverUrls.get(progCoverKey(pr.id,n))){pcTarget=n;$('#progCoverFile').click();return}
+ pcSel=n;pr.coverIdx=n;persist();await renderProgCover();renderTakes();toast(`${n+1}枚目の画像を動画に使います`)};
+$('#pcReplace').onclick=()=>{if(pcSel<0)return;pcTarget=pcSel;$('#progCoverFile').click()};
+$('#pcRemove').onclick=async e=>{if(pcSel<0||!armButton(e.currentTarget,'もう一度押すと外す'))return;const pr=curProgram();await setCover(progCoverKey(pr.id,pcSel),null);if(pr.coverIdx===pcSel){const next=[...Array(PC_SLOTS).keys()].find(n=>coverUrls.get(progCoverKey(pr.id,n)));pr.coverIdx=next??-1}pcSel=-1;persist();await renderProgCover();renderTakes()};
+$('#pcUseDefault').onclick=async()=>{curProgram().coverIdx=-1;pcSel=-1;persist();await renderProgCover();renderTakes();toast('この番組は共通の画像を使います')};
+$('#progCoverFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||pcTarget<0)return;const pr=curProgram(),n=pcTarget;pcTarget=-1;
+ await setCover(progCoverKey(pr.id,n),f);pr.coverIdx=n;pcSel=n;persist();await renderProgCover();renderTakes()};
+function moveProgram(d){const i=cfg.currentProgram,j=i+d;if(j<0||j>=cfg.programs.length||rec.state!=='idle')return;[cfg.programs[i],cfg.programs[j]]=[cfg.programs[j],cfg.programs[i]];cfg.currentProgram=j;persist();renderPrograms();updateProgMoveBtns()}
+function updateProgMoveBtns(){$('#progMovePrev').disabled=cfg.currentProgram===0;$('#progMoveNext').disabled=cfg.currentProgram===cfg.programs.length-1}
+$('#progMovePrev').onclick=()=>moveProgram(-1);$('#progMoveNext').onclick=()=>moveProgram(1);
 $('#progForm').onsubmit=e=>{e.preventDefault();const pr=curProgram();pr.name=$('#progName').value.trim()||pr.name;pr.bgmId=$('#progBgmSel').value||null;pr.autoBgm=$('#progAuto').checked;persist();closeModal('progModal');renderPrograms();toast('番組の設定を保存しました')};
 
 /* ===================== モニター音（ヘッドホン・スピーカー） ===================== */
@@ -708,7 +746,7 @@ const busyTakes=new Map();
 async function loadTakes(){return (await idbAll('takes')).sort((a,b)=>b.created-a.created)}
 async function renderTakes(){
  const list=await loadTakes(),box=$('#takes');
- await coverUrl('default');for(const pr of cfg.programs)await coverUrl('prog-'+pr.id);for(const t of list)if(t.cover)await coverUrl(t.id);
+ await coverUrl('default');for(const pr of cfg.programs){const k=activeProgCoverKey(pr.id);if(k)await coverUrl(k)}for(const t of list)if(t.cover)await coverUrl(t.id);
  const openState=new Map([...box.querySelectorAll('details[data-take]')].map(d=>[d.dataset.take,d.open]));
  const players=new Map([...box.querySelectorAll('audio[data-take]')].map(a=>[a.dataset.take,a]));
  if(!list.length){box.innerHTML='<div class="empty">まだ録音はありません。<br>「● 録音開始」を押すと、ここにテイクが並びます。</div>';return}
@@ -716,7 +754,7 @@ async function renderTakes(){
   const live=rec.take?.id===t.id,dur=fmtTime((live?rec.frames:t.frames)/t.sampleRate),broken=t.status==='recovered'||(t.status==='recording'&&!live);
   const mk=t.markers||[];
   return `<article class="take ${live?'live':''}" data-id="${esc(t.id)}">
-   <div class="take-top"><button class="take-cover ${t.cover?'own':(t.programId&&coverUrls.get('prog-'+t.programId))||coverUrls.get('default')?'inherit':''}" data-take-cover="${esc(t.id)}" title="このテイクの動画用画像（押して変更）" style="${coverStyle(t)}">${t.cover||(t.programId&&coverUrls.get('prog-'+t.programId))||coverUrls.get('default')?'':'画像'}</button><input class="take-name" data-rename="${esc(t.id)}" value="${esc(t.name)}" aria-label="テイク名" maxlength="60"><button class="btn danger" data-del="${esc(t.id)}" ${live?'disabled':''}>削除</button></div>
+   <div class="take-top"><button class="take-cover ${t.cover?'own':(t.programId&&coverUrls.get(activeProgCoverKey(t.programId)))||coverUrls.get('default')?'inherit':''}" data-take-cover="${esc(t.id)}" title="このテイクの動画用画像（押して変更）" style="${coverStyle(t)}">${t.cover||(t.programId&&coverUrls.get(activeProgCoverKey(t.programId)))||coverUrls.get('default')?'':'画像'}</button><input class="take-name" data-rename="${esc(t.id)}" value="${esc(t.name)}" aria-label="テイク名" maxlength="60"><button class="btn danger" data-del="${esc(t.id)}" ${live?'disabled':''}>削除</button></div>
    <div class="take-meta">${esc(stamp(new Date(t.created)))} · ${live?'録音中':dur} · ${t.sampleRate/1000}kHz · ${t.tracks.map(k=>TRACK_INFO[k].label).join('／')}${broken?' · <span class="warn">途中で閉じられたため、保存済みの部分まで復旧</span>':''}</div>
    ${live?'':`<div class="take-play" data-player="${esc(t.id)}"><button class="btn primary" data-listen="${esc(t.id)}">▶ 試聴する</button></div>`}
    ${live?'':`<div class="take-actions">${t.tracks.map(k=>`<button class="btn" data-wav="${esc(t.id)}" data-track="${k}">${TRACK_INFO[k].label} WAV</button>`).join('')}<button class="btn gold" data-mp3="${esc(t.id)}" data-track="mix">ミックス MP3</button><button class="btn primary" data-video="${esc(t.id)}">動画を書き出す</button>${t.cover?`<button class="btn" data-uncover="${esc(t.id)}">画像を共通に戻す</button>`:''}${t.tracks.includes('voice')?`<button class="btn" data-mp3="${esc(t.id)}" data-track="voice">声だけ MP3</button>`:''}</div>`}
@@ -844,7 +882,7 @@ const Mux=(()=>{
 /* ===================== サムネイルと動画書き出し ===================== */
 const coverUrls=new Map();let coverTarget=null;
 async function coverUrl(key){if(coverUrls.has(key))return coverUrls.get(key);const blob=db?await idbGet('assets','cover:'+key):null;const url=blob?URL.createObjectURL(blob):null;coverUrls.set(key,url);return url}
-function coverStyle(t){const url=t.cover?coverUrls.get(t.id):(t.programId&&coverUrls.get('prog-'+t.programId))||coverUrls.get('default');return url?`background-image:url('${url}')`:''}
+function coverStyle(t){const url=t.cover?coverUrls.get(t.id):(t.programId&&coverUrls.get(activeProgCoverKey(t.programId)))||coverUrls.get('default');return url?`background-image:url('${url}')`:''}
 async function renderCover(){const url=await coverUrl('default'),el=$('#coverPreview');el.style.backgroundImage=url?`url('${url}')`:'';el.style.backgroundSize=cfg.rec.coverFit==='contain'?'contain':'cover';el.classList.toggle('set',!!url);el.textContent=url?'':'画像なし';$('#coverClear').disabled=!url}
 async function setCover(key,file){
  if(coverUrls.get(key))URL.revokeObjectURL(coverUrls.get(key));coverUrls.delete(key);
@@ -877,7 +915,8 @@ async function pickVideoFormat(size,sr,forceWebm=false){
  return null;
 }
 async function buildVideo(t,progress,forceWebm=false){
- const blob=(t.cover&&await idbGet('assets','cover:'+t.id))||(t.programId&&await idbGet('assets','cover:prog-'+t.programId))||await idbGet('assets','cover:default');
+ const pk=t.programId&&activeProgCoverKey(t.programId);
+ const blob=(t.cover&&await idbGet('assets','cover:'+t.id))||(pk&&await idbGet('assets','cover:'+pk))||await idbGet('assets','cover:default');
  if(!blob)throw Object.assign(Error('先に「動画用サムネイル」で画像を選んでください'),{user:true});
  const size=+cfg.rec.videoSize||1080,sr=t.sampleRate,fmt=await pickVideoFormat(size,sr,forceWebm);
  if(!fmt)throw Object.assign(Error('このブラウザは動画の書き出しに対応していません。最新のChromeかEdgeでお試しください'),{user:true});
@@ -993,11 +1032,11 @@ function render(){if(cfg?.programs&&document.getElementById('progChips'))queueMi
   $('#'+type+'Grid').innerHTML=list.map(s=>`<button class="${type}-pad ${s.assetId?'loaded':''} ${[...active].some(a=>a.soundId===s.id)?'playing':''}" data-sound="${esc(s.id)}" title="${esc(s.assetId?s.fileName+' · 長押しで編集':'空き枠 · 押して設定')}" aria-label="${esc(s.assetId?s.label||'効果音':'空き枠、押して設定')}">${s.assetId?esc(s.label||'♪'):''}${s.assetId&&s.shortcut?`<span class="shortcut">${esc(s.shortcut)}</span>`:''}</button>`).join('');
  }
  $('#bgmTabs').innerHTML=cfg.bgmTabs.map((name,i)=>`<button class="chip ${i===bgmTab?'active':''}" data-bgm-tab="${i}">${esc(name)}</button>`).join('');
- $('#bgmList').innerHTML=cfg.bgms.filter(b=>b.tabIndex===bgmTab).sort((a,b)=>a.slotIndex-b.slotIndex).map(b=>`<div class="bgm-card ${b.assetId?'':'unset'} ${bgmPlaying?.trackId===b.id||bgmLoadingId===b.id?'active':''}" data-bgm-card="${esc(b.id)}"><div class="bgm-row"><button class="bgm-play" data-play-bgm="${esc(b.id)}" title="${esc(b.fileName||'空き枠・押して設定')}" aria-label="${esc(b.assetId?b.name:'空きBGM枠、押して設定')}"><span class="bgm-icon">${b.assetId?(bgmPlaying?.trackId===b.id?'■':bgmLoadingId===b.id?'…':'▶'):''}</span><span class="bgm-name">${b.assetId?esc(b.name):''}</span></button><button class="bgm-edit" data-edit-bgm="${esc(b.id)}">設定</button><button class="bgm-remove" data-reset-bgm="${esc(b.id)}" ${b.assetId||b.name?'':'disabled'}>選択リセット</button></div><div class="bgm-bottom"><label for="volume-${esc(b.id)}">曲音量</label><input id="volume-${esc(b.id)}" aria-label="${esc(b.name)}の音量" data-bgm-volume="${esc(b.id)}" type="range" min="0" max="100" value="${b.volume}"><output>${b.volume}%</output></div></div>`).join('');
+ $('#bgmList').innerHTML=cfg.bgms.filter(b=>b.tabIndex===bgmTab).sort((a,b)=>a.slotIndex-b.slotIndex).map(b=>`<div class="bgm-card ${b.assetId?'':'unset'} ${bgmPlaying?.trackId===b.id||bgmLoadingId===b.id?'active':''}" data-bgm-card="${esc(b.id)}"><div class="bgm-row"><button class="bgm-play" data-play-bgm="${esc(b.id)}" title="${esc(b.fileName||'空き枠・押して設定')}" aria-label="${esc(b.assetId?b.name:'空きBGM枠、押して設定')}"><span class="bgm-icon">${b.assetId?(bgmPlaying?.trackId===b.id?'■':bgmLoadingId===b.id?'…':'▶'):''}</span><span class="bgm-name">${b.assetId?esc(b.name):''}</span></button><button class="bgm-edit" data-edit-bgm="${esc(b.id)}">設定</button></div><div class="bgm-bottom"><label for="volume-${esc(b.id)}">曲音量</label><input id="volume-${esc(b.id)}" aria-label="${esc(b.name)}の音量" data-bgm-volume="${esc(b.id)}" type="range" min="0" max="100" value="${b.volume}"><output>${b.volume}%</output></div></div>`).join('');
 }
 function save(){persist();render()}
 function openSound(s,type){const del=$('#deleteSound');clearTimeout(del._armTimer);del.dataset.armed='';del.classList.remove('armed');del.textContent='削除';$('#soundForm').reset();$('#soundId').value=s?.id||'';$('#soundType').value=type;$('#soundHeading').textContent=s?'効果音の編集':'効果音を追加';const configured=!!(s?.assetId||s?.configured);$('#labelInput').value=configured?s.label||'':'';$('#labelInput').maxLength=type==='emoji'?12:20;$('#labelCaption').textContent=type==='emoji'?'ボタン名（絵文字1文字）':'ボタン名（最大4文字）';$('#labelHelp').textContent=type==='emoji'?'絵文字1文字を指定します。':'絵文字も1文字として数えます。';const volume=configured?s.volume??100:100;$('#soundVol').value=volume;$('#soundVolVal').textContent=volume+'%';$('#shortcutInput').value=configured?s.shortcut||'':'';$('#currentSoundFile').textContent=s?.fileName||'音源未登録';$('#soundFile').value='';$('#deleteSound').hidden=!s;$('#movePrev').disabled=!s;$('#moveNext').disabled=!s;openModal('soundModal')}
-function openBgm(b){if(!b)return;$('#bgmForm').reset();$('#bgmId').value=b.id;$('#bgmHeading').textContent=b.assetId||b.name?'BGMの編集':'BGMを登録';$('#bgmNameInput').value=b.name||'';$('#currentBgmFile').textContent=b.fileName||'音源未登録';$('#bgmVolModal').value=b.volume??100;$('#bgmVolModalVal').textContent=(b.volume??100)+'%';$('#resetBgm').disabled=!b.assetId&&!b.name;$('#bgmMovePrev').disabled=b.slotIndex===0;$('#bgmMoveNext').disabled=b.slotIndex===9;openModal('bgmModal')}
+function openBgm(b){if(!b)return;{const rb=$('#resetBgm');clearTimeout(rb._armTimer);rb.dataset.armed='';rb.classList.remove('armed');rb.textContent='選択リセット'}$('#bgmForm').reset();$('#bgmId').value=b.id;$('#bgmHeading').textContent=b.assetId||b.name?'BGMの編集':'BGMを登録';$('#bgmNameInput').value=b.name||'';$('#currentBgmFile').textContent=b.fileName||'音源未登録';$('#bgmVolModal').value=b.volume??100;$('#bgmVolModalVal').textContent=(b.volume??100)+'%';$('#resetBgm').disabled=!b.assetId&&!b.name;$('#bgmMovePrev').disabled=b.slotIndex===0;$('#bgmMoveNext').disabled=b.slotIndex===9;openModal('bgmModal')}
 function armButton(btn,label='もう一度押すと削除'){
  if(btn.dataset.armed==='1'){clearTimeout(btn._armTimer);btn.dataset.armed='';btn.classList.remove('armed');return true}
  btn.dataset.armed='1';btn.dataset.orig=btn.textContent;btn.textContent=label;btn.classList.add('armed');
@@ -1080,7 +1119,7 @@ $('#bgmForm').onsubmit=async e=>{e.preventDefault();const old=cfg.bgms.find(x=>x
 async function resetBgm(trackId){const b=cfg.bgms.find(x=>x.id===trackId);if(!b||(!b.assetId&&!b.name))return;const oldAsset=b.assetId;
  Object.assign(b,{name:'',volume:100,assetId:null,fileName:''});bgmSerial++;if(bgmPendingId===trackId)bgmPendingId=null;if(bgmPlaying?.trackId===trackId)fadeStop(bgmPlaying);
  save();closeModal('bgmModal');await deleteAsset(oldAsset);toast('この枠の選択をリセットしました')}
-$('#resetBgm').onclick=()=>resetBgm($('#bgmId').value);
+$('#resetBgm').onclick=e=>{if(armButton(e.currentTarget,'もう一度押すとリセット'))resetBgm($('#bgmId').value)};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));document.querySelectorAll('.modal-back').forEach(m=>m.onclick=e=>{if(e.target===m)closeModal(m.id)});
 document.addEventListener('keydown',e=>{if(e.repeat||e.altKey||e.ctrlKey||e.metaKey||document.querySelector('.modal-back.open')||e.target.closest('input,select,textarea,[contenteditable]'))return;const key=e.key.length===1?e.key.toUpperCase():e.key;const s=cfg.sounds.find(x=>x.shortcut&&x.shortcut.toUpperCase()===key);if(s){e.preventDefault();playSound(s)}});
 window.addEventListener('beforeunload',e=>{if(rec.state!=='idle'){e.preventDefault();e.returnValue=''}});
@@ -1094,7 +1133,7 @@ async function exportPack(){
   const conf=JSON.parse(JSON.stringify(cfg)),assets=[],blobs=[];let off=0;
   const add=async(key,kind)=>{const b=kind==='cover'?await idbGet('assets','cover:'+key):await getAsset(key);if(!b)return false;assets.push({key,kind,offset:off,size:b.size,type:b.type||''});blobs.push(b);off+=b.size;return true};
   for(const item of [...conf.sounds,...conf.bgms])if(item.assetId&&!await add(item.assetId,'audio'))item.assetId=null;
-  await add('default','cover');for(const pr of conf.programs||[])await add('prog-'+pr.id,'cover');
+  await add('default','cover');for(const pr of conf.programs||[])for(let n=0;n<PC_SLOTS;n++)await add(progCoverKey(pr.id,n),'cover');
   const head=new TextEncoder().encode(JSON.stringify({format:'kinniku-radio-pack',version:1,app:'筋肉室ラジオ収録',created:new Date().toISOString(),config:conf,assets}));
   const len=new Uint8Array(4);new DataView(len.buffer).setUint32(0,head.length,true);
   download(new Blob([PACK_MAGIC,len,head,...blobs],{type:'application/octet-stream'}),'筋肉室ラジオ収録_設定.kinniku');
@@ -1147,7 +1186,7 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
  const oldAssets=[...cfg.sounds,...cfg.bgms].map(x=>x.assetId).filter(Boolean);
  const keepRec=cfg.rec;stopAll();cfg=normalize(incoming);if(!incoming.rec)cfg.rec=keepRec;emojiTab=0;textTab=0;bgmTab=0;save();renderVolumes();updateGains();
  if(coverBlob){await setCover('default',coverBlob)}
- for(const [k,b] of Object.entries(progCovers))await setCover(k,b);
+ for(const [k,b] of Object.entries(progCovers)){const m=/^prog-(.+)$/.exec(k);const isOld=m&&!/-\d$/.test(k);const key=isOld?progCoverKey(m[1],0):k;await setCover(key,b);if(isOld){const pr=cfg.programs.find(x=>x.id===m[1]);if(pr&&!(pr.coverIdx>=0))pr.coverIdx=0}}persist();
  renderPrograms();
  for(const assetId of oldAssets)await deleteAsset(assetId);updateStorage();
  toast(`設定を読み込みました（音源${stored}件${coverBlob?'・サムネイル画像':''}）`,4000);
@@ -1192,7 +1231,7 @@ $('#importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return
  else{try{const st=await navigator.permissions?.query?.({name:'microphone'});if(st?.state==='granted')enableMic(true)}catch(_){}}
  document.addEventListener('pointerdown',()=>{if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})});
  navigator.mediaDevices?.addEventListener?.('devicechange',()=>{listMics();if(micStream&&!micLive())enableMic(true)});
- renderBgmNow();renderPrograms();detectOutput();navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
+ renderBgmNow();if(db)await migrateProgCovers().catch(e=>console.error(e));renderPrograms();detectOutput();navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
 })();
 </script>
 </body>
