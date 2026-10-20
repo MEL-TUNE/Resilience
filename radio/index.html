@@ -131,6 +131,8 @@
 .prog-bgm .bgm-card{border-width:2px;border-color:#c9a263}
 .prog-bgm .prog-bgm-label{font-size:10px;color:#8a6a33;font-weight:700;margin:0 0 3px 4px}
 .prog-bgm .empty{padding:9px}
+.db-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.db-steps .btn{padding:6px 2px;font-size:10.5px}
+@media(max-width:420px){.db-steps{grid-template-columns:1fr 1fr}}
 .bgm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px}
 .bgm-low-state{font-size:10px;color:var(--muted)}
 .section-title .storage{font-size:10px}
@@ -139,7 +141,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-14 第12版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第13版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -194,8 +196,11 @@
  <section class="panel" aria-labelledby="mixTitle">
   <h3 id="mixTitle">音量 <span>ヘッドホン音量は録音に影響しません</span></h3>
   <div class="volume-row"><label for="micVolume">マイク</label><input id="micVolume" type="range" min="0" max="300"><output id="micVal"></output></div>
-  <div class="volume-row"><label for="seVolume">効果音</label><input id="seVolume" type="range" min="0" max="100"><output id="seVal"></output></div>
-  <div class="volume-row"><label for="bgmVolume">BGM</label><input id="bgmVolume" type="range" min="0" max="100"><output id="bgmVal"></output></div>
+  <div class="volume-row"><label for="seVolume">効果音</label><input id="seVolume" type="range" min="-60" max="0" step="0.5"><output id="seVal"></output></div>
+  <div class="volume-row"><label for="bgmVolume">BGM</label><input id="bgmVolume" type="range" min="-60" max="0" step="0.5"><output id="bgmVal"></output></div>
+  <div class="db-steps"><button type="button" class="btn" data-db="se:-1">効果音 −1dB</button><button type="button" class="btn" data-db="se:1">効果音 ＋1dB</button><button type="button" class="btn" data-db="bgm:-1">BGM −1dB</button><button type="button" class="btn" data-db="bgm:1">BGM ＋1dB</button></div>
+  <p class="note">効果音とBGMはdB（デシベル）で調整します。0dBが音源そのままの大きさで、−6dBで約半分、−20dBで約10分の1、−40dBで約100分の1です。一番左（−60dB）は消音です。</p>
+  <div class="opts"><label><input type="checkbox" id="bgmLevel">BGMごとの音量差をそろえる（音の大きい曲は下げ、小さい曲は上げる）</label></div>
   <div class="volume-row"><label for="masterVolume">ヘッドホン</label><input id="masterVolume" type="range" min="0" max="100"><output id="masterVal"></output></div>
   <div class="opts"><label><input type="checkbox" id="optLimiter">音割れ防止リミッター</label></div>
   <div class="opts"><label><input type="checkbox" id="previewFull">録音していないときは、効果音とBGMを端末の音量いっぱいで鳴らす（比率はそのまま）</label></div>
@@ -265,13 +270,16 @@ const KEY='kinniku-radio-studio-config-v1';
 const emojiLabels=Array(30).fill(''), textLabels=Array(12).fill('');
 const LEGACY_PRESET_LABELS=new Set(['👏','💖','😂','😢','💪','✨','🔔','✅','🌿','🦌','🍪','📚','🌟','🌸','📯','⭕','✖️','🎹','🫢','🪨','🪞','🥊','💥','🎉','📛取得','📛進化','長攻撃','吹雪','扉開け','扉閉じ','拍手','正解','退場']);
 const BGM_TAB_DEFAULTS=['標準','明','暗','1','2','その他'], TEXT_TAB_DEFAULTS=['標準','感謝','力業','1','2','その他'], EMOJI_TAB_DEFAULTS=[...TEXT_TAB_DEFAULTS];
-const REC_DEFAULTS={micVolume:100,micId:'',ec:false,ns:false,agc:false,monitor:false,limiter:true,duck:true,duckDepth:10,duckThresh:-42,keepVoice:true,keepProg:false,normalize:false,mp3Rate:192,monitorMode:'auto',previewFull:true,bgmLowLevel:35,fadeSec:3,fadeOnStop:true,coverFit:'cover',videoSize:1080};
+const REC_DEFAULTS={micVolume:100,micId:'',ec:false,ns:false,agc:false,monitor:false,limiter:true,duck:true,duckDepth:10,duckThresh:-42,keepVoice:true,keepProg:false,normalize:false,mp3Rate:192,monitorMode:'auto',previewFull:true,bgmLevel:true,bgmLowLevel:35,fadeSec:3,fadeOnStop:true,coverFit:'cover',videoSize:1080};
 const id=()=>globalThis.crypto?.randomUUID?.()||'s'+Date.now().toString(36)+Math.random().toString(36).slice(2);
 const graphemes=s=>[...new Intl.Segmenter('ja',{granularity:'grapheme'}).segment(String(s))].map(x=>x.segment);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const newSound=(type,label,order)=>({id:id(),type,label,category:'全て',volume:100,assetId:null,fileName:'',shortcut:'',configured:false,order});
 const newBgm=(tabIndex,slotIndex)=>({id:id(),name:'',volume:100,assetId:null,fileName:'',tabIndex,slotIndex});
-const defaults=()=>({version:6,categories:[],sounds:[...EMOJI_TAB_DEFAULTS.flatMap((_,tab)=>emojiLabels.map((x,slot)=>({...newSound('emoji',x,slot),tabIndex:tab,slotIndex:slot}))),...TEXT_TAB_DEFAULTS.flatMap((_,tab)=>textLabels.map((x,slot)=>({...newSound('text',x,slot),tabIndex:tab,slotIndex:slot})))],emojiTabs:[...EMOJI_TAB_DEFAULTS],textTabs:[...TEXT_TAB_DEFAULTS],bgmTabs:[...BGM_TAB_DEFAULTS],bgms:BGM_TAB_DEFAULTS.flatMap((_,tab)=>Array.from({length:10},(_,slot)=>newBgm(tab,slot))),master:100,seVolume:100,bgmVolume:100,playMode:'restart',rec:{...REC_DEFAULTS},programs:defaultPrograms(),currentProgram:0});
+const defaults=()=>({version:6,categories:[],sounds:[...EMOJI_TAB_DEFAULTS.flatMap((_,tab)=>emojiLabels.map((x,slot)=>({...newSound('emoji',x,slot),tabIndex:tab,slotIndex:slot}))),...TEXT_TAB_DEFAULTS.flatMap((_,tab)=>textLabels.map((x,slot)=>({...newSound('text',x,slot),tabIndex:tab,slotIndex:slot})))],emojiTabs:[...EMOJI_TAB_DEFAULTS],textTabs:[...TEXT_TAB_DEFAULTS],bgmTabs:[...BGM_TAB_DEFAULTS],bgms:BGM_TAB_DEFAULTS.flatMap((_,tab)=>Array.from({length:10},(_,slot)=>newBgm(tab,slot))),master:100,seVolume:100,bgmVolume:100,playMode:'restart',seDb:-18,bgmDb:-30,rec:{...REC_DEFAULTS},programs:defaultPrograms(),currentProgram:0});
+const dbGain=db=>db<=-60?0:Math.pow(10,db/20);
+const pctToDb=p=>p<=0?-60:Math.max(-60,Math.min(0,Math.round(20*Math.log10(p/100)*2)/2));
+const fmtDb=db=>db<=-60?'消音':(db>0?'+':'')+(+db).toFixed(1)+'dB';
 function defaultPrograms(){return [1,2,3,4,5].map(n=>({id:'prog'+n,name:'番組'+n,bgmId:null,autoBgm:true}))}
 let db,cfg,emojiTab=0,textTab=0,bgmTab=0,noticeTimer;
 let ctx,monProg,bgmTrim,bgmLow=false,seBus,bgmBus,masterBus,duckGain,programBus,progStereo,voiceBus,selfMon,recMix,limiter,limOut,micGain,micAnalyser,mixAnalyser,merger;
@@ -294,7 +302,8 @@ function normalize(raw){
  base.bgmTabs=Array.isArray(raw.bgmTabs)&&raw.bgmTabs.length===6?raw.bgmTabs.map((x,i)=>String(x||BGM_TAB_DEFAULTS[i])):[...BGM_TAB_DEFAULTS];
  base.textTabs=Array.isArray(raw.textTabs)&&raw.textTabs.length===6?raw.textTabs.map((x,i)=>String(x||TEXT_TAB_DEFAULTS[i])):[...TEXT_TAB_DEFAULTS];
  base.emojiTabs=Array.isArray(raw.emojiTabs)&&raw.emojiTabs.length===6?raw.emojiTabs.map((x,i)=>String(x||EMOJI_TAB_DEFAULTS[i])):[...EMOJI_TAB_DEFAULTS];
- for(const key of ['master','seVolume','bgmVolume'])base[key]=Number.isFinite(+raw[key])?+raw[key]:base[key];base.playMode=raw.playMode==='overlap'?'overlap':'restart';return ensureBgmSlots(ensureTextSlots(ensureEmojiSlots(ensureSlots(base))));
+ for(const key of ['master','seVolume','bgmVolume'])base[key]=Number.isFinite(+raw[key])?+raw[key]:base[key];
+ for(const [k,leg] of [['seDb','seVolume'],['bgmDb','bgmVolume']])base[k]=Number.isFinite(+raw[k])&&raw[k]!==null?+raw[k]:(Number.isFinite(+raw[leg])?pctToDb(+raw[leg]):base[k]);base.playMode=raw.playMode==='overlap'?'overlap':'restart';return ensureBgmSlots(ensureTextSlots(ensureEmojiSlots(ensureSlots(base))));
 }
 function ensureSlots(config){
  for(const s of config.sounds){delete s.favorite;if(s.type==='text')s.category='全て';if(!s.assetId){
@@ -367,7 +376,7 @@ function audioEngine(){
 }
 function updateGains(){
  if(!ctx)return;const r=cfg.rec;
- masterBus.gain.value=monitorMuted()?0:cfg.master/100;monProg.gain.value=previewBoost();seBus.gain.value=cfg.seVolume/100;bgmBus.gain.value=cfg.bgmVolume/100;
+ masterBus.gain.value=monitorMuted()?0:cfg.master/100;monProg.gain.value=previewBoost();seBus.gain.value=dbGain(cfg.seDb);bgmBus.gain.value=dbGain(cfg.bgmDb);
  if(micGain)micGain.gain.value=r.micVolume/100;selfMon.gain.value=r.monitor?1:0;
  if(r.limiter){limiter.threshold.value=-2;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.002;limiter.release.value=.15}
  else{limiter.threshold.value=0;limiter.knee.value=0;limiter.ratio.value=1}
@@ -375,18 +384,21 @@ function updateGains(){
 }
 /* 再生は「音源を一度だけ解析して使い回す」方式（AudioBuffer）。
    以前のaudio要素方式は、効果音を何度も鳴らすとブラウザの再生器の上限に達してBGMが鳴らなくなることがあった */
-const bufCache=new Map(),bgmLru=[];
+const bufCache=new Map(),bgmLru=[],bgmLoud=new Map();
+function measureRms(buf){let sum=0,n=0;const step=8;for(let c=0;c<buf.numberOfChannels;c++){const d=buf.getChannelData(c);for(let i=0;i<d.length;i+=step){sum+=d[i]*d[i];n++}}const rms=Math.sqrt(sum/Math.max(1,n));return rms>0?20*Math.log10(rms):-90}
+// BGMの音量差をそろえる：曲全体の平均の大きさを-20dB前後に合わせる（上げ下げは最大±12dBまで）
+function bgmItemGain(assetId,volume){let g=volume/100;if(cfg.rec.bgmLevel!==false&&bgmLoud.has(assetId)){const adj=Math.max(-12,Math.min(12,-20-bgmLoud.get(assetId)));g*=Math.pow(10,adj/20)}return g}
 function decodeAsset(assetId,isBgm){
  if(bufCache.has(assetId)){if(isBgm){const i=bgmLru.indexOf(assetId);if(i>=0)bgmLru.splice(i,1);bgmLru.push(assetId)}return bufCache.get(assetId)}
  const pr=(async()=>{const blob=await getAsset(assetId);if(!blob)throw Object.assign(Error('missing'),{userMessage:'保存音源が見つかりません。再登録してください'});
   const data=await blob.arrayBuffer();audioEngine();
-  try{return await new Promise((res,rej)=>{const r=ctx.decodeAudioData(data,res,rej);if(r&&r.then)r.then(res,rej)})}
+  try{const buf=await new Promise((res,rej)=>{const r=ctx.decodeAudioData(data,res,rej);if(r&&r.then)r.then(res,rej)});if(isBgm)bgmLoud.set(assetId,measureRms(buf));return buf}
   catch(e){throw Object.assign(Error('decode'),{userMessage:'この音源の形式を読み込めませんでした（'+(blob.type||'形式不明')+'）。mp3かwavで登録し直すと鳴る可能性があります'})}})();
  bufCache.set(assetId,pr);pr.catch(()=>bufCache.delete(assetId));
  if(isBgm){bgmLru.push(assetId);while(bgmLru.length>3){const old=bgmLru.shift();if(old!==bgmPlaying?.assetId)bufCache.delete(old)}}
  return pr;
 }
-function release(inst){if(!inst||inst.released)return;inst.released=true;active.delete(inst);if(bgmPlaying===inst)bgmPlaying=null;try{inst.source.onended=null;inst.source.stop()}catch(_){}try{inst.source.disconnect();inst.gain.disconnect()}catch(_){}render();renderBgmNow()}
+function release(inst){if(!inst||inst.released)return;setTimeout(releaseBoostHoldIfQuiet,0);inst.released=true;active.delete(inst);if(bgmPlaying===inst)bgmPlaying=null;try{inst.source.onended=null;inst.source.stop()}catch(_){}try{inst.source.disconnect();inst.gain.disconnect()}catch(_){}render();renderBgmNow()}
 function fadeStop(inst,duration=.34){if(!inst||inst.released||inst.fading)return Promise.resolve();inst.fading=true;active.delete(inst);if(bgmPlaying===inst){bgmPlaying=null;bgmFading=inst}render();renderBgmNow();return new Promise(resolve=>{if(!ctx||ctx.state!=='running'){release(inst);if(bgmFading===inst)bgmFading=null;resolve();return}const now=ctx.currentTime;inst.gain.gain.cancelScheduledValues(now);inst.gain.gain.setValueAtTime(inst.gain.gain.value,now);inst.gain.gain.linearRampToValueAtTime(0,now+duration);setTimeout(()=>{release(inst);if(bgmFading===inst)bgmFading=null;renderBgmNow();resolve()},duration*1000+35)})}
 function startBuffer(buffer,volume,bus,meta,{loop=false,offset=0}={}){
  const source=ctx.createBufferSource(),gain=ctx.createGain();source.buffer=buffer;source.loop=loop;gain.gain.value=volume/100;source.connect(gain);gain.connect(bus);
@@ -421,7 +433,7 @@ async function playBgm(b,{restart=false,quiet=false}={}){
   const bufP=decodeAsset(b.assetId,true);
   if(previous)await fadeStop(previous,restart?.12:.38);
   const buf=await bufP;if(serial!==bgmSerial)return;
-  const inst=startBuffer(buf,b.volume,bgmBus,{trackId:b.id,assetId:b.assetId,name:b.name},{loop:true});
+  const inst=startBuffer(buf,100,bgmBus,{trackId:b.id,assetId:b.assetId,name:b.name},{loop:true});inst.gain.gain.value=bgmItemGain(b.assetId,b.volume);
   bgmPlaying=inst;addMarker('BGM開始：'+b.name,true);render();
  }catch(e){console.error(e);if(serial===bgmSerial){bgmError=(b.name||'BGM')+'：'+(e.userMessage||'再生できませんでした');if(!quiet)toast(bgmError,6000)}}
  finally{if(serial===bgmSerial){bgmPendingId=null;bgmLoadingId=null}renderBgmNow()}
@@ -487,7 +499,7 @@ function meterLoop(){
  requestAnimationFrame(meterLoop);
 }
 function duckLoop(){
- if(!ctx||!micStream||!cfg.rec.duck)return;
+ if(!ctx||!micStream||!cfg.rec.duck||rec.state==='ending')return;
  micAnalyser.getFloatTimeDomainData(micBuf);const level=rmsDb(micAnalyser,micBuf),now=performance.now();
  if(level>cfg.rec.duckThresh)lastVoiceAt=now;
  const want=now-lastVoiceAt<500;
@@ -527,10 +539,13 @@ async function detectOutput(){
   outputKind=!outputLabel?'unknown':HEAD_RE.test(outputLabel)?'headphones':SPK_RE.test(outputLabel)?'speaker':'unknown'}catch(_){outputKind='unknown';outputLabel=''}
  applyMonitor();
 }
+// 録音中に鳴り始めた音が残っている間は持ち上げない（録音停止・録り直しの瞬間にBGMが急に大きくなるのを防ぐ）
+let boostHold=false,retaking=false;
+function releaseBoostHoldIfQuiet(){if(boostHold&&!retaking&&rec.state==='idle'&&!bgmPlaying&&!bgmFading&&!bgmLoadingId&&active.size===0){boostHold=false;applyMonitor()}}
 function previewBoost(){
  // 録音していないときだけ、効果音・BGMを端末の音量いっぱいで聴けるよう持ち上げる（効果音とBGMの比率は変えない・録音には影響しない）
- if(!cfg.rec.previewFull)return 1;const active=rec.state==='recording'||rec.state==='ending';if(active)return 1;
- const top=Math.max(cfg.seVolume,cfg.bgmVolume,1);return Math.min(20,100/top);
+ if(!cfg.rec.previewFull||boostHold||retaking)return 1;if(rec.state!=='idle'&&rec.state!=='paused')return 1;
+ const top=Math.max(dbGain(cfg.seDb),dbGain(cfg.bgmDb),0.001);return Math.min(20,1/top);
 }
 function monitorMuted(){
  if(monitorManualOff)return true;const active=rec.state==='recording'||rec.state==='ending';if(!active)return false;
@@ -541,7 +556,7 @@ function renderMonitor(){
  const btn=document.getElementById('monBtn');if(!btn||!cfg)return;const muted=monitorMuted();
  btn.classList.toggle('off',muted);btn.textContent=muted?(monitorManualOff?'モニター音：オフ':'モニター音：オフ（自動）'):'モニター音：オン';
  const kind={headphones:'イヤホン・ヘッドホンと判定',speaker:'スピーカーと判定',unknown:'判定できないため、スピーカーとして扱います'}[outputKind];
- const pi=document.getElementById('previewInfo');if(pi){const k=previewBoost(),top=Math.max(cfg.seVolume,cfg.bgmVolume,1);pi.textContent=!cfg.rec.previewFull?'効果音・BGMは、録音されるのと同じ音量で聞こえます。':(k>1?`今は効果音とBGMを約${k.toFixed(1)}倍にして鳴らしています（大きい方の${top}%を100%として、比率はそのまま）。録音中は録音と同じ音量に戻ります。録音される音量は変わりません。`:'録音中は、録音されるのと同じ音量で聞こえます。')}
+ const pi=document.getElementById('previewInfo');if(pi){const k=previewBoost(),top=Math.max(cfg.seDb,cfg.bgmDb);pi.textContent=!cfg.rec.previewFull?'効果音・BGMは、録音されるのと同じ音量で聞こえます。':(k>1?`今は効果音とBGMを約${k.toFixed(1)}倍にして鳴らしています（大きい方の${fmtDb(top)}を0dBとして、比率はそのまま）。録音中は録音と同じ音量に戻ります。録音される音量は変わりません。`:'録音中は、録音されるのと同じ音量で聞こえます。')}
  const info=document.getElementById('outputInfo');if(info)info.textContent=`出力先：${outputLabel||'（ブラウザから名前を取得できません）'} → ${kind}。モニター音を消しても、BGM・効果音は録音に入ります。`;
 }
 $('#monBtn').onclick=()=>{
@@ -613,13 +628,16 @@ function stamp(d=new Date()){const p=n=>String(n).padStart(2,'0');return `${d.ge
 let lastTakeId=null;
 function micLive(){const tr=micStream?.getAudioTracks?.()[0];return !!(tr&&tr.readyState==='live')}
 async function discardRec(){
- const t=rec.take;rec.state='stopping';renderRecState();
+ const t=rec.take;boostHold=true;rec.state='stopping';renderRecState();
  if(rec.mode==='worklet'){await new Promise(resolve=>{rec.stopResolve=resolve;rec.node.port.postMessage('stop');setTimeout(resolve,1500)})}
  rec.pending={mix:[],voice:[],prog:[]};rec.pendingFrames=0;await rec.flushChain;
  rec.take=null;rec.state='idle';if(t)await deleteTakeData(t.id).catch(e=>console.error(e));
 }
 async function retake(btn){
- if(!armButton(btn,'もう一度押すと録り直し'))return;
+ if(!armButton(btn,'もう一度押すと録り直し'))return;boostHold=true;retaking=true;applyMonitor();
+ try{await retakeInner()}finally{retaking=false;releaseBoostHoldIfQuiet()}
+}
+async function retakeInner(){
  let startBgmId=null;
  if(rec.state==='recording'||rec.state==='paused'){startBgmId=rec.take.startBgmId;await discardRec()}
  else if(rec.state==='idle'&&lastTakeId){const t=await idbGet('takes',lastTakeId);startBgmId=t?.startBgmId||null;if(t)await deleteTakeData(t.id).catch(e=>console.error(e));lastTakeId=null}
@@ -654,15 +672,16 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function stopRec(){
  if(rec.state==='idle'||rec.state==='stopping'||rec.state==='ending')return;
  if(cfg.rec.fadeOnStop&&bgmPlaying&&rec.state==='recording'){
-  rec.state='ending';renderRecState();const b=cfg.bgms.find(x=>x.id===bgmPlaying.trackId);addMarker('BGMフェードアウト：'+(b?.name||''),true);
+  rec.state='ending';renderRecState();if(micGain){const t0=ctx.currentTime;micGain.gain.cancelScheduledValues(t0);micGain.gain.setValueAtTime(micGain.gain.value,t0);micGain.gain.linearRampToValueAtTime(0,t0+.12)}const b=cfg.bgms.find(x=>x.id===bgmPlaying.trackId);addMarker('BGMフェードアウト：'+(b?.name||''),true);
   bgmSerial++;await fadeStop(bgmPlaying,cfg.rec.fadeSec);await sleep(500);
  }
  rec.state='stopping';renderRecState();
  if(rec.mode==='worklet'){await new Promise(resolve=>{rec.stopResolve=resolve;rec.node.port.postMessage('stop');setTimeout(resolve,1500)})}
  await flushChunks();
  const t=rec.take;t.status='done';t.frames=rec.frames;await idbPut('takes',t.id,{...t});
- lastTakeId=t.id;rec.take=null;rec.state='idle';if(bgmLow&&!bgmPlaying){bgmLow=false;bgmTrim.gain.setTargetAtTime(1,ctx.currentTime,.05);renderBgmLow()}renderRecState();await renderTakes();updateStorage();
+ lastTakeId=t.id;rec.take=null;rec.state='idle';if(micGain){micGain.gain.cancelScheduledValues(ctx.currentTime);micGain.gain.setValueAtTime(cfg.rec.micVolume/100,ctx.currentTime)}if(bgmLow&&!bgmPlaying){bgmLow=false;bgmTrim.gain.setTargetAtTime(1,ctx.currentTime,.05);renderBgmLow()}renderRecState();await renderTakes();updateStorage();
  toast(`「${t.name}」を保存しました（${fmtTime(t.frames/t.sampleRate)}）`,3500);
+ releaseBoostHoldIfQuiet();
 }
 function addMarker(label,auto=false){
  const t=rec.take;if(!t||rec.state==='idle'||rec.state==='stopping')return;/* ending中も記録 */
@@ -671,7 +690,7 @@ function addMarker(label,auto=false){
 }
 function fmtTime(sec,tenths=false){sec=Math.max(0,sec);const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=Math.floor(sec)%60,p=n=>String(n).padStart(2,'0');return (h?h+':'+p(m):p(m))+':'+p(s)+(tenths?'.'+Math.floor(sec*10)%10:'')}
 function renderTimer(){const t=rec.take,sec=t?rec.frames/t.sampleRate:0,str=fmtTime(sec,true),i=str.lastIndexOf('.');$('#timer').innerHTML=esc(str.slice(0,i))+'<small>'+esc(str.slice(i))+'</small>'}
-function renderRecState(){applyMonitor();if(cfg?.programs)renderPrograms();
+function renderRecState(){if(rec.state!=='idle'&&rec.state!=='paused')boostHold=true;applyMonitor();if(cfg?.programs)renderPrograms();
  const lamp=$('#recLamp'),txt=$('#recLampText'),st=rec.state;
  lamp.className='lamp '+(st==='recording'||st==='ending'?'rec':st==='paused'?'pause':micLive()?'ready':'');
  txt.textContent=st==='ending'?'BGMフェードアウト中…':st==='recording'?'録音中':st==='paused'?'一時停止中':st==='stopping'?'保存中…':micLive()?'待機中':'マイク未接続';
@@ -958,7 +977,9 @@ async function updateStorage(){try{const est=await navigator.storage?.estimate?.
 
 /* ===================== 画面描画（ポン出し） ===================== */
 function renderVolumes(){
- for(const [name,key] of [['master','master'],['se','seVolume'],['bgm','bgmVolume']]){$('#'+name+'Volume').value=cfg[key];$('#'+name+'Val').textContent=cfg[key]+'%'}
+ $('#masterVolume').value=cfg.master;$('#masterVal').textContent=cfg.master+'%';
+ for(const [name,key] of [['se','seDb'],['bgm','bgmDb']]){$('#'+name+'Volume').value=cfg[key];$('#'+name+'Val').textContent=fmtDb(cfg[key])}
+ $('#bgmLevel').checked=cfg.rec.bgmLevel!==false;
  const r=cfg.rec;$('#micVolume').value=r.micVolume;$('#micVal').textContent=r.micVolume+'%';
  $('#duckDepth').value=r.duckDepth;$('#duckDepthVal').textContent='-'+r.duckDepth+'dB';$('#duckThresh').value=r.duckThresh;$('#duckThreshVal').textContent=r.duckThresh+'dB';
  for(const [sel,key] of [['#optEc','ec'],['#optNs','ns'],['#optAgc','agc'],['#optMon','monitor'],['#optLimiter','limiter'],['#duckOn','duck'],['#keepVoice','keepVoice'],['#keepProg','keepProg'],['#optNormalize','normalize']])$(sel).checked=!!r[key];
@@ -1012,8 +1033,12 @@ tabEditor('Emoji','絵文字SE');tabEditor('Text','文字SE');tabEditor('Bgm','B
 $('#bgmList').onclick=e=>{const edit=e.target.closest('[data-edit-bgm]'),reset=e.target.closest('[data-reset-bgm]'),play=e.target.closest('[data-play-bgm]');if(edit){openBgm(cfg.bgms.find(b=>b.id===edit.dataset.editBgm));return}if(reset){resetBgm(reset.dataset.resetBgm);return}if(play){const b=cfg.bgms.find(x=>x.id===play.dataset.playBgm);if(b){if(b.assetId)playBgm(b);else openBgm(b)}}};
 function moveBgm(direction){const b=cfg.bgms.find(x=>x.id===$('#bgmId').value);if(!b)return;const target=b.slotIndex+direction,other=cfg.bgms.find(x=>x.tabIndex===b.tabIndex&&x.slotIndex===target);if(!other)return;[b.slotIndex,other.slotIndex]=[other.slotIndex,b.slotIndex];persist();render();$('#bgmMovePrev').disabled=b.slotIndex===0;$('#bgmMoveNext').disabled=b.slotIndex===9}
 $('#bgmMovePrev').onclick=()=>moveBgm(-1);$('#bgmMoveNext').onclick=()=>moveBgm(1);
-$('#bgmList').oninput=e=>{const slider=e.target.closest('[data-bgm-volume]');if(!slider)return;const b=cfg.bgms.find(x=>x.id===slider.dataset.bgmVolume);if(!b)return;b.volume=+slider.value;slider.nextElementSibling.textContent=b.volume+'%';if(bgmPlaying?.trackId===b.id)bgmPlaying.gain.gain.value=b.volume/100;persist()};
-for(const [selector,key] of [['masterVolume','master'],['seVolume','seVolume'],['bgmVolume','bgmVolume']])$('#'+selector).oninput=e=>{queueMicrotask(renderMonitor);cfg[key]=+e.target.value;$('#'+selector.replace('Volume','Val')).textContent=cfg[key]+'%';updateGains();persist()};
+$('#bgmList').oninput=e=>{const slider=e.target.closest('[data-bgm-volume]');if(!slider)return;const b=cfg.bgms.find(x=>x.id===slider.dataset.bgmVolume);if(!b)return;b.volume=+slider.value;slider.nextElementSibling.textContent=b.volume+'%';if(bgmPlaying?.trackId===b.id)bgmPlaying.gain.gain.value=bgmItemGain(bgmPlaying.assetId,b.volume);persist()};
+function setDb(kind,db){const key=kind==='se'?'seDb':'bgmDb';cfg[key]=Math.max(-60,Math.min(0,Math.round(db*2)/2));cfg[kind==='se'?'seVolume':'bgmVolume']=Math.round(dbGain(cfg[key])*1000)/10;$('#'+kind+'Volume').value=cfg[key];$('#'+kind+'Val').textContent=fmtDb(cfg[key]);updateGains();renderMonitor();persist()}
+$('#seVolume').oninput=e=>setDb('se',+e.target.value);$('#bgmVolume').oninput=e=>setDb('bgm',+e.target.value);
+document.querySelector('.db-steps').onclick=e=>{const b=e.target.closest('[data-db]');if(!b)return;const [k,d]=b.dataset.db.split(':');setDb(k,cfg[k==='se'?'seDb':'bgmDb']+(+d))};
+$('#bgmLevel').onchange=e=>{cfg.rec.bgmLevel=e.target.checked;persist();if(bgmPlaying)bgmPlaying.gain.gain.value=bgmItemGain(bgmPlaying.assetId,cfg.bgms.find(x=>x.id===bgmPlaying.trackId)?.volume??100)};
+for(const [selector,key] of [['masterVolume','master']])$('#'+selector).oninput=e=>{queueMicrotask(renderMonitor);cfg[key]=+e.target.value;$('#'+selector.replace('Volume','Val')).textContent=cfg[key]+'%';updateGains();persist()};
 $('#micVolume').oninput=e=>{cfg.rec.micVolume=+e.target.value;$('#micVal').textContent=cfg.rec.micVolume+'%';updateGains();persist()};
 $('#duckDepth').oninput=e=>{cfg.rec.duckDepth=+e.target.value;$('#duckDepthVal').textContent='-'+cfg.rec.duckDepth+'dB';forceDuck=true;persist()};
 $('#duckThresh').oninput=e=>{cfg.rec.duckThresh=+e.target.value;$('#duckThreshVal').textContent=cfg.rec.duckThresh+'dB';persist()};
@@ -1049,7 +1074,7 @@ $('#deleteSound').onclick=async e=>{const s=cfg.sounds.find(x=>x.id===$('#soundI
 $('#bgmForm').onsubmit=async e=>{e.preventDefault();const old=cfg.bgms.find(x=>x.id===$('#bgmId').value);if(!old){toast('BGMの枠が見つかりません');return}const file=$('#bgmFile').files[0],previousAsset=old.assetId;let assetId=previousAsset||null,fileName=old.fileName||'';
  try{if(file){const nextId=id();await putAsset(nextId,file);assetId=nextId;fileName=file.name}
   const next={name:$('#bgmNameInput').value.trim(),volume:+$('#bgmVolModal').value,assetId,fileName};Object.assign(old,next);
-  if(bgmPlaying?.trackId===old.id){if(file){bgmSerial++;fadeStop(bgmPlaying)}else bgmPlaying.gain.gain.value=next.volume/100}
+  if(bgmPlaying?.trackId===old.id){if(file){bgmSerial++;fadeStop(bgmPlaying)}else bgmPlaying.gain.gain.value=bgmItemGain(bgmPlaying.assetId,next.volume)}
   save();closeModal('bgmModal');if(file&&previousAsset)await deleteAsset(previousAsset);toast('BGMを保存しました')
  }catch(err){console.error(err);toast('音源を保存できませんでした。空き容量をご確認ください')}};
 async function resetBgm(trackId){const b=cfg.bgms.find(x=>x.id===trackId);if(!b||(!b.assetId&&!b.name))return;const oldAsset=b.assetId;
