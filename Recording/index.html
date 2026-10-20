@@ -7,7 +7,7 @@
 <title>筋肉室ラジオ収録</title>
 <style>
 :root{--ink:#51453b;--muted:#85786a;--leaf:#78946d;--leaf-pale:#e9f2e4;--gold:#c9a263;--cream:#fffdf7;--line:#dfcfaf;--rec:#c8463b;--rec-pale:#fbe7e2;--warn:#d39a3a;--shadow:0 10px 28px #59412820}
-*{box-sizing:border-box}html{background:#f8f7ef;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input,select,label,a{touch-action:manipulation}body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:radial-gradient(circle at 30% 0%,#fffefa,#fff9ed 56%,#eef5e9);min-height:100vh}button,input,select{font:inherit;color:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #87aa7b;outline-offset:2px}
+[hidden]{display:none!important}*{box-sizing:border-box}html{background:#f8f7ef;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input,select,label,a{touch-action:manipulation}body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:radial-gradient(circle at 30% 0%,#fffefa,#fff9ed 56%,#eef5e9);min-height:100vh}button,input,select{font:inherit;color:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #87aa7b;outline-offset:2px}
 .app{width:min(100%,1010px);margin:0 auto;padding:13px 10px 26px}
 .top{text-align:center;margin-bottom:12px}.top h1{margin:0;font-size:19px;letter-spacing:.02em}.top p{margin:4px 0 9px;color:var(--muted);font-size:11px}.tools{display:flex;justify-content:center;flex-wrap:wrap;gap:5px}
 .pill,.btn{border:1px solid #d7c49e;border-radius:999px;padding:7px 10px;background:linear-gradient(#fff,#fff9ed);box-shadow:0 2px 6px #60452512;font-size:11px;white-space:nowrap}.danger{color:#8b524b;border-color:#dfbbb3;background:#fff8f5}.primary{border-color:#adc39f;background:linear-gradient(#f1f8ed,#dcebd4);font-weight:700}.gold{border-color:#d5b673;background:linear-gradient(#fff7df,#efdaa9);font-weight:700}
@@ -101,7 +101,7 @@
 .meters{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
 .meters .meter-row{grid-template-columns:34px minmax(0,1fr) 46px;gap:5px;font-size:10px}
 @media(min-height:700px){.recbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}}
-@media(max-width:420px){.meters{grid-template-columns:1fr}.recbar .timer{font-size:26px;text-align:right}.rec-head{grid-template-columns:auto 1fr}.head-btns{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}.head-btns .pill{padding:7px 6px}.prog-row{flex-wrap:wrap}.prog-row #progEdit{margin-left:auto}.cover-row{grid-template-columns:72px minmax(0,1fr)}.cover-thumb{width:72px}.cover-ctl label{display:grid;gap:3px}.cover-ctl select{width:100%}}
+@media(max-width:420px){.meters{grid-template-columns:1fr}.recbar .timer{font-size:26px;text-align:right}.rec-head{grid-template-columns:auto 1fr}.head-btns{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}.head-btns .pill{padding:7px 6px}.prog-row{flex-wrap:nowrap}.prog-row #progEdit{flex:none;padding:7px 9px}.cover-row{grid-template-columns:72px minmax(0,1fr)}.cover-thumb{width:72px}.cover-ctl label{display:grid;gap:3px}.cover-ctl select{width:100%}}
 .transport{grid-template-columns:1.35fr 1fr 1fr 1fr}
 .recbar .tbtn{font-size:12.5px;padding:0 4px}
 .tbtn.discardbtn:not(:disabled){color:#8b524b;border-color:#dfbbb3;background:linear-gradient(#fff,#fff5f2)}
@@ -124,7 +124,7 @@
 .bgm-edit,.bgm-remove{padding:0 9px}
 @media(max-width:420px){.transport{grid-template-columns:1fr 1fr}.bgm-now{grid-template-columns:auto minmax(0,1fr) auto}.bgm-now-time{display:none}}
 .prog-row{display:flex;gap:6px;align-items:center;padding-right:2px}
-.prog-chips{display:flex;flex-wrap:wrap;gap:4px;flex:1;min-width:0;padding:2px 1px}
+.prog-chips{display:flex;flex-wrap:nowrap;gap:4px;flex:1;min-width:0;padding:3px 2px;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none}.prog-chips::-webkit-scrollbar{display:none}.prog-chip{flex:none;scroll-snap-align:start}
 .prog-chip{border:1px solid #d8cab2;border-radius:999px;padding:6px 11px;background:#fffcf5;white-space:nowrap;font-size:12px}
 .prog-chip.active{background:#e4f0dc;border-color:#86aa79;color:#3f5a38;font-weight:800;box-shadow:0 0 0 2px #a5d29066}
 .prog-chip:disabled{opacity:.5}
@@ -179,7 +179,7 @@ body:not([data-page="settings"]) #settingsShell{display:none}
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第21版）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" id="navMain">収録画面</button><button class="pill" type="button" data-goto="settings" id="navSettings">音量・マイクの設定</button></nav></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-21 第22版）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" id="navMain">収録画面</button><button class="pill" type="button" data-goto="settings" id="navSettings">音量・マイクの設定</button></nav></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -580,6 +580,7 @@ function progBgm(){const pr=curProgram();return pr?.bgmId?cfg.bgms.find(b=>b.id=
 function renderPrograms(){
  const busy=rec.state!=='idle';
  $('#progChips').innerHTML=cfg.programs.map((pr,i)=>`<button class="prog-chip ${pr.color&&PROG_COLORS[pr.color]?'c-'+pr.color:''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('');
+ {const act=$('#progChips .prog-chip.active');if(act){const c=$('#progChips');const l=act.offsetLeft-c.offsetLeft,rgt=l+act.offsetWidth;if(l<c.scrollLeft||rgt>c.scrollLeft+c.clientWidth)c.scrollLeft=Math.max(0,l-8)}}
  const pb=progBgm(),box=$('#progBgm');
  box.innerHTML=pb?`<p class="prog-bgm-label">「${esc(curProgram().name)}」の初期BGM</p><div class="bgm-card ${bgmPlaying?.trackId===pb.id||bgmLoadingId===pb.id?'active':''}"><div class="bgm-row" style="grid-template-columns:minmax(0,1fr)"><button class="bgm-play" data-play-bgm="${esc(pb.id)}"><span class="bgm-icon">${bgmPlaying?.trackId===pb.id?'■':bgmLoadingId===pb.id?'…':'▶'}</span><span class="bgm-name">${esc(pb.name)}</span></button></div></div>`
   :`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。録音欄の「番組の設定」で選べます。</div>`;
