@@ -78,7 +78,7 @@
 .storage{font-size:10px;color:var(--muted);text-align:right}
 .footer{text-align:center;color:#928677;font-size:10px;line-height:1.6;margin:14px 5px 0}
 .modal-back{position:fixed;inset:0;background:#2d281fba;display:none;align-items:center;justify-content:center;padding:13px;z-index:10}.modal-back.open{display:flex}.modal{width:min(420px,100%);max-height:90vh;overflow-y:auto;border:6px solid #d6ba81;border-radius:22px;background:linear-gradient(#fffefa,#fff8e9);padding:17px;box-shadow:0 20px 50px #211a0e77}.modal h2{font-size:18px;margin:0 0 12px}.field{display:grid;gap:6px;margin:11px 0}.field label{font-size:12px;font-weight:700}.field input,.field select{width:100%;border:1px solid #d7c9ac;border-radius:10px;background:white;padding:9px}.field input[type=range]{padding:0;accent-color:#86a477}.field input[type=file]{padding:6px}.field small{color:#897c6b;font-size:10px;line-height:1.4}.filebox{background:#fffdf7;border:1px dashed #cfbb91;border-radius:10px;padding:8px}.modal-actions{display:flex;justify-content:space-between;gap:7px;align-items:center;margin-top:14px;flex-wrap:wrap}.modal-actions .btn{font-size:12px}.actions-right{display:flex;gap:6px}.move-row{display:flex;gap:7px}.move-row button{flex:1}
-.category-list{display:grid;gap:7px}.category-line{display:flex;gap:6px}.category-line input{min-width:0;flex:1;border:1px solid #d7c9ac;border-radius:9px;background:#fff;padding:8px}.category-note{font-size:10px;color:#897c6b;line-height:1.5}
+.category-list{display:grid;gap:7px}.category-line{display:grid!important;grid-template-columns:minmax(0,1fr) 40px 40px;gap:5px}.category-line input{width:100%;min-width:0}.category-line .tab-move{width:40px;padding:6px 0;font-size:14px;border-radius:9px}.category-line{display:flex;gap:6px}.category-line input{min-width:0;flex:1;border:1px solid #d7c9ac;border-radius:9px;background:#fff;padding:8px}.category-note{font-size:10px;color:#897c6b;line-height:1.5}
 .emoji-head-controls{display:flex;align-items:center;gap:5px}.emoji-mode{display:flex;align-items:center;gap:4px;font-size:10px;white-space:nowrap}.emoji-mode select{min-width:0;max-width:100px;border:1px solid #d9c7a8;border-radius:8px;background:#fff;padding:5px 3px;font-size:10px}
 .ver{color:#a8987f;font-size:10px}.btn.armed{background:var(--rec);border-color:var(--rec);color:#fff;font-weight:700}
 .confirm-back{z-index:15}.confirm-text{margin:0;font-size:13px;line-height:1.7;white-space:pre-line}#confirmYes{font-weight:700}
@@ -150,7 +150,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第16版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第17版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -269,9 +269,9 @@
 <input type="file" id="progCoverFile" accept="image/*" hidden>
 <div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back" id="bgmModal"><form class="modal" id="bgmForm"><h2 id="bgmHeading">BGMの設定</h2><input type="hidden" id="bgmId"><div class="field"><label for="bgmNameInput">表示名</label><input id="bgmNameInput" maxlength="80" required placeholder="例：筋肉室の午後"></div><div class="field"><label for="bgmFile">音源ファイル</label><div class="filebox"><input id="bgmFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentBgmFile"></small></div></div><div class="field"><label for="bgmVolModal">この曲の音量：<span id="bgmVolModalVal"></span></label><input id="bgmVolModal" type="range" min="0" max="100"></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="bgmMovePrev">← 前へ</button><button type="button" class="btn" id="bgmMoveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="resetBgm">選択リセット</button><div class="actions-right"><button type="button" class="btn" data-close="bgmModal">キャンセル</button><button type="submit" class="btn gold">保存</button></div></div></form></div>
-<div class="modal-back" id="emojiTabsModal"><form class="modal" id="emojiTabsForm"><h2>絵文字SE分類名の編集</h2><p class="category-note">5つのタブ名を編集できます。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="emojiTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="emojiTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
-<div class="modal-back" id="bgmTabsModal"><form class="modal" id="bgmTabsForm"><h2>BGM分類名の編集</h2><p class="category-note">5つのタブ名を編集できます。登録済みの曲は各タブに残ります。</p><div class="category-list" id="bgmTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="bgmTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
-<div class="modal-back" id="textTabsModal"><form class="modal" id="textTabsForm"><h2>文字SE分類名の編集</h2><p class="category-note">5つのタブ名を編集できます。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="textTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="textTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="emojiTabsModal"><form class="modal" id="emojiTabsForm"><h2>絵文字SEのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="emojiTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="emojiTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="bgmTabsModal"><form class="modal" id="bgmTabsForm"><h2>BGMのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの曲は各タブに残ります。</p><div class="category-list" id="bgmTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="bgmTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="textTabsModal"><form class="modal" id="textTabsForm"><h2>文字SEのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="textTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="textTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back confirm-back" id="confirmModal"><div class="modal" role="alertdialog" aria-labelledby="confirmTitle" aria-describedby="confirmText"><h2 id="confirmTitle">確認</h2><p id="confirmText" class="confirm-text"></p><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" id="confirmNo">キャンセル</button><button type="button" class="btn danger" id="confirmYes">削除する</button></div></div></div></div>
 <input id="importFile" type="file" hidden><div class="notice" id="notice" role="status"></div>
 
@@ -1095,9 +1095,30 @@ setupGrid('emoji');setupGrid('text');
 $('#emojiTabs').onclick=e=>{const tab=e.target.closest('[data-emoji-tab]');if(tab){emojiTab=+tab.dataset.emojiTab;render()}};
 $('#textTabs').onclick=e=>{const tab=e.target.closest('[data-text-tab]');if(tab){textTab=+tab.dataset.textTab;render()}};
 $('#bgmTabs').onclick=e=>{const tab=e.target.closest('[data-bgm-tab]');if(tab){bgmTab=+tab.dataset.bgmTab;render()}};
+// タブ名の編集と並べ替え（↑↓で行を動かし、保存するとタブの中身ごと順番が入れ替わる）
 function tabEditor(kind,label){
- $('#edit'+kind+'Tabs').onclick=()=>{const key=kind.toLowerCase()+'Tabs',box=$('#'+kind.toLowerCase()+'TabNames');box.replaceChildren(...cfg[key].map((name,i)=>{const row=document.createElement('div');row.className='category-line';const input=document.createElement('input');input.value=name;input.maxLength=20;input.setAttribute('aria-label',(i+1)+'番目の'+label+'分類名');row.append(input);return row}));openModal(kind.toLowerCase()+'TabsModal')};
- $('#'+kind.toLowerCase()+'TabsForm').onsubmit=e=>{e.preventDefault();const key=kind.toLowerCase()+'Tabs',names=[...$('#'+kind.toLowerCase()+'TabNames').querySelectorAll('input')].map(x=>x.value.trim());if(names.length!==TABS||names.some(x=>!x)||new Set(names).size!==TABS){toast('分類名は空欄や重複を避けてください');return}cfg[key]=names;save();closeModal(kind.toLowerCase()+'TabsModal');toast(label+'の分類名を保存しました')};
+ const k=kind.toLowerCase(),key=k+'Tabs',box=$('#'+k+'TabNames');
+ const syncBtns=()=>{const rows=[...box.children];rows.forEach((row,i)=>{row.querySelector('[data-up]').disabled=i===0;row.querySelector('[data-down]').disabled=i===rows.length-1;row.querySelector('input').setAttribute('aria-label',(i+1)+'番目の'+label+'分類名')})};
+ $('#edit'+kind+'Tabs').onclick=()=>{
+  box.replaceChildren(...cfg[key].map((name,i)=>{const row=document.createElement('div');row.className='category-line';row.dataset.orig=i;
+   const input=document.createElement('input');input.value=name;input.maxLength=20;
+   const up=document.createElement('button');up.type='button';up.className='btn tab-move';up.dataset.up='1';up.textContent='↑';up.setAttribute('aria-label','上へ');
+   const down=document.createElement('button');down.type='button';down.className='btn tab-move';down.dataset.down='1';down.textContent='↓';down.setAttribute('aria-label','下へ');
+   row.append(input,up,down);return row}));
+  syncBtns();openModal(k+'TabsModal');
+ };
+ box.onclick=e=>{const btn=e.target.closest('.tab-move');if(!btn)return;const row=btn.closest('.category-line');
+  if(btn.dataset.up&&row.previousElementSibling)box.insertBefore(row,row.previousElementSibling);
+  else if(btn.dataset.down&&row.nextElementSibling)box.insertBefore(row.nextElementSibling,row);
+  syncBtns();btn.focus()};
+ $('#'+k+'TabsForm').onsubmit=e=>{e.preventDefault();
+  const rows=[...box.children],names=rows.map(r=>r.querySelector('input').value.trim()),order=rows.map(r=>+r.dataset.orig);
+  if(names.length!==TABS||names.some(x=>!x)||new Set(names).size!==TABS){toast('分類名は空欄や重複を避けてください');return}
+  const newIndex=new Map(order.map((orig,pos)=>[orig,pos]));
+  const items=kind==='Bgm'?cfg.bgms:cfg.sounds.filter(x=>x.type===(kind==='Emoji'?'emoji':'text'));
+  for(const x of items)if(newIndex.has(x.tabIndex))x.tabIndex=newIndex.get(x.tabIndex);
+  if(kind==='Emoji')emojiTab=newIndex.get(emojiTab)??0;else if(kind==='Text')textTab=newIndex.get(textTab)??0;else bgmTab=newIndex.get(bgmTab)??0;
+  const moved=order.some((o,i)=>o!==i);cfg[key]=names;save();closeModal(k+'TabsModal');toast(label+(moved?'のタブの名前と順番を保存しました':'の分類名を保存しました'))};
 }
 tabEditor('Emoji','絵文字SE');tabEditor('Text','文字SE');tabEditor('Bgm','BGM');
 $('#bgmList').onclick=e=>{const edit=e.target.closest('[data-edit-bgm]'),reset=e.target.closest('[data-reset-bgm]'),play=e.target.closest('[data-play-bgm]');if(edit){openBgm(cfg.bgms.find(b=>b.id===edit.dataset.editBgm));return}if(reset){resetBgm(reset.dataset.resetBgm);return}if(play){const b=cfg.bgms.find(x=>x.id===play.dataset.playBgm);if(b){if(b.assetId)playBgm(b);else openBgm(b)}}};
