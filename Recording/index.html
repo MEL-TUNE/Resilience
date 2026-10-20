@@ -122,10 +122,20 @@
 .bgm-edit,.bgm-remove{padding:0 9px}
 @media(max-width:420px){.transport{grid-template-columns:1fr 1fr}.bgm-now{grid-template-columns:auto minmax(0,1fr) auto}.bgm-now-time{display:none}}
 .prog-row{display:flex;gap:6px;align-items:center;padding-right:2px}
-.prog-chips{display:flex;gap:4px;overflow-x:auto;flex:1;min-width:0;padding:2px 1px;scrollbar-width:thin}
+.prog-chips{display:flex;flex-wrap:wrap;gap:4px;flex:1;min-width:0;padding:2px 1px}
 .prog-chip{border:1px solid #d8cab2;border-radius:999px;padding:6px 11px;background:#fffcf5;white-space:nowrap;font-size:12px}
 .prog-chip.active{background:#e4f0dc;border-color:#86aa79;color:#3f5a38;font-weight:800;box-shadow:0 0 0 2px #a5d29066}
 .prog-chip:disabled{opacity:.5}
+.prog-chip.c-snow{background:#e6f3fb;border-color:#a9cfe6;color:#2f566e}
+.prog-chip.c-leaf{background:#e8f3e1;border-color:#a9c99b;color:#3f5a38}
+.prog-chip.c-honey{background:#fcf3d3;border-color:#e1c578;color:#6b5320}
+.prog-chip.c-snow.active{background:#cfe8f7;border-color:#6aa9cf;box-shadow:0 0 0 2px #8ec3e399;color:#1f4660}
+.prog-chip.c-leaf.active{background:#d6ebcb;border-color:#79a56a;box-shadow:0 0 0 2px #a5d29099;color:#2f4a29}
+.prog-chip.c-honey.active{background:#f8e7ad;border-color:#cfa53e;box-shadow:0 0 0 2px #e6c87099;color:#5a4214}
+.prog-colors{display:flex;flex-wrap:wrap;gap:6px}
+.prog-colors label{display:flex;align-items:center;gap:5px;border:1px solid #d7c9ac;border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:400!important;background:#fff;cursor:pointer}
+.prog-colors input{width:auto!important;margin:0}
+.prog-colors label.c-snow{background:#e6f3fb;border-color:#a9cfe6}.prog-colors label.c-leaf{background:#e8f3e1;border-color:#a9c99b}.prog-colors label.c-honey{background:#fcf3d3;border-color:#e1c578}
 .head-btns{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
 #monBtn.off{background:#fff3df;border-color:#d8b56f;color:#7a5520;font-weight:700}
 .prog-bgm{margin-bottom:8px}
@@ -150,7 +160,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第17版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第18版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -258,6 +268,7 @@
 
 <div class="modal-back" id="progModal"><form class="modal" id="progForm"><h2>番組の設定</h2>
  <div class="field"><label for="progName">番組名</label><input id="progName" maxlength="30" required><small>テイク名の先頭にも使われます。</small></div>
+ <div class="field"><span style="font-size:12px;font-weight:700">ボタンの色</span><div class="prog-colors" id="progColors"><label><input type="radio" name="progColor" value="">指定なし</label><label class="c-snow"><input type="radio" name="progColor" value="snow">❄️ 淡い水色（雪見おと名義）</label><label class="c-leaf"><input type="radio" name="progColor" value="leaf">🌿 淡い緑色（コウサカチヅル名義）</label><label class="c-honey"><input type="radio" name="progColor" value="honey">🍯 淡い黄色（その他）</label></div></div>
  <div class="field"><label for="progBgmSel">初期BGM</label><select id="progBgmSel"></select><small>BGM欄に登録した曲から選びます。BGM欄の一番上と、録音欄に表示されます。</small></div>
  <div class="field"><label style="display:flex;gap:6px;align-items:center;font-weight:400"><input type="checkbox" id="progAuto" style="width:auto">録音開始と同時に初期BGMを頭から流す</label></div>
  <div class="field"><label>この番組の動画用サムネイル（7枚まで）</label>
@@ -295,7 +306,9 @@ const defaults=()=>({version:6,categories:[],sounds:[...EMOJI_TAB_DEFAULTS.flatM
 const dbGain=db=>db<=-60?0:Math.pow(10,db/20);
 const pctToDb=p=>p<=0?-60:Math.max(-60,Math.min(0,Math.round(20*Math.log10(p/100)*2)/2));
 const fmtDb=db=>db<=-60?'消音':(db>0?'+':'')+(+db).toFixed(1)+'dB';
-function defaultPrograms(){return [1,2,3,4,5].map(n=>({id:'prog'+n,name:'番組'+n,bgmId:null,autoBgm:true,coverIdx:-1}))}
+const PROGRAMS=7;
+function defaultPrograms(){return Array.from({length:PROGRAMS},(_,i)=>({id:'prog'+(i+1),name:'番組'+(i+1),bgmId:null,autoBgm:true,coverIdx:-1,color:''}))}
+const PROG_COLORS={snow:'❄️ 淡い水色（雪見おと名義）',leaf:'🌿 淡い緑色（コウサカチヅル名義）',honey:'🍯 淡い黄色（その他）'};
 let db,cfg,emojiTab=0,textTab=0,bgmTab=0,noticeTimer;
 let ctx,monProg,bgmTrim,bgmLow=false,seBus,bgmBus,masterBus,duckGain,programBus,progStereo,voiceBus,selfMon,recMix,limiter,limOut,micGain,micAnalyser,mixAnalyser,merger;
 let bgmPlaying=null,bgmSerial=0,bgmPendingId=null;
@@ -304,8 +317,8 @@ const soundSerial=new Map(), pendingText=new Set(), active=new Set();
 function normalize(raw){
  const base=defaults();if(!raw)return base;
  base.rec={...REC_DEFAULTS,...(raw.rec&&typeof raw.rec==='object'?raw.rec:{})};
- if(Array.isArray(raw.programs)&&raw.programs.length===5)base.programs=raw.programs.map((x,i)=>({...defaultPrograms()[i],...x}));
- base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=0&&raw.currentProgram<5?raw.currentProgram:0;
+ if(Array.isArray(raw.programs)&&raw.programs.length){const defs=defaultPrograms(),used=new Set(raw.programs.map(x=>x&&x.id));const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...defs[i],...x}));for(const d of defs){if(kept.length>=PROGRAMS)break;if(!used.has(d.id))kept.push(d)}base.programs=kept}
+ base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=0&&raw.currentProgram<PROGRAMS?raw.currentProgram:0;
  if(Array.isArray(raw.sounds)&&raw.sounds.some(x=>x.emoji)&&!raw.sounds.some(x=>x.type)){
   const old=raw.sounds.map((s,i)=>({...newSound('emoji',s.emoji||'🔔',i),...s,label:s.emoji||'🔔',type:'emoji',category:s.assetId?s.category||'全て':'全て',order:i}));
   base.sounds=[...old,...emojiLabels.slice(old.length).map((x,i)=>newSound('emoji',x,old.length+i)),...textLabels.map((x,i)=>newSound('text',x,i))];
@@ -542,7 +555,7 @@ const curProgram=()=>cfg.programs?.[cfg.currentProgram];
 function progBgm(){const pr=curProgram();return pr?.bgmId?cfg.bgms.find(b=>b.id===pr.bgmId&&b.assetId):null}
 function renderPrograms(){
  const busy=rec.state!=='idle';
- $('#progChips').innerHTML=cfg.programs.map((pr,i)=>`<button class="prog-chip ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('');
+ $('#progChips').innerHTML=cfg.programs.map((pr,i)=>`<button class="prog-chip ${pr.color&&PROG_COLORS[pr.color]?'c-'+pr.color:''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('');
  const pb=progBgm(),box=$('#progBgm');
  box.innerHTML=pb?`<p class="prog-bgm-label">「${esc(curProgram().name)}」の初期BGM</p><div class="bgm-card ${bgmPlaying?.trackId===pb.id||bgmLoadingId===pb.id?'active':''}"><div class="bgm-row" style="grid-template-columns:minmax(0,1fr)"><button class="bgm-play" data-play-bgm="${esc(pb.id)}"><span class="bgm-icon">${bgmPlaying?.trackId===pb.id?'■':bgmLoadingId===pb.id?'…':'▶'}</span><span class="bgm-name">${esc(pb.name)}</span></button></div></div>`
   :`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。録音欄の「番組の設定」で選べます。</div>`;
@@ -552,6 +565,7 @@ $('#progChips').onclick=e=>{const c=e.target.closest('[data-prog]');if(!c||rec.s
 $('#progBgm').onclick=e=>{const pbtn=e.target.closest('[data-play-bgm]');if(!pbtn)return;const b=cfg.bgms.find(x=>x.id===pbtn.dataset.playBgm);if(b)playBgm(b)};
 $('#progEdit').onclick=async()=>{
  const pr=curProgram();$('#progName').value=pr.name;$('#progAuto').checked=!!pr.autoBgm;
+ for(const rd of document.querySelectorAll('input[name=progColor]'))rd.checked=rd.value===(PROG_COLORS[pr.color]?pr.color:'');
  const list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
  $('#progBgmSel').innerHTML='<option value="">なし</option>'+list.map(b=>`<option value="${esc(b.id)}">${esc(cfg.bgmTabs[b.tabIndex]+'｜'+b.name)}</option>`).join('');
  $('#progBgmSel').value=list.some(b=>b.id===pr.bgmId)?pr.bgmId:'';
@@ -587,7 +601,7 @@ $('#progCoverFile').onchange=async e=>{const f=e.target.files[0];e.target.value=
 function moveProgram(d){const i=cfg.currentProgram,j=i+d;if(j<0||j>=cfg.programs.length||rec.state!=='idle')return;[cfg.programs[i],cfg.programs[j]]=[cfg.programs[j],cfg.programs[i]];cfg.currentProgram=j;persist();renderPrograms();updateProgMoveBtns()}
 function updateProgMoveBtns(){$('#progMovePrev').disabled=cfg.currentProgram===0;$('#progMoveNext').disabled=cfg.currentProgram===cfg.programs.length-1}
 $('#progMovePrev').onclick=()=>moveProgram(-1);$('#progMoveNext').onclick=()=>moveProgram(1);
-$('#progForm').onsubmit=e=>{e.preventDefault();const pr=curProgram();pr.name=$('#progName').value.trim()||pr.name;pr.bgmId=$('#progBgmSel').value||null;pr.autoBgm=$('#progAuto').checked;persist();closeModal('progModal');renderPrograms();toast('番組の設定を保存しました')};
+$('#progForm').onsubmit=e=>{e.preventDefault();const pr=curProgram();pr.name=$('#progName').value.trim()||pr.name;pr.bgmId=$('#progBgmSel').value||null;pr.autoBgm=$('#progAuto').checked;pr.color=document.querySelector('input[name=progColor]:checked')?.value||'';persist();closeModal('progModal');renderPrograms();toast('番組の設定を保存しました')};
 
 /* ===================== モニター音（ヘッドホン・スピーカー） ===================== */
 let monitorManualOff=false,outputLabel='',outputKind='unknown';
