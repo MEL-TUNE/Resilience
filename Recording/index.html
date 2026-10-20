@@ -7,7 +7,7 @@
 <title>筋肉室ラジオ収録</title>
 <style>
 :root{--ink:#51453b;--muted:#85786a;--leaf:#78946d;--leaf-pale:#e9f2e4;--gold:#c9a263;--cream:#fffdf7;--line:#dfcfaf;--rec:#c8463b;--rec-pale:#fbe7e2;--warn:#d39a3a;--shadow:0 10px 28px #59412820}
-*{box-sizing:border-box}html{background:#f8f7ef}body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:radial-gradient(circle at 30% 0%,#fffefa,#fff9ed 56%,#eef5e9);min-height:100vh}button,input,select{font:inherit;color:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #87aa7b;outline-offset:2px}
+*{box-sizing:border-box}html{background:#f8f7ef;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input,select,label,a{touch-action:manipulation}body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:radial-gradient(circle at 30% 0%,#fffefa,#fff9ed 56%,#eef5e9);min-height:100vh}button,input,select{font:inherit;color:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #87aa7b;outline-offset:2px}
 .app{width:min(100%,1010px);margin:0 auto;padding:13px 10px 26px}
 .top{text-align:center;margin-bottom:12px}.top h1{margin:0;font-size:19px;letter-spacing:.02em}.top p{margin:4px 0 9px;color:var(--muted);font-size:11px}.tools{display:flex;justify-content:center;flex-wrap:wrap;gap:5px}
 .pill,.btn{border:1px solid #d7c49e;border-radius:999px;padding:7px 10px;background:linear-gradient(#fff,#fff9ed);box-shadow:0 2px 6px #60452512;font-size:11px;white-space:nowrap}.danger{color:#8b524b;border-color:#dfbbb3;background:#fff8f5}.primary{border-color:#adc39f;background:linear-gradient(#f1f8ed,#dcebd4);font-weight:700}.gold{border-color:#d5b673;background:linear-gradient(#fff7df,#efdaa9);font-weight:700}
@@ -78,7 +78,9 @@
 .storage{font-size:10px;color:var(--muted);text-align:right}
 .footer{text-align:center;color:#928677;font-size:10px;line-height:1.6;margin:14px 5px 0}
 .modal-back{position:fixed;inset:0;background:#2d281fba;display:none;align-items:center;justify-content:center;padding:13px;z-index:10}.modal-back.open{display:flex}.modal{width:min(420px,100%);max-height:90vh;overflow-y:auto;border:6px solid #d6ba81;border-radius:22px;background:linear-gradient(#fffefa,#fff8e9);padding:17px;box-shadow:0 20px 50px #211a0e77}.modal h2{font-size:18px;margin:0 0 12px}.field{display:grid;gap:6px;margin:11px 0}.field label{font-size:12px;font-weight:700}.field input,.field select{width:100%;border:1px solid #d7c9ac;border-radius:10px;background:white;padding:9px}.field input[type=range]{padding:0;accent-color:#86a477}.field input[type=file]{padding:6px}.field small{color:#897c6b;font-size:10px;line-height:1.4}.filebox{background:#fffdf7;border:1px dashed #cfbb91;border-radius:10px;padding:8px}.modal-actions{display:flex;justify-content:space-between;gap:7px;align-items:center;margin-top:14px;flex-wrap:wrap}.modal-actions .btn{font-size:12px}.actions-right{display:flex;gap:6px}.move-row{display:flex;gap:7px}.move-row button{flex:1}
-.category-list{display:grid;gap:7px}.category-line{display:grid!important;grid-template-columns:minmax(0,1fr) 40px 40px;gap:5px}.category-line input{width:100%;min-width:0}.category-line .tab-move{width:40px;padding:6px 0;font-size:14px;border-radius:9px}.category-line{display:flex;gap:6px}.category-line input{min-width:0;flex:1;border:1px solid #d7c9ac;border-radius:9px;background:#fff;padding:8px}.category-note{font-size:10px;color:#897c6b;line-height:1.5}
+.category-list{display:grid;gap:7px}
+.category-line.moved input{animation:rowflash .7s ease-out}@keyframes rowflash{0%{background:#dcefd2;border-color:#86aa79}100%{background:#fff}}
+@media(pointer:coarse){input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea{font-size:16px!important}}.category-line{display:grid!important;grid-template-columns:minmax(0,1fr) 40px 40px;gap:5px}.category-line input{width:100%;min-width:0}.category-line .tab-move{width:40px;padding:6px 0;font-size:14px;border-radius:9px}.category-line{display:flex;gap:6px}.category-line input{min-width:0;flex:1;border:1px solid #d7c9ac;border-radius:9px;background:#fff;padding:8px}.category-note{font-size:10px;color:#897c6b;line-height:1.5}
 .emoji-head-controls{display:flex;align-items:center;gap:5px}.emoji-mode{display:flex;align-items:center;gap:4px;font-size:10px;white-space:nowrap}.emoji-mode select{min-width:0;max-width:100px;border:1px solid #d9c7a8;border-radius:8px;background:#fff;padding:5px 3px;font-size:10px}
 .ver{color:#a8987f;font-size:10px}.btn.armed{background:var(--rec);border-color:var(--rec);color:#fff;font-weight:700}
 .confirm-back{z-index:15}.confirm-text{margin:0;font-size:13px;line-height:1.7;white-space:pre-line}#confirmYes{font-weight:700}
@@ -160,7 +162,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第18版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第19版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -1124,7 +1126,7 @@ function tabEditor(kind,label){
  box.onclick=e=>{const btn=e.target.closest('.tab-move');if(!btn)return;const row=btn.closest('.category-line');
   if(btn.dataset.up&&row.previousElementSibling)box.insertBefore(row,row.previousElementSibling);
   else if(btn.dataset.down&&row.nextElementSibling)box.insertBefore(row.nextElementSibling,row);
-  syncBtns();btn.focus()};
+  syncBtns();row.classList.remove('moved');void row.offsetWidth;row.classList.add('moved');row.scrollIntoView({block:'nearest'})};
  $('#'+k+'TabsForm').onsubmit=e=>{e.preventDefault();
   const rows=[...box.children],names=rows.map(r=>r.querySelector('input').value.trim()),order=rows.map(r=>+r.dataset.orig);
   if(names.length!==TABS||names.some(x=>!x)||new Set(names).size!==TABS){toast('分類名は空欄や重複を避けてください');return}
