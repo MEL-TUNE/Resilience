@@ -102,6 +102,7 @@
 @media(max-width:420px){.meters{grid-template-columns:1fr}.recbar .timer{font-size:26px;text-align:right}.rec-head{grid-template-columns:auto 1fr}.head-btns{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}.head-btns .pill{padding:7px 6px}.prog-row{flex-wrap:wrap}.prog-row #progEdit{margin-left:auto}.cover-row{grid-template-columns:72px minmax(0,1fr)}.cover-thumb{width:72px}.cover-ctl label{display:grid;gap:3px}.cover-ctl select{width:100%}}
 .transport{grid-template-columns:1.35fr 1fr 1fr 1fr}
 .recbar .tbtn{font-size:12.5px;padding:0 4px}
+.tbtn.discardbtn:not(:disabled){color:#8b524b;border-color:#dfbbb3;background:linear-gradient(#fff,#fff5f2)}
 .voice-warn{border:1px solid #e2b0a7;background:var(--rec-pale);color:#93362d;border-radius:10px;padding:6px 9px;font-size:11.5px;font-weight:700}
 .bgm-now{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:8px;align-items:center;border:1px solid #e4d7bd;border-radius:12px;padding:6px 8px;background:#fffcf5}
 .bgm-now-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:#efe6d3;color:#8b7a63;font-weight:700}
@@ -149,7 +150,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第14版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第15版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -159,7 +160,7 @@
   <button class="tbtn recbtn" id="recBtn">● 録音開始</button>
   <button class="tbtn" id="stopRecBtn" disabled>■ 停止・保存</button>
   <button class="tbtn" id="retakeBtn" disabled title="今のテイク（または直前のテイク）を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button>
-  <button class="tbtn" id="markBtn" disabled title="編集の目印を記録します">◆ マーカー</button>
+  <button class="tbtn discardbtn" id="discardBtn" disabled title="録音を止めて、保存せずに捨てます">✕ 停止して破棄</button>
  </div>
  <div class="voice-warn" id="voiceWarn" role="alert" hidden></div>
  <div class="bgm-now" id="bgmNow" data-state="idle"><span class="bgm-now-icon" aria-hidden="true">♪</span><div class="bgm-now-main"><div class="bgm-now-name" id="bgmNowName">BGM：なし</div><div class="bgm-now-track"><i id="bgmNowBar"></i></div></div><span class="bgm-now-time" id="bgmNowTime"></span><button class="btn" id="bgmNowStop" disabled>■ BGM停止</button></div>
@@ -194,7 +195,7 @@
   </div>
  </div>
  <input type="file" id="coverFile" accept="image/*" hidden><input type="file" id="takeCoverFile" accept="image/*" hidden>
- <p class="note">録音は数秒ごとにブラウザ内へ保存されます。途中でタブが閉じても、そこまでの音声はテイク一覧に残ります。テイク名の左の四角を押すと、そのテイクだけ動画の画像を変えられます。</p>
+ <p class="note">各テイクの「BGM操作の記録」には、BGMを流した・止めた・小さくした時刻が自動で残ります。編集ソフトで切り貼りするときの目安に使えます。録音は数秒ごとにブラウザ内へ保存されます。途中でタブが閉じても、そこまでの音声はテイク一覧に残ります。テイク名の左の四角を押すと、そのテイクだけ動画の画像を変えられます。</p>
 </div></section>
 
 <!-- 4. 設定（音量・マイクなど） -->
@@ -671,8 +672,19 @@ async function discardRec(){
  rec.pending={mix:[],voice:[],prog:[]};rec.pendingFrames=0;await rec.flushChain;
  rec.take=null;rec.state='idle';if(t)await deleteTakeData(t.id).catch(e=>console.error(e));
 }
+async function discardTake(btn){
+ if(!(rec.state==='recording'||rec.state==='paused'))return;
+ if(!armButton(btn,'もう一度押すと破棄'))return;
+ boostHold=true;await discardRec();
+ if(bgmLow){bgmLow=false;bgmTrim.gain.cancelScheduledValues(ctx.currentTime);bgmTrim.gain.setTargetAtTime(1,ctx.currentTime,.05);renderBgmLow()}
+ if(bgmPlaying){bgmSerial++;fadeStop(bgmPlaying,.5)}
+ renderRecState();await renderTakes();updateStorage();setTimeout(releaseBoostHoldIfQuiet,700);
+ toast('録音を止めて破棄しました（保存していません）',3500);
+}
 async function retake(btn){
- if(!armButton(btn,'もう一度押すと録り直し'))return;boostHold=true;retaking=true;applyMonitor();
+ if(retaking||rec.state==='stopping'||rec.state==='ending')return;
+ const live=rec.state==='recording'||rec.state==='paused';
+ if(!live&&!armButton(btn,'もう一度押すと録り直し'))return;boostHold=true;retaking=true;applyMonitor();
  try{await retakeInner()}finally{retaking=false;releaseBoostHoldIfQuiet()}
 }
 async function retakeInner(){
@@ -733,7 +745,7 @@ function renderRecState(){if(rec.state!=='idle'&&rec.state!=='paused')boostHold=
  lamp.className='lamp '+(st==='recording'||st==='ending'?'rec':st==='paused'?'pause':micLive()?'ready':'');
  txt.textContent=st==='ending'?'BGMフェードアウト中…':st==='recording'?'録音中':st==='paused'?'一時停止中':st==='stopping'?'保存中…':micLive()?'待機中':'マイク未接続';
  const rb=$('#recBtn');rb.textContent=st==='recording'?'‖ 一時停止':st==='paused'?'● 再開':'● 録音開始';rb.classList.toggle('on',st==='recording');rb.disabled=st==='stopping'||st==='ending';
- $('#stopRecBtn').disabled=!(st==='recording'||st==='paused');const rb2=$('#retakeBtn');rb2.disabled=!(st==='recording'||st==='paused'||(st==='idle'&&lastTakeId));if(rb2.dataset.armed!=='1')rb2.textContent='↺ 録り直し';$('#markBtn').disabled=!(st==='recording'||st==='paused');
+ $('#stopRecBtn').disabled=!(st==='recording'||st==='paused');const rb2=$('#retakeBtn');rb2.disabled=!(st==='recording'||st==='paused'||(st==='idle'&&lastTakeId));if(rb2.dataset.armed!=='1')rb2.textContent='↺ 録り直し';const db2=$('#discardBtn');db2.disabled=!(st==='recording'||st==='paused');if(db2.dataset.armed!=='1')db2.textContent='✕ 停止して破棄';
  const busy=st!=='idle';for(const s of ['#micSelect','#optEc','#optNs','#optAgc','#micBtn','#importBtn','#keepVoice','#keepProg'])$(s).disabled=busy;
  if(st==='idle')$('#timer').innerHTML='00:00<small>.0</small>';
 }
@@ -759,7 +771,7 @@ async function renderTakes(){
    ${live?'':`<div class="take-play" data-player="${esc(t.id)}"><button class="btn primary" data-listen="${esc(t.id)}">▶ 試聴する</button></div>`}
    ${live?'':`<div class="take-actions">${t.tracks.map(k=>`<button class="btn" data-wav="${esc(t.id)}" data-track="${k}">${TRACK_INFO[k].label} WAV</button>`).join('')}<button class="btn gold" data-mp3="${esc(t.id)}" data-track="mix">ミックス MP3</button><button class="btn primary" data-video="${esc(t.id)}">動画を書き出す</button>${t.cover?`<button class="btn" data-uncover="${esc(t.id)}">画像を共通に戻す</button>`:''}${t.tracks.includes('voice')?`<button class="btn" data-mp3="${esc(t.id)}" data-track="voice">声だけ MP3</button>`:''}</div>`}
    <div class="take-progress" data-progress="${esc(t.id)}">${esc(busyTakes.get(t.id)||'')}</div>
-   <details class="markers" data-take="${esc(t.id)}" ${live||openState.get(t.id)?'open':''}><summary>マーカー（${mk.length}）</summary><ol ${live?'id="liveMarkers"':''}>${markerList(mk)}</ol>${!live&&mk.length?`<button class="btn" style="margin-top:5px" data-copy="${esc(t.id)}">マーカー一覧をコピー</button>`:''}</details>
+   <details class="markers" data-take="${esc(t.id)}" ${live||openState.get(t.id)?'open':''}><summary>BGM操作の記録（${mk.length}）</summary><ol ${live?'id="liveMarkers"':''}>${markerList(mk)}</ol>${!live&&mk.length?`<button class="btn" style="margin-top:5px" data-copy="${esc(t.id)}">記録をコピー</button>`:''}</details>
   </article>`}).join('');
  for(const [tid,audio] of players){const slot=box.querySelector(`[data-player="${CSS.escape(tid)}"]`);if(slot){slot.replaceChildren(audio)}}
 }
@@ -1009,7 +1021,7 @@ $('#takes').addEventListener('click',e=>{const b=e.target.closest('button');if(!
  if(b.dataset.uncover){setCover(b.dataset.uncover,null);return}
  if(b.dataset.video){exportTake(b.dataset.video,'mix','video');return}
  if(b.dataset.listen)listenTake(b.dataset.listen,b);else if(b.dataset.wav)exportTake(b.dataset.wav,b.dataset.track,'wav');else if(b.dataset.mp3)exportTake(b.dataset.mp3,b.dataset.track,'mp3');else if(b.dataset.del){if(armButton(b))deleteTake(b.dataset.del,b)}
- else if(b.dataset.copy){idbGet('takes',b.dataset.copy).then(t=>{const text=(t.markers||[]).map(m=>fmtTime(m.t,true)+'\t'+m.label).join('\n');navigator.clipboard.writeText(text).then(()=>toast('マーカー一覧をコピーしました'),()=>toast('コピーできませんでした'))})}});
+ else if(b.dataset.copy){idbGet('takes',b.dataset.copy).then(t=>{const text=(t.markers||[]).map(m=>fmtTime(m.t,true)+'\t'+m.label).join('\n');navigator.clipboard.writeText(text).then(()=>toast('記録をコピーしました'),()=>toast('コピーできませんでした'))})}});
 $('#takes').addEventListener('change',async e=>{const inp=e.target.closest('[data-rename]');if(!inp)return;const name=inp.value.trim()||'収録';
  if(rec.take?.id===inp.dataset.rename){rec.take.name=name;return}const t=await idbGet('takes',inp.dataset.rename);if(t){t.name=name;await idbPut('takes',t.id,t);toast('テイク名を変更しました')}});
 async function updateStorage(){try{const est=await navigator.storage?.estimate?.();if(!est)return;const mb=x=>x>1073741824?(x/1073741824).toFixed(1)+'GB':Math.round(x/1048576)+'MB';$('#storageInfo').textContent=`保存 ${mb(est.usage)}／空き 約${mb(est.quota-est.usage)}`}catch(_){}}
@@ -1087,7 +1099,7 @@ $('#mp3Rate').onchange=e=>{cfg.rec.mp3Rate=+e.target.value;persist()};
 $('#micSelect').onchange=e=>{cfg.rec.micId=e.target.value;persist();if(micStream)enableMic()};
 $('#micBtn').onclick=()=>enableMic();
 $('#recBtn').onclick=()=>{if(rec.state==='idle')startRec();else if(rec.state==='recording')pauseRec();else if(rec.state==='paused')resumeRec()};
-$('#stopRecBtn').onclick=stopRec;$('#retakeBtn').onclick=e=>retake(e.currentTarget);$('#markBtn').onclick=()=>addMarker();
+$('#stopRecBtn').onclick=stopRec;$('#retakeBtn').onclick=e=>retake(e.currentTarget);$('#discardBtn').onclick=e=>discardTake(e.currentTarget);
 $('#bgmFadeBtn').onclick=()=>{if(!bgmPlaying){toast('再生中のBGMはありません');return}const b=cfg.bgms.find(x=>x.id===bgmPlaying.trackId);bgmSerial++;addMarker('BGMフェードアウト：'+(b?.name||''),true);fadeStop(bgmPlaying,cfg.rec.fadeSec)};
 function setBgmLow(on){audioEngine();bgmLow=on;const t=ctx.currentTime;bgmTrim.gain.cancelScheduledValues(t);bgmTrim.gain.setTargetAtTime(on?cfg.rec.bgmLowLevel/100:1,t,.6);addMarker(on?'BGMを小さく':'BGMを元の音量へ',true);renderBgmLow();renderBgmNow()}
 function renderBgmLow(){$('#bgmLowBtn').classList.toggle('on',bgmLow);$('#bgmLowBtn').textContent=bgmLow?'BGMを元に戻す':'BGMを小さくする';$('#bgmLowState').textContent=bgmLow?'小さくしています（'+cfg.rec.bgmLowLevel+'%）':'通常の音量'}
