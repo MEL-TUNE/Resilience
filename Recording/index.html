@@ -135,8 +135,9 @@
 .prog-chip.c-leaf.active{background:#d6ebcb;border-color:#79a56a;box-shadow:0 0 0 2px #a5d29099;color:#2f4a29}
 .prog-chip.c-honey.active{background:#f8e7ad;border-color:#cfa53e;box-shadow:0 0 0 2px #e6c87099;color:#5a4214}
 .prog-colors{display:flex;flex-wrap:wrap;gap:6px}
-.prog-colors label{display:flex;align-items:center;gap:5px;border:1px solid #d7c9ac;border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:400!important;background:#fff;cursor:pointer}
+.prog-colors label{display:flex;align-items:center;gap:5px;border:1px solid #d7c9ac;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:400!important;background:#fff;cursor:pointer}
 .prog-colors input{width:auto!important;margin:0}
+.prog-colors label.c-snow,.prog-colors label.c-leaf,.prog-colors label.c-honey{font-size:18px;padding:3px 9px;gap:4px}
 .prog-colors label.c-snow{background:#e6f3fb;border-color:#a9cfe6}.prog-colors label.c-leaf{background:#e8f3e1;border-color:#a9c99b}.prog-colors label.c-honey{background:#fcf3d3;border-color:#e1c578}
 .head-btns{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
 #monBtn.off{background:#fff3df;border-color:#d8b56f;color:#7a5520;font-weight:700}
@@ -162,7 +163,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第19版）</span></p></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-20 第20版）</span></p></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -270,7 +271,7 @@
 
 <div class="modal-back" id="progModal"><form class="modal" id="progForm"><h2>番組の設定</h2>
  <div class="field"><label for="progName">番組名</label><input id="progName" maxlength="30" required><small>テイク名の先頭にも使われます。</small></div>
- <div class="field"><span style="font-size:12px;font-weight:700">ボタンの色</span><div class="prog-colors" id="progColors"><label><input type="radio" name="progColor" value="">指定なし</label><label class="c-snow"><input type="radio" name="progColor" value="snow">❄️ 淡い水色（雪見おと名義）</label><label class="c-leaf"><input type="radio" name="progColor" value="leaf">🌿 淡い緑色（コウサカチヅル名義）</label><label class="c-honey"><input type="radio" name="progColor" value="honey">🍯 淡い黄色（その他）</label></div></div>
+ <div class="field"><span style="font-size:12px;font-weight:700">ボタンの色</span><div class="prog-colors" id="progColors"><label><input type="radio" name="progColor" value="">指定なし</label><label class="c-snow" title="淡い水色"><input type="radio" name="progColor" value="snow" aria-label="淡い水色">❄️</label><label class="c-leaf" title="淡い緑色"><input type="radio" name="progColor" value="leaf" aria-label="淡い緑色">🌿</label><label class="c-honey" title="淡い黄色"><input type="radio" name="progColor" value="honey" aria-label="淡い黄色">🍯</label></div></div>
  <div class="field"><label for="progBgmSel">初期BGM</label><select id="progBgmSel"></select><small>BGM欄に登録した曲から選びます。BGM欄の一番上と、録音欄に表示されます。</small></div>
  <div class="field"><label style="display:flex;gap:6px;align-items:center;font-weight:400"><input type="checkbox" id="progAuto" style="width:auto">録音開始と同時に初期BGMを頭から流す</label></div>
  <div class="field"><label>この番組の動画用サムネイル（7枚まで）</label>
