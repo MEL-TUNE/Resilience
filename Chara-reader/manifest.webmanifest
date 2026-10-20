@@ -1,0 +1,18 @@
+{
+  "name": "彼岸リオ Reader",
+  "short_name": "リオReader",
+  "description": "長文を一括コピペして端末音声で連続再生する彼岸リオ・ブラウザReader。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5eee5",
+  "theme_color": "#781f35",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "assets/rio-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
