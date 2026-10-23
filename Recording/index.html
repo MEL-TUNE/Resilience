@@ -80,6 +80,7 @@
 .modal-back{position:fixed;inset:0;background:#2d281fba;display:none;align-items:center;justify-content:center;padding:13px;z-index:10}.modal-back.open{display:flex}.modal{width:min(420px,100%);max-height:90vh;overflow-y:auto;border:6px solid #d6ba81;border-radius:22px;background:linear-gradient(#fffefa,#fff8e9);padding:17px;box-shadow:0 20px 50px #211a0e77}.modal h2{font-size:18px;margin:0 0 12px}.field{display:grid;gap:6px;margin:11px 0}.field label{font-size:12px;font-weight:700}.field input,.field select{width:100%;border:1px solid #d7c9ac;border-radius:10px;background:white;padding:9px}.field input[type=range]{padding:0;accent-color:#86a477}.field input[type=file]{padding:6px}.field small{color:#897c6b;font-size:10px;line-height:1.4}.filebox{background:#fffdf7;border:1px dashed #cfbb91;border-radius:10px;padding:8px}.modal-actions{display:flex;justify-content:space-between;gap:7px;align-items:center;margin-top:14px;flex-wrap:wrap}.modal-actions .btn{font-size:12px}.actions-right{display:flex;gap:6px}.move-row{display:flex;gap:7px}.move-row button{flex:1}
 .category-list{display:grid;gap:7px}
 .category-line.moved input{animation:rowflash .7s ease-out}@keyframes rowflash{0%{background:#dcefd2;border-color:#86aa79}100%{background:#fff}}
+@media(max-width:480px){.section-help,.note,.take-meta,.category-note{font-size:11.5px;line-height:1.55}.chip{font-size:11.5px;padding:5px 10px}.meters .meter-row{font-size:11px}.bgm-tabs{gap:5px}}
 @media(pointer:coarse){input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea{font-size:16px!important}}.category-line{display:grid!important;grid-template-columns:minmax(0,1fr) 40px 40px;gap:5px}.category-line input{width:100%;min-width:0}.category-line .tab-move{width:40px;padding:6px 0;font-size:14px;border-radius:9px}.category-line{display:flex;gap:6px}.category-line input{min-width:0;flex:1;border:1px solid #d7c9ac;border-radius:9px;background:#fff;padding:8px}.category-note{font-size:10px;color:#897c6b;line-height:1.5}
 .emoji-head-controls{display:flex;align-items:center;gap:5px}.emoji-mode{display:flex;align-items:center;gap:4px;font-size:10px;white-space:nowrap}.emoji-mode select{min-width:0;max-width:100px;border:1px solid #d9c7a8;border-radius:8px;background:#fff;padding:5px 3px;font-size:10px}
 .ver{color:#a8987f;font-size:10px}.btn.armed{background:var(--rec);border-color:var(--rec);color:#fff;font-weight:700}
@@ -128,6 +129,7 @@
 .prog-chip{border:1px solid #d8cab2;border-radius:999px;padding:6px 11px;background:#fffcf5;white-space:nowrap;font-size:12px}
 .prog-chip.active{background:#e4f0dc;border-color:#86aa79;color:#3f5a38;font-weight:800;box-shadow:0 0 0 2px #a5d29066}
 .prog-chip:disabled{opacity:.5}
+.prog-chip.free{border-style:dashed;color:#6d6252}.prog-chip.free.active{background:#f3ede2;border-style:solid;border-color:#a8997f;color:#4a4034;box-shadow:0 0 0 2px #cdbfa699}
 .prog-chip.c-snow{background:#e6f3fb;border-color:#a9cfe6;color:#2f566e}
 .prog-chip.c-leaf{background:#e8f3e1;border-color:#a9c99b;color:#3f5a38}
 .prog-chip.c-honey{background:#fcf3d3;border-color:#e1c578;color:#6b5320}
@@ -171,6 +173,19 @@ body:not([data-page="settings"]) #settingsShell{display:none}
 .voice-pad:active{transform:scale(.96)}
 .voice-pad .shortcut{position:absolute;top:2px;left:4px;color:#fff;text-shadow:0 0 3px #000;font-size:9px}
 .try-row{display:flex;flex-wrap:wrap;gap:5px}
+.bgm-now-main,.mini-bgm-name{cursor:pointer}.bgm-now-main:hover .bgm-now-name,.mini-bgm-name:hover{text-decoration:underline}
+.save-warn{font-weight:400}.save-warn .warn-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.save-warn .btn{font-size:11.5px;white-space:normal}
+.minibar{position:fixed;left:0;right:0;top:0;z-index:6;padding:calc(env(safe-area-inset-top,0px) + 6px) 10px 6px;background:#fffbf1f5;border-bottom:2px solid #d7bc83;box-shadow:0 6px 16px #5941281f;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.minibar-in{width:min(100%,540px);margin:0 auto;display:grid;gap:5px}
+.mini-row{display:flex;align-items:center;gap:5px;min-width:0}
+.mini-timer{font:700 17px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;flex:none}.mini-timer[data-st="recording"],.mini-timer[data-st="ending"]{color:var(--rec)}.mini-timer[data-st="paused"]{color:#b07a1e}
+@media(max-width:360px){.mbtn{font-size:11px;padding:0 2px}.mini-timer{font-size:15px}}
+.mbtn{flex:1;min-width:0;height:36px;border:1px solid #d7c49e;border-radius:10px;background:linear-gradient(#fff,#fff6e6);font-size:12px;font-weight:800;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbtn.recbtn{border-color:#dba79c;background:linear-gradient(#fff4f1,#f5d5cd);color:#93362d}.mbtn.recbtn.on{background:linear-gradient(#fff8e8,#f3dfb2);border-color:#d8b56f;color:#7a5520}.mbtn.armed{background:var(--rec);border-color:var(--rec);color:#fff}
+.mini-bgm{display:flex;align-items:center;gap:6px;font-size:11.5px;border:1px solid #e4d7bd;border-radius:9px;padding:3px 3px 3px 8px;background:#fffcf5}
+.mini-bgm-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+.mini-bgm .mbtn{flex:none;height:28px;font-size:11px;padding:0 8px}
+.mini-bgm[data-state="playing"]{border-color:#9dbb8f;background:#f2f8ee}.mini-bgm[data-state="low"]{border-color:#d8b56f;background:#fff7e6}.mini-bgm[data-state="error"]{border-color:#e2b0a7;background:var(--rec-pale);color:#93362d}
 .bgm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px}
 .bgm-low-state{font-size:10px;color:var(--muted)}
 .section-title .storage{font-size:10px}
@@ -179,7 +194,7 @@ body:not([data-page="settings"]) #settingsShell{display:none}
 </head>
 <body>
 <div class="app">
-<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-21 第22版）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" id="navMain">収録画面</button><button class="pill" type="button" data-goto="settings" id="navSettings">音量・マイクの設定</button></nav></header>
+<header class="top"><h1>筋肉室ラジオ収録</h1><p>声・BGM・効果音をその場で合成して録音します <span class="ver">（2026-10-24 第23版）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" id="navMain">収録画面</button><button class="pill" type="button" data-goto="settings" id="navSettings">音量・マイクの設定</button></nav></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content recbar-in">
@@ -192,13 +207,18 @@ body:not([data-page="settings"]) #settingsShell{display:none}
   <button class="tbtn discardbtn" id="discardBtn" disabled title="録音を止めて、保存せずに捨てます">✕ 停止して破棄</button>
  </div>
  <div class="voice-warn" id="voiceWarn" role="alert" hidden></div>
- <div class="bgm-now" id="bgmNow" data-state="idle"><span class="bgm-now-icon" aria-hidden="true">♪</span><div class="bgm-now-main"><div class="bgm-now-name" id="bgmNowName">BGM：なし</div><div class="bgm-now-track"><i id="bgmNowBar"></i></div></div><span class="bgm-now-time" id="bgmNowTime"></span><button class="btn" id="bgmNowStop" disabled>■ BGM停止</button></div>
+ <div class="voice-warn save-warn" id="saveWarn" role="alert" hidden></div>
+ <div class="bgm-now" id="bgmNow" data-state="idle"><span class="bgm-now-icon" aria-hidden="true">♪</span><div class="bgm-now-main" id="bgmNowMain" role="button" tabindex="0" title="押すとBGM欄へ移動"><div class="bgm-now-name" id="bgmNowName">BGM：なし</div><div class="bgm-now-track"><i id="bgmNowBar"></i></div></div><span class="bgm-now-time" id="bgmNowTime"></span><button class="btn" id="bgmNowStop" disabled>■ BGM停止</button></div>
  <div class="meters">
   <div class="meter-row"><span>マイク</span><div class="meter"><i id="micMeter"></i><b id="micPeak"></b></div><output id="micDb">-∞ dB</output></div>
   <div class="meter-row"><span>録音</span><div class="meter"><i id="mixMeter"></i><b id="mixPeak"></b></div><output id="mixDb">-∞ dB</output></div>
  </div>
 </div></section>
 
+<div class="minibar" id="miniBar" hidden><div class="minibar-in">
+ <div class="mini-row"><span class="mini-timer" id="miniTimer">00:00.0</span><button class="mbtn recbtn" type="button" id="miniRec">● 録音開始</button><button class="mbtn" type="button" id="miniStop">■ 停止</button><button class="mbtn" type="button" id="miniRetake">↺ 録り直し</button></div>
+ <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button></div>
+</div></div>
 <!-- 2. 効果音・BGM -->
 <main class="shell" id="boardShell"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content">
 <section class="section"><div class="section-title"><h2>絵文字の効果音 <span>6×7</span></h2><div class="emoji-head-controls"><label class="emoji-mode" for="playMode">連打 <select id="playMode"><option value="restart">鳴らし直す</option><option value="overlap">重ねる</option></select></label><button class="btn gold" type="button" id="editEmojiTabs">分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs"></div><div class="emoji-grid" id="emojiGrid"></div><p class="section-help">空欄を押して登録。登録後は長押し・右クリックで編集できます。</p></section>
@@ -337,10 +357,10 @@ let bgmPlaying=null,bgmSerial=0,bgmPendingId=null;
 const soundSerial=new Map(), pendingText=new Set(), active=new Set();
 
 function normalize(raw){
- const base=defaults();if(!raw)return base;
+ const base=defaults();if(!raw)return ensureBgmSlots(ensureTextSlots(ensureEmojiSlots(ensureSlots(base))));
  base.rec={...REC_DEFAULTS,...(raw.rec&&typeof raw.rec==='object'?raw.rec:{})};
  if(Array.isArray(raw.programs)&&raw.programs.length){const defs=defaultPrograms(),used=new Set(raw.programs.map(x=>x&&x.id));const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...defs[i],...x}));for(const d of defs){if(kept.length>=PROGRAMS)break;if(!used.has(d.id))kept.push(d)}base.programs=kept}
- base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=0&&raw.currentProgram<PROGRAMS?raw.currentProgram:0;
+ base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<PROGRAMS?raw.currentProgram:(raw.currentProgram===-1?-1:0);
  if(Array.isArray(raw.sounds)&&raw.sounds.some(x=>x.emoji)&&!raw.sounds.some(x=>x.type)){
   const old=raw.sounds.map((s,i)=>({...newSound('emoji',s.emoji||'🔔',i),...s,label:s.emoji||'🔔',type:'emoji',category:s.assetId?s.category||'全て':'全て',order:i}));
   base.sounds=[...old,...emojiLabels.slice(old.length).map((x,i)=>newSound('emoji',x,old.length+i)),...textLabels.map((x,i)=>newSound('text',x,i))];
@@ -564,6 +584,7 @@ function drawMeter(name,db){
 function meterLoop(){
  if(ctx){drawMeter('mic',micStream?peakDb(micAnalyser,micBuf):-99);drawMeter('mix',peakDb(mixAnalyser,mixBuf))}
  if(rec.state!=='idle')renderTimer();
+ if(miniOn)syncMini();
  tickBgmNow();checkVoice();
  requestAnimationFrame(meterLoop);
 }
@@ -575,20 +596,23 @@ function duckLoop(){
  if(want!==ducked||forceDuck){ducked=want;forceDuck=false;const t=ctx.currentTime;duckGain.gain.cancelScheduledValues(t);duckGain.gain.setTargetAtTime(want?Math.pow(10,-cfg.rec.duckDepth/20):1,t,want?.06:.35);renderDuck()}
 }
 /* ===================== 番組プリセット ===================== */
-const curProgram=()=>cfg.programs?.[cfg.currentProgram];
+const curProgram=()=>cfg.currentProgram>=0?cfg.programs?.[cfg.currentProgram]:null;
+const isFree=()=>cfg.currentProgram<0;
+function preloadProgBgm(){const pb=progBgm();if(pb&&db)setTimeout(()=>decodeAsset(pb.assetId,true).catch(()=>{}),300)}
 function progBgm(){const pr=curProgram();return pr?.bgmId?cfg.bgms.find(b=>b.id===pr.bgmId&&b.assetId):null}
 function renderPrograms(){
  const busy=rec.state!=='idle';
- $('#progChips').innerHTML=cfg.programs.map((pr,i)=>`<button class="prog-chip ${pr.color&&PROG_COLORS[pr.color]?'c-'+pr.color:''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('');
+ $('#progEdit').disabled=isFree();
+ $('#progChips').innerHTML=`<button class="prog-chip free ${isFree()?'active':''}" role="tab" aria-selected="${isFree()}" data-prog="-1" title="番組を使わずに録る（初期BGM・番組の画像なし）" ${busy&&!isFree()?'disabled':''}>フリー</button>`+cfg.programs.map((pr,i)=>`<button class="prog-chip ${pr.color&&PROG_COLORS[pr.color]?'c-'+pr.color:''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('');
  {const act=$('#progChips .prog-chip.active');if(act){const c=$('#progChips');const l=act.offsetLeft-c.offsetLeft,rgt=l+act.offsetWidth;if(l<c.scrollLeft||rgt>c.scrollLeft+c.clientWidth)c.scrollLeft=Math.max(0,l-8)}}
  const pb=progBgm(),box=$('#progBgm');
  box.innerHTML=pb?`<p class="prog-bgm-label">「${esc(curProgram().name)}」の初期BGM</p><div class="bgm-card ${bgmPlaying?.trackId===pb.id||bgmLoadingId===pb.id?'active':''}"><div class="bgm-row" style="grid-template-columns:minmax(0,1fr)"><button class="bgm-play" data-play-bgm="${esc(pb.id)}"><span class="bgm-icon">${bgmPlaying?.trackId===pb.id?'■':bgmLoadingId===pb.id?'…':'▶'}</span><span class="bgm-name">${esc(pb.name)}</span></button></div></div>`
-  :`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。録音欄の「番組の設定」で選べます。</div>`;
+  :isFree()?`<div class="empty">フリー収録中です。初期BGMと番組の画像は使いません。BGMを流すときは下の一覧から選べます。</div>`:`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。録音欄の「番組の設定」で選べます。</div>`;
  renderBgmNow();
 }
-$('#progChips').onclick=e=>{const c=e.target.closest('[data-prog]');if(!c||rec.state!=='idle')return;cfg.currentProgram=+c.dataset.prog;persist();renderPrograms();toast('番組を「'+curProgram().name+'」に切り替えました')};
+$('#progChips').onclick=e=>{const c=e.target.closest('[data-prog]');if(!c||rec.state!=='idle')return;cfg.currentProgram=+c.dataset.prog;persist();renderPrograms();preloadProgBgm();toast(isFree()?'フリー収録に切り替えました（初期BGM・番組の画像なし）':'番組を「'+curProgram().name+'」に切り替えました')};
 $('#progBgm').onclick=e=>{const pbtn=e.target.closest('[data-play-bgm]');if(!pbtn)return;const b=cfg.bgms.find(x=>x.id===pbtn.dataset.playBgm);if(b)playBgm(b)};
-$('#progEdit').onclick=async()=>{
+$('#progEdit').onclick=async()=>{if(isFree())return;
  const pr=curProgram();$('#progName').value=pr.name;$('#progAuto').checked=!!pr.autoBgm;
  for(const rd of document.querySelectorAll('input[name=progColor]'))rd.checked=rd.value===(PROG_COLORS[pr.color]?pr.color:'');
  const list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
@@ -623,10 +647,10 @@ $('#pcRemove').onclick=async e=>{if(pcSel<0||!armButton(e.currentTarget,'もう�
 $('#pcUseDefault').onclick=async()=>{curProgram().coverIdx=-1;pcSel=-1;persist();await renderProgCover();renderTakes();toast('この番組は共通の画像を使います')};
 $('#progCoverFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||pcTarget<0)return;const pr=curProgram(),n=pcTarget;pcTarget=-1;
  await setCover(progCoverKey(pr.id,n),f);pr.coverIdx=n;pcSel=n;persist();await renderProgCover();renderTakes()};
-function moveProgram(d){const i=cfg.currentProgram,j=i+d;if(j<0||j>=cfg.programs.length||rec.state!=='idle')return;[cfg.programs[i],cfg.programs[j]]=[cfg.programs[j],cfg.programs[i]];cfg.currentProgram=j;persist();renderPrograms();updateProgMoveBtns()}
+function moveProgram(d){const i=cfg.currentProgram,j=i+d;if(i<0)return;if(j<0||j>=cfg.programs.length||rec.state!=='idle')return;[cfg.programs[i],cfg.programs[j]]=[cfg.programs[j],cfg.programs[i]];cfg.currentProgram=j;persist();renderPrograms();updateProgMoveBtns()}
 function updateProgMoveBtns(){$('#progMovePrev').disabled=cfg.currentProgram===0;$('#progMoveNext').disabled=cfg.currentProgram===cfg.programs.length-1}
 $('#progMovePrev').onclick=()=>moveProgram(-1);$('#progMoveNext').onclick=()=>moveProgram(1);
-$('#progForm').onsubmit=e=>{e.preventDefault();const pr=curProgram();pr.name=$('#progName').value.trim()||pr.name;pr.bgmId=$('#progBgmSel').value||null;pr.autoBgm=$('#progAuto').checked;pr.color=document.querySelector('input[name=progColor]:checked')?.value||'';persist();closeModal('progModal');renderPrograms();toast('番組の設定を保存しました')};
+$('#progForm').onsubmit=e=>{e.preventDefault();const pr=curProgram();pr.name=$('#progName').value.trim()||pr.name;pr.bgmId=$('#progBgmSel').value||null;pr.autoBgm=$('#progAuto').checked;setTimeout(preloadProgBgm,0);pr.color=document.querySelector('input[name=progColor]:checked')?.value||'';persist();closeModal('progModal');renderPrograms();toast('番組の設定を保存しました')};
 
 /* ===================== モニター音（ヘッドホン・スピーカー） ===================== */
 let monitorManualOff=false,outputLabel='',outputKind='unknown';
@@ -682,7 +706,8 @@ const WORKLET=`class R extends AudioWorkletProcessor{constructor(){super();this.
 flush(){if(!this.n)return;const ch=this.b.map(a=>a.slice(0,this.n));this.port.postMessage({frames:this.n,ch},ch.map(a=>a.buffer));this.n=0}
 process(inputs){if(!this.on)return true;const inp=inputs[0]||[];const len=inp[0]?inp[0].length:128;if(this.n+len>this.N)this.flush();for(let c=0;c<5;c++){const src=inp[c],dst=this.b[c];if(src)dst.set(src,this.n);else dst.fill(0,this.n,this.n+len)}this.n+=len;return true}}
 registerProcessor('kinniku-rec',R);`;
-const rec={state:'idle',take:null,node:null,mode:'',pending:{mix:[],voice:[],prog:[]},pendingFrames:0,idx:{mix:0,voice:0,prog:0},frames:0,flushChain:Promise.resolve(),stopResolve:null};
+const rec={state:'idle',take:null,node:null,mode:'',pending:{mix:[],voice:[],prog:[]},pendingFrames:0,idx:{mix:0,voice:0,prog:0},frames:0,flushChain:Promise.resolve(),stopResolve:null,retry:[],saveTrouble:false,saveErr:'',recovered:false};
+let rescue=null;
 async function ensureRecorder(){
  if(rec.node)return;audioEngine();
  const sink=ctx.createGain();sink.gain.value=0;sink.connect(ctx.destination);
@@ -710,16 +735,44 @@ function onRecData({frames,ch}){
 }
 const chunkKey=(takeId,track,i)=>`${takeId}|${track}|${String(i).padStart(7,'0')}`;
 const chunkRange=(takeId,track)=>IDBKeyRange.bound(`${takeId}|${track}|`,`${takeId}|${track}|￿`);
+// 数秒ごとの保存。失敗した分は捨てずにメモリに持ち、次の保存で書き直す
 function flushChunks(){
  const t=rec.take;if(!t)return rec.flushChain;
- const parts={};for(const k of t.tracks){if(rec.pending[k].length){parts[k]=new Blob(rec.pending[k]);rec.pending[k]=[]}}
+ const jobs=[];for(const k of t.tracks){if(rec.pending[k].length){jobs.push([chunkKey(t.id,k,rec.idx[k]++),new Blob(rec.pending[k])]);rec.pending[k]=[]}}
  const frames=rec.frames;rec.pendingFrames=0;
- const jobs=Object.entries(parts).map(([k,blob])=>[chunkKey(t.id,k,rec.idx[k]++),blob]);
- rec.flushChain=rec.flushChain.then(()=>new Promise((resolve,reject)=>{
-  const tx=db.transaction(['chunks','takes'],'readwrite');for(const [key,blob] of jobs)tx.objectStore('chunks').put(blob,key);
-  t.frames=frames;tx.objectStore('takes').put({...t},t.id);tx.oncomplete=resolve;tx.onerror=tx.onabort=()=>reject(tx.error);
- })).catch(e=>{console.error(e);toast('録音データを保存できませんでした。空き容量をご確認ください',5000)});
+ rec.flushChain=rec.flushChain.then(async()=>{
+  const all=[...rec.retry,...jobs];rec.retry=[];
+  try{
+   await new Promise((resolve,reject)=>{const tx=db.transaction(['chunks','takes'],'readwrite');
+    try{for(const [key,blob] of all)tx.objectStore('chunks').put(blob,key);t.frames=frames;tx.objectStore('takes').put({...t},t.id)}catch(e){try{tx.abort()}catch(_){}reject(e);return}
+    tx.oncomplete=resolve;tx.onerror=tx.onabort=()=>reject(tx.error||Error('保存が中断されました'))});
+   if(rec.saveTrouble){rec.saveTrouble=false;rec.recovered=true;renderSaveWarn()}
+  }catch(e){console.error(e);rec.retry=all;rec.saveTrouble=true;rec.saveErr=errText(e);renderSaveWarn()}
+ });
  return rec.flushChain;
+}
+const unsavedSec=(jobs,sr)=>jobs.filter(([k])=>k.includes('|mix|')).reduce((n,[,b])=>n+b.size,0)/4/sr;
+function renderSaveWarn(){
+ const el=$('#saveWarn');if(!el)return;
+ if(rec.saveTrouble&&rec.take){el.hidden=false;el.innerHTML=`ブラウザへの保存に失敗しています（${esc(rec.saveErr)}）。録音は続いていて、保存できなかった約${Math.ceil(unsavedSec(rec.retry,rec.take.sampleRate))}秒分はメモリに持ったまま、保存をやり直しています。`;return}
+ if(rescue){const sec=Math.ceil(unsavedSec(rescue.jobs,rescue.take.sampleRate));el.hidden=false;
+  el.innerHTML=(sec>0?`「${esc(rescue.take.name)}」の一部（約${sec}秒分）をブラウザに保存できませんでした（${esc(rescue.err)}）。この画面を閉じる前に、どちらかを押すと録音を残せます。`:`「${esc(rescue.take.name)}」の音声は保存できていますが、仕上げの保存に失敗しました（${esc(rescue.err)}）。「もう一度保存する」で完了できます。WAVで書き出して残すこともできます。`)+`<div class="warn-actions"><button class="btn" type="button" id="rescueRetry">もう一度保存する</button><button class="btn gold" type="button" id="rescueWav">この録音をWAVで書き出す</button><button class="btn" type="button" id="rescueClose">閉じる</button></div>`;
+  $('#rescueRetry').onclick=rescueRetry;$('#rescueWav').onclick=rescueWav;$('#rescueClose').onclick=e=>{if(armButton(e.currentTarget,'もう一度押すと閉じる（未保存分は失われます）')){rescue=null;renderSaveWarn()}};return}
+ el.hidden=true;el.innerHTML='';
+}
+async function rescueRetry(){
+ if(!rescue)return;const {take,jobs}=rescue;
+ try{await new Promise((resolve,reject)=>{const tx=db.transaction(['chunks','takes'],'readwrite');try{for(const [key,blob] of jobs)tx.objectStore('chunks').put(blob,key);tx.objectStore('takes').put({...take,status:'done',missingSec:0},take.id)}catch(e){try{tx.abort()}catch(_){}reject(e);return}tx.oncomplete=resolve;tx.onerror=tx.onabort=()=>reject(tx.error||Error('保存が中断されました'))});
+  rescue=null;renderSaveWarn();await renderTakes();updateStorage();toast(`「${take.name}」を最後まで保存できました`,4000)}
+ catch(e){console.error(e);rescue.err=errText(e);renderSaveWarn();toast('まだ保存できません（'+errText(e)+'）。WAVで書き出すと録音を残せます',6000)}
+}
+async function rescueWav(){
+ if(!rescue)return;const {take,jobs}=rescue;
+ try{let stored=[];try{for(const k of await trackKeys(take,'mix')){const b=await idbGet('chunks',k);if(b)stored.push([k,b])}}catch(_){}
+  const all=[...stored,...jobs.filter(([k])=>k.includes('|mix|'))].sort((a,b)=>a[0]<b[0]?-1:1);
+  const bytes=all.reduce((n,[,b])=>n+b.size,0);
+  download(new Blob([wavHeader(2,take.sampleRate,bytes),...all.map(([,b])=>b)],{type:'audio/wav'}),`${safeName(take.name)}_ミックス.wav`);toast('録音をWAVで書き出しました',4000)}
+ catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
 }
 function stamp(d=new Date()){const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
 let lastTakeId=null;
@@ -727,7 +780,7 @@ function micLive(){const tr=micStream?.getAudioTracks?.()[0];return !!(tr&&tr.re
 async function discardRec(){
  const t=rec.take;boostHold=true;rec.state='stopping';renderRecState();
  if(rec.mode==='worklet'){await new Promise(resolve=>{rec.stopResolve=resolve;rec.node.port.postMessage('stop');setTimeout(resolve,1500)})}
- rec.pending={mix:[],voice:[],prog:[]};rec.pendingFrames=0;await rec.flushChain;
+ rec.pending={mix:[],voice:[],prog:[]};rec.pendingFrames=0;await rec.flushChain;rec.retry=[];rec.saveTrouble=false;rec.recovered=false;renderSaveWarn();
  rec.take=null;rec.state='idle';if(t)await deleteTakeData(t.id).catch(e=>console.error(e));
 }
 async function discardTake(btn){
@@ -764,9 +817,10 @@ async function startRec(opts={}){
   if(!micLive())await enableMic();
   if(!micLive()){toast('マイクがつながっていないため、録音を始めませんでした。マイクの許可や接続を確かめてから、もう一度「録音開始」を押してください',7000);return}
   navigator.storage?.persist?.().catch(()=>{});
+  try{const est=await navigator.storage?.estimate?.();if(est&&est.quota&&est.quota-est.usage<150*1048576)toast(`ブラウザの空き容量が少なくなっています（残り約${Math.max(0,Math.round((est.quota-est.usage)/1048576))}MB）。長い録音は途中で保存できなくなる可能性があります`,7000)}catch(_){}
   const tracks=['mix'];if(cfg.rec.keepVoice)tracks.push('voice');if(cfg.rec.keepProg)tracks.push('prog');
-  rec.take={id:id(),name:(curProgram()?.name||'収録')+' '+stamp(),programId:curProgram()?.id||null,created:Date.now(),sampleRate:ctx.sampleRate,frames:0,tracks,markers:[],status:'recording',startBgmId:bgmPlaying?.trackId||bgmLoadingId||null};
-  rec.pending={mix:[],voice:[],prog:[]};rec.pendingFrames=0;rec.idx={mix:0,voice:0,prog:0};rec.frames=0;
+  rec.take={id:id(),name:(curProgram()?.name||'フリー')+' '+stamp(),programId:curProgram()?.id||null,created:Date.now(),sampleRate:ctx.sampleRate,frames:0,tracks,markers:[],status:'recording',startBgmId:bgmPlaying?.trackId||bgmLoadingId||null};
+  rec.pending={mix:[],voice:[],prog:[]};rec.pendingFrames=0;rec.idx={mix:0,voice:0,prog:0};rec.frames=0;rec.retry=[];rec.saveTrouble=false;rec.recovered=false;
   await idbPut('takes',rec.take.id,{...rec.take});
   rec.state='recording';if(rec.mode==='worklet')rec.node.port.postMessage('start');
   if(bgmPlaying){const b=cfg.bgms.find(x=>x.id===bgmPlaying.trackId);if(b)addMarker('BGM再生中：'+b.name,true)}
@@ -784,12 +838,24 @@ async function stopRec(){
   bgmSerial++;await fadeStop(bgmPlaying,cfg.rec.fadeSec);await sleep(500);
  }
  rec.state='stopping';renderRecState();
- if(rec.mode==='worklet'){await new Promise(resolve=>{rec.stopResolve=resolve;rec.node.port.postMessage('stop');setTimeout(resolve,1500)})}
- await flushChunks();
- const t=rec.take;t.status='done';t.frames=rec.frames;await idbPut('takes',t.id,{...t});
- lastTakeId=t.id;rec.take=null;rec.state='idle';if(micGain){micGain.gain.cancelScheduledValues(ctx.currentTime);micGain.gain.setValueAtTime(cfg.rec.micVolume/100,ctx.currentTime)}if(bgmLow&&!bgmPlaying){bgmLow=false;bgmTrim.gain.setTargetAtTime(1,ctx.currentTime,.05);renderBgmLow()}renderRecState();await renderTakes();updateStorage();
- toast(`「${t.name}」を保存しました（${fmtTime(t.frames/t.sampleRate)}）`,3500);
- releaseBoostHoldIfQuiet();
+ const t=rec.take;let ok=true,err='';
+ try{
+  if(rec.mode==='worklet'){await new Promise(resolve=>{rec.stopResolve=resolve;rec.node.port.postMessage('stop');setTimeout(resolve,1500)})}
+  await flushChunks();
+  for(let i=0;i<3&&rec.retry.length;i++){await sleep(500);await flushChunks()}
+  ok=!rec.retry.length;if(!ok)err=rec.saveErr;
+  t.frames=rec.frames;t.status=ok?'done':'partial';t.missingSec=ok?0:Math.ceil(unsavedSec(rec.retry,t.sampleRate));if(rec.recovered)t.retried=true;
+  try{await idbPut('takes',t.id,{...t})}catch(e){console.error(e);ok=false;err=errText(e)}
+ }catch(e){console.error(e);ok=false;err=err||errText(e)}
+ finally{
+  if(!ok)rescue={take:{...t},jobs:rec.retry.slice(),err:err||'原因不明'};
+  rec.retry=[];rec.saveTrouble=false;
+  lastTakeId=t.id;rec.take=null;rec.state='idle';if(micGain){micGain.gain.cancelScheduledValues(ctx.currentTime);micGain.gain.setValueAtTime(cfg.rec.micVolume/100,ctx.currentTime)}if(bgmLow&&!bgmPlaying){bgmLow=false;bgmTrim.gain.setTargetAtTime(1,ctx.currentTime,.05);renderBgmLow()}
+  renderRecState();renderSaveWarn();try{await renderTakes()}catch(_){}updateStorage();
+ }
+ if(ok)toast(rec.recovered?`「${t.name}」を保存しました（${fmtTime(t.frames/t.sampleRate)}）。途中で保存できない時間がありましたが、すべて保存し直しました`:`「${t.name}」を保存しました（${fmtTime(t.frames/t.sampleRate)}）`,rec.recovered?6000:3500);
+ else toast('録音の一部を保存できませんでした。録音欄の案内から残せます',6000);
+ rec.recovered=false;releaseBoostHoldIfQuiet();
 }
 function addMarker(label,auto=false){
  const t=rec.take;if(!t||rec.state==='idle'||rec.state==='stopping')return;/* ending中も記録 */
@@ -825,7 +891,7 @@ async function renderTakes(){
   const mk=t.markers||[];
   return `<article class="take ${live?'live':''}" data-id="${esc(t.id)}">
    <div class="take-top"><button class="take-cover ${t.cover?'own':(t.programId&&coverUrls.get(activeProgCoverKey(t.programId)))||coverUrls.get('default')?'inherit':''}" data-take-cover="${esc(t.id)}" title="このテイクの動画用画像（押して変更）" style="${coverStyle(t)}">${t.cover||(t.programId&&coverUrls.get(activeProgCoverKey(t.programId)))||coverUrls.get('default')?'':'画像'}</button><input class="take-name" data-rename="${esc(t.id)}" value="${esc(t.name)}" aria-label="テイク名" maxlength="60"><button class="btn danger" data-del="${esc(t.id)}" ${live?'disabled':''}>削除</button></div>
-   <div class="take-meta">${esc(stamp(new Date(t.created)))} · ${live?'録音中':dur} · ${t.sampleRate/1000}kHz · ${t.tracks.map(k=>TRACK_INFO[k].label).join('／')}${broken?' · <span class="warn">途中で閉じられたため、保存済みの部分まで復旧</span>':''}</div>
+   <div class="take-meta">${esc(stamp(new Date(t.created)))} · ${live?'録音中':dur} · ${t.sampleRate/1000}kHz · ${t.tracks.map(k=>TRACK_INFO[k].label).join('／')}${broken?' · <span class="warn">途中で閉じられたため、保存済みの部分まで復旧</span>':''}${t.status==='partial'?` · <span class="warn">約${t.missingSec||'?'}秒分を保存できませんでした</span>`:''}</div>
    ${live?'':`<div class="take-play" data-player="${esc(t.id)}"><button class="btn primary" data-listen="${esc(t.id)}">▶ 試聴する</button></div>`}
    ${live?'':`<div class="take-actions">${t.tracks.map(k=>`<button class="btn" data-wav="${esc(t.id)}" data-track="${k}">${TRACK_INFO[k].label} WAV</button>`).join('')}<button class="btn gold" data-mp3="${esc(t.id)}" data-track="mix">ミックス MP3</button><button class="btn primary" data-video="${esc(t.id)}">動画を書き出す</button>${t.cover?`<button class="btn" data-uncover="${esc(t.id)}">画像を共通に戻す</button>`:''}${t.tracks.includes('voice')?`<button class="btn" data-mp3="${esc(t.id)}" data-track="voice">声だけ MP3</button>`:''}</div>`}
    <div class="take-progress" data-progress="${esc(t.id)}">${esc(busyTakes.get(t.id)||'')}</div>
@@ -972,6 +1038,14 @@ async function drawCover(blob,size,fit){
  if(fit==='contain'){g.filter='blur(30px) brightness(.85)';draw(cover*1.15);g.filter='none';draw(contain)}else draw(cover);
  bmp.close();return c;
 }
+function drawPlainCover(size,title){
+ const c=document.createElement('canvas');c.width=c.height=size;const g=c.getContext('2d');
+ const gr=g.createLinearGradient(0,0,0,size);gr.addColorStop(0,'#fffaf0');gr.addColorStop(1,'#efe2c4');g.fillStyle=gr;g.fillRect(0,0,size,size);
+ g.strokeStyle='#d7bc83';g.lineWidth=size*.03;g.strokeRect(size*.05,size*.05,size*.9,size*.9);
+ g.fillStyle='#51453b';g.textAlign='center';g.textBaseline='middle';let fs=size*.075;g.font=`700 ${fs}px "Hiragino Sans","Yu Gothic",sans-serif`;
+ while(g.measureText(title).width>size*.8&&fs>size*.03){fs*=.92;g.font=`700 ${fs}px "Hiragino Sans","Yu Gothic",sans-serif`}
+ g.fillText(title,size/2,size/2);return c;
+}
 const toU8=d=>!d?null:d instanceof ArrayBuffer?new Uint8Array(d.slice(0)):new Uint8Array(d.buffer.slice(d.byteOffset,d.byteOffset+d.byteLength));
 async function pickVideoFormat(size,sr,forceWebm=false){
  const ok=async(E,c)=>{try{return (await E.isConfigSupported(c)).supported}catch(_){return false}};
@@ -987,10 +1061,10 @@ async function pickVideoFormat(size,sr,forceWebm=false){
 async function buildVideo(t,progress,forceWebm=false){
  const pk=t.programId&&activeProgCoverKey(t.programId);
  const blob=(t.cover&&await idbGet('assets','cover:'+t.id))||(pk&&await idbGet('assets','cover:'+pk))||await idbGet('assets','cover:default');
- if(!blob)throw Object.assign(Error('先に「動画用サムネイル」で画像を選んでください'),{user:true});
+
  const size=+cfg.rec.videoSize||1080,sr=t.sampleRate,fmt=await pickVideoFormat(size,sr,forceWebm);
  if(!fmt)throw Object.assign(Error('このブラウザは動画の書き出しに対応していません。最新のChromeかEdgeでお試しください'),{user:true});
- progress('画像を準備中…');let canvas;try{canvas=await drawCover(blob,size,cfg.rec.coverFit)}catch(e){throw Object.assign(Error('画像を読み込めませんでした。別の画像でお試しください'),{user:true})}
+ progress('画像を準備中…');let canvas;try{canvas=blob?await drawCover(blob,size,cfg.rec.coverFit):drawPlainCover(size,t.name)}catch(e){throw Object.assign(Error('画像を読み込めませんでした。別の画像でお試しください'),{user:true})}
  const g=await normGain(t,'mix',p=>progress('音量を解析中 '+Math.round(p*100)+'%'));
  const vChunks=[],aChunks=[];let vDesc=null,aDesc=null,err=null;
  const grab=(list,c,extra)=>{const d=new Uint8Array(c.byteLength);c.copyTo(d);list.push({ts:c.timestamp,data:d,...extra})};
@@ -1327,6 +1401,24 @@ window.addEventListener('hashchange',applyPage);applyPage();
 $('#trySe').onclick=()=>{const s=cfg.sounds.find(x=>x.type==='emoji'&&x.assetId&&x.tabIndex===emojiTab)||cfg.sounds.find(x=>x.type!=='voice'&&x.assetId);if(s)playSound(s);else toast('登録済みの効果音がありません')};
 $('#tryVo').onclick=()=>{const s=cfg.sounds.find(x=>x.type==='voice'&&x.assetId);if(s)playSound(s);else toast('登録済みのボイスがありません')};
 $('#tryBgm').onclick=()=>{if(bgmPlaying||bgmLoadingId){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;if(bgmPlaying)fadeStop(bgmPlaying,.4);renderBgmNow();return}const b=progBgm()||cfg.bgms.find(x=>x.assetId);if(b)playBgm(b);else toast('登録済みのBGMがありません')};
+/* ===================== スクロール中の小さな録音欄・BGM欄への移動 ===================== */
+let miniOn=false;
+const MINI_LABEL={'● 録音開始':'● 録音','‖ 一時停止':'‖ 一時停止','● 再開':'● 再開','■ 停止・保存':'■ 停止','↺ 録り直し':'↺ 録り直し'};
+function syncMini(){
+ $('#miniTimer').textContent=$('#timer').textContent;$('#miniTimer').dataset.st=rec.state;
+ for(const [m,o] of [['#miniRec','#recBtn'],['#miniStop','#stopRecBtn'],['#miniRetake','#retakeBtn']]){const a=$(m),b=$(o),txt=MINI_LABEL[b.textContent]||(b.classList.contains('armed')?'もう一度':b.textContent);if(a.textContent!==txt)a.textContent=txt;a.title=b.textContent;a.disabled=b.disabled;a.classList.toggle('on',b.classList.contains('on'));a.classList.toggle('armed',b.classList.contains('armed'))}
+ const st=$('#bgmNow').dataset.state;$('#miniBgm').dataset.state=st;const nm=$('#bgmNowName').textContent;if($('#miniBgmName').textContent!==nm)$('#miniBgmName').textContent=nm;
+ const bb=$('#bgmNowStop'),mb=$('#miniBgmBtn');if(mb.textContent!==bb.textContent)mb.textContent=bb.textContent;mb.disabled=bb.disabled;
+}
+function setMini(on){miniOn=on;$('#miniBar').hidden=!on;if(on)syncMini()}
+if('IntersectionObserver' in window){new IntersectionObserver(([e])=>setMini(!e.isIntersecting&&e.boundingClientRect.top<0),{threshold:0}).observe(document.querySelector('.recbar'))}
+$('#miniRec').onclick=()=>$('#recBtn').click();$('#miniStop').onclick=()=>$('#stopRecBtn').click();$('#miniRetake').onclick=()=>$('#retakeBtn').click();$('#miniBgmBtn').onclick=()=>$('#bgmNowStop').click();
+function gotoBgm(){
+ if(document.body.dataset.page==='settings'){history.replaceState(null,'',location.pathname+location.search);applyPage()}
+ const sec=$('#bgmTabs').closest('.section');const y=sec.getBoundingClientRect().top+scrollY;
+ requestAnimationFrame(()=>{const bar=document.querySelector('.recbar');const stickyH=getComputedStyle(bar).position==='sticky'?bar.offsetHeight:($('#miniBar').offsetHeight||110);window.scrollTo({top:Math.max(0,y-stickyH-8),behavior:'smooth'})});
+}
+for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){el.onclick=gotoBgm;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();gotoBgm()}}}
 (async()=>{
  try{db=await openDB();let stored=null;try{stored=localStorage.getItem(KEY)}catch(_){}cfg=normalize(stored?JSON.parse(stored):null);persist()}
  catch(err){console.error(err);cfg=defaults();toast('ブラウザの保存領域を開けませんでした')}
@@ -1338,7 +1430,7 @@ $('#tryBgm').onclick=()=>{if(bgmPlaying||bgmLoadingId){bgmSerial++;bgmPendingId=
  else{try{const st=await navigator.permissions?.query?.({name:'microphone'});if(st?.state==='granted')enableMic(true)}catch(_){}}
  document.addEventListener('pointerdown',()=>{if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})});
  navigator.mediaDevices?.addEventListener?.('devicechange',()=>{listMics();if(micStream&&!micLive())enableMic(true)});
- renderBgmNow();if(db)await migrateProgCovers().catch(e=>console.error(e));renderPrograms();detectOutput();navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
+ setTimeout(preloadProgBgm,1500);renderBgmNow();if(db)await migrateProgCovers().catch(e=>console.error(e));renderPrograms();detectOutput();navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
 })();
 </script>
 </body>
