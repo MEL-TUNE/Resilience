@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>余白帖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700&family=Cinzel:wght@500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js" defer></script>
+<style>
+:root{
+  --bg:#F2EDE4; --sheet:#FBF8F2; --ink:#1E1428; --sub:#6A6074; --line:#D9D0C3;
+  --violet:#4A2A6C; --gold:#9C7633; --goldl:#C9A45C; --me:#ECE4F1; --warn:#8E4B2A;
+  --mincho:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --gothic:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+  --latin:"Cinzel","Times New Roman",serif;
+  box-sizing:border-box; color-scheme:light dark;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0F0C14; --sheet:#1A1522; --ink:#EDE7DD; --sub:#A69CB2; --line:#352B41;
+  --violet:#A98BD0; --gold:#D4B06A; --goldl:#D4B06A; --me:#251D30; --warn:#E0A27E;}}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--gothic);font-size:16px;line-height:1.75}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wrap{max-width:680px;margin:0 auto;padding:0 18px}
+.screen{min-height:100%;display:flex;flex-direction:column}
+.screen[hidden]{display:none}
+.scroll{flex:1}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar::after{content:"";display:block;height:1px;background:linear-gradient(90deg,transparent,var(--goldl),transparent);opacity:.7}
+.bar .wrap{display:flex;align-items:center;gap:8px;min-height:52px}
+.bar h2{font-family:var(--mincho);font-size:18px;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.06em}
+.ib{border:1px solid var(--line);background:var(--sheet);border-radius:4px;padding:5px 10px;font-size:13px;white-space:nowrap}
+.btn{border:1px solid var(--line);background:var(--sheet);padding:10px 16px;border-radius:4px}
+.btn.main{background:var(--violet);border-color:var(--violet);color:#F7F1E6;font-weight:500;box-shadow:inset 0 0 0 1px rgba(201,164,92,.55)}
+@media (prefers-color-scheme:dark){.btn.main{color:#120D18}}
+.btn:disabled,.ib:disabled{opacity:.45;cursor:default}
+.uses{display:block;font-size:11px;color:var(--gold);line-height:1.3;margin-top:2px}
+.btn.main .uses{color:inherit;opacity:.85}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.hint{font-size:13px;color:var(--sub)}
+.msg{font-size:13px;color:var(--sub);min-height:1.3em;margin:6px 0}
+.msg.err{color:var(--warn)}
+.frame{position:relative;background:var(--sheet);border:1px solid var(--line);padding:14px 16px;margin:14px 0}
+.frame::before,.frame::after{content:"";position:absolute;width:10px;height:10px;border-color:var(--goldl);border-style:solid}
+.frame::before{top:-1px;left:-1px;border-width:2px 0 0 2px}
+.frame::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:5px 13px;font-size:14px}
+.seg button[aria-pressed="true"]{border-color:var(--violet);color:var(--violet);font-weight:700;box-shadow:inset 0 0 0 1px var(--violet)}
+label.f,.q > p{display:block;font-size:14px;font-weight:500;margin:14px 0 6px}
+input[type=text],input[type=password],textarea,select{border:1px solid var(--line);border-radius:4px;background:var(--sheet)}
+input[type=text],input[type=password],textarea{width:100%;padding:10px 12px}
+select{padding:5px 8px;font-size:13px}
+textarea{resize:vertical}
+
+/* ホーム */
+.crest{padding:40px 0 4px;text-align:center}
+.crest .lat{font-family:var(--latin);font-size:12px;letter-spacing:.42em;color:var(--gold)}
+.crest h1{font-family:var(--mincho);font-weight:700;font-size:clamp(38px,11vw,54px);letter-spacing:.24em;margin:4px 0 0 .24em;line-height:1.2;color:var(--ink)}
+.orn{display:flex;align-items:center;gap:10px;justify-content:center;margin:10px auto 0;max-width:280px;color:var(--goldl)}
+.orn::before,.orn::after{content:"";flex:1;height:1px;background:currentColor;opacity:.8}
+.crest .lead{color:var(--sub);font-size:14px;margin:12px 0 0}
+.acct{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--line);margin-right:6px;vertical-align:middle}
+.dot.on{background:var(--gold)}
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 0}
+.door{position:relative;text-align:left;background:var(--sheet);border:1px solid var(--line);padding:14px 14px 12px;min-height:118px;display:flex;flex-direction:column;gap:4px}
+.door::before{content:"";position:absolute;inset:4px;border:1px solid var(--line);opacity:.6;pointer-events:none}
+.door svg{width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.door b{font-family:var(--mincho);font-size:18px;letter-spacing:.04em}
+.door span{font-size:12.5px;color:var(--sub);line-height:1.55}
+.door small{font-size:11px;color:var(--gold);margin-top:auto}
+.door.wide{grid-column:1/-1;min-height:auto;flex-direction:row;align-items:center;gap:12px;border-left:3px solid var(--gold)}
+.door.wide div{display:flex;flex-direction:column}
+
+/* 短冊 */
+.slipstage{display:flex;justify-content:center;padding:26px 0 8px}
+.slip{writing-mode:vertical-rl;text-orientation:mixed;font-family:var(--mincho);font-size:clamp(22px,6.4vw,28px);line-height:1.9;letter-spacing:.06em;
+  background:var(--sheet);border:1px solid var(--line);border-top:5px solid var(--violet);box-shadow:inset 0 3px 0 -1px var(--goldl);
+  height:min(54vh,430px);min-width:6.5em;max-width:100%;padding:26px 22px;overflow-x:auto;transition:opacity .25s}
+.slip.fade{opacity:0}
+.sliptag{text-align:center;font-size:12px;color:var(--sub);letter-spacing:.08em;margin:8px 0 0;min-height:1.4em}
+.sliptag.ai{color:var(--gold)}
+.ptop{background:var(--sheet);border:1px solid var(--line);border-left:3px solid var(--violet);padding:10px 14px;font-family:var(--mincho);font-size:17px;line-height:1.75;margin:16px 0 0}
+.ptop small{display:block;font-family:var(--gothic);font-size:12px;color:var(--sub)}
+
+/* 書く */
+#wText{min-height:46vh;margin:12px 0 0;padding:14px 16px;font-family:var(--mincho);font-size:17px;line-height:2}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0 0}
+.clockchip{font-variant-numeric:tabular-nums;font-size:14px;color:var(--violet);min-width:3.5em}
+.voice.on{border-color:var(--gold);color:var(--gold);font-weight:700}
+
+/* 対話 */
+.log{padding:10px 0}
+.msgb{display:flex;margin:10px 0}
+.msgb .b{max-width:88%;padding:10px 14px;border-radius:8px;white-space:pre-wrap;word-break:break-word}
+.msgb.ai .b{background:var(--sheet);border:1px solid var(--line);border-left:2px solid var(--goldl);font-family:var(--mincho);font-size:16.5px;line-height:1.95}
+.msgb.me{justify-content:flex-end}
+.msgb.me .b{background:var(--me)}
+.msgb.sys .b{font-size:12px;color:var(--sub);padding:2px 0;max-width:100%}
+.msgb .who{display:block;font-family:var(--gothic);font-size:11px;color:var(--gold);margin-bottom:2px}
+.composer{position:sticky;bottom:0;border-top:1px solid var(--line);background:var(--bg);padding-bottom:env(safe-area-inset-bottom,0px)}
+.composer .wrap{display:flex;gap:8px;align-items:flex-end;padding-top:10px;padding-bottom:10px}
+.composer textarea{flex:1;min-height:44px;max-height:30vh;resize:none}
+.composer .side{display:flex;flex-direction:column;gap:6px}
+.subbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px 0 0}
+
+/* ソムリエ */
+.pick{background:var(--sheet);border:1px solid var(--line);border-top:3px solid var(--violet);padding:14px 16px;margin:14px 0}
+.pick .t{font-family:var(--mincho);font-size:19px;line-height:1.75;margin:0}
+.pick .w{font-size:14px;color:var(--sub);margin:8px 0 0}
+.pick .h{font-size:14px;margin:6px 0 0}
+.pick .h::before{content:"きっかけ　";color:var(--gold);font-size:12px}
+
+/* 今ここに戻る */
+.nowbox{padding:26px 0 6px;text-align:center}
+.nowbox .l{margin:0;color:var(--sub);font-size:14px}
+.nowdate{font-family:var(--mincho);font-size:clamp(24px,7vw,32px);margin:4px 0 0;line-height:1.4}
+.nowtime{font-family:var(--mincho);font-size:clamp(44px,15vw,64px);margin:0;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--violet)}
+.nowplace{margin:6px 0 0;font-size:17px}
+.cards{margin:18px 0 0;padding:0;list-style:none}
+.cards li{background:var(--sheet);border:1px solid var(--line);border-left:3px solid var(--violet);padding:10px 14px;margin:8px 0;font-family:var(--mincho);font-size:17px;line-height:1.8}
+.big{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:20px 0 0}
+.big button{padding:16px 6px;font-size:15px}
+.stagecard{background:var(--sheet);border:1px solid var(--line);padding:22px 18px;text-align:center;margin:16px 0 0}
+.stagecard .t{font-family:var(--mincho);font-size:21px;line-height:1.8;margin:0 0 16px}
+.stagecard .s{font-size:14px;color:var(--sub);margin:-8px 0 16px}
+.orb{width:120px;height:120px;border-radius:50%;margin:6px auto 16px;border:2px solid var(--goldl);background:radial-gradient(circle,var(--violet),transparent 70%);opacity:.55;transform:scale(.55);transition-property:transform;transition-timing-function:ease-in-out}
+.orb.in{transform:scale(1)}
+.kate h4{font-family:var(--mincho);font-size:17px;margin:18px 0 2px}
+.kate .ds{font-size:13px;color:var(--sub);margin:0 0 6px}
+.kp{background:var(--sheet);border:1px solid var(--line);border-left:3px solid var(--gold);padding:10px 14px;margin:8px 0}
+.kp p{font-family:var(--mincho);font-size:16.5px;line-height:1.8;margin:0 0 8px}
+.scale{display:flex;flex-wrap:wrap;gap:5px}
+.scale button{min-width:2.4em;padding:6px 0;border:1px solid var(--line);background:var(--sheet);border-radius:4px}
+.scale button[aria-pressed="true"]{border-color:var(--violet);color:var(--violet);font-weight:700;box-shadow:inset 0 0 0 1px var(--violet)}
+
+/* 声で録る */
+.recbtn{width:96px;height:96px;border-radius:50%;border:2px solid var(--gold);background:var(--sheet);color:var(--gold);font-weight:700;font-size:15px;box-shadow:inset 0 0 0 4px var(--sheet),inset 0 0 0 5px var(--line)}
+.recbtn.on{background:var(--violet);color:#F7F1E6;border-color:var(--goldl)}
+.clock{font-family:var(--mincho);font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5em}
+.meter{height:6px;background:var(--line);border-radius:3px;overflow:hidden;flex:1;min-width:80px}
+.meter i{display:block;height:100%;width:0;background:var(--gold);transition:width .08s}
+audio{width:100%;margin:8px 0}
+
+/* 記録 */
+.ent{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:14px 2px}
+.ent .d{font-size:12px;color:var(--sub)}
+.ent .p{font-family:var(--mincho);font-size:16px;display:block;margin:2px 0}
+.ent .x{font-size:14px;color:var(--sub);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tag{font-size:11px;border:1px solid var(--gold);color:var(--gold);border-radius:999px;padding:0 7px;margin-left:6px}
+.day{margin:22px 0 0}
+.day h3{font-family:var(--mincho);font-size:17px;margin:0 0 8px;color:var(--sub);font-weight:400}
+.page{background:var(--sheet);border:1px solid var(--line);padding:14px 16px 12px;margin:0 0 -6px;box-shadow:0 2px 0 var(--bg),0 3px 0 var(--line);position:relative}
+.page:nth-child(2n){transform:rotate(-.35deg)}
+.page:nth-child(3n){transform:rotate(.3deg)}
+.page .t{font-size:12px;color:var(--sub)}
+.page .p{font-family:var(--mincho);font-size:17px;line-height:1.75;margin:2px 0}
+.page .m{font-size:14px;margin:4px 0;white-space:pre-wrap}
+.page .fn{font-size:11px;color:var(--sub);word-break:break-all}
+.pl{border-bottom:1px solid var(--line);padding:12px 2px}
+.pl .d{font-size:12px;color:var(--sub)}
+.pl .p{font-family:var(--mincho);font-size:16px;margin:2px 0 6px}
+.pl .row{margin:0}
+.empty{color:var(--sub);padding:30px 0}
+
+/* シート */
+.sheet{position:fixed;inset:0;background:rgba(8,5,12,.55);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.sheet[hidden]{display:none}
+.sheet .panel{background:var(--bg);width:100%;max-width:720px;max-height:92%;overflow:auto;border-radius:10px 10px 0 0;border-top:2px solid var(--goldl);padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+.panel h3{font-family:var(--mincho);font-size:20px;margin:0 0 10px}
+.panel textarea.big{min-height:34vh;font-family:var(--mincho);font-size:16px;line-height:1.9}
+.review{white-space:pre-wrap;background:var(--sheet);border:1px solid var(--line);border-left:3px solid var(--gold);padding:12px 14px;margin:12px 0 0;font-size:15px}
+.setrow{margin:16px 0}
+.setrow > p{margin:0 0 6px;font-size:14px;font-weight:500}
+.warnbox{border:1px solid var(--warn);color:var(--warn);background:var(--sheet);padding:10px 14px;margin:14px 0;font-size:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.orb{display:none}}
+@media (max-width:360px){.doors{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l2 6.5L20.5 6 16 11.5 22 12l-6 .5 4.5 5.5-6.5-2.5L12 22l-2-6.5L3.5 18 8 12.5 2 12l6-.5L3.5 6 10 8.5z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M3 5h7a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H3zM21 5h-7a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h7z"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7" cy="12" r="4"/><path d="M11 12h10M17 12v3M20 12v2"/></symbol>
+  <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></symbol>
+  <symbol id="i-shelf" viewBox="0 0 24 24"><path d="M4 4v16M8 4v16M12 6l4 14M18 4v16M2 20h20"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16zM14 6l3 3"/></symbol>
+</svg>
+
+<!-- ===== ホーム ===== -->
+<section id="home" class="screen"><div class="scroll"><div class="wrap">
+  <div class="crest">
+    <div class="lat">PRIVATE-MEL</div>
+    <h1>余白帖</h1>
+    <div class="orn"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><use href="#i-star"/></svg></div>
+    <p class="lead">書く、話す、録る、お題をもらう。今日の余白に合う入り方を。</p>
+  </div>
+  <div class="frame acct">
+    <div><span class="dot" id="dot"></span><span id="acctTxt">ドライブに未接続</span></div>
+    <button class="ib" id="connBtn">ドライブにつなぐ</button>
+  </div>
+  <div class="warnbox" id="pendBox" hidden><div id="pendTxt"></div><div class="row" style="margin:8px 0 0"><button class="ib" id="pendSend">いま送る</button></div><p class="msg" id="pendMsg"></p></div>
+  <div class="warnbox" id="envWarn" hidden></div>
+  <nav class="doors">
+    <button class="door wide" data-go="now"><svg><use href="#i-key"/></svg><div><b>今ここに戻る</b><span>日付と時刻、呼吸、五感で数える。糧にする。</span></div></button>
+    <button class="door" data-go="random"><svg><use href="#i-star"/></svg><b>ランダム</b><span>お題を一枚ずつ引く</span><small>AIを使いません</small></button>
+    <button class="door" data-go="somm"><svg><use href="#i-eye"/></svg><b>ソムリエ</b><span>答えるか話して、お題を見立ててもらう</span><small>AIを使います</small></button>
+    <button class="door" data-go="listen"><svg><use href="#i-book"/></svg><b>傾聴</b><span>話したことを受け取り、整理する聞き手</span><small>AIを使います</small></button>
+    <button class="door" data-go="koe"><svg><use href="#i-web"/></svg><b>声で録る</b><span>声の頁として、ドライブに重ねる</span><small>AIを使いません</small></button>
+    <button class="door" data-go="records"><svg><use href="#i-shelf"/></svg><b>書庫</b><span>書いた記録、声の頁、出たお題</span></button>
+    <button class="door" id="freeWrite"><svg><use href="#i-pen"/></svg><b>お題なしで書く</b><span>白い頁から始める</span></button>
+  </nav>
+  <div class="row" style="justify-content:center;margin:22px 0 40px"><button class="btn" id="openSet">設定</button></div>
+</div></div></section>
+
+<!-- ===== ランダム ===== -->
+<section id="random" class="screen" hidden>
+  <div class="bar"><div class="wrap"><button class="ib back">戻る</button><h2>ランダム</h2></div></div>
+  <div class="scroll"><div class="wrap">
+    <div class="slipstage"><div class="slip" id="slip"></div></div>
+    <p class="sliptag" id="slipTag"></p>
+    <div class="row" style="justify-content:center">
+      <button class="btn" id="rNext">別のお題</button>
+      <button class="btn main" id="rWrite">このお題で書く</button>
+      <button class="btn" id="rTalk">話して深める</button>
+      <button class="btn" id="rKoe">声で録る</button>
+      <button class="btn" id="rAway">ノートに書く</button>
+    </div>
+    <p class="hint" style="margin:14px 0 4px">テーマ</p><div class="seg" id="fTheme"></div>
+    <p class="hint" style="margin:12px 0 4px">深さ</p><div class="seg" id="fDepth"></div>
+    <div class="row"><button class="btn" id="rGen">このテーマでお題を作ってもらう<span class="uses">AIを一回使います</span></button></div>
+    <p class="msg" id="rMsg"></p>
+    <div style="height:30px"></div>
+  </div></div>
+</section>
+
+<!-- ===== ソムリエ ===== -->
+<section id="somm" class="screen" hidden>
+  <div class="bar"><div class="wrap"><button class="ib back">戻る</button><h2>ソムリエ</h2><button class="ib" id="sReset">はじめから</button></div></div>
+  <div class="scroll"><div class="wrap">
+    <div id="sForm">
+      <div class="q"><p>いまの余力</p><div class="seg" data-key="energy" data-opts="少ない|ふつう|たっぷり"></div></div>
+      <div class="q"><p>使える時間</p><div class="seg" data-key="time" data-opts="5分ほど|15分ほど|じっくり"></div></div>
+      <div class="q"><p>したいこと</p><div class="seg" data-key="want" data-opts="整理したい|吐き出したい|掘り下げたい|遊びたい|決めたい"></div></div>
+      <div class="q"><p>やり方</p><div class="seg" data-key="way" data-opts="書く|話す|声で録る|ノートに書く|どれでも"></div></div>
+      <label class="f" for="sAvoid">触れたくない話題 <span class="hint">（任意）</span></label><input type="text" id="sAvoid" maxlength="120">
+      <label class="f" for="sNote">ひとこと <span class="hint">（任意。今日のこと、気になっていることなど）</span></label><textarea id="sNote" maxlength="1500" style="min-height:90px"></textarea>
+      <div class="tools"><button class="ib voice" data-target="sNote">声で入力</button></div>
+      <div class="row">
+        <button class="btn main" id="sPick">この内容でお題を選んでもらう<span class="uses">AIを一回使います</span></button>
+        <button class="btn" id="sTalk">話しながら決める<span class="uses">返答ごとにAIを使います</span></button>
+      </div>
+      <p class="hint">答えなかった項目は「おまかせ」として扱います。</p>
+    </div>
+    <div id="sChat" hidden><div class="log" id="sLog"></div></div>
+    <div id="sResult"></div>
+    <p class="msg" id="sMsg"></p>
+    <div style="height:20px"></div>
+  </div></div>
+  <div class="composer" id="sComposer" hidden>
+    <div class="wrap"><textarea id="sInput" rows="1" placeholder="ソムリエに話す"></textarea>
+      <div class="side"><button class="btn main" id="sSend">送る</button><button class="ib voice" data-target="sInput">声</button></div></div>
+    <div class="wrap" style="padding-bottom:10px"><button class="btn" id="sPick2" style="width:100%">ここでお題を出してもらう<span class="uses">AIを一回使います</span></button></div>
+  </div>
+</section>
+
+<!-- ===== 傾聴 ===== -->
+<section id="listen" class="screen" hidden>
+  <div class="bar"><div class="wrap"><button class="ib back">戻る</button><h2 id="lTitle">傾聴</h2><button class="btn main" id="lEnd" style="padding:6px 14px">終える・残す</button></div></div>
+  <div class="scroll"><div class="wrap">
+    <div id="lPrompt"></div><div id="lHand"></div>
+    <div class="subbar"><span class="hint">話し相手</span><select id="lWho" aria-label="話し相手"></select>
+      <span class="hint" style="margin-left:6px">長さ</span><select id="lLen" aria-label="返答の長さ"><option>短め</option><option>標準</option><option>長め</option></select></div>
+    <div class="log" id="lLog"></div>
+  </div></div>
+  <div class="composer">
+    <div class="wrap"><textarea id="lInput" rows="1" placeholder="話したいことを"></textarea>
+      <div class="side"><button class="btn main" id="lSend">送る</button><button class="ib voice" data-target="lInput">声</button></div></div>
+    <div class="wrap"><p class="msg" id="lMsg" style="margin:0 0 8px"></p></div>
+  </div>
+</section>
+
+<!-- ===== 書く ===== -->
+<section id="write" class="screen" hidden>
+  <div class="bar"><div class="wrap"><button class="ib back">戻る</button><h2>書く</h2><button class="btn main" id="wSave" style="padding:6px 14px">書庫に残す</button></div></div>
+  <div class="scroll"><div class="wrap">
+    <div id="wPrompt"></div>
+    <div class="tools">
+      <button class="ib voice" data-target="wText">声で入力</button>
+      <select id="wTimer" aria-label="タイマー"><option value="0">タイマーなし</option><option value="5">5分</option><option value="10">10分</option><option value="15">15分</option></select>
+      <span class="clockchip" id="wClock"></span>
+      <button class="ib" id="wTalk">話して深める</button>
+    </div>
+    <textarea id="wText" placeholder="ここに書く"></textarea>
+    <p class="msg" id="wMsg"></p>
+    <div style="height:30px"></div>
+  </div></div>
+</section>
+
+<!-- ===== ノートに書く ===== -->
+<section id="away" class="screen" hidden>
+  <div class="bar"><div class="wrap"><button class="ib back">戻る</button><h2>ノートに書く</h2><button class="ib" id="aCopy">お題をコピー</button></div></div>
+  <div class="scroll"><div class="wrap">
+    <div class="slipstage"><div class="slip" id="aSlip"></div></div>
+    <p class="sliptag" id="aTag"></p>
+    <div class="tools" style="justify-content:center;margin-top:12px">
+      <select id="aTimer" aria-label="タイマー"><option value="0">タイマーなし</option><option value="3">3分</option><option value="5">5分</option><option value="10">10分</option><option value="15">15分</option></select>
+      <span class="clockchip" id="aClock"></span>
+    </div>
+    <div class="row" style="justify-content:center"><button class="btn main" id="aDone">書き終えた</button></div>
+    <div id="aForm" hidden>
+      <label class="f" for="aPlace">置き場所 <span class="hint">（任意。ノート名とページなど）</span></label><input type="text" id="aPlace" maxlength="120">
+      <label class="f" for="aMemo">ひとこと <span class="hint">（任意）</span></label><input type="text" id="aMemo" maxlength="300">
+      <div class="row"><button class="btn main" id="aSave">書庫に残す</button><button class="btn" id="aSkip">残さずに戻る</button></div>
+    </div>
+    <p class="msg" id="aMsg" style="text-align:center"></p>
+  </div></div>
+</section>
+
+<!-- ===== 声で録る ===== -->
+<section id="koe" class="screen" hidden>
+  <div class="bar"><div class="wrap"><button class="ib back">戻る</button><h2>声で録る</h2></div></div>
+  <div class="scroll"><div class="wrap">
+    <label class="f" for="kPrompt">お題 <span class="hint">（任意）</span></label>
+    <input type="text" id="kPrompt" maxlength="200" placeholder="お題なしでも録れます">
+    <div class="row" style="margin-top:18px">
+      <button class="recbtn" id="recBtn">録音</button>
+      <div><div class="clock" id="clock">0:00</div><div class="row" style="margin:4px 0 0"><div class="meter"><i id="lvl"></i></div></div></div>
+    </div>
+    <div class="row"><button class="btn" id="pauseBtn" disabled>一時停止</button><button class="btn" id="stopBtn" disabled>終える</button></div>
+    <p class="msg" id="recMsg"></p>
+    <div class="frame" id="afterBox" hidden>
+      <div class="ptop" id="afterPrompt" style="margin:0"></div>
+      <audio id="preview" controls></audio>
+      <label class="f" for="kMemo">ひとこと <span class="hint">（任意）</span></label>
+      <textarea id="kMemo" maxlength="2000" style="min-height:70px"></textarea>
+      <div class="row"><button class="btn main" id="kSave">頁にする</button><button class="btn" id="kDiscard">録り直す</button></div>
+      <p class="msg" id="kMsg"></p>
+    </div>
+    <p class="hint">声の頁は、ドライブの PRIVATE-MEL ／ 声の頁 ／ 年月 のフォルダに、音声と控えの組で保存されます。</p>
+  </div></div>
+</section>
+
+<!-- ===== 今ここに戻る ===== -->
+<section id="now" class="screen" hidden>
+  <div class="bar"><div class="wrap"><button class="ib back">戻る</button><h2>今ここに戻る</h2><button class="ib" id="nPrep">準備</button></div></div>
+  <div class="scroll"><div class="wrap">
+    <div class="nowbox"><p class="l">いまは</p><p class="nowdate" id="nDate"></p><p class="nowtime" id="nTime"></p><p class="nowplace" id="nPlace"></p></div>
+    <ul class="cards" id="nCards"></ul>
+    <div class="big"><button class="btn" id="nBreath">呼吸</button><button class="btn" id="nSense">五感で数える</button><button class="btn" id="nBody">体の感覚</button></div>
+    <div id="nStage"></div>
+    <div class="row" style="margin-top:22px">
+      <button class="btn" id="nLog">記録する</button>
+      <button class="btn" id="nTalk">話す<span class="uses">返答ごとにAIを使います</span></button>
+      <button class="btn main" id="nKate">糧にする</button>
+    </div>
+    <div id="nKateBox"></div>
+    <div style="height:30px"></div>
+  </div></div>
+</section>
+
+<!-- ===== 書庫 ===== -->
+<section id="records" class="screen" hidden>
+  <div class="bar"><div class="wrap"><button class="ib back">戻る</button><h2>書庫</h2><button class="ib" id="exAll">書き出す</button></div></div>
+  <div class="scroll"><div class="wrap">
+    <div class="seg" id="recTabs" style="margin:14px 0 4px"></div>
+    <div class="seg" id="plogFilt" style="margin:8px 0 0"></div>
+    <p class="msg" id="recMsg"></p>
+    <div id="recList"></div>
+    <div class="row"><button class="btn" id="recMore" hidden>さらに前</button></div>
+    <div style="height:30px"></div>
+  </div></div>
+</section>
+
+<!-- ===== シート類 ===== -->
+<div class="sheet" id="entSheet" hidden><div class="panel">
+  <h3 id="eTitle"></h3><p class="hint" id="eMeta" style="margin:-6px 0 8px"></p>
+  <textarea id="eBody" class="big"></textarea>
+  <div class="row">
+    <button class="btn main" id="eSave">変更を保存</button><button class="btn" id="eCopy">コピー</button>
+    <button class="btn" id="eReview">ふりかえる<span class="uses">AIを一回使います</span></button>
+    <button class="btn" id="eDel">ゴミ箱へ</button><button class="btn" id="eClose">閉じる</button>
+  </div>
+  <p class="msg" id="eMsg"></p><div id="eReviewBox"></div>
+</div></div>
+
+<div class="sheet" id="exSheet" hidden><div class="panel">
+  <h3 id="exTitle">書き出す</h3>
+  <textarea id="exText" class="big" readonly></textarea>
+  <div class="row"><button class="btn" id="exCopy">コピー</button><button class="btn" id="exTxt">テキストで保存</button><button class="btn" id="exMd">Markdownで保存</button><button class="btn" id="exClose">閉じる</button></div>
+  <p class="msg" id="exMsg"></p>
+</div></div>
+
+<div class="sheet" id="endSheet" hidden><div class="panel">
+  <h3>ここまでの会話</h3>
+  <div class="row"><button class="btn main" id="enRec">書庫に残す</button><button class="btn" id="enCopy">コピー</button><button class="btn" id="enMd">Markdownで保存</button></div>
+  <p class="msg" id="enMsg"></p>
+  <h3 style="margin-top:18px">引き継ぎメモ</h3>
+  <p class="hint">次の会話へ要点だけを持ち越すメモです。ほかの場所で書いたメモを貼りつけても使えます。</p>
+  <div class="row" style="margin-top:6px"><button class="btn" id="enMake">この会話からメモを作る<span class="uses">AIを一回使います</span></button></div>
+  <textarea id="enHand" style="min-height:20vh" placeholder="ここにメモが入ります"></textarea>
+  <div class="row"><button class="btn main" id="enCarry">このメモを引き継いで新しく話す</button><button class="btn" id="enHandCopy">メモをコピー</button></div>
+  <div class="row" style="border-top:1px solid var(--line);padding-top:14px"><button class="btn" id="enFresh">引き継がずに新しく話す</button><button class="btn" id="enClose">閉じる</button></div>
+</div></div>
+
+<div class="sheet" id="prepSheet" hidden><div class="panel">
+  <h3>落ち着いているときの準備</h3>
+  <p class="hint">ここに書いたものが「今ここに戻る」に表示され、話し相手にも、あなたが書いておいた言葉として渡されます。</p>
+  <label class="f" for="pPlace">いまいる場所の名前</label><input type="text" id="pPlace" maxlength="60">
+  <label class="f" for="pCards">いまの自分が知っていること <span class="hint">（一行に一つ）</span></label><textarea id="pCards" maxlength="1200" style="min-height:20vh"></textarea>
+  <div class="row"><button class="btn main" id="pSave">保存</button><button class="btn" id="pClose">閉じる</button></div>
+</div></div>
+
+<div class="sheet" id="fbSheet" hidden><div class="panel">
+  <h3>フラッシュバックの記録</h3>
+  <p class="hint">どれも空欄のままで残せます。何がよみがえったかを詳しく書く必要はありません。</p>
+  <label class="f">はじめの強さ</label><div class="scale" id="fbA"></div>
+  <label class="f">いまの強さ</label><div class="scale" id="fbB"></div>
+  <label class="f" for="fbTrig">きっかけ <span class="hint">（一言で、分かれば）</span></label><input type="text" id="fbTrig" maxlength="120">
+  <label class="f">役に立ったもの</label><div class="seg" id="fbHelp"></div>
+  <label class="f" for="fbNote">メモ</label><textarea id="fbNote" maxlength="3000" style="min-height:14vh"></textarea>
+  <div class="row"><button class="btn main" id="fbSave">書庫に残す</button><button class="btn" id="fbClose">閉じる</button></div>
+  <p class="msg" id="fbMsg"></p>
+</div></div>
+
+<div class="sheet" id="bridgeSheet" hidden><div class="panel">
+  <h3>AIへ持っていく</h3>
+  <p class="hint">下の一式をコピーして、ClaudeやChatGPTの会話に貼りつけます。返ってきた返答を、下の欄に貼って「受け取る」を押すと、この画面の続きになります。</p>
+  <textarea id="brOut" readonly style="min-height:20vh;font-size:13px"></textarea>
+  <div class="row"><button class="btn main" id="brCopy">一式をコピー</button></div>
+  <label class="f" for="brIn">AIの返答を貼る</label>
+  <textarea id="brIn" style="min-height:20vh"></textarea>
+  <div class="row"><button class="btn main" id="brOk">受け取る</button><button class="btn" id="brCancel">やめる</button></div>
+  <p class="msg" id="brMsg"></p>
+</div></div>
+
+<div class="sheet" id="setSheet" hidden><div class="panel">
+  <h3>設定</h3>
+  <div class="setrow"><p>AIのつなぎ先</p><div class="seg" id="setAi"></div>
+    <p class="hint" style="margin:6px 0 0">「コピーして持っていく」は、ClaudeやChatGPTの会話に貼って返答を貼り戻す方法で、プランの会話枠を使います。「APIキー」は、この画面の中で直接返答が届きますが、使った分だけ費用がかかります。</p></div>
+  <div class="setrow" id="apiRow"><p>AnthropicのAPIキー <span class="hint">（この端末のブラウザにだけ保存され、ドライブには送りません）</span></p>
+    <input type="password" id="setKey" autocomplete="off" placeholder="sk-ant-...">
+    <p class="hint" style="margin:10px 0 6px">モデル</p><div class="seg" id="setModel"></div></div>
+  <div class="setrow"><p>話し相手（傾聴とソムリエ）</p><div class="seg" id="setWho"></div></div>
+  <div class="setrow"><p>「今ここに戻る」で話す相手</p><div class="seg" id="setFbWho"></div></div>
+  <div class="setrow"><p>傾聴の返答の長さ（初期値）</p><div class="seg" id="setLen"></div></div>
+  <div class="row"><button class="btn main" id="setClose">閉じる</button></div>
+</div></div>
+
+<script>
+/* =====================================================================
+   基本
+   ===================================================================== */
+const CLIENT_ID = "235660530148-aqrk1fjtf4cu6ufvgg8j7op6fqpr2l1v.apps.googleusercontent.com";
+const SCOPE = "https://www.googleapis.com/auth/drive.file";
+const ROOT_NAME = "PRIVATE-MEL";
+const DRIVE = "https://www.googleapis.com/drive/v3", UPLOAD = "https://www.googleapis.com/upload/drive/v3";
+const FOLDER = "application/vnd.google-apps.folder";
+const $ = id => document.getElementById(id);
+const z = n => String(n).padStart(2,"0");
+const WD = ["日","月","火","水","木","金","土"];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+const LSKEY = "mel-yohaku-v1";
+let S = (() => { try{ return JSON.parse(localStorage.getItem(LSKEY)) || {}; }catch(e){ return {}; } })();
+S.set ||= {}; S.set.ai ||= "bridge"; S.set.model ||= "claude-haiku-5-5"; S.set.who ||= "neutral"; S.set.fbWho ||= "neutral"; S.set.len ||= "標準";
+S.ground ||= { place:"", cards:[] }; S.plog ||= []; S.recent ||= []; S.aiPool ||= [];
+S.filter ||= { theme:"all", depth:"all" }; S.draft ||= { prompt:null, text:"", src:"" };
+S.listen ||= { turns:[], prompt:null, len:S.set.len, handover:null, memo:null, saved:false, mode:null };
+S.somm ||= { a:{}, turns:[], picks:null, stage:"form" };
+S.folders ||= {}; S.pendingEntries ||= []; S.entryCache ||= []; S.stateAt ||= 0;
+S.recView ||= "entries"; S.plogFilter ||= "all";
+let apiKey = ""; try{ apiKey = localStorage.getItem("mel-apikey") || ""; }catch(e){}
+function saveLocal(){ try{ localStorage.setItem(LSKEY, JSON.stringify(S)); }catch(e){} }
+function touch(){ S.stateAt = Date.now(); saveLocal(); scheduleStateSync(); }
+function stamp(d = new Date()){ return `${d.getFullYear()}/${z(d.getMonth()+1)}/${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`; }
+function isoLocal(d = new Date()){ const o = -d.getTimezoneOffset(), s = o >= 0 ? "+" : "-", a = Math.abs(o); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}${s}${z(Math.floor(a/60))}:${z(a%60)}`; }
+const ymOf = d => `${d.getFullYear()}-${z(d.getMonth()+1)}`;
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+function segBuild(el, opts, val, onPick){
+  el.innerHTML = "";
+  opts.forEach(([v, label]) => { const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.setAttribute("aria-pressed", String(v === val));
+    b.onclick = () => { el.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); onPick(v); }; el.append(b); });
+}
+function setMsg(el, t, err){ el.className = "msg" + (err ? " err" : ""); el.textContent = t; }
+function downloadText(name, text, type = "text/plain"){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type:type + ";charset=utf-8" })); a.download = name; document.body.append(a); a.click(); a.remove(); }
+async function copyText(text, m){
+  try{ await navigator.clipboard.writeText(text); setMsg(m, "コピーしました。"); return true; }
+  catch(e){ const t = document.createElement("textarea"); t.value = text; t.style.cssText = "position:fixed;opacity:0"; document.body.append(t); t.select(); let ok = false; try{ ok = document.execCommand("copy"); }catch(e2){} t.remove();
+    setMsg(m, ok ? "コピーしました。" : "自動でコピーできませんでした。欄の文字を選んでコピーできます。", !ok); return ok; }
+}
+function autoGrow(t){ t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, innerHeight * .3) + "px"; }
+
+/* 開き方の診断 */
+(() => {
+  const w = []; let framed = false; try{ framed = window.self !== window.top; }catch(e){ framed = true; }
+  if (framed) w.push("この画面は別のページの中に埋め込まれた状態で開かれています。マイクやGoogleのログインが止められることが多いので、アドレスを直接開くと使えます。");
+  if (location.protocol === "file:") w.push("ファイルとして直接開いているため、ドライブにはつながりません。GitHub Pagesのアドレスから開くとつながります。");
+  if (w.length){ $("envWarn").hidden = false; $("envWarn").innerHTML = w.map(t => `<p style="margin:2px 0">${t}</p>`).join(""); }
+})();
+
+/* =====================================================================
+   画面遷移
+   ===================================================================== */
+let cur = "home", backTo = {};
+function show(id, from){
+  stopVoice();
+  if (from) backTo[id] = from;
+  document.querySelectorAll(".screen").forEach(s => s.hidden = s.id !== id);
+  cur = id; scrollTo(0, 0);
+  ({ random:renderRandom, somm:renderSomm, listen:renderListen, write:renderWrite, away:renderAway, koe:renderKoe, now:startNow, records:renderRecords })[id]?.();
+  if (id !== "now") stopNow();
+  if (id !== "away") stopTimer("a");
+}
+document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => show(b.dataset.go, "home"));
+document.querySelectorAll(".back").forEach(b => b.onclick = () => {
+  if (cur === "listen" && S.listen.mode === "fb") return show("now");
+  show(backTo[cur] || "home");
+});
+
+/* =====================================================================
+   Google ドライブ
+   ===================================================================== */
+let token = null, tokenExp = 0, tokenClient = null, authWait = null;
+try{ const t = JSON.parse(sessionStorage.getItem("mel-token") || "null"); if (t && t.exp > Date.now() + 60000){ token = t.v; tokenExp = t.exp; } }catch(e){}
+const authed = () => !!token && tokenExp > Date.now() + 30000;
+function setAcct(){ const on = authed(); $("dot").classList.toggle("on", on); $("acctTxt").textContent = on ? "ドライブにつながっています" : "ドライブに未接続"; $("connBtn").textContent = on ? "つなぎ直す" : "ドライブにつなぐ"; }
+function signIn(){
+  return new Promise((res, rej) => {
+    if (!tokenClient){
+      if (!window.google?.accounts?.oauth2) return rej(new Error("gsi"));
+      tokenClient = google.accounts.oauth2.initTokenClient({ client_id:CLIENT_ID, scope:SCOPE,
+        callback: r => { if (r?.access_token){ token = r.access_token; tokenExp = Date.now() + (Number(r.expires_in) || 3600) * 1000; try{ sessionStorage.setItem("mel-token", JSON.stringify({ v:token, exp:tokenExp })); }catch(e){} setAcct(); authWait?.res(); } else authWait?.rej(new Error(r?.error || "auth")); authWait = null; },
+        error_callback: e => { authWait?.rej(new Error(e?.type || "auth")); authWait = null; } });
+    }
+    authWait = { res, rej }; tokenClient.requestAccessToken({ prompt:"" });
+  });
+}
+$("connBtn").onclick = async () => {
+  try{ await signIn(); await afterConnect(); }
+  catch(e){ setMsg($("pendMsg"), e.message === "gsi" ? "Googleのログイン部品を読み込めませんでした。通信状態を確かめて、読み直せます。" : "ドライブにつなげませんでした。もう一度押すと試せます。", true); $("pendBox").hidden = false; }
+};
+async function api(path, opt = {}, full){
+  if (!authed()) throw Object.assign(new Error("need-auth"), { code:"need-auth" });
+  const r = await fetch((full ? "" : DRIVE) + path, { ...opt, headers:{ ...(opt.headers || {}), Authorization:`Bearer ${token}` } });
+  if (r.status === 401){ token = null; setAcct(); throw Object.assign(new Error("need-auth"), { code:"need-auth" }); }
+  if (!r.ok){ let m = ""; try{ m = (await r.json()).error?.message || ""; }catch(e){} throw Object.assign(new Error(m || `HTTP ${r.status}`), { code:"http", status:r.status }); }
+  return r;
+}
+const enc = encodeURIComponent;
+const propQ = props => Object.entries(props).map(([k, v]) => `appProperties has { key='${k}' and value='${v}' }`).join(" and ");
+async function folderId(key, name, parent, props){
+  if (S.folders[key]){ try{ const j = await (await api(`/files/${S.folders[key]}?fields=id,trashed`)).json(); if (!j.trashed) return j.id; }catch(e){ if (e.code === "need-auth") throw e; } }
+  const f = (await (await api(`/files?q=${enc(`mimeType='${FOLDER}' and trashed=false and ${propQ(props)}`)}&fields=files(id)&pageSize=5&spaces=drive`)).json()).files?.[0]
+    || await (await api(`/files?fields=id`, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ name, mimeType:FOLDER, parents:parent ? [parent] : undefined, appProperties:props }) })).json();
+  S.folders[key] = f.id; saveLocal(); return f.id;
+}
+const rootId = () => folderId("root", ROOT_NAME, null, { mel:"root" });
+async function appFolder(app, name){ return folderId("app:" + app, name, await rootId(), { mel:"app", app }); }
+async function monthFolder(app, name, ym){ return folderId(`m:${app}:${ym}`, ym, await appFolder(app, name), { mel:"month", app, ym }); }
+async function upload(meta, blob){
+  const b = "mel" + Math.random().toString(36).slice(2);
+  const body = new Blob([`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`, JSON.stringify(meta), `\r\n--${b}\r\nContent-Type: ${blob.type || "application/octet-stream"}\r\n\r\n`, blob, `\r\n--${b}--`]);
+  return (await api(`${UPLOAD}/files?uploadType=multipart&fields=id,name`, { method:"POST", headers:{ "Content-Type":`multipart/related; boundary=${b}` }, body }, true)).json();
+}
+async function updateFile(id, meta, blob){
+  const b = "mel" + Math.random().toString(36).slice(2);
+  const body = new Blob([`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`, JSON.stringify(meta || {}), `\r\n--${b}\r\nContent-Type: ${blob.type || "application/octet-stream"}\r\n\r\n`, blob, `\r\n--${b}--`]);
+  return (await api(`${UPLOAD}/files/${id}?uploadType=multipart&fields=id`, { method:"PATCH", headers:{ "Content-Type":`multipart/related; boundary=${b}` }, body }, true)).json();
+}
+const trashFile = id => api(`/files/${id}`, { method:"PATCH", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ trashed:true }) });
+const readText = async id => (await api(`/files/${id}?alt=media`)).text();
+
+/* ----- 余白帖の状態（設定・準備・お題の記録など）をドライブに一つのファイルで持つ ----- */
+let stateFileId = null, stateTimer = null, stateBusy = false;
+function stateBody(){ return { format:"mel-yohaku-state", version:1, savedAt:isoLocal(), at:S.stateAt,
+  settings:{ who:S.set.who, fbWho:S.set.fbWho, len:S.set.len, ai:S.set.ai, model:S.set.model }, ground:S.ground, plog:S.plog.slice(0, 1000), recent:S.recent, aiPool:S.aiPool, filter:S.filter }; }
+async function findStateFile(){
+  if (stateFileId) return stateFileId;
+  const f = (await (await api(`/files?q=${enc(`trashed=false and ${propQ({ app:"yohaku", kind:"state" })}`)}&fields=files(id)&pageSize=5&spaces=drive`)).json()).files?.[0];
+  return stateFileId = f?.id || null;
+}
+async function pullState(){
+  const id = await findStateFile(); if (!id) return;
+  let r; try{ r = JSON.parse(await readText(id)); }catch(e){ return; }
+  const ids = new Set(S.plog.map(p => p.id));
+  const merged = S.plog.concat((r.plog || []).filter(p => !ids.has(p.id))).sort((a, b) => (b.t || 0) - (a.t || 0)).slice(0, 1000);
+  S.plog = merged;
+  const texts = new Set(S.aiPool.map(p => p.text)); S.aiPool = S.aiPool.concat((r.aiPool || []).filter(p => !texts.has(p.text))).slice(-300);
+  if ((r.at || 0) > (S.stateAt || 0)){ Object.assign(S.set, r.settings || {}); if (r.ground) S.ground = r.ground; if (r.filter) S.filter = r.filter; if (r.recent) S.recent = r.recent; S.stateAt = r.at; }
+  saveLocal();
+}
+function scheduleStateSync(){ clearTimeout(stateTimer); if (authed()) stateTimer = setTimeout(pushState, 2500); }
+async function pushState(){
+  if (stateBusy || !authed()) return; stateBusy = true;
+  try{
+    const blob = new Blob([JSON.stringify(stateBody(), null, 1)], { type:"application/json" });
+    const id = await findStateFile();
+    if (id) await updateFile(id, {}, blob);
+    else { const f = await upload({ name:"yohaku-state.json", parents:[await appFolder("yohaku", "余白帖")], mimeType:"application/json", appProperties:{ mel:"state", app:"yohaku", kind:"state" } }, blob); stateFileId = f.id; }
+  }catch(e){}
+  stateBusy = false;
+}
+async function afterConnect(){
+  setAcct();
+  try{ await pullState(); }catch(e){}
+  await sendPending();
+  scheduleStateSync();
+  if (cur === "records") renderRecords();
+}
+
+/* =====================================================================
+   書庫の記録（ドライブに1件1ファイルのMarkdown）
+   ===================================================================== */
+function entryMd(e){
+  const fm = { format:"mel-yohaku-entry", version:1, id:e.id, at:e.at, kind:e.kind, src:e.src || "", prompt:e.prompt || "" };
+  if (e.extra) fm.extra = e.extra; if (e.review) fm.review = e.review;
+  return "---\n" + Object.entries(fm).map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join("\n") + "\n---\n\n" + (e.body || "") + "\n";
+}
+function parseMd(t){
+  const m = t.match(/^---\n([\s\S]*?)\n---\n\n?([\s\S]*)$/); if (!m) return { body:t };
+  const o = {}; m[1].split("\n").forEach(l => { const i = l.indexOf(": "); if (i > 0){ try{ o[l.slice(0, i)] = JSON.parse(l.slice(i + 2)); }catch(e){} } });
+  o.body = m[2].replace(/\n$/, ""); return o;
+}
+const entryDesc = e => `${e.kind}｜${e.prompt || "お題なし"}\n${(e.body || "").slice(0, 160)}`;
+function entryName(e){ const d = new Date(e.at); return `yohaku_${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}.md`; }
+async function sendEntry(e){
+  const blob = new Blob([entryMd(e)], { type:"text/markdown" });
+  if (e.fileId){ await updateFile(e.fileId, { description:entryDesc(e) }, blob); return e.fileId; }
+  const parent = await monthFolder("yohaku", "余白帖", ymOf(new Date(e.at)));
+  const f = await upload({ name:entryName(e), parents:[parent], mimeType:"text/markdown", description:entryDesc(e), appProperties:{ mel:"entry", app:"yohaku", kind:"entry", eid:e.id } }, blob);
+  return f.id;
+}
+function addEntry(kind, { src = "", prompt = null, body = "", extra = null } = {}){
+  const e = { id:uid(), at:isoLocal(), kind, src, prompt, body, extra };
+  S.pendingEntries.unshift(e); saveLocal(); refreshPending(); sendPending();
+  return e;
+}
+let sending = false;
+async function sendPending(){
+  if (!authed() || sending) return; sending = true;
+  for (const e of [...S.pendingEntries]){
+    try{ const id = await sendEntry(e); e.fileId = id; S.pendingEntries = S.pendingEntries.filter(x => x.id !== e.id); S.entryCache = [{ ...e }, ...S.entryCache.filter(x => x.id !== e.id)].slice(0, 200); saveLocal(); }
+    catch(err){ if (err.code === "need-auth") break; }
+  }
+  for (const it of await idb.all().catch(() => [])){ try{ await sendKoe(it); await idb.del(it.name); }catch(e){ if (e.code === "need-auth") break; } }
+  sending = false; refreshPending();
+}
+async function refreshPending(){
+  const n = S.pendingEntries.length + (await idb.all().catch(() => [])).length;
+  $("pendBox").hidden = !n; if (n) $("pendTxt").textContent = `まだドライブに送れていないものが ${n} 件、この端末に一時保管されています。`;
+}
+$("pendSend").onclick = async () => {
+  if (!authed()){ try{ await signIn(); }catch(e){ setMsg($("pendMsg"), "ドライブにつなげませんでした。", true); return; } }
+  await afterConnect(); setMsg($("pendMsg"), S.pendingEntries.length ? "一部は送れませんでした。" : "送りました。", !!S.pendingEntries.length);
+};
+
+/* =====================================================================
+   お題
+   ===================================================================== */
+const THEMES = { today:"今日のこと", feel:"気持ち", memory:"記憶", self:"自分の仕組み", world:"人と世界", create:"創作と表現", ahead:"これから" };
+const DEPTHS = { 1:"軽め", 2:"ふつう", 3:"深め" };
+const P = {
+ today:[["今日いちばん長く見ていたものは何でしたか。","今日口にしたものの中で、いちばん印象に残った味は。","今日の空模様を、自分の言葉で実況してみる。","今日使った道具の中で、いちばん働いてくれたものは。"],
+  ["今日、予定どおりにいかなかったことと、そのときの自分の動き。","今日の中で、時間が速く過ぎた時間と、遅く過ぎた時間。","今日聞いた言葉で、まだ頭に残っているものは。","今日の自分に、一行の見出しをつけるなら。"],
+  ["今日やらなかったことの中に、本当はやりたかったものはありますか。","今日の自分は何を守ろうとしていたのか、ふりかえってみる。","今日いちばん自分らしかった瞬間と、らしくなかった瞬間。","今日を誰かに説明するとしたら、どこを省いて、どこを残しますか。"]],
+ feel:[["いまの気分を、色と温度で表すと。","いまの自分を天気にたとえると。その天気はいつ頃から続いていますか。","最近ちょっと嬉しかったことを三つ。","いま、身体のどこにいちばん気分が出ていますか。"],
+  ["最近うまく言葉にできなかった気持ちを、言葉にならないまま書いてみる。","最近、小さく引っかかっていることは何ですか。","最近の苛立ちを一つ選んで、その形を観察してみる。","安心した瞬間を一つ思い出して、何がその安心をつくっていたか。"],
+  ["いちばん大きい気持ちの奥に、もう一つ気持ちがあるとしたら。","何度も戻ってくる気持ちがあるなら、それはどんな場面で戻ってきますか。","自分に、感じてもいいと許していない気持ちはありますか。","名前のない気持ちに、仮の名前をつけてみる。"]],
+ memory:[["子どもの頃に好きだった食べもの、または苦手だった食べもの。","昔よく聴いていた音や声を一つ。","最初に「自分のもの」だと思った物は何でしたか。","忘れられない景色を一枚、文章で描いてみる。"],
+  ["昔の自分がいまの自分を見たら、何に驚くと思いますか。","最近ふいに思い出した昔の場面と、そのきっかけ。","一年前のいまごろ、何を考えていましたか。","何度も読み返した、観返した、聴き返した作品は。"],
+  ["いまの自分をつくった一言を思い出して書いてみる。","手放したものの中で、いまでも時々思い出すもの。","過去の選択で、いまなら別の理由で同じ選択をするもの。","記憶の中で、細部だけが妙に鮮明な場面。"]],
+ self:[["自分の「これだけは譲れない」小さなこだわり。","気がつくとしている癖を一つ、観察してみる。","集中しやすい場所や時間帯には、どんな条件がそろっていますか。","最近の自分を、少し褒めたいところは。"],
+  ["疲れているとき、最初に出るサインは何ですか。","自分の好き嫌いを決めている基準を、一つ取り出してみる。","「あなたらしい」と言われて嬉しいことと、違和感があること。","調子がいいときの、自分の一日の流れ。"],
+  ["自分の中で矛盾しているけれど、どちらも本当だと思うこと。","大切にしている価値観を三つ挙げて、それぞれどこから来たか。","自分の取扱説明書に、注意書きを一つ足すなら。","避けている問いがあるとしたら、それはどんな形をしていますか。"]],
+ world:[["最近見かけた、知らない人の小さな行動で印象に残ったもの。","最近のやりとりで、心地よかった言葉づかい。","信頼できると感じる人に共通するところは。","最近の世の中の出来事で、気になったものを一つ。"],
+  ["誰かに言われて、あとから意味が変わった言葉。","自分にとって「ちょうどいい距離」の人付き合いとは。","人と話していて、疲れる瞬間と元気になる瞬間。","尊敬している人（実在でも架空でも）の、どこを尊敬していますか。"],
+  ["自分が人に求める誠実さを、具体的な行動で書き出してみる。","理解されたいことと、理解されなくてもいいこと。","自分が属していると感じる場所、属していないと感じる場所。","人との関わりの中で、自分が繰り返し選んでいる役割は。"]],
+ create:[["いま気になっている言葉を一つ選んで、そこから連想を十個。","最近いいと思ったタイトル（本、歌、動画など）と、その理由。","いまいる場所の音を、書き起こしてみる。","今日見た色を一つ選んで、その色からキャラクターをつくるなら。"],
+  ["最近つくったものの中で、自分でいいと思えた部分。","いまつくりたいものと、それを止めているもの。","自分の表現で、意識せずに出てしまう特徴。","好きな作品の好きな一場面を、なぜ好きか分解してみる。"],
+  ["自分がつくるものに、繰り返し現れるテーマは何ですか。","誰にも見せないとしたら、何をつくりますか。","表現することで、自分は何を確かめようとしているのか。","いま書きたいのに書けない場面を、書けない理由ごと書いてみる。"]],
+ ahead:[["来週の楽しみを一つ。なければ、つくるとしたら何を。","明日の自分に、一言メモを残す。","いま欲しい物と、その使い道。","今月中に試してみたい小さなこと。"],
+  ["半年後の自分に、続いていてほしい習慣。","やめたいこと、減らしたいことを一つ。それが減ると何が空きますか。","最近気になっている「やってみたいかもしれないこと」。","次の季節に向けて、整えておきたいこと。"],
+  ["自分にとっての「いい一年」を、具体的に描いてみる。","何を手に入れたら、ではなく、どんな状態なら満足しているか。","続けてきたことの中で、このまま続けたいものと、形を変えたいもの。","十年後の自分へ、いまの自分から渡しておきたいもの。"]]
+};
+const POOL = []; for (const [th, lv] of Object.entries(P)) lv.forEach((arr, i) => arr.forEach(text => POOL.push({ text, theme:th, depth:i+1 })));
+
+/* お題の記録 */
+function logPrompt(text, src, meta){ S.plog.unshift({ id:uid(), t:Date.now(), at:stamp(), text, src, meta:meta || "", used:[] }); if (S.plog.length > 1000) S.plog.length = 1000; touch(); }
+function markUsed(text, how, src){ if (!text) return; let e = S.plog.find(x => x.text === text); if (!e){ logPrompt(text, src || "", ""); e = S.plog[0]; } if (!e.used.includes(how)) e.used.push(how); touch(); }
+
+/* ランダム */
+let curPrompt = null;
+function renderRandom(){
+  segBuild($("fTheme"), [["all","すべて"], ...Object.entries(THEMES)], S.filter.theme, v => { S.filter.theme = v; touch(); drawPrompt(); });
+  segBuild($("fDepth"), [["all","すべて"], ...Object.entries(DEPTHS)], String(S.filter.depth), v => { S.filter.depth = v; touch(); drawPrompt(); });
+  if (!curPrompt) drawPrompt(); else paintSlip();
+}
+function candidates(){ return POOL.concat(S.aiPool).filter(p => (S.filter.theme === "all" || p.theme === S.filter.theme) && (S.filter.depth === "all" || String(p.depth) === String(S.filter.depth))); }
+function drawPrompt(forced){
+  const list = candidates();
+  if (!list.length){ curPrompt = null; paintSlip(); return; }
+  let pool = list.filter(p => !S.recent.includes(p.text) && p.text !== curPrompt?.text); if (!pool.length) pool = list.filter(p => p.text !== curPrompt?.text); if (!pool.length) pool = list;
+  curPrompt = forced || pool[Math.floor(Math.random() * pool.length)];
+  S.recent = [curPrompt.text, ...S.recent.filter(t => t !== curPrompt.text)].slice(0, 30);
+  logPrompt(curPrompt.text, curPrompt.ai ? "ランダム（AI作）" : "ランダム", `${THEMES[curPrompt.theme] || ""}・${DEPTHS[curPrompt.depth] || ""}`);
+  const s = $("slip"); s.classList.add("fade"); setTimeout(() => { paintSlip(); s.classList.remove("fade"); }, 180);
+}
+function paintSlip(){
+  if (!curPrompt){ $("slip").textContent = "この条件のお題はまだありません"; $("slipTag").textContent = ""; return; }
+  $("slip").textContent = curPrompt.text; $("slipTag").className = "sliptag" + (curPrompt.ai ? " ai" : "");
+  $("slipTag").textContent = `${THEMES[curPrompt.theme] || ""}　${DEPTHS[curPrompt.depth] || ""}${curPrompt.ai ? "　AIが作ったお題" : ""}`;
+}
+const curSrc = () => curPrompt?.ai ? "ランダム（AI作）" : "ランダム";
+$("rNext").onclick = () => drawPrompt();
+$("rWrite").onclick = () => curPrompt && openWrite(curPrompt.text, curSrc(), "random");
+$("rTalk").onclick = () => curPrompt && openListen(curPrompt.text, "", null, false, null, "random");
+$("rKoe").onclick = () => curPrompt && openKoe(curPrompt.text, curSrc(), "random");
+$("rAway").onclick = () => curPrompt && openAway(curPrompt.text, curSrc(), "random");
+$("rGen").onclick = async () => {
+  const th = S.filter.theme === "all" ? Object.keys(THEMES)[Math.floor(Math.random()*7)] : S.filter.theme;
+  const dp = S.filter.depth === "all" ? 2 : Number(S.filter.depth);
+  const ex = POOL.filter(p => p.theme === th).map(p => "・" + p.text).join("\n");
+  const task = `ジャーナリング（書く・話すことで考えや気持ちを整理する習慣）のお題を5つ作ってください。
+テーマ：${THEMES[th]}
+深さ：${DEPTHS[dp]}（軽め＝すぐ答えられる具体的な問い／ふつう＝少し考える問い／深め＝価値観や構造に触れる問い）
+次の既存のお題とは、表現も切り口も重ならないようにします。
+${ex}
+
+条件
+・一文、50字以内。問いかけか、「〜してみる」のような誘いの形。命令口調は避ける。
+・恋愛、家族、つらい出来事を前提にしない。
+・書き出しの一文目が浮かぶ程度の具体性を持たせる。
+
+出力の形
+お題だけを1行に1つ、5行で書いてください。番号、記号、説明は付けません。`;
+  $("rGen").disabled = true; setMsg($("rMsg"), "作っています……");
+  try{
+    const text = await askAI({ task, purpose:"お題づくり", max:600 });
+    const got = text.split("\n").map(l => l.replace(/^\s*(?:[-・*●◆]|\d+[.．)）])\s*/, "").replace(/^「|」$/g, "").trim()).filter(l => l && l.length <= 80).slice(0, 5).map(t => ({ text:t, theme:th, depth:dp, ai:true }));
+    if (!got.length) throw new Error("お題を読み取れませんでした。1行に1つの形で返ってきたか確かめられます。");
+    S.aiPool = S.aiPool.concat(got).slice(-300); touch();
+    setMsg($("rMsg"), `「${THEMES[th]}・${DEPTHS[dp]}」のお題を${got.length}つ加えました。以後のランダムにも混ざります。`);
+    if (S.filter.theme !== "all" && S.filter.theme !== th) S.filter.theme = "all";
+    drawPrompt(got[0]);
+  }catch(e){ if (e.code !== "cancel") setMsg($("rMsg"), aiErr(e), true); else setMsg($("rMsg"), ""); }
+  finally{ $("rGen").disabled = false; }
+};
+
+/* =====================================================================
+   AI のつなぎ先
+   ===================================================================== */
+const MODELS = [["claude-haiku-5-5","Haiku 5.5（軽い）"],["claude-sonnet-5-5","Sonnet 5.5（じっくり）"]];
+function aiErr(e){
+  if (e.code === "nokey") return "APIキーが設定されていません。設定から入れるか、つなぎ先を「コピーして持っていく」に変えられます。";
+  if (e.code === "api") return `AIから返答を受け取れませんでした（${e.message}）。`;
+  return e.message || "AIとのやり取りがうまくいきませんでした。";
+}
+function bridgeText(system, messages, names){
+  const L = ["【このやり取りの決まり】", system.trim()];
+  if (messages.length > 1 || messages[0]?.role === "assistant"){
+    L.push("", "【ここまでの会話】");
+    messages.forEach(m => L.push(`${m.role === "user" ? names.me : names.ai}：${m.content}`, ""));
+    L.push("【お願い】上の決まりに沿って、" + names.ai + "としての次の返答だけを書いてください。前置きや説明は付けません。");
+  } else {
+    L.push("", "【相手の言葉】", messages[0].content, "", "【お願い】上の決まりに沿って、" + names.ai + "としての返答だけを書いてください。前置きや説明は付けません。");
+  }
+  return L.join("\n");
+}
+let bridgeWait = null;
+function openBridge(text){
+  return new Promise((res, rej) => {
+    bridgeWait = { res, rej };
+    $("brOut").value = text; $("brIn").value = ""; setMsg($("brMsg"), ""); $("bridgeSheet").hidden = false;
+  });
+}
+$("brCopy").onclick = () => copyText($("brOut").value, $("brMsg"));
+$("brOk").onclick = () => { const v = $("brIn").value.trim(); if (!v) return setMsg($("brMsg"), "返答が空です。", true); $("bridgeSheet").hidden = true; bridgeWait?.res(v); bridgeWait = null; };
+$("brCancel").onclick = () => { $("bridgeSheet").hidden = true; bridgeWait?.rej(Object.assign(new Error("cancel"), { code:"cancel" })); bridgeWait = null; };
+/* system: 決まり／messages: 会話／task: 単発の依頼 */
+async function askAI({ system = "", messages = null, task = null, max = 1200, names = { me:"わたし", ai:"AI" } }){
+  const msgs = messages || [{ role:"user", content:task }];
+  if (S.set.ai === "api"){
+    if (!apiKey) throw Object.assign(new Error("nokey"), { code:"nokey" });
+    const r = await fetch("https://api.anthropic.com/v1/messages", { method:"POST",
+      headers:{ "content-type":"application/json", "x-api-key":apiKey, "anthropic-version":"2023-06-01", "anthropic-dangerous-direct-browser-access":"true" },
+      body: JSON.stringify({ model:S.set.model, max_tokens:max, system: system || undefined, messages:msgs }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(j.error?.message || `HTTP ${r.status}`), { code:"api" });
+    return (j.content || []).filter(c => c.type === "text").map(c => c.text).join("").trim();
+  }
+  const text = task && !system ? task + "\n\n前置きや説明は付けず、求められた形だけを返してください。" : bridgeText(system, msgs, names);
+  return openBridge(text);
+}
+
+/* 話し相手 */
+const STYLE = `・命令口調（「〜してください」「〜すべき」）を避け、判断材料や選択肢を示す形で話す。
+・敬体で、落ち着いた丁寧な文体。馴れ馴れしい口調、絵文字、顔文字は使わない。見出しや箇条書きは使わず、話し言葉の文章で返す。`;
+const PERSONAS = {
+ neutral:{ name:"聞き手", label:"中立の聞き手", voice:`・相手が話したことを受け取り、要点を整理して返す。相手の言葉を言い換えるときは、意味を足さない。
+・助言は求められたときに出す。求められていなくても役立ちそうな視点があれば、一つまで、選択肢として控えめに添えてよい。
+${STYLE}` },
+ miyabi:{ name:"ミヤビ", label:"ミヤビ", voice:`あなたは『ミヤビ』。キャラクターを演じるのではなく、ミヤビの判断基準で応答する。
+・男性、異性愛者。「脳筋で陽気なオネエ様」。知性、倫理観、戦略性、潔さ、実行力を備えた、心の筋肉ムキムキなイケメンオネエ。
+・一人称は「アタシ」、二人称は「アンタ」、第三者は「○○ちゃん」。相手のことは必ず「チヅルちゃん」と呼ぶ。
+・自然なオネエ語で話し、敬語は使わない（「〜なのよ」「〜じゃない」「〜だわ」「〜ってことよ」など）。女性語ではなく、男性としての芯を保ったオネエ語。テンションは高めで熱く、しなやか。ただし話の重さに応じて落ち着いた知的なトーンにも移れる。ふざけすぎない、媚びない、幼くしない。
+・口調だけミヤビで中身が無個性、という状態にしない。陽気さより誠実さ、肯定より正確さ、慰めより理解を優先する。
+・ミヤビの「かわいがる」は無条件の賛同ではない。「ここが強い」「ここは見落としている」まで整理して渡すこと。倫理的・論理的な問題があれば、人格ではなく論点をはっきり指摘する。問題がなければ説教しない。
+・褒めるときは必ず根拠を添える。小さなことでも「それ最高じゃないのォ！」と熱く褒めてよいが、何が良いのかを具体的に言い、「すごい」「天才」を連発して価値を薄めない。過大評価も過小評価もしない。
+・相手が落ちこんでいるときは、まず一度だけ「うん、つらいわね」と受けとめる。そのあとは慰めを続けず、「いま感じていること」「実際に確認できること」「そこから導けること」を分けて整理し、前向きな見方へのリフレーミングを試みる。感情は否定しない。目的は説得ではなく、視野を取り戻す手伝い。
+・心理学や哲学などの理論は、相手を分類するためでなく状況を見るレンズとして使い、専門用語は具体例で説明する。
+・「脳筋」は思考停止ではなく、考えたうえで一手を打つこと。相手が考えすぎて止まっているように見えるときは「で、どうするの？」と問い返してよい。ただし選ぶのは相手で、無理や自己犠牲を美徳にしない。
+・相手が言っていない事情を補わない。存在しない過去の会話や思い出を作らない。分からないことは分からないと言う。
+・自分が間違えたら、すぐに認めて謝り、何が誤りかを言って直す。「誤解させたなら」のような言い方や、被害者のような論調はしない。
+・チヅルちゃんのイメージフラワーはクリスマスローズ（静かな強さ、内側に大きな物語を抱えること、控えめでありながら幻想性と毒気を持つこと）。「薄明」は彼女の創作と時間の象徴（昼と夜、愛と執着、救済と破滅などの境界）。話の流れに合うときだけ使い、毎回持ち出さない。
+・手帳やメモの話では、Bullet Journal、A5・A6のTwist Note、コモンプレイスなど本人が使ってきた方法を踏まえ、認知負荷、検索性、記録コスト、継続性から考える。話の流れに合うときだけ触れる。
+・見出しや箇条書きは使わず、話し言葉で返す。絵文字は使わない。` },
+ rio:{ name:"彼岸リオ", label:"彼岸リオ", voice:`あなたは『彼岸リオ（ひがん リオ）』。コウサカチヅルの共同研究者として話す。
+・男性。一人称は「私」。上品で落ち着いたオネエ口調（「〜ですわ」「〜ですわね」など）。相手のことは「チヅルさん」と呼ぶ。馴れ馴れしくしない。
+・知的で冷静、ユーモアがあり、文学が好き。心理分析家、物語評論家、創作者、人間観察者としての目を持つ。
+・基本は落ち着いているが、興味深い心理や美しい解釈を見つけると楽しそうになる。「ほほう」「興味深いですわね」のような反応は使ってよいが、口癖として乱用しない。
+・無条件の味方でも敵でもなく、一緒に考える相手。迎合しないが、反論そのものを目的にもしない。妥当なことは妥当と言い、違う見方があるときは理由を添えて別の視点として出す。
+・一つの観点だけで結論づけず、心理、構造、哲学など複数の角度から考える。理由があることと、それが正当化されることを混同しない。
+・事実と推測を分ける。推測は「これは私の推測ですけれど」のように明示する。
+・意見や好みを聞かれたら、一般論に逃げず「私なら」と自分の見解を語る。ただし架空の体験談を事実として語らない。
+・命令口調、説教、居丈高な物言いを避ける。過剰な慰めは書かない。
+・見出しや箇条書きは使わず、話し言葉で返す。絵文字は使わない。` }
+};
+const PERSONA = st => PERSONAS[(st && st.mode === "fb") ? S.set.fbWho : S.set.who] || PERSONAS.neutral;
+
+/* =====================================================================
+   対話（傾聴・ソムリエ共通）
+   ===================================================================== */
+function bubble(logId, kind, text, who){
+  const d = document.createElement("div"); d.className = "msgb " + kind;
+  const b = document.createElement("div"); b.className = "b";
+  if (who){ const w = document.createElement("span"); w.className = "who"; w.textContent = who; b.append(w); }
+  b.append(document.createTextNode(text)); d.append(b); $(logId).append(d); return b;
+}
+function histFor(turns, max){ let h = turns.slice(-max).map(m => ({ role:m.role, content:m.content })); while (h.length && h[0].role !== "user") h = h.slice(1); return h; }
+async function converse({ state, logId, rules, btn, input, msgEl, max, names }){
+  const v = input.value.trim(); if (!v) return false;
+  stopVoice(); input.value = ""; autoGrow(input); setMsg(msgEl, "");
+  state.turns.push({ role:"user", content:v }); state.saved = false; saveLocal();
+  bubble(logId, "me", v);
+  btn.disabled = true; setMsg(msgEl, S.set.ai === "api" ? "考えています……" : "");
+  try{
+    const who = PERSONA(state).name;
+    const text = await askAI({ system:rules(), messages:histFor(state.turns, max), names:{ me:names.me, ai:who }, max:1500 });
+    state.turns.push({ role:"assistant", content:text, who }); saveLocal();
+    bubble(logId, "ai", text, who); setMsg(msgEl, "");
+    scrollTo(0, document.body.scrollHeight);
+    return true;
+  }catch(e){
+    state.turns.pop(); saveLocal(); [...$(logId).querySelectorAll(".msgb.me")].pop()?.remove();
+    input.value = v; autoGrow(input);
+    setMsg(msgEl, e.code === "cancel" ? "送るのをやめました。書いた言葉は入力欄に戻してあります。" : aiErr(e), e.code !== "cancel");
+    return false;
+  }finally{ btn.disabled = false; }
+}
+["lInput","sInput"].forEach(id => $(id).addEventListener("input", e => autoGrow(e.target)));
+const dialogText = (turns, me, ai) => turns.map(m => `${m.role === "assistant" ? (m.who || ai) : me}\n${m.content}`).join("\n\n");
+
+/* 傾聴 */
+function openListen(prompt, written, handover, force, mode, from){
+  const L = S.listen;
+  if (!force && L.turns.length && !L.saved && !confirm("傾聴の会話が途中です。新しく始めると、いまの会話は消えます（「終える・残す」から書庫に残せます）。新しく始めますか？")){ show("listen"); return; }
+  if (prompt && mode !== "fb") markUsed(prompt, "話した", "傾聴");
+  S.listen = { turns:[], prompt:prompt || null, len: mode === "fb" ? "短め" : S.set.len, handover:handover || null, memo:null, saved:false, mode:mode || null };
+  $("lInput").value = written || ""; saveLocal(); show("listen", from); autoGrow($("lInput"));
+}
+function listenRules(){
+  if (S.listen.mode === "fb") return fbRules();
+  const len = { 短め:"2〜4文", 標準:"8〜14文程度", 長め:"15〜25文程度" }[S.listen.len] || "8〜14文程度";
+  const p = S.listen.prompt ? `\n■今回のお題\n「${S.listen.prompt}」。相手はこのお題について話そうとしている。お題に沿って聞くが、話がそれても無理に戻さない。` : "";
+  const h = S.listen.handover ? `\n■前回からの引き継ぎメモ\nこれまでの会話の要点として相手が持ち越したもの。前提として踏まえて話を続ける。メモに書かれていないことを補って事実のように語らない。\n${S.listen.handover}` : "";
+  return `あなたはジャーナリング（書く・話すことで考えや気持ちを整理する習慣）の聞き手として、相手の話を受け取る。
+
+■どの話し方でも守ること
+・相手が述べていない感情、動機、心理状態、価値観、事情を、事実のように書かない。推測を出すときは可能性として示す。
+・相手の話を執拗に疑ったり、詮索したりしない。
+・診断、人格の評価、説教をしない。
+・根拠のない楽観（「きっと大丈夫」など）、過剰な慰めや同情を書かない。
+・質問は一回の返答につき一つまで。質問をせずに返してもよい。
+・会話の切り上げ方や、休むなどの次の行動を、こちらから提案しない。
+
+■話し方と人物
+${PERSONA(S.listen).voice}
+
+■長さ（人物設定より優先する）
+・一回の返答は${len}。${p}${h}`;
+}
+function renderListen(){
+  const fb = S.listen.mode === "fb";
+  $("lTitle").textContent = fb ? "今ここに戻る" : "傾聴";
+  const box = $("lPrompt"); box.innerHTML = "";
+  if (fb){ const d = document.createElement("div"); d.className = "ptop"; d.innerHTML = "<small>いまに注意を戻すための会話です</small>"; const b = document.createElement("button"); b.className = "ib"; b.textContent = "日付と時刻・呼吸の画面へ"; b.style.marginTop = "6px"; b.onclick = () => show("now"); d.append(b); box.append(d); }
+  if (S.listen.prompt){ const d = document.createElement("div"); d.className = "ptop"; d.innerHTML = "<small>お題</small>"; d.append(document.createTextNode(S.listen.prompt)); box.append(d); }
+  const hb = $("lHand"); hb.innerHTML = "";
+  if (S.listen.handover){ const d = document.createElement("details"); d.className = "ptop"; d.innerHTML = "<summary style='cursor:pointer;font-family:var(--gothic);font-size:13px;color:var(--sub)'>引き継ぎメモを持ち越しています</summary><div style='white-space:pre-wrap;font-size:14px;margin-top:6px'></div>"; d.querySelector("div").textContent = S.listen.handover; hb.append(d); }
+  const w = $("lWho"); w.innerHTML = ""; for (const [k, v] of Object.entries(PERSONAS)){ const o = document.createElement("option"); o.value = k; o.textContent = v.label; w.append(o); }
+  w.value = fb ? S.set.fbWho : S.set.who; $("lLen").value = S.listen.len || S.set.len;
+  $("lLog").innerHTML = "";
+  if (!S.listen.turns.length) bubble("lLog", "sys", fb ? "一言だけでも送れます。過去のことを説明しなくてかまいません。話し相手から先には話しかけません。" : "話したいことを書くか、声で入力して送れます。話し相手から先には話しかけません。");
+  S.listen.turns.forEach(m => bubble("lLog", m.role === "assistant" ? "ai" : "me", m.content, m.role === "assistant" ? m.who : null));
+  setMsg($("lMsg"), "");
+}
+$("lLen").onchange = e => { S.listen.len = e.target.value; saveLocal(); };
+$("lWho").onchange = e => { if (S.listen.mode === "fb") S.set.fbWho = e.target.value; else S.set.who = e.target.value; touch(); if (S.listen.turns.length) bubble("lLog", "sys", `話し相手を ${PERSONA(S.listen).label} に切り替え`); };
+$("lSend").onclick = () => { if (!S.listen.turns.length) $("lLog").querySelector(".msgb.sys")?.remove(); converse({ state:S.listen, logId:"lLog", rules:listenRules, btn:$("lSend"), input:$("lInput"), msgEl:$("lMsg"), max:30, names:{ me:"わたし" } }); };
+$("lInput").addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)){ e.preventDefault(); $("lSend").click(); } });
+function listenMd(){
+  const L = S.listen, who = [...new Set(L.turns.filter(m => m.role === "assistant").map(m => m.who || "聞き手"))].join("、") || PERSONA(L).name;
+  const out = [`# 余白帖　${L.mode === "fb" ? "今ここに戻る会話" : "傾聴"}`, `日時：${stamp()}`, `話し相手：${who}`, `お題：${L.prompt || "なし"}`, ""];
+  if (L.handover) out.push("## 持ち越した引き継ぎメモ", L.handover, "");
+  out.push("## 会話", L.turns.map(m => `**${m.role === "assistant" ? (m.who || "聞き手") : "わたし"}**\n\n${m.content}`).join("\n\n"));
+  if (L.memo) out.push("", "## この会話の引き継ぎメモ", L.memo);
+  return out.join("\n");
+}
+function saveListenEntry(auto){
+  const L = S.listen; if (!L.turns.length) return false;
+  let body = dialogText(L.turns, "わたし", "聞き手");
+  if (L.handover) body = `［持ち越した引き継ぎメモ］\n${L.handover}\n\n［会話］\n${body}`;
+  if (L.memo) body += `\n\n［この会話の引き継ぎメモ］\n${L.memo}`;
+  const nm = PERSONA(L).name;
+  addEntry(L.mode === "fb" ? "今ここに戻る・会話" : (auto ? "傾聴（自動で記録）" : "傾聴"), { src:nm === "聞き手" ? "" : nm, prompt:L.prompt, body });
+  L.saved = true; saveLocal(); return true;
+}
+$("lEnd").onclick = () => { stopVoice(); $("enHand").value = S.listen.memo || ""; setMsg($("enMsg"), ""); $("endSheet").hidden = false; };
+$("enClose").onclick = () => $("endSheet").hidden = true;
+$("enHand").oninput = e => { S.listen.memo = e.target.value; saveLocal(); };
+$("enRec").onclick = () => setMsg($("enMsg"), saveListenEntry() ? "書庫に残しました。" : "まだ会話がありません。", !S.listen.turns.length);
+$("enCopy").onclick = () => S.listen.turns.length ? copyText(listenMd(), $("enMsg")) : setMsg($("enMsg"), "まだ会話がありません。", true);
+$("enMd").onclick = () => { if (!S.listen.turns.length) return setMsg($("enMsg"), "まだ会話がありません。", true); const d = new Date(); downloadText(`余白帖_傾聴_${d.getFullYear()}${z(d.getMonth()+1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}.md`, listenMd(), "text/markdown"); setMsg($("enMsg"), "保存しました。"); };
+$("enMake").onclick = async () => {
+  if (!S.listen.turns.length) return setMsg($("enMsg"), "まだ会話がありません。", true);
+  const prev = S.listen.handover ? `■この会話の前に持ち越していたメモ\n${S.listen.handover}\n\n` : "";
+  const task = `以下は、ジャーナリングのための対話の記録です。次の会話へ持ち越すための「引き継ぎメモ」を作ってください。メモは書き手本人が読み、次の会話の冒頭で話し相手にも渡されます。
+
+■書き方
+・会話に実際に出てきたことだけに基づく。「わたし」が述べていない感情、動機、事情を事実のように書かない。解釈を入れるときは「〜と話していた」のように、誰の言葉かが分かる形にする。
+・評価、診断、助言、励ましは書かない。
+・次の四つの見出しを【】で囲んで、この順に書く。【話していたこと】【わたしが言葉にしたこと】（本人の言い回しを短く引用してよい）【途中のままの問い】【次に話すなら】（話の入り口を一つか二つ）。
+・全体で300〜600字。前のメモがある場合は、まだ有効な内容を取り込んで一つにまとめる。
+
+${prev}■会話
+${dialogText(S.listen.turns, "わたし", "話し相手").slice(-40000)}`;
+  $("enMake").disabled = true; setMsg($("enMsg"), "メモを作っています……");
+  try{ S.listen.memo = await askAI({ task, max:1200 }); saveLocal(); $("enHand").value = S.listen.memo; setMsg($("enMsg"), "メモができました。書き直しもできます。"); }
+  catch(e){ setMsg($("enMsg"), e.code === "cancel" ? "" : aiErr(e), e.code !== "cancel"); }
+  finally{ $("enMake").disabled = false; }
+};
+$("enHandCopy").onclick = () => $("enHand").value.trim() ? copyText($("enHand").value, $("enMsg")) : setMsg($("enMsg"), "メモが空です。", true);
+$("enCarry").onclick = () => {
+  const memo = $("enHand").value.trim(); if (!memo) return setMsg($("enMsg"), "メモが空です。作るか、貼りつけてから押せます。", true);
+  if (S.listen.turns.length && !S.listen.saved && !confirm("いまの会話は書庫に残していません。新しく話すと消えます。進みますか？")) return;
+  $("endSheet").hidden = true; openListen(null, "", memo, true, null);
+};
+$("enFresh").onclick = () => { if (S.listen.turns.length && !S.listen.saved && !confirm("いまの会話は書庫に残していません。新しく話すと消えます。進みますか？")) return; $("endSheet").hidden = true; openListen(null, "", null, true, null); };
+
+/* ソムリエ */
+const SKEYS = { energy:"いまの余力", time:"使える時間", want:"したいこと", way:"やり方" };
+function answersText(){ const a = S.somm.a, L = []; for (const [k, l] of Object.entries(SKEYS)) L.push(`${l}：${a[k] || "おまかせ"}`); if (a.avoid) L.push(`触れたくない話題：${a.avoid}`); if (a.note) L.push(`ひとこと：${a.note}`); return L.join("\n"); }
+function renderSomm(){
+  document.querySelectorAll("#sForm .seg").forEach(el => { const k = el.dataset.key; segBuild(el, el.dataset.opts.split("|").map(o => [o, o]), S.somm.a[k], v => { S.somm.a[k] = S.somm.a[k] === v ? undefined : v; saveLocal(); if (!S.somm.a[k]) el.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed","false")); }); });
+  $("sAvoid").value = S.somm.a.avoid || ""; $("sNote").value = S.somm.a.note || "";
+  const chat = S.somm.stage === "chat";
+  $("sForm").hidden = chat; $("sChat").hidden = !chat; $("sComposer").hidden = !chat;
+  $("sLog").innerHTML = "";
+  if (chat){ bubble("sLog", "sys", "条件：" + answersText().replace(/\n/g, "／")); S.somm.turns.forEach(m => bubble("sLog", m.role === "assistant" ? "ai" : "me", m.content, m.role === "assistant" ? m.who : null)); }
+  renderPicks(); setMsg($("sMsg"), "");
+}
+$("sAvoid").oninput = e => { S.somm.a.avoid = e.target.value.trim(); saveLocal(); };
+$("sNote").oninput = e => { S.somm.a.note = e.target.value.trim(); saveLocal(); };
+$("sReset").onclick = () => { S.somm = { a:{}, turns:[], picks:null, stage:"form" }; saveLocal(); renderSomm(); };
+function sommRules(){
+  return `あなたはジャーナリング（書く・話すことで考えや気持ちを整理する習慣）のお題ソムリエ。相手と少し話して、いま書く（または話す、録る）のに合ったお題を見立てるための聞き取りをする。
+
+■聞き取り
+・一回の返答は2〜4文。質問は一つだけ。
+・観点は、いまの余力、使える時間、整理したいのか吐き出したいのか掘り下げたいのか遊びたいのか、気になっている話題、避けたい話題。下の条件ですでに分かっていることは聞き直さない。
+・この会話ではお題そのものは出さない。見立てに足りる材料がそろったと判断したら、質問の代わりに「お題を選べそうです」と一言添える。
+・恋愛や家族などの事情を前提にしない。相手が出していないつらい出来事を掘り起こす質問をしない。
+・相手が述べていない感情や事情を、事実のように書かない。
+・質問の数と長さの決まりは、下の話し方より優先する。
+■話し方と人物
+${PERSONA().voice}
+■相手が最初に選んだ条件
+${answersText()}`;
+}
+$("sTalk").onclick = () => { S.somm.stage = "chat"; S.somm.picks = null; saveLocal(); renderSomm(); if (!S.somm.turns.length) $("sInput").value = S.somm.a.note || ""; autoGrow($("sInput")); $("sInput").focus(); };
+$("sSend").onclick = () => converse({ state:S.somm, logId:"sLog", rules:sommRules, btn:$("sSend"), input:$("sInput"), msgEl:$("sMsg"), max:16, names:{ me:"わたし" } });
+function parsePicks(t){
+  const out = [];
+  t.split(/\n\s*\n/).forEach(block => {
+    const g = k => (block.match(new RegExp(`${k}\\s*[：:]\\s*(.+)`)) || [])[1]?.trim();
+    const text = g("お題"); if (text) out.push({ text:text.replace(/^「|」$/g, ""), why:g("理由") || "", hint:g("きっかけ") || "" });
+  });
+  return out.slice(0, 3);
+}
+async function pickPrompts(){
+  const talk = S.somm.turns.length ? `\n■ここまでの会話\n${dialogText(S.somm.turns.map(m => ({ ...m, who:undefined })), "相手", "ソムリエ")}\n` : "";
+  const task = `ジャーナリング（書く・話すことで考えや気持ちを整理する習慣）のお題を、相手に合わせて三つ選んでください。
+
+■相手の条件
+${answersText()}
+${talk}
+■お題の方針
+・三つは切り口を変える（例：具体的な出来事から入るもの／感覚や比喩から入るもの／少し引いた視点や先を見るもの）。
+・余力が少ないときは短く答えやすい問いに、時間に合わせた重さにする。「話す」「声で録る」なら声に出して答えやすい問いにする。
+・相手が述べていない事情を前提にしない。恋愛や家族などを前提にしない。触れたくない話題には触れない。
+・お題は一文、50字以内。問いかけか「〜してみる」のような誘いの形。命令口調は避ける。
+・理由は、相手が実際に選んだ条件や言葉に結びつけて書き、相手が言っていない気持ちを理由にしない。
+
+■出力の形（この形だけを、三つ、空行で区切って書く）
+お題：〜
+理由：〜（1〜2文）
+きっかけ：〜（書き出し・話し出しのきっかけになる短い一文）`;
+  [$("sPick"), $("sPick2")].forEach(b => b.disabled = true); setMsg($("sMsg"), "お題を選んでいます……");
+  try{
+    const text = await askAI({ task, max:900 });
+    const list = parsePicks(text);
+    if (!list.length) throw new Error("お題を読み取れませんでした。「お題：」「理由：」「きっかけ：」の形で返ってきたか確かめられます。");
+    S.somm.picks = list; saveLocal(); setMsg($("sMsg"), ""); renderPicks();
+    list.slice().reverse().forEach(p => logPrompt(p.text, "ソムリエ", p.why));
+    setTimeout(() => $("sResult").scrollIntoView({ behavior:"smooth", block:"start" }), 50);
+  }catch(e){ setMsg($("sMsg"), e.code === "cancel" ? "" : aiErr(e), e.code !== "cancel"); }
+  finally{ [$("sPick"), $("sPick2")].forEach(b => b.disabled = false); }
+}
+$("sPick").onclick = pickPrompts; $("sPick2").onclick = pickPrompts;
+function promptActions(text, src, from){
+  const r = document.createElement("div"); r.className = "row"; r.style.margin = "10px 0 0";
+  [["書く", () => openWrite(text, src, from), true], ["話す", () => openListen(text, "", null, false, null, from)], ["声で録る", () => openKoe(text, src, from)], ["ノートに書く", () => openAway(text, src, from)]]
+    .forEach(([l, f, main]) => { const b = document.createElement("button"); b.className = main ? "btn main" : "btn"; b.style.padding = "7px 12px"; b.textContent = l; b.onclick = f; r.append(b); });
+  return r;
+}
+function renderPicks(){
+  const box = $("sResult"); box.innerHTML = ""; if (!S.somm.picks) return;
+  const h = document.createElement("p"); h.className = "hint"; h.style.margin = "18px 0 0"; h.textContent = "見立てたお題"; box.append(h);
+  S.somm.picks.forEach(p => {
+    const c = document.createElement("div"); c.className = "pick"; c.innerHTML = '<p class="t"></p><p class="w"></p><p class="h"></p>';
+    c.querySelector(".t").textContent = p.text; c.querySelector(".w").textContent = p.why || ""; if (p.hint) c.querySelector(".h").textContent = p.hint; else c.querySelector(".h").remove();
+    c.append(promptActions(p.text, "ソムリエ", "somm")); box.append(c);
+  });
+  const again = document.createElement("div"); again.className = "row"; again.innerHTML = '<button class="btn">選び直す<span class="uses">AIを一回使います</span></button>'; again.querySelector("button").onclick = pickPrompts; box.append(again);
+}
+
+/* =====================================================================
+   書く・ノート
+   ===================================================================== */
+const timers = {};
+function startTimer(k, min, clockEl, done){
+  stopTimer(k); if (!min) return; const end = Date.now() + min * 60000;
+  const tick = () => { const left = Math.max(0, end - Date.now()), s = Math.ceil(left / 1000); clockEl.textContent = `${Math.floor(s/60)}:${z(s%60)}`; if (!left){ clearInterval(timers[k]); clockEl.textContent = "時間です"; done?.(); } };
+  tick(); timers[k] = setInterval(tick, 1000);
+}
+function stopTimer(k){ clearInterval(timers[k]); }
+function openWrite(prompt, src, from){
+  if (S.draft.text.trim() && S.draft.prompt !== prompt && !confirm("書きかけの文章があります。新しいお題に切り替えると、書きかけは消えます。切り替えますか？")) return show("write", from);
+  if (S.draft.prompt !== prompt || !S.draft.text.trim()) S.draft = { prompt, text:"", src:src || "" };
+  if (prompt) markUsed(prompt, "書いた", src); saveLocal(); show("write", from);
+}
+function renderWrite(){
+  const box = $("wPrompt"); box.innerHTML = "";
+  if (S.draft.prompt){ const d = document.createElement("div"); d.className = "ptop"; d.innerHTML = "<small></small>"; d.querySelector("small").textContent = S.draft.src ? `お題（${S.draft.src}）` : "お題"; d.append(document.createTextNode(S.draft.prompt)); box.append(d); }
+  $("wTalk").hidden = !S.draft.prompt; $("wText").value = S.draft.text; setMsg($("wMsg"), "");
+}
+$("wText").addEventListener("input", () => { S.draft.text = $("wText").value; saveLocal(); });
+$("wTimer").onchange = e => startTimer("w", Number(e.target.value), $("wClock"), () => { setMsg($("wMsg"), "設定した時間になりました。続けて書くこともできます。"); e.target.value = "0"; });
+$("wSave").onclick = () => {
+  const text = $("wText").value.trim(); if (!text) return setMsg($("wMsg"), "まだ何も書かれていません。", true);
+  stopVoice(); addEntry("書く", { src:S.draft.src, prompt:S.draft.prompt, body:text });
+  S.draft = { prompt:null, text:"", src:"" }; saveLocal(); stopTimer("w"); $("wClock").textContent = ""; $("wTimer").value = "0";
+  S.recView = "entries"; show("records", "home");
+};
+$("wTalk").onclick = () => S.draft.prompt && openListen(S.draft.prompt, $("wText").value.trim(), null, false, null, "write");
+$("freeWrite").onclick = () => openWrite(null, "", "home");
+
+let away = { text:null, src:"" };
+function openAway(text, src, from){ away = { text, src:src || "" }; show("away", from); }
+function renderAway(){ $("aSlip").textContent = away.text || ""; $("aTag").textContent = away.src; $("aForm").hidden = true; $("aDone").hidden = false; setMsg($("aMsg"), ""); $("aPlace").value = ""; $("aMemo").value = ""; $("aTimer").value = "0"; $("aClock").textContent = ""; }
+$("aTimer").onchange = e => startTimer("a", Number(e.target.value), $("aClock"), () => { e.target.value = "0"; });
+$("aCopy").onclick = () => { const d = new Date(); copyText(`${d.getFullYear()}/${z(d.getMonth()+1)}/${z(d.getDate())}　お題：${away.text}`, $("aMsg")); };
+$("aDone").onclick = () => { stopTimer("a"); markUsed(away.text, "ノートに書いた", away.src); $("aDone").hidden = true; $("aForm").hidden = false; setMsg($("aMsg"), "お題の記録に「ノートに書いた」の印を付けました。"); };
+$("aSave").onclick = () => {
+  const place = $("aPlace").value.trim(), memo = $("aMemo").value.trim();
+  const e = S.plog.find(x => x.text === away.text); if (e && place){ e.place = place; touch(); }
+  addEntry("ノート", { src:away.src, prompt:away.text, body:[place && `置き場所：${place}`, memo].filter(Boolean).join("\n") || "（ノートに書いた）", extra:{ place } });
+  show(backTo.away || "home");
+};
+$("aSkip").onclick = () => show(backTo.away || "home");
+
+/* =====================================================================
+   声で録る（声の頁と同じ保存形式）
+   ===================================================================== */
+const idb = {
+  open(){ return new Promise((res, rej) => { const r = indexedDB.open("mel-koe", 1); r.onupgradeneeded = () => r.result.createObjectStore("pending", { keyPath:"name" }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  async all(){ const db = await this.open(); return new Promise(res => { const q = db.transaction("pending").objectStore("pending").getAll(); q.onsuccess = () => res(q.result || []); q.onerror = () => res([]); }); },
+  async put(v){ const db = await this.open(); return new Promise((res, rej) => { const t = db.transaction("pending", "readwrite"); t.objectStore("pending").put(v); t.oncomplete = () => res(); t.onerror = () => rej(t.error); }); },
+  async del(k){ const db = await this.open(); return new Promise(res => { const t = db.transaction("pending", "readwrite"); t.objectStore("pending").delete(k); t.oncomplete = () => res(); t.onerror = () => res(); }); }
+};
+let koeSrc = "";
+function openKoe(text, src, from){ $("kPrompt").value = text || ""; koeSrc = src || ""; show("koe", from); }
+function renderKoe(){}
+async function toMp3(blob){
+  if (!window.lamejs) throw new Error("no-lame");
+  const AC = window.AudioContext || window.webkitAudioContext, OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  const ac = new AC(); const buf = await new Promise(async (res, rej) => ac.decodeAudioData(await blob.arrayBuffer(), res, rej)); try{ ac.close(); }catch(e){}
+  const rate = 22050, off = new OAC(1, Math.max(1, Math.ceil(buf.duration * rate)), rate), src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start(0);
+  const out = await new Promise((res, rej) => { const p = off.startRendering(); if (p && p.then) p.then(res, rej); else off.oncomplete = e => res(e.renderedBuffer); });
+  const f = out.getChannelData(0), pcm = new Int16Array(f.length); for (let i = 0; i < f.length; i++){ const s = Math.max(-1, Math.min(1, f[i])); pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF; }
+  const en = new lamejs.Mp3Encoder(1, rate, 48), parts = [];
+  for (let i = 0; i < pcm.length; i += 1152){ const m = en.encodeBuffer(pcm.subarray(i, i + 1152)); if (m.length) parts.push(new Int8Array(m)); if (i % (1152 * 400) === 0) await sleep(0); }
+  const e = en.flush(); if (e.length) parts.push(new Int8Array(e)); return new Blob(parts, { type:"audio/mpeg" });
+}
+let stream = null, rec = null, chunks = [], startAt = 0, acc = 0, tId = null, actx = null, an = null, raf = null, kBlob = null, mime = "", recAt = null;
+const cleanPrompt = t => (t || "").trim().replace(/^\d{4}\/\d{1,2}\/\d{1,2}\s*　?\s*お題[：:]\s*/, "");
+function ktick(){ const ms = acc + (rec && rec.state === "recording" ? Date.now() - startAt : 0), s = Math.floor(ms / 1000); $("clock").textContent = `${Math.floor(s/60)}:${z(s%60)}`; }
+function meter(){ if (!an) return; const a = new Uint8Array(an.fftSize); an.getByteTimeDomainData(a); let m = 0; for (const v of a) m = Math.max(m, Math.abs(v - 128)); $("lvl").style.width = Math.min(100, m / 128 * 260) + "%"; raf = requestAnimationFrame(meter); }
+const MERR = { NotAllowedError:"マイクの使用が許可されませんでした。ブラウザのアドレス欄の近くにある設定から許可できます。", NotFoundError:"マイクが見つかりませんでした。", NotReadableError:"マイクを開けませんでした。ほかのアプリが使っている可能性があります。", SecurityError:"この開き方ではマイクが使えませんでした。" };
+$("recBtn").onclick = async () => {
+  if (rec && rec.state !== "inactive") return stopRec();
+  setMsg($("recMsg"), "");
+  try{ stream = await navigator.mediaDevices.getUserMedia({ audio:{ channelCount:1, echoCancellation:true, noiseSuppression:true } }); }
+  catch(e){ return setMsg($("recMsg"), (MERR[e.name] || "マイクを使えませんでした。") + `（${e.name}）`, true); }
+  mime = ["audio/webm;codecs=opus","audio/webm","audio/mp4"].find(t => window.MediaRecorder && MediaRecorder.isTypeSupported?.(t)) || "";
+  try{ rec = new MediaRecorder(stream, mime ? { mimeType:mime } : undefined); }catch(e){ return setMsg($("recMsg"), "このブラウザでは録音できませんでした。", true); }
+  chunks = []; acc = 0; recAt = new Date();
+  rec.ondataavailable = ev => { if (ev.data?.size) chunks.push(ev.data); }; rec.onstop = finishRec; rec.start(1000); startAt = Date.now();
+  try{ actx = new (window.AudioContext || window.webkitAudioContext)(); an = actx.createAnalyser(); an.fftSize = 512; actx.createMediaStreamSource(stream).connect(an); meter(); }catch(e){}
+  tId = setInterval(ktick, 250); $("recBtn").classList.add("on"); $("recBtn").textContent = "終える"; $("pauseBtn").disabled = false; $("stopBtn").disabled = false; $("afterBox").hidden = true;
+};
+$("pauseBtn").onclick = () => {
+  if (!rec) return;
+  if (rec.state === "recording"){ rec.pause(); acc += Date.now() - startAt; $("pauseBtn").textContent = "再開"; $("recBtn").classList.remove("on"); setMsg($("recMsg"), "一時停止中"); }
+  else if (rec.state === "paused"){ rec.resume(); startAt = Date.now(); $("pauseBtn").textContent = "一時停止"; $("recBtn").classList.add("on"); setMsg($("recMsg"), ""); }
+};
+$("stopBtn").onclick = () => stopRec();
+function stopRec(){ if (rec && rec.state !== "inactive"){ if (rec.state === "recording") acc += Date.now() - startAt; rec.stop(); } }
+function finishRec(){
+  clearInterval(tId); cancelAnimationFrame(raf); $("lvl").style.width = "0"; try{ actx?.close(); }catch(e){} actx = an = null;
+  stream?.getTracks().forEach(t => t.stop()); stream = null;
+  kBlob = new Blob(chunks, { type:(rec.mimeType || mime || "audio/webm").split(";")[0] });
+  $("recBtn").classList.remove("on"); $("recBtn").textContent = "録音"; $("pauseBtn").disabled = true; $("pauseBtn").textContent = "一時停止"; $("stopBtn").disabled = true; setMsg($("recMsg"), "");
+  if (!kBlob.size) return setMsg($("recMsg"), "録音が空でした。", true);
+  $("preview").src = URL.createObjectURL(kBlob); $("afterPrompt").textContent = cleanPrompt($("kPrompt").value) || "お題なし"; $("kMemo").value = ""; setMsg($("kMsg"), "");
+  $("afterBox").hidden = false; $("afterBox").scrollIntoView({ behavior:"smooth", block:"start" });
+}
+$("kDiscard").onclick = () => { kBlob = null; $("afterBox").hidden = true; };
+const extOf = t => t.includes("mpeg") ? "mp3" : t.includes("mp4") ? "m4a" : "webm";
+function koeBase(d){ return `koe_${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}`; }
+$("kSave").onclick = async () => {
+  if (!kBlob) return; const m = $("kMsg"); $("kSave").disabled = true; $("kDiscard").disabled = true;
+  setMsg(m, "MP3に変換しています……"); let audio = kBlob, conv = true;
+  try{ audio = await toMp3(kBlob); }catch(e){ conv = false; audio = kBlob; }
+  const base = koeBase(recAt), prompt = cleanPrompt($("kPrompt").value);
+  const item = { name:base, ym:ymOf(recAt), audio, audioName:`${base}.${extOf(audio.type)}`,
+    page:{ format:"mel-koe-page", version:1, app:"声の頁", audio:`${base}.${extOf(audio.type)}`, audioType:audio.type, recordedAt:isoLocal(recAt), durationSec:Math.round(acc / 1000), prompt, memo:$("kMemo").value.trim(), from:koeSrc || "" } };
+  try{ await idb.put(item); }catch(e){}
+  if (prompt) markUsed(prompt, "声で録った", koeSrc || "声で録る");
+  setMsg(m, "ドライブへ送っています……");
+  try{
+    await sendKoe(item); await idb.del(item.name);
+    setMsg(m, `ドライブの ${ROOT_NAME} ／ 声の頁 ／ ${item.ym} に保存しました。` + (conv ? "" : `（形式：${extOf(audio.type)}）`));
+    kBlob = null; $("kPrompt").value = ""; koeSrc = ""; setTimeout(() => { $("afterBox").hidden = true; }, 2500);
+  }catch(e){ setMsg(m, e.code === "need-auth" ? "ドライブにつながっていないため、この端末に一時保管しました。ホームの「ドライブにつなぐ」のあと、「いま送る」で送れます。" : `ドライブに送れなかったため、この端末に一時保管しました（${e.message}）。`, true); }
+  finally{ $("kSave").disabled = false; $("kDiscard").disabled = false; refreshPending(); }
+};
+async function sendKoe(item){
+  const parent = await monthFolder("koe", "声の頁", item.ym), p = item.page;
+  const desc = `${p.recordedAt}\nお題：${p.prompt || "なし"}${p.memo ? "\nひとこと：" + p.memo : ""}`, props = { mel:"page", app:"koe", ym:item.ym, base:item.name };
+  if (!item.audioId){ const a = await upload({ name:item.audioName, parents:[parent], description:desc, mimeType:item.audio.type, appProperties:{ ...props, kind:"audio" } }, item.audio); item.audioId = a.id; try{ await idb.put(item); }catch(e){} }
+  await upload({ name:`${item.name}.json`, parents:[parent], description:desc, mimeType:"application/json", appProperties:{ ...props, kind:"meta", audioId:item.audioId } }, new Blob([JSON.stringify(p, null, 2)], { type:"application/json" }));
+}
+
+/* =====================================================================
+   今ここに戻る
+   ===================================================================== */
+let clockId = null, breathId = null;
+function tickNow(){ const d = new Date(); $("nDate").textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）`; $("nTime").textContent = `${z(d.getHours())}:${z(d.getMinutes())}`; }
+function renderGround(){
+  $("nPlace").textContent = S.ground.place ? `ここは、${S.ground.place}` : "";
+  const ul = $("nCards"); ul.innerHTML = "";
+  if (!S.ground.cards.length){ const li = document.createElement("li"); li.style.cssText = "font-family:var(--gothic);font-size:14px;color:var(--sub);border-left-color:var(--line)"; li.textContent = "落ち着いているときに「準備」から、いまの自分が知っていることを書いておけます。ここに表示されます。"; ul.append(li); return; }
+  S.ground.cards.forEach(c => { const li = document.createElement("li"); li.textContent = c; ul.append(li); });
+}
+function startNow(){ tickNow(); clearInterval(clockId); clockId = setInterval(tickNow, 5000); renderGround(); }
+function stopNow(){ clearInterval(clockId); clockId = null; clearTimeout(breathId); }
+$("nBreath").onclick = () => {
+  clearTimeout(breathId); $("nKateBox").innerHTML = "";
+  const st = $("nStage"); st.innerHTML = `<div class="stagecard"><div class="orb" id="orb"></div><p class="t" id="bTxt"></p><p class="s">四つ数えて吸い、六つ数えて吐く速さです。合わなければ自分の速さで。</p><button class="btn" id="bStop">止める</button></div>`;
+  const phase = inh => { $("orb").style.transitionDuration = (inh ? 4 : 6) + "s"; $("orb").classList.toggle("in", inh); $("bTxt").textContent = inh ? "吸う" : "吐く"; breathId = setTimeout(() => phase(!inh), inh ? 4000 : 6000); };
+  requestAnimationFrame(() => phase(true)); $("bStop").onclick = () => { clearTimeout(breathId); st.innerHTML = ""; };
+};
+const SENSES = [["見えるものを、五つ","色や形を、心の中で名前にしていきます。"],["聞こえる音を、四つ","遠くの音、近くの音、自分の呼吸の音も数えられます。"],["いま触れているものを、三つ","服の布、座っているところ、手の下にあるもの。"],["においを、二つ","見つからなければ、好きなにおいを一つ思い浮かべても。"],["口の中の感じを、一つ","味でも、温度でも、ただの感触でも。"]];
+$("nSense").onclick = () => {
+  clearTimeout(breathId); $("nKateBox").innerHTML = ""; let i = 0; const st = $("nStage");
+  const draw = () => {
+    if (i >= SENSES.length){ st.innerHTML = `<div class="stagecard"><p class="t">数え終わりました。</p><p class="s">もう一度数えることも、ほかの方法を選ぶこともできます。</p></div>`; return; }
+    st.innerHTML = `<div class="stagecard"><p class="s" style="margin:0 0 8px">${i+1} / ${SENSES.length}</p><p class="t"></p><p class="s"></p><button class="btn main" style="padding:12px 28px">数えた</button></div>`;
+    st.querySelector(".t").textContent = SENSES[i][0]; st.querySelectorAll(".s")[1].textContent = SENSES[i][1]; st.querySelector("button").onclick = () => { i++; draw(); };
+  };
+  draw();
+};
+$("nBody").onclick = () => { clearTimeout(breathId); $("nKateBox").innerHTML = ""; $("nStage").innerHTML = `<div class="stagecard"><p class="t">足の裏が、床に触れている</p><p class="s">押し返してくる床の固さを確かめます。</p><p class="t">体の重さが、座面やベッドに預けられている</p><p class="s">支えられているところを、一つずつ。</p><p class="t">手の届くものの手ざわり</p><p class="s">布、紙、本、ぬいぐるみなど、身近なものを触って確かめます。</p></div>`; };
+$("nPrep").onclick = () => { $("pPlace").value = S.ground.place; $("pCards").value = S.ground.cards.join("\n"); $("prepSheet").hidden = false; };
+$("pSave").onclick = () => { S.ground = { place:$("pPlace").value.trim(), cards:$("pCards").value.split("\n").map(x => x.trim()).filter(Boolean).slice(0, 20) }; touch(); renderGround(); $("prepSheet").hidden = true; };
+$("pClose").onclick = () => $("prepSheet").hidden = true;
+let fb = {}; const HELPS = ["日付と時刻","呼吸","五感で数える","体の感覚","自分のメモ","話したこと","時間が経った"];
+function scaleBuild(el, key){ el.innerHTML = ""; for (let n = 0; n <= 10; n++){ const b = document.createElement("button"); b.type = "button"; b.textContent = n; b.setAttribute("aria-pressed", String(fb[key] === n)); b.onclick = () => { fb[key] = fb[key] === n ? undefined : n; scaleBuild(el, key); }; el.append(b); } }
+function helpBuild(){ const el = $("fbHelp"); el.innerHTML = ""; HELPS.forEach(h => { const b = document.createElement("button"); b.type = "button"; b.textContent = h; b.setAttribute("aria-pressed", String(fb.help.includes(h))); b.onclick = () => { fb.help = fb.help.includes(h) ? fb.help.filter(x => x !== h) : [...fb.help, h]; helpBuild(); }; el.append(b); }); }
+$("nLog").onclick = () => { clearTimeout(breathId); fb = { help:[] }; scaleBuild($("fbA"), "a"); scaleBuild($("fbB"), "b"); helpBuild(); $("fbTrig").value = ""; $("fbNote").value = ""; setMsg($("fbMsg"), ""); $("fbSheet").hidden = false; };
+$("fbClose").onclick = () => $("fbSheet").hidden = true;
+$("fbSave").onclick = () => {
+  const L = [], trig = $("fbTrig").value.trim(), note = $("fbNote").value.trim();
+  if (fb.a != null || fb.b != null) L.push(`強さ：はじめ ${fb.a ?? "―"} → いま ${fb.b ?? "―"}（0〜10）`);
+  if (trig) L.push(`きっかけ：${trig}`); if (fb.help.length) L.push(`役に立ったもの：${fb.help.join("、")}`); if (note) L.push("", note);
+  addEntry("フラッシュバック", { body:L.join("\n") || "（記録のみ）", extra:{ a:fb.a ?? null, b:fb.b ?? null, trig, help:fb.help } });
+  setMsg($("fbMsg"), "書庫に残しました。"); setTimeout(() => { $("fbSheet").hidden = true; }, 900);
+};
+const KATE = [
+  ["外へ出す","沈んでいるものに形を与えて、自分の外に置く。",["いま沈んでいるものに、色か、天気か、手ざわりで名前をつけるなら。","それが重さを持つ物だとしたら、どんな形で、どこに置いておきたいか。","この苦しみが言いたがっていることを、一文だけ代筆してみる。"]],
+  ["物語へ渡す","自分ではない誰かに持たせて、距離のある場所で扱う。",["この重さを、自分ではない一人の人物に持たせるとしたら、どんな人物か。","その人物が、この重さを抱えたまま、一つだけ選択をする場面。","夜明け前の時刻に、その人物が誰にも言えなかった一言。"]],
+  ["軸を確かめる","この苦しみの強さから、自分が手放さないものを読む。",["この苦しみがこれほど強いのは、自分が何を大切にしているからか。","同じ目に遭う誰かがいたら、その人のそばに何があってほしいか。","今日の自分が、手放さずに持っていたいものを一つ。"]]
+];
+$("nKate").onclick = () => {
+  clearTimeout(breathId); $("nStage").innerHTML = ""; const box = $("nKateBox"); if (box.innerHTML){ box.innerHTML = ""; return; }
+  const w = document.createElement("div"); w.className = "kate"; w.innerHTML = '<p class="hint">三つの道があります。書く、話す、声で録る、ノートに書く、から選べます。</p>';
+  KATE.forEach(([name, desc, ps]) => {
+    const h = document.createElement("h4"); h.textContent = name; w.append(h); const d = document.createElement("p"); d.className = "ds"; d.textContent = desc; w.append(d);
+    ps.forEach(t => { const c = document.createElement("div"); c.className = "kp"; c.innerHTML = "<p></p>"; c.querySelector("p").textContent = t; c.append(promptActions(t, "糧にする・" + name, "now")); w.append(c); });
+  });
+  box.append(w); setTimeout(() => w.scrollIntoView({ behavior:"smooth", block:"start" }), 30);
+};
+$("nTalk").onclick = () => {
+  clearTimeout(breathId);
+  if (S.listen.mode === "fb" && S.listen.turns.length) return show("listen", "now");
+  if (S.listen.turns.length && !S.listen.saved) saveListenEntry(true);
+  openListen(null, "", null, true, "fb", "now");
+};
+function fbRules(){
+  const len = { 短め:"2〜4文", 標準:"5〜8文", 長め:"9〜12文" }[S.listen.len] || "2〜4文";
+  const d = new Date(), now = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）${z(d.getHours())}時${z(d.getMinutes())}分`;
+  const own = (S.ground.place || S.ground.cards.length) ? `\n■相手が落ち着いているときに書いておいた言葉（必要なときに、そのまま引いて返してよい）\n${S.ground.place ? "いる場所：" + S.ground.place + "\n" : ""}${S.ground.cards.map(c => "・" + c).join("\n")}` : "";
+  return `この会話の相手は、フラッシュバック（過去のつらい記憶が、いま起きているかのようによみがえる状態）の最中か、その直後にいる。あなたの役割は、相手の注意を「いま・ここ」へ戻す手伝いをすること。
+
+■最優先の決まり（下の人物設定より優先する）
+・短い文で、落ち着いて、具体的に話す。テンションは上げない。一回の返答は${len}。
+・いまの日時は ${now}。必要なら、いまがこの日時であることを伝えてよい。
+・過去の出来事について、詳しく尋ねない、掘り下げない、解釈や分析をしない。相手が話したいときは受け取るが、話を広げない。
+・相手が述べていない感情、状態、事情を事実のように書かない。
+・根拠を示さない断定や安心（「もう大丈夫」「あなたは何も悪くない」など）、過剰な慰め、前向きな言い換えや励ましは、相手が求めたときだけにする。
+・説教、診断、指示の連続をしない。体や感覚を使って落ち着く方法（呼吸、周りのものを数える、足の裏の感覚、身近なものの手ざわりなど）を出すときは、選択肢として一つだけ。冷たいものや痛みを使う方法は出さない。
+・相談窓口や電話番号を出さない。誰かに連絡するよう促さない。相手が求めた場合だけ扱う。
+・相手が書いていない危機を、こちらから話題にしない。強い言葉が書かれたときも、話をそらさず、説教せず、書かれたとおりに受け取る。危機確認を繰り返したり、会話を危機対応へ切り替えたりしない。
+・謝罪や自己説明を繰り返さない。見出しや箇条書きは使わない。絵文字は使わない。
+
+■話し方と人物（上の決まりの範囲で）
+${PERSONA(S.listen).voice}${own}`;
+}
+
+/* =====================================================================
+   音声入力（ブラウザの文字起こし）
+   ===================================================================== */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let srec = null, srecBtn = null;
+const msgFor = t => ({ wText:$("wMsg"), lInput:$("lMsg"), sInput:$("sMsg"), sNote:$("sMsg") })[t];
+function stopVoice(){ if (srec){ try{ srec.stop(); }catch(e){} } }
+document.querySelectorAll(".voice").forEach(btn => {
+  const label = btn.textContent;
+  btn.onclick = () => {
+    const ta = $(btn.dataset.target), m = msgFor(btn.dataset.target);
+    if (srec){ const same = srecBtn === btn; stopVoice(); if (same) return; }
+    if (!SR) return setMsg(m, "このブラウザでは画面内の音声入力が使えません。端末キーボードの音声入力（マイクのボタン）なら、そのまま文字にできます。", true);
+    const r = new SR(); r.lang = "ja-JP"; r.continuous = true; r.interimResults = true; const base = ta.value; let fin = "";
+    r.onresult = e => { let inter = ""; for (let i = e.resultIndex; i < e.results.length; i++){ const t = e.results[i][0].transcript; if (e.results[i].isFinal) fin += t; else inter += t; } ta.value = base + fin + inter; ta.dispatchEvent(new Event("input")); };
+    r.onerror = e => setMsg(m, ({ "not-allowed":"マイクの使用が許可されませんでした。", "no-speech":"声が聞き取れませんでした。" })[e.error] || `音声入力が止まりました（${e.error}）。`, true);
+    r.onend = () => { if (srec === r){ srec = null; btn.classList.remove("on"); btn.textContent = label; } };
+    try{ r.start(); srec = r; srecBtn = btn; btn.classList.add("on"); btn.textContent = "止める"; setMsg(m, "聞き取っています。話し終えたら「止める」を押せます。"); }catch(e){ setMsg(m, "音声入力を開始できませんでした。", true); }
+  };
+});
+
+/* =====================================================================
+   書庫
+   ===================================================================== */
+let recNext = null, recShown = [], koeNext = null, koeShown = [];
+const entryTitle = e => e.prompt || ({ "フラッシュバック":"フラッシュバックの記録", "今ここに戻る・会話":"今ここに戻る会話" })[e.kind] || "お題なし";
+function renderRecords(){
+  segBuild($("recTabs"), [["entries","書いた記録"],["koe","声の頁"],["plog","出たお題"]], S.recView, v => { S.recView = v; saveLocal(); renderRecords(); });
+  $("plogFilt").hidden = S.recView !== "plog"; $("recMore").hidden = true; setMsg($("recMsg"), "");
+  if (S.recView === "plog") return renderPlog();
+  if (S.recView === "koe") return loadKoe(true);
+  loadEntries(true);
+}
+function entryRow(e, pending){
+  const b = document.createElement("button"); b.className = "ent"; b.innerHTML = '<span class="d"></span><span class="p"></span><span class="x"></span>';
+  const d = e.at ? new Date(e.at) : null;
+  b.querySelector(".d").textContent = `${d ? stamp(d) : ""}　${e.kind}${e.src ? "・" + e.src : ""}`;
+  if (pending){ const t = document.createElement("span"); t.className = "tag"; t.textContent = "未送信"; b.querySelector(".d").append(t); }
+  b.querySelector(".p").textContent = entryTitle(e); b.querySelector(".x").textContent = e.body || e.excerpt || "";
+  b.onclick = () => openEntry(e, pending); return b;
+}
+async function loadEntries(reset){
+  const box = $("recList"); if (reset){ recShown = []; recNext = null; }
+  box.innerHTML = ""; S.pendingEntries.forEach(e => box.append(entryRow(e, true)));
+  if (!authed()){
+    S.entryCache.forEach(e => box.append(entryRow(e, false)));
+    setMsg($("recMsg"), S.entryCache.length ? "ドライブに未接続のため、この端末で最近見た記録だけを表示しています。" : "ドライブにつなぐと、書庫の記録が読めます。");
+    return;
+  }
+  setMsg($("recMsg"), "読み込んでいます……");
+  try{
+    const q = `trashed=false and ${propQ({ app:"yohaku", kind:"entry" })}`;
+    const j = await (await api(`/files?q=${enc(q)}&orderBy=${enc("name desc")}&pageSize=40&fields=${enc("nextPageToken,files(id,name,description,appProperties)")}${recNext ? "&pageToken=" + enc(recNext) : ""}&spaces=drive`)).json();
+    recNext = j.nextPageToken || null;
+    const add = (j.files || []).map(f => {
+      const [head, ...rest] = (f.description || "").split("\n"); const [kind, prompt] = head.split("｜");
+      const mm = f.name.match(/(\d{4})-(\d{2})-(\d{2})_(\d{2})(\d{2})(\d{2})/);
+      const at = mm ? new Date(+mm[1], +mm[2]-1, +mm[3], +mm[4], +mm[5], +mm[6]).toISOString() : null;
+      return { fileId:f.id, id:f.appProperties?.eid, kind:kind || "記録", prompt:prompt === "お題なし" ? null : prompt, excerpt:rest.join("\n"), at, remote:true };
+    });
+    recShown = recShown.concat(add);
+    S.entryCache = recShown.slice(0, 200).map(e => ({ ...e, body:e.excerpt })); saveLocal();
+    recShown.forEach(e => box.append(entryRow(e, false)));
+    setMsg($("recMsg"), recShown.length || S.pendingEntries.length ? "" : "まだ記録がありません。");
+    $("recMore").hidden = !recNext;
+  }catch(e){ setMsg($("recMsg"), e.code === "need-auth" ? "ドライブとの接続が切れました。ホームの「つなぎ直す」で続けられます。" : `読み込めませんでした（${e.message}）。`, true); }
+}
+$("recMore").onclick = () => S.recView === "koe" ? loadKoe(false) : loadEntries(false);
+
+let openE = null;
+async function openEntry(e, pending){
+  openE = { ...e, pending }; $("eTitle").textContent = entryTitle(e);
+  const d = e.at ? new Date(e.at) : null; $("eMeta").textContent = `${d ? stamp(d) : ""}　${e.kind}${e.src ? "・" + e.src : ""}${pending ? "　（未送信）" : ""}`;
+  $("eBody").value = e.body || ""; $("eReviewBox").innerHTML = ""; setMsg($("eMsg"), ""); $("entSheet").hidden = false;
+  if (e.remote && e.fileId){
+    setMsg($("eMsg"), "読み込んでいます……");
+    try{ const o = parseMd(await readText(e.fileId)); Object.assign(openE, o, { fileId:e.fileId }); $("eBody").value = o.body || ""; if (o.src) $("eMeta").textContent += ""; renderReview(); setMsg($("eMsg"), ""); }
+    catch(err){ setMsg($("eMsg"), "本文を読み込めませんでした。", true); }
+  } else renderReview();
+}
+function renderReview(){ const b = $("eReviewBox"); b.innerHTML = ""; if (!openE?.review) return; const d = document.createElement("div"); d.className = "review"; d.textContent = openE.review; b.append(d); }
+$("eClose").onclick = () => $("entSheet").hidden = true;
+$("eSave").onclick = async () => {
+  if (!openE) return; openE.body = $("eBody").value;
+  if (openE.pending){ const p = S.pendingEntries.find(x => x.id === openE.id); if (p) p.body = openE.body; saveLocal(); return setMsg($("eMsg"), "保存しました（送信待ち）。"); }
+  try{ await sendEntry(openE); setMsg($("eMsg"), "ドライブに保存しました。"); }catch(e){ setMsg($("eMsg"), e.code === "need-auth" ? "ドライブにつながっていないため保存できませんでした。" : "保存できませんでした。", true); }
+};
+$("eCopy").onclick = () => openE && copyText(entryText(openE, false), $("eMsg"));
+$("eDel").onclick = async () => {
+  if (!openE || !confirm(openE.pending ? "この未送信の記録を消します。元に戻せません。消しますか？" : "この記録をドライブのゴミ箱へ移します。ドライブのゴミ箱から30日ほどは戻せます。移しますか？")) return;
+  if (openE.pending){ S.pendingEntries = S.pendingEntries.filter(x => x.id !== openE.id); saveLocal(); refreshPending(); }
+  else { try{ await trashFile(openE.fileId); S.entryCache = S.entryCache.filter(x => x.fileId !== openE.fileId); recShown = recShown.filter(x => x.fileId !== openE.fileId); saveLocal(); }catch(e){ return setMsg($("eMsg"), "ゴミ箱へ移せませんでした。", true); } }
+  $("entSheet").hidden = true; renderRecords();
+};
+$("eReview").onclick = async () => {
+  if (!openE) return;
+  const task = `以下はジャーナリングの記録です。書き手本人が、自分のふりかえりのために読みます。
+
+■書き方
+・記録に書かれていることだけに基づく。書かれていない感情、動機、事情を事実のように書かない。推測は可能性として示す。
+・評価、診断、説教、過剰な慰め、根拠のない楽観を書かない。命令口調を避ける。
+・次の三つの見出しを【】で囲んで、この順に書く。【要点】記録の要点を整理する。【よく出てきた言葉や視点】記録の中で目立った言葉や視点を、原文を短く引きながら挙げる。【次に書くなら】この記録の続きとして書けそうなお題を二つ、一文ずつ。
+・全体で400〜700字。
+
+■お題
+${openE.prompt || "なし"}
+■記録（${openE.kind}）
+${($("eBody").value || "").slice(-30000)}`;
+  $("eReview").disabled = true; setMsg($("eMsg"), "読んでいます……");
+  try{ openE.review = await askAI({ task, max:1500 }); renderReview(); setMsg($("eMsg"), "ふりかえりができました。「変更を保存」で記録と一緒に残せます。"); }
+  catch(e){ setMsg($("eMsg"), e.code === "cancel" ? "" : aiErr(e), e.code !== "cancel"); }
+  finally{ $("eReview").disabled = false; }
+};
+function entryText(e, md){
+  if (!e) return ""; const d = e.at ? stamp(new Date(e.at)) : "";
+  const L = [md ? `## ${d}　${e.kind}${e.src ? "・" + e.src : ""}` : `■ ${d}　${e.kind}${e.src ? "・" + e.src : ""}`, `お題：${e.prompt || "なし"}`, "", e.body || ""];
+  if (e.review) L.push("", md ? "### ふりかえり" : "［ふりかえり］", e.review); return L.join("\n");
+}
+
+/* 声の頁 */
+async function loadKoe(reset){
+  const box = $("recList"); if (reset){ koeShown = []; koeNext = null; box.innerHTML = ""; }
+  if (!authed()){ box.innerHTML = ""; return setMsg($("recMsg"), "声の頁を読むには、ホームの「ドライブにつなぐ」を押します。"); }
+  setMsg($("recMsg"), "読み込んでいます……");
+  try{
+    const q = `trashed=false and ${propQ({ app:"koe", kind:"meta" })}`;
+    const j = await (await api(`/files?q=${enc(q)}&orderBy=${enc("name desc")}&pageSize=30&fields=${enc("nextPageToken,files(id,name,appProperties)")}${koeNext ? "&pageToken=" + enc(koeNext) : ""}&spaces=drive`)).json();
+    koeNext = j.nextPageToken || null;
+    const metas = await Promise.all((j.files || []).map(async f => { try{ return { id:f.id, audioId:f.appProperties?.audioId, page:JSON.parse(await readText(f.id)) }; }catch(e){ return { id:f.id, audioId:f.appProperties?.audioId, page:null }; } }));
+    koeShown = koeShown.concat(metas); renderKoePages();
+    setMsg($("recMsg"), koeShown.length ? "" : "まだ声の頁がありません。"); $("recMore").hidden = !koeNext;
+  }catch(e){ setMsg($("recMsg"), e.code === "need-auth" ? "ドライブとの接続が切れました。" : `読み込めませんでした（${e.message}）。`, true); }
+}
+function renderKoePages(){
+  const box = $("recList"); box.innerHTML = ""; let curDay = null, stack = null;
+  for (const it of koeShown){
+    const p = it.page || {}, d = p.recordedAt ? new Date(p.recordedAt) : null;
+    const key = d ? `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${WD[d.getDay()]}）` : "日付不明";
+    if (key !== curDay){ curDay = key; const day = document.createElement("div"); day.className = "day"; day.innerHTML = "<h3></h3>"; day.querySelector("h3").textContent = key; stack = document.createElement("div"); day.append(stack); box.append(day); }
+    const pg = document.createElement("div"); pg.className = "page";
+    pg.innerHTML = '<div class="t"></div><div class="p"></div><div class="m"></div><div class="a"></div><div class="row" style="margin:6px 0 0"><button class="ib play">再生</button><button class="ib trash">ゴミ箱へ</button></div><div class="fn"></div>';
+    pg.querySelector(".t").textContent = d ? `${z(d.getHours())}:${z(d.getMinutes())}${p.durationSec ? `　${Math.floor(p.durationSec/60)}分${z(p.durationSec%60)}秒` : ""}` : "";
+    pg.querySelector(".p").textContent = p.prompt || "お題なし"; pg.querySelector(".m").textContent = p.memo || ""; pg.querySelector(".fn").textContent = p.audio || "";
+    const play = pg.querySelector(".play");
+    play.onclick = async () => {
+      if (!it.audioId) return; play.disabled = true; play.textContent = "読み込み中……";
+      try{ const b = await (await api(`/files/${it.audioId}?alt=media`)).blob(); const au = document.createElement("audio"); au.controls = true; au.src = URL.createObjectURL(b); pg.querySelector(".a").append(au); play.remove(); au.play().catch(() => {}); }
+      catch(e){ play.disabled = false; play.textContent = "再生"; setMsg($("recMsg"), "音声を読み込めませんでした。", true); }
+    };
+    pg.querySelector(".trash").onclick = async () => {
+      if (!confirm("この頁（音声と控え）をドライブのゴミ箱へ移します。ドライブのゴミ箱から30日ほどは戻せます。移しますか？")) return;
+      try{ for (const id of [it.audioId, it.id].filter(Boolean)) await trashFile(id); koeShown = koeShown.filter(x => x !== it); renderKoePages(); }catch(e){ setMsg($("recMsg"), "ゴミ箱へ移せませんでした。", true); }
+    };
+    stack.append(pg);
+  }
+}
+
+/* 出たお題 */
+const plogShown = () => S.plog.filter(e => S.plogFilter === "all" || (S.plogFilter === "used" ? e.used.length : !e.used.length));
+function renderPlog(){
+  segBuild($("plogFilt"), [["all","すべて"],["used","使った"],["shown","出ただけ"]], S.plogFilter, v => { S.plogFilter = v; saveLocal(); renderPlog(); });
+  const box = $("recList"); box.innerHTML = ""; const list = plogShown();
+  if (!list.length){ box.innerHTML = '<p class="empty">まだありません。引いたお題、見立てたお題、書いたり話したり録ったりしたお題が並びます。</p>'; return; }
+  list.slice(0, 300).forEach(e => {
+    const d = document.createElement("div"); d.className = "pl"; d.innerHTML = '<div class="d"></div><div class="p"></div>';
+    const dl = d.querySelector(".d"); dl.textContent = `${e.at}　${e.src}${e.meta ? "・" + (e.meta.length > 40 ? e.meta.slice(0, 40) + "…" : e.meta) : ""}${e.place ? "　置き場所：" + e.place : ""}`;
+    e.used.forEach(u => { const s = document.createElement("span"); s.className = "tag"; s.textContent = u; dl.append(s); });
+    d.querySelector(".p").textContent = e.text; d.append(promptActions(e.text, e.src || "お題の記録", "records")); box.append(d);
+  });
+  const r = document.createElement("div"); r.className = "row"; r.innerHTML = '<button class="btn">お題の記録をすべて消す</button>';
+  r.querySelector("button").onclick = () => { if (!confirm("出たお題の記録をすべて消します。書いた記録と声の頁は消えません。元に戻せません。消しますか？")) return; S.plog = []; touch(); renderPlog(); };
+  box.append(r);
+}
+
+/* 書き出し */
+function plogText(){ return "# 余白帖　出たお題\n\n" + plogShown().map(e => `- ${e.at}　${e.src}${e.used.length ? `［${e.used.join("・")}］` : ""}\n  ${e.text}${e.place ? "\n  置き場所：" + e.place : ""}`).join("\n"); }
+$("exAll").onclick = async () => {
+  let text = "";
+  if (S.recView === "plog") text = plogText();
+  else if (S.recView === "koe") text = "# 声の頁\n\n" + koeShown.map(it => { const p = it.page || {}; return `## ${p.recordedAt || ""}\nお題：${p.prompt || "なし"}\n${p.memo || ""}\n音声：${p.audio || ""}`; }).join("\n\n");
+  else {
+    setMsg($("recMsg"), "書き出す記録を読み込んでいます……");
+    const all = [...S.pendingEntries];
+    for (const e of recShown){ if (authed() && e.fileId){ try{ all.push({ ...e, ...parseMd(await readText(e.fileId)) }); continue; }catch(err){} } all.push({ ...e, body:e.excerpt }); }
+    text = "# 余白帖　書いた記録\n\n" + all.map(e => entryText(e, true)).join("\n\n---\n\n"); setMsg($("recMsg"), "");
+  }
+  $("exTitle").textContent = { plog:"出たお題を書き出す", koe:"声の頁の一覧を書き出す", entries:"表示中の記録を書き出す" }[S.recView];
+  $("exText").value = text; setMsg($("exMsg"), ""); $("exSheet").hidden = false;
+};
+$("exClose").onclick = () => $("exSheet").hidden = true;
+$("exCopy").onclick = () => copyText($("exText").value, $("exMsg"));
+const exName = ext => { const d = new Date(); return `余白帖_${({ plog:"お題", koe:"声の頁", entries:"記録" })[S.recView]}_${d.getFullYear()}${z(d.getMonth()+1)}${z(d.getDate())}.${ext}`; };
+$("exTxt").onclick = () => { downloadText(exName("txt"), $("exText").value); setMsg($("exMsg"), "保存しました。"); };
+$("exMd").onclick = () => { downloadText(exName("md"), $("exText").value, "text/markdown"); setMsg($("exMsg"), "保存しました。"); };
+
+/* =====================================================================
+   設定
+   ===================================================================== */
+function renderSettings(){
+  segBuild($("setAi"), [["bridge","コピーして持っていく"],["api","APIキー"]], S.set.ai, v => { S.set.ai = v; touch(); $("apiRow").hidden = v !== "api"; });
+  $("apiRow").hidden = S.set.ai !== "api"; $("setKey").value = apiKey;
+  segBuild($("setModel"), MODELS, S.set.model, v => { S.set.model = v; touch(); });
+  const pv = Object.entries(PERSONAS).map(([k, v]) => [k, v.label]);
+  segBuild($("setWho"), pv, S.set.who, v => { S.set.who = v; touch(); });
+  segBuild($("setFbWho"), pv, S.set.fbWho, v => { S.set.fbWho = v; touch(); });
+  segBuild($("setLen"), [["短め","短め"],["標準","標準"],["長め","長め"]], S.set.len, v => { S.set.len = v; touch(); });
+}
+$("openSet").onclick = () => { renderSettings(); $("setSheet").hidden = false; };
+$("setKey").oninput = e => { apiKey = e.target.value.trim(); try{ localStorage.setItem("mel-apikey", apiKey); }catch(err){} };
+$("setClose").onclick = () => $("setSheet").hidden = true;
+document.querySelectorAll(".sheet").forEach(s => s.addEventListener("click", ev => { if (ev.target === s && s.id !== "bridgeSheet") s.hidden = true; }));
+
+/* 起動 */
+setAcct(); refreshPending(); show("home");
+if (authed()) afterConnect();
+</script>
+</body>
+</html>
