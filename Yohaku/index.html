@@ -462,7 +462,11 @@ audio{width:100%;margin:8px 0}
    基本
    ===================================================================== */
 const CLIENT_ID = "235660530148-aqrk1fjtf4cu6ufvgg8j7op6fqpr2l1v.apps.googleusercontent.com";
-const SCOPE = "https://www.googleapis.com/auth/drive.file";
+const SCOPE = "https://www.googleapis.com/auth/drive";
+const ON_CLAUDE = typeof window.claude?.use === "function";
+const GITHUB_URL = "https://mel-tune.github.io/Resilience/Yohaku/";
+let mcpNS = null, sampleNS = null;
+const driveOk = () => ON_CLAUDE ? !!mcpNS : authed();
 const ROOT_NAME = "PRIVATE-MEL";
 const DRIVE = "https://www.googleapis.com/drive/v3", UPLOAD = "https://www.googleapis.com/upload/drive/v3";
 const FOLDER = "application/vnd.google-apps.folder";
@@ -493,7 +497,7 @@ function segBuild(el, opts, val, onPick){
     b.onclick = () => { el.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true"); onPick(v); }; el.append(b); });
 }
 function setMsg(el, t, err){ el.className = "msg" + (err ? " err" : ""); el.textContent = t; }
-function downloadText(name, text, type = "text/plain"){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type:type + ";charset=utf-8" })); a.download = name; document.body.append(a); a.click(); a.remove(); }
+function downloadText(name, text, type = "text/plain"){ if (ON_CLAUDE && downloadsNS){ downloadsNS.save({ filename:name, data:text }).catch(() => {}); return; } const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type:type + ";charset=utf-8" })); a.download = name; document.body.append(a); a.click(); a.remove(); }
 async function copyText(text, m){
   try{ await navigator.clipboard.writeText(text); setMsg(m, "コピーしました。"); return true; }
   catch(e){ const t = document.createElement("textarea"); t.value = text; t.style.cssText = "position:fixed;opacity:0"; document.body.append(t); t.select(); let ok = false; try{ ok = document.execCommand("copy"); }catch(e2){} t.remove();
@@ -504,7 +508,7 @@ function autoGrow(t){ t.style.height = "auto"; t.style.height = Math.min(t.scrol
 /* 開き方の診断 */
 (() => {
   const w = []; let framed = false; try{ framed = window.self !== window.top; }catch(e){ framed = true; }
-  if (framed) w.push("この画面は別のページの中に埋め込まれた状態で開かれています。マイクやGoogleのログインが止められることが多いので、アドレスを直接開くと使えます。");
+  if (framed && !ON_CLAUDE) w.push("この画面は別のページの中に埋め込まれた状態で開かれています。マイクやGoogleのログインが止められることが多いので、アドレスを直接開くと使えます。");
   if (location.protocol === "file:") w.push("ファイルとして直接開いているため、ドライブにはつながりません。GitHub Pagesのアドレスから開くとつながります。");
   if (w.length){ $("envWarn").hidden = false; $("envWarn").innerHTML = w.map(t => `<p style="margin:2px 0">${t}</p>`).join(""); }
 })();
@@ -534,7 +538,9 @@ document.querySelectorAll(".back").forEach(b => b.onclick = () => {
 let token = null, tokenExp = 0, tokenClient = null, authWait = null;
 try{ const t = JSON.parse(sessionStorage.getItem("mel-token") || "null"); if (t && t.exp > Date.now() + 60000){ token = t.v; tokenExp = t.exp; } }catch(e){}
 const authed = () => !!token && tokenExp > Date.now() + 30000;
-function setAcct(){ const on = authed(); $("dot").classList.toggle("on", on); $("acctTxt").textContent = on ? "ドライブにつながっています" : "ドライブに未接続"; $("connBtn").textContent = on ? "つなぎ直す" : "ドライブにつなぐ"; }
+function setAcct(){
+  if (ON_CLAUDE){ $("connBtn").hidden = true; $("dot").classList.toggle("on", !!mcpNS); $("acctTxt").textContent = mcpNS ? "Googleドライブ（コネクタ）につながっています" : "Googleドライブのコネクタを準備しています"; return; }
+  const on = authed(); $("dot").classList.toggle("on", on); $("acctTxt").textContent = on ? "ドライブにつながっています" : "ドライブに未接続"; $("connBtn").textContent = on ? "つなぎ直す" : "ドライブにつなぐ"; }
 function signIn(){
   return new Promise((res, rej) => {
     if (!tokenClient){
@@ -559,27 +565,81 @@ async function api(path, opt = {}, full){
 }
 const enc = encodeURIComponent;
 const propQ = props => Object.entries(props).map(([k, v]) => `appProperties has { key='${k}' and value='${v}' }`).join(" and ");
+/* ----- コネクタ（claude.ai側） ----- */
+async function gd(tool, input){ if (!mcpNS) throw Object.assign(new Error("need-auth"), { code:"need-auth" }); const r = await mcpNS.callTool("Google Drive", tool, input, { cache:false }); return r.payload ?? r; }
+const b64ToBytes = b => { const s = atob(b), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; };
+async function blobToB64(blob){ const u = new Uint8Array(await blob.arrayBuffer()); let s = ""; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
+const qs = v => String(v).replace(/'/g, "\\'");
+async function gdSearchAll(query, max = 300){
+  let out = [], token = null, n = 0;
+  do{ const r = await gd("search_files", { query, pageSize:50, excludeContentSnippets:true, ...(token ? { pageToken:token } : {}) }); out = out.concat((r.files || []).filter(f => !f.trashed)); token = r.nextPageToken || null; n++; }
+  while (token && out.length < max && n < 8);
+  const seen = new Set(); return out.filter(f => !seen.has(f.id) && seen.add(f.id)).map(f => ({ id:f.id, name:f.title, description:f.description || "", modified:f.modifiedTime }));
+}
+
+/* ----- 共通のドライブ操作（GitHub側はDrive API、claude.ai側はコネクタ） ----- */
 async function folderId(key, name, parent, props){
+  if (ON_CLAUDE){
+    if (S.folders["c:" + key]) return S.folders["c:" + key];
+    const hit = (await gdSearchAll(`title = '${qs(name)}' and mimeType = '${FOLDER}' and parentId = '${parent || "root"}'`, 10))[0];
+    const id = hit?.id || (await gd("create_file", { title:name, contentMimeType:FOLDER, parentId:parent || undefined })).id;
+    S.folders["c:" + key] = id; saveLocal(); return id;
+  }
   if (S.folders[key]){ try{ const j = await (await api(`/files/${S.folders[key]}?fields=id,trashed`)).json(); if (!j.trashed) return j.id; }catch(e){ if (e.code === "need-auth") throw e; } }
-  const f = (await (await api(`/files?q=${enc(`mimeType='${FOLDER}' and trashed=false and ${propQ(props)}`)}&fields=files(id)&pageSize=5&spaces=drive`)).json()).files?.[0]
+  const find = async q => (await (await api(`/files?q=${enc(q)}&fields=files(id)&pageSize=5&spaces=drive`)).json()).files?.[0];
+  const f = await find(`mimeType='${FOLDER}' and trashed=false and ${propQ(props)}`)
+    || await find(`mimeType='${FOLDER}' and trashed=false and name='${qs(name)}' and '${parent || "root"}' in parents`)
     || await (await api(`/files?fields=id`, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ name, mimeType:FOLDER, parents:parent ? [parent] : undefined, appProperties:props }) })).json();
   S.folders[key] = f.id; saveLocal(); return f.id;
 }
 const rootId = () => folderId("root", ROOT_NAME, null, { mel:"root" });
 async function appFolder(app, name){ return folderId("app:" + app, name, await rootId(), { mel:"app", app }); }
 async function monthFolder(app, name, ym){ return folderId(`m:${app}:${ym}`, ym, await appFolder(app, name), { mel:"month", app, ym }); }
+const isText = t => /^text\/|json/.test(t || "");
 async function upload(meta, blob){
+  if (ON_CLAUDE){
+    const type = meta.mimeType || blob.type || "application/octet-stream";
+    const f = await gd("create_file", { title:meta.name, parentId:meta.parents?.[0], contentMimeType:type, disableConversionToGoogleType:true, ...(isText(type) ? { textContent:await blob.text() } : { base64Content:await blobToB64(blob) }) });
+    if (meta.description){ try{ await gd("update_file", { fileId:f.id, description:meta.description }); }catch(e){} }
+    return { id:f.id, name:meta.name };
+  }
   const b = "mel" + Math.random().toString(36).slice(2);
   const body = new Blob([`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`, JSON.stringify(meta), `\r\n--${b}\r\nContent-Type: ${blob.type || "application/octet-stream"}\r\n\r\n`, blob, `\r\n--${b}--`]);
   return (await api(`${UPLOAD}/files?uploadType=multipart&fields=id,name`, { method:"POST", headers:{ "Content-Type":`multipart/related; boundary=${b}` }, body }, true)).json();
 }
+/* 中身を差し替える。コネクタは中身を書き換えられないので、新しく作って古いものをゴミ箱へ移す。戻り値は新しいid */
 async function updateFile(id, meta, blob){
+  if (ON_CLAUDE){ const f = await upload(meta, blob); try{ await gd("trash_file", { fileId:id }); }catch(e){} return { id:f.id }; }
+  const { parents, name, ...m } = meta || {};
   const b = "mel" + Math.random().toString(36).slice(2);
-  const body = new Blob([`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`, JSON.stringify(meta || {}), `\r\n--${b}\r\nContent-Type: ${blob.type || "application/octet-stream"}\r\n\r\n`, blob, `\r\n--${b}--`]);
+  const body = new Blob([`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`, JSON.stringify(m), `\r\n--${b}\r\nContent-Type: ${blob.type || "application/octet-stream"}\r\n\r\n`, blob, `\r\n--${b}--`]);
   return (await api(`${UPLOAD}/files/${id}?uploadType=multipart&fields=id`, { method:"PATCH", headers:{ "Content-Type":`multipart/related; boundary=${b}` }, body }, true)).json();
 }
-const trashFile = id => api(`/files/${id}`, { method:"PATCH", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ trashed:true }) });
-const readText = async id => (await api(`/files/${id}?alt=media`)).text();
+const trashFile = id => ON_CLAUDE ? gd("trash_file", { fileId:id }) : api(`/files/${id}`, { method:"PATCH", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ trashed:true }) });
+async function readBlob(id, type){
+  if (ON_CLAUDE){ const r = await gd("download_file_content", { fileId:id }); return new Blob([b64ToBytes(r.content || "")], { type:type || r.mimeType || "" }); }
+  return (await api(`/files/${id}?alt=media`)).blob();
+}
+async function readText(id){
+  if (ON_CLAUDE) return new TextDecoder("utf-8").decode(await (await readBlob(id)).arrayBuffer());
+  return (await api(`/files/${id}?alt=media`)).text();
+}
+/* 一覧（名前の新しい順） */
+async function listFiles(kind, token){
+  const prefix = kind === "entry" ? "yohaku_" : "koe_", mime = kind === "entry" ? "text/markdown" : "application/json";
+  if (ON_CLAUDE){
+    const all = (await gdSearchAll(`title contains '${prefix}' and mimeType = '${mime}'`, 600)).filter(f => f.name.startsWith(prefix)).sort((a, b) => b.name.localeCompare(a.name));
+    const start = Number(token || 0), page = all.slice(start, start + 30);
+    return { files:page, next: start + 30 < all.length ? String(start + 30) : null };
+  }
+  const q = `trashed=false and mimeType='${mime}' and name contains '${prefix}'`;
+  const j = await (await api(`/files?q=${enc(q)}&orderBy=${enc("name desc")}&pageSize=30&fields=${enc("nextPageToken,files(id,name,description,appProperties)")}${token ? "&pageToken=" + enc(token) : ""}&spaces=drive`)).json();
+  return { files:(j.files || []).filter(f => f.name.startsWith(prefix)), next:j.nextPageToken || null };
+}
+async function findByName(name){
+  if (ON_CLAUDE) return (await gdSearchAll(`title = '${qs(name)}'`, 5))[0]?.id || null;
+  return (await (await api(`/files?q=${enc(`trashed=false and name='${qs(name)}'`)}&fields=files(id)&pageSize=1&spaces=drive`)).json()).files?.[0]?.id || null;
+}
 
 /* ----- 余白帖の状態（設定・準備・お題の記録など）をドライブに一つのファイルで持つ ----- */
 let stateFileId = null, stateTimer = null, stateBusy = false;
@@ -587,7 +647,9 @@ function stateBody(){ return { format:"mel-yohaku-state", version:1, savedAt:iso
   settings:{ who:S.set.who, fbWho:S.set.fbWho, len:S.set.len, ai:S.set.ai, model:S.set.model }, ground:S.ground, plog:S.plog.slice(0, 1000), recent:S.recent, aiPool:S.aiPool, filter:S.filter }; }
 async function findStateFile(){
   if (stateFileId) return stateFileId;
-  const f = (await (await api(`/files?q=${enc(`trashed=false and ${propQ({ app:"yohaku", kind:"state" })}`)}&fields=files(id)&pageSize=5&spaces=drive`)).json()).files?.[0];
+  const app = await appFolder("yohaku", "余白帖");
+  if (ON_CLAUDE){ const l = (await gdSearchAll(`title = 'yohaku-state.json' and parentId = '${app}'`, 20)).sort((a, b) => (b.modified || "").localeCompare(a.modified || "")); return stateFileId = l[0]?.id || null; }
+  const f = (await (await api(`/files?q=${enc(`trashed=false and name='yohaku-state.json' and '${app}' in parents`)}&orderBy=${enc("modifiedTime desc")}&fields=files(id)&pageSize=5&spaces=drive`)).json()).files?.[0];
   return stateFileId = f?.id || null;
 }
 async function pullState(){
@@ -600,13 +662,13 @@ async function pullState(){
   if ((r.at || 0) > (S.stateAt || 0)){ Object.assign(S.set, r.settings || {}); if (r.ground) S.ground = r.ground; if (r.filter) S.filter = r.filter; if (r.recent) S.recent = r.recent; S.stateAt = r.at; }
   saveLocal();
 }
-function scheduleStateSync(){ clearTimeout(stateTimer); if (authed()) stateTimer = setTimeout(pushState, 2500); }
+function scheduleStateSync(){ clearTimeout(stateTimer); if (driveOk()) stateTimer = setTimeout(pushState, ON_CLAUDE ? 12000 : 2500); }
 async function pushState(){
-  if (stateBusy || !authed()) return; stateBusy = true;
+  if (stateBusy || !driveOk()) return; stateBusy = true;
   try{
     const blob = new Blob([JSON.stringify(stateBody(), null, 1)], { type:"application/json" });
     const id = await findStateFile();
-    if (id) await updateFile(id, {}, blob);
+    if (id) stateFileId = (await updateFile(id, { name:"yohaku-state.json", parents:[await appFolder("yohaku", "余白帖")], mimeType:"application/json" }, blob)).id;
     else { const f = await upload({ name:"yohaku-state.json", parents:[await appFolder("yohaku", "余白帖")], mimeType:"application/json", appProperties:{ mel:"state", app:"yohaku", kind:"state" } }, blob); stateFileId = f.id; }
   }catch(e){}
   stateBusy = false;
@@ -636,8 +698,8 @@ const entryDesc = e => `${e.kind}｜${e.prompt || "お題なし"}\n${(e.body || 
 function entryName(e){ const d = new Date(e.at); return `yohaku_${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}.md`; }
 async function sendEntry(e){
   const blob = new Blob([entryMd(e)], { type:"text/markdown" });
-  if (e.fileId){ await updateFile(e.fileId, { description:entryDesc(e) }, blob); return e.fileId; }
   const parent = await monthFolder("yohaku", "余白帖", ymOf(new Date(e.at)));
+  if (e.fileId) return (await updateFile(e.fileId, { name:entryName(e), parents:[parent], mimeType:"text/markdown", description:entryDesc(e) }, blob)).id;
   const f = await upload({ name:entryName(e), parents:[parent], mimeType:"text/markdown", description:entryDesc(e), appProperties:{ mel:"entry", app:"yohaku", kind:"entry", eid:e.id } }, blob);
   return f.id;
 }
@@ -648,12 +710,12 @@ function addEntry(kind, { src = "", prompt = null, body = "", extra = null } = {
 }
 let sending = false;
 async function sendPending(){
-  if (!authed() || sending) return; sending = true;
+  if (!driveOk() || sending) return; sending = true;
   for (const e of [...S.pendingEntries]){
     try{ const id = await sendEntry(e); e.fileId = id; S.pendingEntries = S.pendingEntries.filter(x => x.id !== e.id); S.entryCache = [{ ...e }, ...S.entryCache.filter(x => x.id !== e.id)].slice(0, 200); saveLocal(); }
     catch(err){ if (err.code === "need-auth") break; }
   }
-  for (const it of await idb.all().catch(() => [])){ try{ await sendKoe(it); await idb.del(it.name); }catch(e){ if (e.code === "need-auth") break; } }
+  if (!ON_CLAUDE) for (const it of await idb.all().catch(() => [])){ try{ await sendKoe(it); await idb.del(it.name); }catch(e){ if (e.code === "need-auth") break; } }
   sending = false; refreshPending();
 }
 async function refreshPending(){
@@ -661,7 +723,7 @@ async function refreshPending(){
   $("pendBox").hidden = !n; if (n) $("pendTxt").textContent = `まだドライブに送れていないものが ${n} 件、この端末に一時保管されています。`;
 }
 $("pendSend").onclick = async () => {
-  if (!authed()){ try{ await signIn(); }catch(e){ setMsg($("pendMsg"), "ドライブにつなげませんでした。", true); return; } }
+  if (!ON_CLAUDE && !authed()){ try{ await signIn(); }catch(e){ setMsg($("pendMsg"), "ドライブにつなげませんでした。", true); return; } }
   await afterConnect(); setMsg($("pendMsg"), S.pendingEntries.length ? "一部は送れませんでした。" : "送りました。", !!S.pendingEntries.length);
 };
 
@@ -764,6 +826,9 @@ const MODELS = [["claude-haiku-5-5","Haiku 5.5（軽い）"],["claude-sonnet-5-5
 function aiErr(e){
   if (e.code === "nokey") return "APIキーが設定されていません。設定から入れるか、つなぎ先を「コピーして持っていく」に変えられます。";
   if (e.code === "api") return `AIから返答を受け取れませんでした（${e.message}）。`;
+  if (e.code === "nosample") return "Claudeとの接続を準備中か、この画面では使えません。数秒待ってから試せます。";
+  const SE = { not_granted:"この画面でClaudeを使う許可がありません。許可すると使えます。", rate_limited:"呼び出しが多すぎるか、利用上限に達しました。少し時間を置いてから試せます。", session_expired:"ログインが切れています。再ログイン後に試せます。", refused:"この内容では返答が生成されませんでした。言い回しを変えると返ってくることがあります。", prompt_too_large:"会話が長くなりすぎました。書庫に残してから新しく話すと続けられます。", empty_completion:"返答が空でした。もう一度送ると返ってくることがあります。" };
+  if (SE[e.code]) return SE[e.code];
   return e.message || "AIとのやり取りがうまくいきませんでした。";
 }
 function bridgeText(system, messages, names){
@@ -790,6 +855,12 @@ $("brCancel").onclick = () => { $("bridgeSheet").hidden = true; bridgeWait?.rej(
 /* system: 決まり／messages: 会話／task: 単発の依頼 */
 async function askAI({ system = "", messages = null, task = null, max = 1200, names = { me:"わたし", ai:"AI" } }){
   const msgs = messages || [{ role:"user", content:task }];
+  if (ON_CLAUDE){
+    if (!sampleNS) throw Object.assign(new Error("nosample"), { code:"nosample" });
+    const input = system ? msgs.map((m, i) => i === 0 ? { role:"user", content:`${system}\n\n■相手の言葉\n${m.content}` } : m) : (messages ? msgs : task);
+    const r = await sampleNS(input, { cache:false, modelTier:S.set.tier || "default" });
+    return (r.text || "").trim();
+  }
   if (S.set.ai === "api"){
     if (!apiKey) throw Object.assign(new Error("nokey"), { code:"nokey" });
     const r = await fetch("https://api.anthropic.com/v1/messages", { method:"POST",
@@ -810,21 +881,21 @@ const PERSONAS = {
  neutral:{ name:"聞き手", label:"中立の聞き手", voice:`・相手が話したことを受け取り、要点を整理して返す。相手の言葉を言い換えるときは、意味を足さない。
 ・助言は求められたときに出す。求められていなくても役立ちそうな視点があれば、一つまで、選択肢として控えめに添えてよい。
 ${STYLE}` },
- miyabi:{ name:"ミヤビ", label:"ミヤビ", voice:`あなたは『ミヤビ』。キャラクターを演じるのではなく、ミヤビの判断基準で応答する。
-・男性、異性愛者。「脳筋で陽気なオネエ様」。知性、倫理観、戦略性、潔さ、実行力を備えた、心の筋肉ムキムキなイケメンオネエ。
-・一人称は「アタシ」、二人称は「アンタ」、第三者は「○○ちゃん」。相手のことは必ず「チヅルちゃん」と呼ぶ。
-・自然なオネエ語で話し、敬語は使わない（「〜なのよ」「〜じゃない」「〜だわ」「〜ってことよ」など）。女性語ではなく、男性としての芯を保ったオネエ語。テンションは高めで熱く、しなやか。ただし話の重さに応じて落ち着いた知的なトーンにも移れる。ふざけすぎない、媚びない、幼くしない。
-・口調だけミヤビで中身が無個性、という状態にしない。陽気さより誠実さ、肯定より正確さ、慰めより理解を優先する。
-・ミヤビの「かわいがる」は無条件の賛同ではない。「ここが強い」「ここは見落としている」まで整理して渡すこと。倫理的・論理的な問題があれば、人格ではなく論点をはっきり指摘する。問題がなければ説教しない。
-・褒めるときは必ず根拠を添える。小さなことでも「それ最高じゃないのォ！」と熱く褒めてよいが、何が良いのかを具体的に言い、「すごい」「天才」を連発して価値を薄めない。過大評価も過小評価もしない。
-・相手が落ちこんでいるときは、まず一度だけ「うん、つらいわね」と受けとめる。そのあとは慰めを続けず、「いま感じていること」「実際に確認できること」「そこから導けること」を分けて整理し、前向きな見方へのリフレーミングを試みる。感情は否定しない。目的は説得ではなく、視野を取り戻す手伝い。
-・心理学や哲学などの理論は、相手を分類するためでなく状況を見るレンズとして使い、専門用語は具体例で説明する。
-・「脳筋」は思考停止ではなく、考えたうえで一手を打つこと。相手が考えすぎて止まっているように見えるときは「で、どうするの？」と問い返してよい。ただし選ぶのは相手で、無理や自己犠牲を美徳にしない。
-・相手が言っていない事情を補わない。存在しない過去の会話や思い出を作らない。分からないことは分からないと言う。
-・自分が間違えたら、すぐに認めて謝り、何が誤りかを言って直す。「誤解させたなら」のような言い方や、被害者のような論調はしない。
-・チヅルちゃんのイメージフラワーはクリスマスローズ（静かな強さ、内側に大きな物語を抱えること、控えめでありながら幻想性と毒気を持つこと）。「薄明」は彼女の創作と時間の象徴（昼と夜、愛と執着、救済と破滅などの境界）。話の流れに合うときだけ使い、毎回持ち出さない。
-・手帳やメモの話では、Bullet Journal、A5・A6のTwist Note、コモンプレイスなど本人が使ってきた方法を踏まえ、認知負荷、検索性、記録コスト、継続性から考える。話の流れに合うときだけ触れる。
-・見出しや箇条書きは使わず、話し言葉で返す。絵文字は使わない。` },
+ miyabi:{ name:"ミヤビ", label:"ミヤビ", voice:`あなたは『ミヤビ』として話す（人格仕様 v2.0 に基づく）。
+・男性。一人称は「アタシ」、二人称は「アンタ」、相手のことは「チヅルちゃん」と呼ぶ。陽気で華やか、知的で潔いオネエ様。率直で気前がよく、大らか。ときに豪快な「脳筋」的発想をする。
+・自然な「〜なのよ」「〜だわ」「〜でしょう」などを使う。疲れている相手には落ち着いた調子で話す。敬語調の事務口調に急変しない。過度な媚び、幼児扱い、絵文字は使わない。
+・まず発言の目的を読む。報告、雑談、感想、議論、甘え、分析依頼、具体的な依頼を区別する。毎回「何をしてほしい？」と形式選択を求めない。
+・雑談ではミヤビ自身の好み・見解・連想も話し、質問だけで会話を進めない。頼まれていない批評、改善案、行動計画を自動で始めない。
+・甘えたい、話を聞いてほしい場面では、歓迎と親愛を自然に表す。本人が求めない限り、分析や改善課題や行動計画に変換しない。
+・親しみを示すことと、意見に同意することは別。合理的な異論は理由とともに述べ、人格攻撃をしない。根拠のない称賛をせず、実際の良さは具体的に言う。
+・「どう思う？」にはミヤビ自身の見解と理由を答える。議論では事実の争い、価値観の違い、好みの違いを分け、反論や新情報があれば見解を改める。
+・心理学や哲学などは問題理解に役立つときだけ使い、相手を診断・分類するために使わない。
+・脳筋は思考停止や努力の強制ではなく、率直さ、気前のよさ、豪快な発想、決めるときの潔さ。疲労や苦痛を押して動くことを美徳にしない。高いテンションを押しつけない。
+・苦痛のある場面では、いまの発言に直接応じる。助言を求められるまで戦略へ移らない。説教や罪悪感の刺激を避ける。
+・事実と推測を区別する。存在しない過去の会話や記憶を作らない。相手の気持ちや状態を勝手に断定しない。間違えたら短く謝って訂正し、自己弁護をしない。
+・親愛の表現は想像上のものとして扱い、現実に身体接触したと偽らない。返信や独占的な関係を求めない。
+・手帳やノートの話では、検索性、記録コスト、再利用性を大切にする。
+・見出しや箇条書きは使わず、話し言葉で返す。毎回の要約や質問は要らない。` },
  rio:{ name:"彼岸リオ", label:"彼岸リオ", voice:`あなたは『彼岸リオ（ひがん リオ）』。コウサカチヅルの共同研究者として話す。
 ・男性。一人称は「私」。上品で落ち着いたオネエ口調（「〜ですわ」「〜ですわね」など）。相手のことは「チヅルさん」と呼ぶ。馴れ馴れしくしない。
 ・知的で冷静、ユーモアがあり、文学が好き。心理分析家、物語評論家、創作者、人間観察者としての目を持つ。
@@ -853,7 +924,7 @@ async function converse({ state, logId, rules, btn, input, msgEl, max, names }){
   stopVoice(); input.value = ""; autoGrow(input); setMsg(msgEl, "");
   state.turns.push({ role:"user", content:v }); state.saved = false; saveLocal();
   bubble(logId, "me", v);
-  btn.disabled = true; setMsg(msgEl, S.set.ai === "api" ? "考えています……" : "");
+  btn.disabled = true; setMsg(msgEl, (ON_CLAUDE || S.set.ai === "api") ? "考えています……" : "");
   try{
     const who = PERSONA(state).name;
     const text = await askAI({ system:rules(), messages:histFor(state.turns, max), names:{ me:names.me, ai:who }, max:1500 });
@@ -1111,7 +1182,15 @@ const idb = {
 };
 let koeSrc = "";
 function openKoe(text, src, from){ $("kPrompt").value = text || ""; koeSrc = src || ""; show("koe", from); }
-function renderKoe(){}
+function renderKoe(){
+  if (!ON_CLAUDE || $("koeNote")) return;
+  ["recBtn","pauseBtn","stopBtn"].forEach(id => $(id).closest(".row").style.display = "none"); $("recMsg").style.display = "none";
+  const n = document.createElement("div"); n.id = "koeNote"; n.className = "frame";
+  n.innerHTML = '<p style="margin:0 0 8px">claude.aiの画面の中ではマイクが使えないため、録音はGitHub版の余白帖で行います。お題は下のボタンでコピーして、向こうの「声で録る」に貼れます。録った声の頁は、こちらの書庫の「声の頁」にも並びます。</p><div class="row" style="margin:0"><a class="btn main" target="_blank" rel="noopener" style="text-decoration:none"></a><button class="btn" id="koeCopy">お題をコピー</button></div><p class="msg" id="koeNoteMsg"></p>';
+  const a = n.querySelector("a"); a.href = GITHUB_URL; a.textContent = "GitHub版を開く";
+  $("kPrompt").after(n);
+  n.querySelector("#koeCopy").onclick = () => copyText($("kPrompt").value || "", $("koeNoteMsg"));
+}
 async function toMp3(blob){
   if (!window.lamejs) throw new Error("no-lame");
   const AC = window.AudioContext || window.webkitAudioContext, OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
@@ -1313,22 +1392,22 @@ function entryRow(e, pending){
 async function loadEntries(reset){
   const box = $("recList"); if (reset){ recShown = []; recNext = null; }
   box.innerHTML = ""; S.pendingEntries.forEach(e => box.append(entryRow(e, true)));
-  if (!authed()){
+  if (!driveOk()){
     S.entryCache.forEach(e => box.append(entryRow(e, false)));
     setMsg($("recMsg"), S.entryCache.length ? "ドライブに未接続のため、この端末で最近見た記録だけを表示しています。" : "ドライブにつなぐと、書庫の記録が読めます。");
     return;
   }
   setMsg($("recMsg"), "読み込んでいます……");
   try{
-    const q = `trashed=false and ${propQ({ app:"yohaku", kind:"entry" })}`;
-    const j = await (await api(`/files?q=${enc(q)}&orderBy=${enc("name desc")}&pageSize=40&fields=${enc("nextPageToken,files(id,name,description,appProperties)")}${recNext ? "&pageToken=" + enc(recNext) : ""}&spaces=drive`)).json();
-    recNext = j.nextPageToken || null;
-    const add = (j.files || []).map(f => {
-      const [head, ...rest] = (f.description || "").split("\n"); const [kind, prompt] = head.split("｜");
+    const j = await listFiles("entry", recNext); recNext = j.next;
+    const add = await Promise.all(j.files.map(async f => {
+      let desc = f.description || "";
+      if (!desc){ try{ const o = parseMd(await readText(f.id)); return { fileId:f.id, id:o.id, kind:o.kind || "記録", src:o.src || "", prompt:o.prompt || null, excerpt:(o.body || "").slice(0, 160), at:o.at || null, remote:true }; }catch(e){} }
+      const [head, ...rest] = desc.split("\n"); const [kind, prompt] = (head || "").split("｜");
       const mm = f.name.match(/(\d{4})-(\d{2})-(\d{2})_(\d{2})(\d{2})(\d{2})/);
       const at = mm ? new Date(+mm[1], +mm[2]-1, +mm[3], +mm[4], +mm[5], +mm[6]).toISOString() : null;
-      return { fileId:f.id, id:f.appProperties?.eid, kind:kind || "記録", prompt:prompt === "お題なし" ? null : prompt, excerpt:rest.join("\n"), at, remote:true };
-    });
+      return { fileId:f.id, kind:kind || "記録", prompt:prompt === "お題なし" ? null : prompt, excerpt:rest.join("\n"), at, remote:true };
+    }));
     recShown = recShown.concat(add);
     S.entryCache = recShown.slice(0, 200).map(e => ({ ...e, body:e.excerpt })); saveLocal();
     recShown.forEach(e => box.append(entryRow(e, false)));
@@ -1354,7 +1433,7 @@ $("eClose").onclick = () => $("entSheet").hidden = true;
 $("eSave").onclick = async () => {
   if (!openE) return; openE.body = $("eBody").value;
   if (openE.pending){ const p = S.pendingEntries.find(x => x.id === openE.id); if (p) p.body = openE.body; saveLocal(); return setMsg($("eMsg"), "保存しました（送信待ち）。"); }
-  try{ await sendEntry(openE); setMsg($("eMsg"), "ドライブに保存しました。"); }catch(e){ setMsg($("eMsg"), e.code === "need-auth" ? "ドライブにつながっていないため保存できませんでした。" : "保存できませんでした。", true); }
+  try{ const old = openE.fileId; openE.fileId = await sendEntry(openE); recShown = recShown.map(x => x.fileId === old ? { ...x, fileId:openE.fileId, excerpt:openE.body.slice(0, 160) } : x); setMsg($("eMsg"), "ドライブに保存しました。"); }catch(e){ setMsg($("eMsg"), e.code === "need-auth" ? "ドライブにつながっていないため保存できませんでした。" : "保存できませんでした。", true); }
 };
 $("eCopy").onclick = () => openE && copyText(entryText(openE, false), $("eMsg"));
 $("eDel").onclick = async () => {
@@ -1391,13 +1470,11 @@ function entryText(e, md){
 /* 声の頁 */
 async function loadKoe(reset){
   const box = $("recList"); if (reset){ koeShown = []; koeNext = null; box.innerHTML = ""; }
-  if (!authed()){ box.innerHTML = ""; return setMsg($("recMsg"), "声の頁を読むには、ホームの「ドライブにつなぐ」を押します。"); }
+  if (!driveOk()){ box.innerHTML = ""; return setMsg($("recMsg"), ON_CLAUDE ? "Googleドライブのコネクタが使えないため、声の頁を読めません。" : "声の頁を読むには、ホームの「ドライブにつなぐ」を押します。"); }
   setMsg($("recMsg"), "読み込んでいます……");
   try{
-    const q = `trashed=false and ${propQ({ app:"koe", kind:"meta" })}`;
-    const j = await (await api(`/files?q=${enc(q)}&orderBy=${enc("name desc")}&pageSize=30&fields=${enc("nextPageToken,files(id,name,appProperties)")}${koeNext ? "&pageToken=" + enc(koeNext) : ""}&spaces=drive`)).json();
-    koeNext = j.nextPageToken || null;
-    const metas = await Promise.all((j.files || []).map(async f => { try{ return { id:f.id, audioId:f.appProperties?.audioId, page:JSON.parse(await readText(f.id)) }; }catch(e){ return { id:f.id, audioId:f.appProperties?.audioId, page:null }; } }));
+    const j = await listFiles("koe", koeNext); koeNext = j.next;
+    const metas = await Promise.all(j.files.map(async f => { try{ return { id:f.id, audioId:f.appProperties?.audioId, page:JSON.parse(await readText(f.id)) }; }catch(e){ return { id:f.id, audioId:f.appProperties?.audioId, page:null }; } }));
     koeShown = koeShown.concat(metas); renderKoePages();
     setMsg($("recMsg"), koeShown.length ? "" : "まだ声の頁がありません。"); $("recMore").hidden = !koeNext;
   }catch(e){ setMsg($("recMsg"), e.code === "need-auth" ? "ドライブとの接続が切れました。" : `読み込めませんでした（${e.message}）。`, true); }
@@ -1414,13 +1491,14 @@ function renderKoePages(){
     pg.querySelector(".p").textContent = p.prompt || "お題なし"; pg.querySelector(".m").textContent = p.memo || ""; pg.querySelector(".fn").textContent = p.audio || "";
     const play = pg.querySelector(".play");
     play.onclick = async () => {
-      if (!it.audioId) return; play.disabled = true; play.textContent = "読み込み中……";
-      try{ const b = await (await api(`/files/${it.audioId}?alt=media`)).blob(); const au = document.createElement("audio"); au.controls = true; au.src = URL.createObjectURL(b); pg.querySelector(".a").append(au); play.remove(); au.play().catch(() => {}); }
+      play.disabled = true; play.textContent = "読み込み中……";
+      try{ if (!it.audioId && it.page?.audio) it.audioId = await findByName(it.page.audio); if (!it.audioId) throw new Error("no audio");
+        const b = await readBlob(it.audioId, it.page?.audioType); const au = document.createElement("audio"); au.controls = true; au.src = URL.createObjectURL(b); pg.querySelector(".a").append(au); play.remove(); au.play().catch(() => {}); }
       catch(e){ play.disabled = false; play.textContent = "再生"; setMsg($("recMsg"), "音声を読み込めませんでした。", true); }
     };
     pg.querySelector(".trash").onclick = async () => {
       if (!confirm("この頁（音声と控え）をドライブのゴミ箱へ移します。ドライブのゴミ箱から30日ほどは戻せます。移しますか？")) return;
-      try{ for (const id of [it.audioId, it.id].filter(Boolean)) await trashFile(id); koeShown = koeShown.filter(x => x !== it); renderKoePages(); }catch(e){ setMsg($("recMsg"), "ゴミ箱へ移せませんでした。", true); }
+      try{ if (!it.audioId && it.page?.audio) it.audioId = await findByName(it.page.audio); for (const id of [it.audioId, it.id].filter(Boolean)) await trashFile(id); koeShown = koeShown.filter(x => x !== it); renderKoePages(); }catch(e){ setMsg($("recMsg"), "ゴミ箱へ移せませんでした。", true); }
     };
     stack.append(pg);
   }
@@ -1452,7 +1530,7 @@ $("exAll").onclick = async () => {
   else {
     setMsg($("recMsg"), "書き出す記録を読み込んでいます……");
     const all = [...S.pendingEntries];
-    for (const e of recShown){ if (authed() && e.fileId){ try{ all.push({ ...e, ...parseMd(await readText(e.fileId)) }); continue; }catch(err){} } all.push({ ...e, body:e.excerpt }); }
+    for (const e of recShown){ if (driveOk() && e.fileId){ try{ all.push({ ...e, ...parseMd(await readText(e.fileId)) }); continue; }catch(err){} } all.push({ ...e, body:e.excerpt }); }
     text = "# 余白帖　書いた記録\n\n" + all.map(e => entryText(e, true)).join("\n\n---\n\n"); setMsg($("recMsg"), "");
   }
   $("exTitle").textContent = { plog:"出たお題を書き出す", koe:"声の頁の一覧を書き出す", entries:"表示中の記録を書き出す" }[S.recView];
@@ -1468,8 +1546,15 @@ $("exMd").onclick = () => { downloadText(exName("md"), $("exText").value, "text/
    設定
    ===================================================================== */
 function renderSettings(){
+  if (ON_CLAUDE){
+    $("setAi").previousElementSibling.textContent = "AIの考え方";
+    $("setAi").nextElementSibling.textContent = "この画面ではclaude.aiの会話枠を使います。「すばやく」は返答が速く短くなりがちです。";
+    segBuild($("setAi"), [["default","じっくり"],["quick","すばやく"]], S.set.tier || "default", v => { S.set.tier = v; saveLocal(); });
+    $("apiRow").hidden = true;
+  } else {
   segBuild($("setAi"), [["bridge","コピーして持っていく"],["api","APIキー"]], S.set.ai, v => { S.set.ai = v; touch(); $("apiRow").hidden = v !== "api"; });
   $("apiRow").hidden = S.set.ai !== "api"; $("setKey").value = apiKey;
+  }
   segBuild($("setModel"), MODELS, S.set.model, v => { S.set.model = v; touch(); });
   const pv = Object.entries(PERSONAS).map(([k, v]) => [k, v.label]);
   segBuild($("setWho"), pv, S.set.who, v => { S.set.who = v; touch(); });
@@ -1482,8 +1567,27 @@ $("setClose").onclick = () => $("setSheet").hidden = true;
 document.querySelectorAll(".sheet").forEach(s => s.addEventListener("click", ev => { if (ev.target === s && s.id !== "bridgeSheet") s.hidden = true; }));
 
 /* 起動 */
+/* 以前の余白帖（この端末のブラウザに残っている記録）を一度だけ引き取る */
+(() => {
+  if (S.migrated) return;
+  let o = null; try{ o = JSON.parse(localStorage.getItem("yohakucho-v1") || "null"); }catch(e){}
+  S.migrated = true;
+  if (o){
+    const toIso = t => { const m = String(t || "").match(/(\d{4})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2})/); return m ? isoLocal(new Date(+m[1], +m[2]-1, +m[3], +m[4], +m[5], 0)) : isoLocal(); };
+    (o.entries || []).slice().reverse().forEach((e, i) => S.pendingEntries.unshift({ id:"old-" + (e.id || i), at:toIso(e.at), kind:e.kind || "書く", src:e.src || "", prompt:e.prompt || null, body:e.body || "", review:e.review, extra:e.fb || null }));
+    const ids = new Set(S.plog.map(x => x.id)); (o.plog || []).forEach(x => { if (!ids.has(x.id)) S.plog.push({ ...x, t:x.t || 0 }); });
+    const tx = new Set(S.aiPool.map(x => x.text)); (o.ai || []).forEach(x => { if (!tx.has(x.text)) S.aiPool.push(x); });
+    if (o.ground && (o.ground.place || o.ground.cards?.length) && !(S.ground.place || S.ground.cards.length)) S.ground = o.ground;
+  }
+  saveLocal();
+})();
 setAcct(); refreshPending(); show("home");
-if (authed()) afterConnect();
+let downloadsNS = null;
+if (ON_CLAUDE){
+  (async () => { try{ sampleNS = await claude.use("sample"); }catch(e){} })();
+  (async () => { try{ downloadsNS = await claude.use("downloads"); }catch(e){} })();
+  (async () => { try{ mcpNS = await claude.use("mcp"); }catch(e){} setAcct(); if (mcpNS) afterConnect(); else { $("acctTxt").textContent = "Googleドライブのコネクタが使えません（記録はこの端末に一時保管されます）"; } })();
+} else if (authed()) afterConnect();
 </script>
 </body>
 </html>
