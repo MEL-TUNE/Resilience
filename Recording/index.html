@@ -301,7 +301,7 @@ body:not([data-page="settings"]) #settingsShell{display:none}
 
  <section class="panel" aria-labelledby="fileTitle">
   <h3 id="fileTitle">設定ファイル <span>別の端末への引き継ぎ用</span></h3>
-  <div class="end-row"><button class="btn" id="exportBtn">設定を書き出す</button><button class="btn" id="importBtn">設定を読み込む</button><button class="btn" type="button" id="exportJsonBtn">ポン出し用（JSON）で書き出す</button></div>
+  <div class="end-row"><button class="btn" id="exportBtn">設定を書き出す</button><button class="btn" id="importBtn">設定を読み込む</button></div>
   <p class="note">効果音・ボイス・BGM・動画用サムネイルを1つのファイルにまとめます。録音したテイクは含まれません。筋肉室効果音ポン出しと同じファイルで、どちらで書き出しても、もう一方で読み込めます。</p>
  </section>
 </div></section>
@@ -1315,32 +1315,6 @@ async function exportPack(){
  }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
 }
 const blobData=blob=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(blob)});
-// ポン出し用JSON：巨大な文字列を一度に作るとiPhoneなどでページが落ちるため、音源を少しずつ文字に変換してファイルへつなげる
-async function blobToDataUrlParts(blob){
- const parts=[new Blob(['data:'+(blob.type||'application/octet-stream')+';base64,'])];
- const STEP=3*262144;// 3の倍数ずつ変換すると、途中で区切ってもbase64として正しくつながる
- for(let off=0;off<blob.size;off+=STEP){
-  const u=new Uint8Array(await blob.slice(off,off+STEP).arrayBuffer());let bin='';
-  for(let i=0;i<u.length;i+=8192)bin+=String.fromCharCode.apply(null,u.subarray(i,i+8192));
-  parts.push(new Blob([btoa(bin)]));
- }
- return parts;
-}
-async function exportJson(){
- try{toast('書き出しています…',120000);
-  const out=JSON.parse(JSON.stringify(cfg)),assetIds=[];out.sounds=out.sounds.filter(x=>x.type!=='voice');
-  for(const item of [...out.sounds,...out.bgms]){if(item.assetId){item.audioData='__KNKAUDIO_'+assetIds.length+'__';assetIds.push(item.assetId)}}
-  const text=JSON.stringify({format:'kinniku-soundboard',version:6,config:out});
-  const pieces=text.split(/"__KNKAUDIO_(\d+)__"/),parts=[];
-  for(let i=0;i<pieces.length;i++){
-   if(i%2===0){parts.push(new Blob([pieces[i]]));continue}
-   const blob=await getAsset(assetIds[+pieces[i]]);
-   if(blob){parts.push(new Blob(['"']),...await blobToDataUrlParts(blob),new Blob(['"']))}else parts.push(new Blob(['null']));
-   toast(`書き出しています… ${Math.ceil(i/2)}/${assetIds.length}`,120000);
-  }
-  download(new Blob(parts,{type:'application/octet-stream'}),'kinniku-radio_soundboard-settings.json');toast('ポン出し用の設定ファイルを書き出しました',4000);
- }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
-}
 function errText(e){if(!e)return '原因不明';if(e.name==='QuotaExceededError')return '端末の空き容量が足りません';if(e instanceof RangeError||/memory|allocation/i.test(e.message||''))return 'ファイルが大きく、この端末では一度に読み込めません';return e.userMessage||((e.name&&e.name!=='Error'?e.name+'：':'')+(e.message||String(e)))}
 function dataUrlToBlob(u){
  const comma=u.indexOf(','),meta=u.slice(5,comma),type=meta.split(';')[0]||'',b64=meta.includes(';base64');const body=u.slice(comma+1);
@@ -1365,7 +1339,7 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
  for(const assetId of oldAssets)await deleteAsset(assetId);updateStorage();
  toast(`設定を読み込みました（音源${stored}件${coverBlob?'・サムネイル画像':''}）`,4000);
 }
-$('#exportBtn').onclick=exportPack;$('#exportJsonBtn').onclick=exportJson;$('#importBtn').onclick=()=>$('#importFile').click();
+$('#exportBtn').onclick=exportPack;$('#importBtn').onclick=()=>$('#importFile').click();
 $('#importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;const added=[];
  try{
   toast('設定ファイルを確認しています…',120000);
