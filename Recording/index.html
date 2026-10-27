@@ -302,7 +302,7 @@ body:not([data-page="settings"]) #settingsShell{display:none}
  <section class="panel" aria-labelledby="fileTitle">
   <h3 id="fileTitle">設定ファイル <span>別の端末への引き継ぎ用</span></h3>
   <div class="end-row"><button class="btn" id="exportBtn">設定を書き出す</button><button class="btn" id="importBtn">設定を読み込む</button><button class="btn" type="button" id="exportJsonBtn">ポン出し用（JSON）で書き出す</button></div>
-  <p class="note">効果音・BGM・動画用サムネイルを1つのファイルにまとめます。録音したテイクは含まれません。</p>
+  <p class="note">効果音・ボイス・BGM・動画用サムネイルを1つのファイルにまとめます。録音したテイクは含まれません。筋肉室効果音ポン出しと同じファイルで、どちらで書き出しても、もう一方で読み込めます。</p>
  </section>
 </div></section>
 <p class="footer">設定・音源・録音はこのブラウザ内に保存されます。</p>
@@ -1310,7 +1310,7 @@ async function exportPack(){
   await add('default','cover');for(const pr of conf.programs||[])for(let n=0;n<PC_SLOTS;n++)await add(progCoverKey(pr.id,n),'cover');
   const head=new TextEncoder().encode(JSON.stringify({format:'kinniku-radio-pack',version:1,app:'筋肉室ラジオ収録',created:new Date().toISOString(),config:conf,assets}));
   const len=new Uint8Array(4);new DataView(len.buffer).setUint32(0,head.length,true);
-  download(new Blob([PACK_MAGIC,len,head,...blobs],{type:'application/octet-stream'}),'kinniku-radio_settings.kinniku');
+  download(new Blob([PACK_MAGIC,len,head,...blobs],{type:'application/octet-stream'}),'kinniku_settings.kinniku');
   toast(`設定を書き出しました（音源${assets.filter(a=>a.kind==='audio').length}件・${(off/1048576).toFixed(1)}MB）`,4000);
  }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
 }
