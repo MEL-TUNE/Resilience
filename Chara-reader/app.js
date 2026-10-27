@@ -341,7 +341,7 @@ function openFile(file){
 
 function saveText(){
   const blob=new Blob([els.text.value],{type:"text/plain;charset=utf-8"});
-  downloadBlob(blob,"彼岸リオReader_テキスト.txt");
+  downloadBlob(blob,"chara-reader_text.txt");
 }
 
 // claude.aiで公開したページでは保存確認つきの downloads 機能を使い、それ以外では通常のダウンロードを行う
@@ -435,7 +435,7 @@ function exportSettings(){
     exportedAt:new Date().toISOString(),
     config:appConfig
   };
-  downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),"彼岸リオReader_設定.json");
+  downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),"chara-reader_settings.json");
 }
 
 function importSettings(file){

@@ -771,7 +771,7 @@ async function rescueWav(){
  try{let stored=[];try{for(const k of await trackKeys(take,'mix')){const b=await idbGet('chunks',k);if(b)stored.push([k,b])}}catch(_){}
   const all=[...stored,...jobs.filter(([k])=>k.includes('|mix|'))].sort((a,b)=>a[0]<b[0]?-1:1);
   const bytes=all.reduce((n,[,b])=>n+b.size,0);
-  download(new Blob([wavHeader(2,take.sampleRate,bytes),...all.map(([,b])=>b)],{type:'audio/wav'}),`${safeName(take.name)}_ミックス.wav`);toast('録音をWAVで書き出しました',4000)}
+  download(new Blob([wavHeader(2,take.sampleRate,bytes),...all.map(([,b])=>b)],{type:'audio/wav'}),`${safeName(take.name)}_mix.wav`);toast('録音をWAVで書き出しました',4000)}
  catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
 }
 function stamp(d=new Date()){const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
@@ -1113,7 +1113,7 @@ async function verifyMp4Audio(vChunks,aChunks,{size,sr,vDesc,srcPeak}){
   return peak>srcPeak*0.05;
  }catch(e){console.warn('MP4音声の確認に失敗',e);return false}
 }
-function safeName(s){return String(s).replace(/[\\/:*?"<>|]/g,'_').trim()||'収録'}
+function safeName(s){return String(s).replace(/[\\/:*?"<>|]/g,'_').trim()||'recording'}
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
 async function exportTake(takeId,track,kind){
  if(busyTakes.has(takeId)){toast('このテイクは書き出し中です');return}
@@ -1123,7 +1123,7 @@ async function exportTake(takeId,track,kind){
  try{progress(kind==='mp3'?'MP3変換の準備中…':'WAVを作成中…');
   if(kind==='video'){const v=await buildVideo(t,progress);download(v.blob,`${safeName(t.name)}.${v.ext}`);toast(`動画を書き出しました（${v.ext.toUpperCase()}・${(v.blob.size/1048576).toFixed(1)}MB）${v.fallback?'。MP4で音声を確認できなかったためWebMにしました':''}`,6000);return}
   const blob=kind==='mp3'?await buildMp3(t,track,progress):await buildWav(t,track,progress);
-  download(blob,`${safeName(t.name)}_${TRACK_INFO[track].label}.${kind}`);toast('書き出しました（'+(blob.size/1048576).toFixed(1)+'MB）');
+  download(blob,`${safeName(t.name)}_${({mix:'mix',voice:'voice',prog:'bgm-sfx'})[track]||track}.${kind}`);toast('書き出しました（'+(blob.size/1048576).toFixed(1)+'MB）');
  }catch(e){console.error(e);toast(e.user?e.message:'書き出しに失敗しました',4500)}
  finally{busyTakes.delete(takeId);const e=el();if(e)e.textContent=''}
 }
@@ -1310,7 +1310,7 @@ async function exportPack(){
   await add('default','cover');for(const pr of conf.programs||[])for(let n=0;n<PC_SLOTS;n++)await add(progCoverKey(pr.id,n),'cover');
   const head=new TextEncoder().encode(JSON.stringify({format:'kinniku-radio-pack',version:1,app:'筋肉室ラジオ収録',created:new Date().toISOString(),config:conf,assets}));
   const len=new Uint8Array(4);new DataView(len.buffer).setUint32(0,head.length,true);
-  download(new Blob([PACK_MAGIC,len,head,...blobs],{type:'application/octet-stream'}),'筋肉室ラジオ収録_設定.kinniku');
+  download(new Blob([PACK_MAGIC,len,head,...blobs],{type:'application/octet-stream'}),'kinniku-radio_settings.kinniku');
   toast(`設定を書き出しました（音源${assets.filter(a=>a.kind==='audio').length}件・${(off/1048576).toFixed(1)}MB）`,4000);
  }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
 }
@@ -1338,7 +1338,7 @@ async function exportJson(){
    if(blob){parts.push(new Blob(['"']),...await blobToDataUrlParts(blob),new Blob(['"']))}else parts.push(new Blob(['null']));
    toast(`書き出しています… ${Math.ceil(i/2)}/${assetIds.length}`,120000);
   }
-  download(new Blob(parts,{type:'application/octet-stream'}),'筋肉室ラジオ収録_設定.json');toast('ポン出し用の設定ファイルを書き出しました',4000);
+  download(new Blob(parts,{type:'application/octet-stream'}),'kinniku-radio_soundboard-settings.json');toast('ポン出し用の設定ファイルを書き出しました',4000);
  }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
 }
 function errText(e){if(!e)return '原因不明';if(e.name==='QuotaExceededError')return '端末の空き容量が足りません';if(e instanceof RangeError||/memory|allocation/i.test(e.message||''))return 'ファイルが大きく、この端末では一度に読み込めません';return e.userMessage||((e.name&&e.name!=='Error'?e.name+'：':'')+(e.message||String(e)))}

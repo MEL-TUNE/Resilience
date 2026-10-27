@@ -62,7 +62,7 @@ audio{width:100%;margin:8px 0}
 <body><div class="wrap">
 <header>
   <h1>声の頁</h1>
-  <p class="lead">声で書く日記帳。録った声は、Googleドライブの PRIVATE-MEL ／ 声の頁 に一枚ずつ重なっていきます。</p>
+  <p class="lead">声で書く日記帳。録った声は、Googleドライブの PRIVATE-MEL ／ Journaling に一枚ずつ重なっていきます。</p>
 </header>
 
 <div class="box warn" id="envWarn" hidden></div>
@@ -118,7 +118,7 @@ audio{width:100%;margin:8px 0}
 /* ===== 設定 ===== */
 const CLIENT_ID = "235660530148-aqrk1fjtf4cu6ufvgg8j7op6fqpr2l1v.apps.googleusercontent.com";
 const SCOPE = "https://www.googleapis.com/auth/drive.file";
-const ROOT_NAME = "PRIVATE-MEL", APP_KEY = "koe", APP_NAME = "声の頁";
+const ROOT_NAME = "PRIVATE-MEL", APP_KEY = "koe", APP_NAME = "声の頁", FOLDER_NAME = "Journaling";
 const FORMAT = "mel-koe-page", FORMAT_V = 1;
 const API = "https://www.googleapis.com/drive/v3", UP = "https://www.googleapis.com/upload/drive/v3";
 const FOLDER = "application/vnd.google-apps.folder";
@@ -218,7 +218,7 @@ async function folderId(key, name, parent, props){
 }
 async function monthFolder(ym){
   const root = await folderId("root", ROOT_NAME, null, { mel:"root" });
-  const app = await folderId("app", APP_NAME, root, { mel:"app", app:APP_KEY });
+  const app = await folderId("app", FOLDER_NAME, root, { mel:"app", app:APP_KEY });
   return folderId("m" + ym, ym, app, { mel:"month", app:APP_KEY, ym });
 }
 async function upload(meta, blob){
@@ -316,7 +316,7 @@ $("saveBtn").onclick = async () => {
   try{
     await sendItem(item);
     await idb.del(item.name);
-    m.textContent = `ドライブの ${ROOT_NAME} ／ ${APP_NAME} ／ ${item.ym} に保存しました。` + (conv ? "" : `（形式：${extOf(audio.type)}）`);
+    m.textContent = `ドライブの ${ROOT_NAME} ／ ${FOLDER_NAME} ／ ${item.ym} に保存しました。` + (conv ? "" : `（形式：${extOf(audio.type)}）`);
     blob = null; $("pIn").value = "";
     setTimeout(() => { $("afterBox").hidden = true; }, 2500);
   }catch(e){

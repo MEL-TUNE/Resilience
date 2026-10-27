@@ -347,7 +347,7 @@ audio{width:100%;margin:8px 0}
       <div class="row"><button class="btn main" id="kSave">頁にする</button><button class="btn" id="kDiscard">録り直す</button></div>
       <p class="msg" id="kMsg"></p>
     </div>
-    <p class="hint">声の頁は、ドライブの PRIVATE-MEL ／ 声の頁 ／ 年月 のフォルダに、音声と控えの組で保存されます。</p>
+    <p class="hint">声の頁は、ドライブの PRIVATE-MEL ／ Journaling ／ 年月 のフォルダに、音声と控えの組で保存されます。</p>
   </div></div>
 </section>
 
@@ -647,7 +647,7 @@ function stateBody(){ return { format:"mel-yohaku-state", version:1, savedAt:iso
   settings:{ who:S.set.who, fbWho:S.set.fbWho, len:S.set.len, ai:S.set.ai, model:S.set.model }, ground:S.ground, plog:S.plog.slice(0, 1000), recent:S.recent, aiPool:S.aiPool, filter:S.filter }; }
 async function findStateFile(){
   if (stateFileId) return stateFileId;
-  const app = await appFolder("yohaku", "余白帖");
+  const app = await appFolder("yohaku", "Yohaku");
   if (ON_CLAUDE){ const l = (await gdSearchAll(`title = 'yohaku-state.json' and parentId = '${app}'`, 20)).sort((a, b) => (b.modified || "").localeCompare(a.modified || "")); return stateFileId = l[0]?.id || null; }
   const f = (await (await api(`/files?q=${enc(`trashed=false and name='yohaku-state.json' and '${app}' in parents`)}&orderBy=${enc("modifiedTime desc")}&fields=files(id)&pageSize=5&spaces=drive`)).json()).files?.[0];
   return stateFileId = f?.id || null;
@@ -668,8 +668,8 @@ async function pushState(){
   try{
     const blob = new Blob([JSON.stringify(stateBody(), null, 1)], { type:"application/json" });
     const id = await findStateFile();
-    if (id) stateFileId = (await updateFile(id, { name:"yohaku-state.json", parents:[await appFolder("yohaku", "余白帖")], mimeType:"application/json" }, blob)).id;
-    else { const f = await upload({ name:"yohaku-state.json", parents:[await appFolder("yohaku", "余白帖")], mimeType:"application/json", appProperties:{ mel:"state", app:"yohaku", kind:"state" } }, blob); stateFileId = f.id; }
+    if (id) stateFileId = (await updateFile(id, { name:"yohaku-state.json", parents:[await appFolder("yohaku", "Yohaku")], mimeType:"application/json" }, blob)).id;
+    else { const f = await upload({ name:"yohaku-state.json", parents:[await appFolder("yohaku", "Yohaku")], mimeType:"application/json", appProperties:{ mel:"state", app:"yohaku", kind:"state" } }, blob); stateFileId = f.id; }
   }catch(e){}
   stateBusy = false;
 }
@@ -698,7 +698,7 @@ const entryDesc = e => `${e.kind}｜${e.prompt || "お題なし"}\n${(e.body || 
 function entryName(e){ const d = new Date(e.at); return `yohaku_${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}.md`; }
 async function sendEntry(e){
   const blob = new Blob([entryMd(e)], { type:"text/markdown" });
-  const parent = await monthFolder("yohaku", "余白帖", ymOf(new Date(e.at)));
+  const parent = await monthFolder("yohaku", "Yohaku", ymOf(new Date(e.at)));
   if (e.fileId) return (await updateFile(e.fileId, { name:entryName(e), parents:[parent], mimeType:"text/markdown", description:entryDesc(e) }, blob)).id;
   const f = await upload({ name:entryName(e), parents:[parent], mimeType:"text/markdown", description:entryDesc(e), appProperties:{ mel:"entry", app:"yohaku", kind:"entry", eid:e.id } }, blob);
   return f.id;
@@ -1012,7 +1012,7 @@ $("enClose").onclick = () => $("endSheet").hidden = true;
 $("enHand").oninput = e => { S.listen.memo = e.target.value; saveLocal(); };
 $("enRec").onclick = () => setMsg($("enMsg"), saveListenEntry() ? "書庫に残しました。" : "まだ会話がありません。", !S.listen.turns.length);
 $("enCopy").onclick = () => S.listen.turns.length ? copyText(listenMd(), $("enMsg")) : setMsg($("enMsg"), "まだ会話がありません。", true);
-$("enMd").onclick = () => { if (!S.listen.turns.length) return setMsg($("enMsg"), "まだ会話がありません。", true); const d = new Date(); downloadText(`余白帖_傾聴_${d.getFullYear()}${z(d.getMonth()+1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}.md`, listenMd(), "text/markdown"); setMsg($("enMsg"), "保存しました。"); };
+$("enMd").onclick = () => { if (!S.listen.turns.length) return setMsg($("enMsg"), "まだ会話がありません。", true); const d = new Date(); downloadText(`yohaku-listening_${d.getFullYear()}${z(d.getMonth()+1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}.md`, listenMd(), "text/markdown"); setMsg($("enMsg"), "保存しました。"); };
 $("enMake").onclick = async () => {
   if (!S.listen.turns.length) return setMsg($("enMsg"), "まだ会話がありません。", true);
   const prev = S.listen.handover ? `■この会話の前に持ち越していたメモ\n${S.listen.handover}\n\n` : "";
@@ -1250,13 +1250,13 @@ $("kSave").onclick = async () => {
   setMsg(m, "ドライブへ送っています……");
   try{
     await sendKoe(item); await idb.del(item.name);
-    setMsg(m, `ドライブの ${ROOT_NAME} ／ 声の頁 ／ ${item.ym} に保存しました。` + (conv ? "" : `（形式：${extOf(audio.type)}）`));
+    setMsg(m, `ドライブの ${ROOT_NAME} ／ Journaling ／ ${item.ym} に保存しました。` + (conv ? "" : `（形式：${extOf(audio.type)}）`));
     kBlob = null; $("kPrompt").value = ""; koeSrc = ""; setTimeout(() => { $("afterBox").hidden = true; }, 2500);
   }catch(e){ setMsg(m, e.code === "need-auth" ? "ドライブにつながっていないため、この端末に一時保管しました。ホームの「ドライブにつなぐ」のあと、「いま送る」で送れます。" : `ドライブに送れなかったため、この端末に一時保管しました（${e.message}）。`, true); }
   finally{ $("kSave").disabled = false; $("kDiscard").disabled = false; refreshPending(); }
 };
 async function sendKoe(item){
-  const parent = await monthFolder("koe", "声の頁", item.ym), p = item.page;
+  const parent = await monthFolder("koe", "Journaling", item.ym), p = item.page;
   const desc = `${p.recordedAt}\nお題：${p.prompt || "なし"}${p.memo ? "\nひとこと：" + p.memo : ""}`, props = { mel:"page", app:"koe", ym:item.ym, base:item.name };
   if (!item.audioId){ const a = await upload({ name:item.audioName, parents:[parent], description:desc, mimeType:item.audio.type, appProperties:{ ...props, kind:"audio" } }, item.audio); item.audioId = a.id; try{ await idb.put(item); }catch(e){} }
   await upload({ name:`${item.name}.json`, parents:[parent], description:desc, mimeType:"application/json", appProperties:{ ...props, kind:"meta", audioId:item.audioId } }, new Blob([JSON.stringify(p, null, 2)], { type:"application/json" }));
@@ -1538,7 +1538,7 @@ $("exAll").onclick = async () => {
 };
 $("exClose").onclick = () => $("exSheet").hidden = true;
 $("exCopy").onclick = () => copyText($("exText").value, $("exMsg"));
-const exName = ext => { const d = new Date(); return `余白帖_${({ plog:"お題", koe:"声の頁", entries:"記録" })[S.recView]}_${d.getFullYear()}${z(d.getMonth()+1)}${z(d.getDate())}.${ext}`; };
+const exName = ext => { const d = new Date(); return `yohaku-${({ plog:"prompts", koe:"journaling", entries:"entries" })[S.recView]}_${d.getFullYear()}${z(d.getMonth()+1)}${z(d.getDate())}.${ext}`; };
 $("exTxt").onclick = () => { downloadText(exName("txt"), $("exText").value); setMsg($("exMsg"), "保存しました。"); };
 $("exMd").onclick = () => { downloadText(exName("md"), $("exText").value, "text/markdown"); setMsg($("exMsg"), "保存しました。"); };
 

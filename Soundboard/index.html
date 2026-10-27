@@ -633,7 +633,7 @@ async function exportPack(){
   for(const item of conf.sounds)if(item.imageId&&!await add(item.imageId,'image'))item.imageId=null;
   const head=new TextEncoder().encode(JSON.stringify({format:'kinniku-radio-pack',version:1,app:'筋肉室効果音ポン出し',created:new Date().toISOString(),config:conf,assets}));
   const len=new Uint8Array(4);new DataView(len.buffer).setUint32(0,head.length,true);
-  download(new Blob([PACK_MAGIC,len,head,...blobs],{type:'application/octet-stream'}),'筋肉室効果音ポン出し_設定.kinniku');
+  download(new Blob([PACK_MAGIC,len,head,...blobs],{type:'application/octet-stream'}),'kinniku-soundboard_settings.kinniku');
   toast(`設定を書き出しました（音源${assets.filter(a=>a.kind==='audio').length}件・${(off/1048576).toFixed(1)}MB）`,4000);
  }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
 }
