@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>筋肉室効果音ポン出し</title>
+<style>
+:root{--ink:#51453b;--muted:#85786a;--leaf:#78946d;--leaf-pale:#e9f2e4;--gold:#c9a263;--cream:#fffdf7;--line:#dfcfaf;--rec:#c8463b;--rec-pale:#fbe7e2;--warn:#d39a3a;--shadow:0 10px 28px #59412820}
+[hidden]{display:none!important}*{box-sizing:border-box}html{background:#f8f7ef;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input,select,label,a{touch-action:manipulation}body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:radial-gradient(circle at 30% 0%,#fffefa,#fff9ed 56%,#eef5e9);min-height:100vh}button,input,select{font:inherit;color:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #87aa7b;outline-offset:2px}
+.app{width:min(100%,560px);margin:0 auto;padding:13px 10px 26px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.app>*,.content{min-width:0}
+.top{text-align:center}.top h1{margin:0;font-size:19px;letter-spacing:.02em}.top p{margin:4px 0 9px;color:var(--muted);font-size:11px}
+.ver{color:#a8987f;font-size:10px}
+.pill,.btn{border:1px solid #d7c49e;border-radius:999px;padding:7px 10px;background:linear-gradient(#fff,#fff9ed);box-shadow:0 2px 6px #60452512;font-size:11px;white-space:nowrap}.danger{color:#8b524b;border-color:#dfbbb3;background:#fff8f5}.primary{border-color:#adc39f;background:linear-gradient(#f1f8ed,#dcebd4);font-weight:700}.gold{border-color:#d5b673;background:linear-gradient(#fff7df,#efdaa9);font-weight:700}
+.btn.armed{background:var(--rec);border-color:var(--rec);color:#fff;font-weight:700}
+.shell{position:relative;border:7px solid #d7bc83;border-radius:25px;padding:14px 11px 13px;background:linear-gradient(160deg,#fffdf7,#fff8e9);box-shadow:var(--shadow),inset 0 0 0 2px #ffffffa8}.shell:before{content:"";position:absolute;inset:5px;border:1px solid #ae874638;border-radius:16px;pointer-events:none}.bolt{position:absolute;width:13px;height:13px;border:1px solid #75916d;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff 0 12%,#cde0bf 18% 50%,#89a77c 55%);box-shadow:0 2px 4px #5b452c33}.bolt.a{top:7px;left:7px}.bolt.b{top:7px;right:7px}.bolt.c{bottom:7px;left:7px}.bolt.d{bottom:7px;right:7px}.content{position:relative;z-index:1}
+.section{margin-top:15px}.section:first-child{margin-top:4px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:8px;flex-wrap:wrap}.section-title h2{font-size:15px;margin:0}.section-title span{font-size:10px;color:var(--muted);font-weight:400}.section-title .btn{flex-shrink:0}
+.chip{border:1px solid #d8cab2;border-radius:999px;padding:4px 9px;background:#fffcf5;white-space:nowrap;font-size:10px}.chip.active{background:#e4f0dc;border-color:#aec7a0;color:#496342;font-weight:700}
+.bgm-tabs{display:flex;gap:4px;overflow-x:auto;padding:2px 1px 7px;scrollbar-width:thin}
+.emoji-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;grid-auto-rows:54px;align-content:start}
+.emoji-pad{position:relative;min-width:0;height:54px;border:1px solid #b8ccb0;border-radius:12px;background:linear-gradient(150deg,#fff,#edf5e9);box-shadow:0 3px 6px #4c653b14;display:grid;place-items:center;font-size:25px;user-select:none;-webkit-user-select:none}.emoji-pad.loaded{background:linear-gradient(150deg,#fffdf7,#e9f2e3);border-color:#a5bd98}
+.emoji-pad.playing,.text-pad.playing{border-color:#6b9b63;box-shadow:0 0 0 2px #a5d29099,0 3px 9px #395b2d20}.emoji-pad:active,.text-pad:active{transform:scale(.96)}
+.emoji-pad .shortcut,.text-pad .shortcut{position:absolute;bottom:2px;right:3px;color:#907f6c;font-size:8px}
+.text-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;min-height:130px;align-content:start}.text-pad{position:relative;min-width:0;height:40px;padding:3px 5px;border:1px solid #d1b993;border-radius:12px;background:linear-gradient(#fffdf8,#f5ead2);box-shadow:0 3px 7px #74512516;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none;-webkit-user-select:none}.text-pad.loaded{border-color:#c3a365}
+.emoji-pad:not(.loaded),.text-pad:not(.loaded){background:#fffdfa;border-style:dashed;box-shadow:inset 0 1px 3px #735b3510}
+.section-help{margin:6px 0 0;color:#918476;font-size:10px;line-height:1.45}
+.voice-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.voice-pad{position:relative;aspect-ratio:1;min-width:0;max-width:100%;padding:0;border:1px solid #c9b48a;border-radius:12px;background:#fffaf0 center/cover no-repeat;box-shadow:0 3px 7px #74512516;overflow:hidden;user-select:none;-webkit-user-select:none}
+.voice-pad:not(.loaded){border-style:dashed;background-color:#fffdfa;box-shadow:inset 0 1px 3px #735b3510}
+.voice-pad .vp-name{position:absolute;left:0;right:0;bottom:0;padding:1px 3px;font-size:10px;font-weight:700;line-height:1.35;color:#fff;background:#3b2f24b3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.voice-pad .vp-noimg{font-size:12px;font-weight:800;color:#6b5320;padding:2px;display:grid;place-items:center;height:100%;text-align:center;line-height:1.2;word-break:break-all}
+.voice-pad.playing{border-color:#6b9b63;box-shadow:0 0 0 3px #a5d290cc}
+.voice-pad.playing::after{content:"■";position:absolute;top:3px;right:4px;font-size:10px;color:#fff;background:#5d8a53;border-radius:5px;padding:0 4px}
+.voice-pad:active{transform:scale(.96)}
+.voice-pad .shortcut{position:absolute;top:2px;left:4px;color:#fff;text-shadow:0 0 3px #000;font-size:9px}
+.bgm-list{display:grid;gap:5px}.bgm-card{border:1px solid #d3b476;border-radius:11px;padding:5px 6px;background:linear-gradient(120deg,#fff9e9,#f3e5c4 55%,#faf5e8);box-shadow:0 2px 5px #73512612}.bgm-card.active{border-color:#6b9b63;box-shadow:0 0 0 2px #a5d290aa;background:linear-gradient(120deg,#f9fff4,#e7f2df)}
+.bgm-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:stretch}.bgm-play{width:100%;min-height:50px;border:0;border-radius:8px;background:#fffaf0c9;display:flex;align-items:center;gap:10px;text-align:left;padding:6px 8px}.bgm-icon{width:38px;height:38px;flex:none;display:grid;place-items:center;border:1px solid #c4a267;border-radius:10px;background:#f1d9a2;color:#665031;font-size:16px}.bgm-card.active .bgm-icon{background:#c4deb8;border-color:#82a276}.bgm-name{font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bgm-edit{border:1px solid #d5bd8c;border-radius:8px;background:#fffcf4;padding:0 9px;font-size:10px}
+.bgm-bottom{display:flex;align-items:center;gap:6px;margin:2px 5px 0;font-size:10px;height:18px}.bgm-bottom input{flex:1;min-width:50px;accent-color:#a98048}.bgm-bottom output{min-width:30px;text-align:right;font-variant-numeric:tabular-nums}
+.bgm-card.unset{border-style:dashed;background:#fffdfa;box-shadow:none}.bgm-card.unset .bgm-play{background:transparent}.bgm-card.unset .bgm-bottom{visibility:hidden}.bgm-card.unset .bgm-icon{visibility:hidden;width:0;border:0}
+.bgm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px}
+.bgm-low-state{font-size:10px;color:var(--muted)}
+#bgmLowBtn.on{border-color:#86aa79;background:linear-gradient(#f1f8ed,#d6e8cc)}
+.prog-bgm{margin-bottom:8px}.prog-bgm .bgm-card{border-width:2px;border-color:#c9a263}.prog-bgm .prog-bgm-label{font-size:10px;color:#8a6a33;font-weight:700;margin:0 0 3px 4px}.prog-bgm .empty{padding:9px}
+.empty{padding:15px 9px;text-align:center;color:#938675;border:1px dashed #d9cbaa;border-radius:12px;font-size:11px;line-height:1.6}
+/* ---- 上部の操作欄 ---- */
+.topbar{padding:10px}
+.topbar-in{display:grid;gap:8px;padding:4px 12px}
+@media(min-height:700px){.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}}
+.prog-row{display:flex;gap:6px;align-items:center;padding-right:2px}
+.prog-chips{display:flex;flex-wrap:nowrap;gap:4px;flex:1;min-width:0;padding:3px 2px;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none}.prog-chips::-webkit-scrollbar{display:none}
+.prog-chip{flex:none;scroll-snap-align:start;border:1px solid #d8cab2;border-radius:999px;padding:6px 11px;background:#fffcf5;white-space:nowrap;font-size:12px}
+.prog-chip.active{background:#e4f0dc;border-color:#86aa79;color:#3f5a38;font-weight:800;box-shadow:0 0 0 2px #a5d29066}
+.prog-chip.free{border-style:dashed;color:#6d6252}.prog-chip.free.active{background:#f3ede2;border-style:solid;border-color:#a8997f;color:#4a4034;box-shadow:0 0 0 2px #cdbfa699}
+.prog-chip.c-snow{background:#e6f3fb;border-color:#a9cfe6;color:#2f566e}.prog-chip.c-leaf{background:#e8f3e1;border-color:#a9c99b;color:#3f5a38}.prog-chip.c-honey{background:#fcf3d3;border-color:#e1c578;color:#6b5320}
+.prog-chip.c-snow.active{background:#cfe8f7;border-color:#6aa9cf;box-shadow:0 0 0 2px #8ec3e399;color:#1f4660}.prog-chip.c-leaf.active{background:#d6ebcb;border-color:#79a56a;box-shadow:0 0 0 2px #a5d29099;color:#2f4a29}.prog-chip.c-honey.active{background:#f8e7ad;border-color:#cfa53e;box-shadow:0 0 0 2px #e6c87099;color:#5a4214}
+.prog-colors{display:flex;flex-wrap:wrap;gap:6px}.prog-colors label{display:flex;align-items:center;gap:5px;border:1px solid #d7c9ac;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:400!important;background:#fff;cursor:pointer}.prog-colors input{width:auto!important;margin:0}
+.prog-colors label.c-snow,.prog-colors label.c-leaf,.prog-colors label.c-honey{font-size:18px;padding:3px 9px;gap:4px}.prog-colors label.c-snow{background:#e6f3fb;border-color:#a9cfe6}.prog-colors label.c-leaf{background:#e8f3e1;border-color:#a9c99b}.prog-colors label.c-honey{background:#fcf3d3;border-color:#e1c578}
+.out-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.meter-row{display:grid;grid-template-columns:34px minmax(0,1fr) 46px;gap:5px;align-items:center;font-size:10px;font-weight:700}
+.meter{position:relative;height:11px;border-radius:6px;background:#efe6d3;overflow:hidden;box-shadow:inset 0 1px 2px #6d55301f}
+.meter i{position:absolute;inset:0;background:linear-gradient(90deg,#8db37d 0 75%,#d9b55c 75% 90%,#d0614f 90%);clip-path:inset(0 100% 0 0)}
+.meter b{position:absolute;top:0;bottom:0;width:2px;background:#5d4b38;left:0;opacity:.7}
+.meter-row output{font-variant-numeric:tabular-nums;font-weight:400;text-align:right;font-size:10px;color:var(--muted)}.meter-row output.clip{color:var(--rec);font-weight:800}
+.bgm-now{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:8px;align-items:center;border:1px solid #e4d7bd;border-radius:12px;padding:6px 8px;background:#fffcf5}
+.bgm-now-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:#efe6d3;color:#8b7a63;font-weight:700}
+.bgm-now-main,.mini-bgm-name{cursor:pointer;min-width:0}.bgm-now-main:hover .bgm-now-name,.mini-bgm-name:hover{text-decoration:underline}
+.bgm-now-name{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bgm-now-track{height:5px;border-radius:3px;background:#efe6d3;overflow:hidden;margin-top:3px}.bgm-now-track i{display:block;height:100%;width:0;background:var(--leaf)}
+.bgm-now-time{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bgm-now .btn{padding:6px 9px}
+.bgm-now[data-state="idle"] .bgm-now-name{color:var(--muted);font-weight:400}
+.bgm-now[data-state="playing"]{border-color:#9dbb8f;background:#f2f8ee}.bgm-now[data-state="playing"] .bgm-now-icon{background:var(--leaf);color:#fff;animation:pulse 1.6s ease-in-out infinite}
+.bgm-now[data-state="low"]{border-color:#d8b56f;background:#fff7e6}.bgm-now[data-state="low"] .bgm-now-icon{background:#d9b55c;color:#fff}.bgm-now[data-state="low"] .bgm-now-track i{background:#d9b55c}
+.bgm-now[data-state="loading"] .bgm-now-icon{animation:pulse .8s ease-in-out infinite}
+.bgm-now[data-state="fading"]{border-color:#d8b56f}
+.bgm-now[data-state="error"]{border-color:#e2b0a7;background:var(--rec-pale)}.bgm-now[data-state="error"] .bgm-now-name{color:#93362d;white-space:normal}.bgm-now[data-state="error"] .bgm-now-icon{background:var(--rec);color:#fff}
+@keyframes pulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.bgm-now-icon{animation:none!important}}
+/* ---- スクロール中の小さな操作欄 ---- */
+.minibar{position:fixed;left:0;right:0;top:0;z-index:6;padding:calc(env(safe-area-inset-top,0px) + 6px) 10px 6px;background:#fffbf1f5;border-bottom:2px solid #d7bc83;box-shadow:0 6px 16px #5941281f;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.minibar-in{width:min(100%,540px);margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:center}
+.mbtn{min-width:0;height:30px;border:1px solid #d7c49e;border-radius:10px;background:linear-gradient(#fff,#fff6e6);font-size:11px;font-weight:800;padding:0 8px;white-space:nowrap}
+.mbtn.danger{color:#8b524b;border-color:#dfbbb3;background:#fff8f5}
+.mini-bgm{display:flex;align-items:center;gap:6px;font-size:11.5px;border:1px solid #e4d7bd;border-radius:9px;padding:3px 3px 3px 8px;background:#fffcf5;min-width:0}
+.mini-bgm-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+.mini-bgm[data-state="playing"]{border-color:#9dbb8f;background:#f2f8ee}.mini-bgm[data-state="low"]{border-color:#d8b56f;background:#fff7e6}.mini-bgm[data-state="error"]{border-color:#e2b0a7;background:var(--rec-pale);color:#93362d}
+/* ---- 設定画面 ---- */
+.desk{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}.content.desk{padding:6px 6px 2px}
+.panel{border:1px solid #e4d7bd;border-radius:15px;background:#fffef9;padding:9px 10px;display:grid;gap:7px}
+.panel h3{margin:0;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}.panel h3 span{font-weight:400;color:var(--muted);font-size:10px}
+.volume-row{display:grid;grid-template-columns:78px minmax(0,1fr) 46px;gap:7px;align-items:center;font-size:11px;font-weight:700}.volume-row input{width:100%;accent-color:#809d73}.volume-row output{font-variant-numeric:tabular-nums;color:#5b7952;text-align:right;font-weight:400}
+.db-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.db-steps .btn{padding:6px 2px;font-size:10.5px;white-space:normal}
+.try-row{display:flex;flex-wrap:wrap;gap:5px}.try-row .btn{white-space:normal}
+.opts{display:flex;flex-wrap:wrap;gap:5px 12px;font-size:11px}.opts label{display:inline-flex;align-items:center;gap:4px}.opts input{accent-color:#809d73}
+.note{margin:0;font-size:10px;color:#918476;line-height:1.5}
+.duck-state{font-size:10px;color:var(--muted);font-weight:400}.duck-state.on{color:#5b7952;font-weight:700}
+.end-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}.end-row select{border:1px solid #d9c7a8;border-radius:8px;padding:5px;background:#fff;font-size:11px}.end-row label{font-size:11px;font-weight:700}
+.storage{font-size:10px;color:var(--muted)}
+.emoji-head-controls{display:flex;align-items:center;gap:5px}.emoji-mode{display:flex;align-items:center;gap:4px;font-size:10px;white-space:nowrap}.emoji-mode select{min-width:0;max-width:100px;border:1px solid #d9c7a8;border-radius:8px;background:#fff;padding:5px 3px;font-size:10px}
+.pagenav{display:flex;justify-content:center;gap:6px;margin-top:8px}.pagenav .pill.on{background:#e4f0dc;border-color:#86aa79;color:#3f5a38;font-weight:800}
+body[data-page="settings"] #boardShell{display:none}
+body:not([data-page="settings"]) #settingsShell{display:none}
+.footer{text-align:center;color:#928677;font-size:10px;line-height:1.6;margin:0 5px}
+/* ---- 小窓 ---- */
+.modal-back{position:fixed;inset:0;background:#2d281fba;display:none;align-items:center;justify-content:center;padding:13px;z-index:10}.modal-back.open{display:flex}.modal{width:min(420px,100%);max-height:90vh;overflow-y:auto;border:6px solid #d6ba81;border-radius:22px;background:linear-gradient(#fffefa,#fff8e9);padding:17px;box-shadow:0 20px 50px #211a0e77}.modal h2{font-size:18px;margin:0 0 12px}.field{display:grid;gap:6px;margin:11px 0}.field label{font-size:12px;font-weight:700}.field input,.field select{width:100%;border:1px solid #d7c9ac;border-radius:10px;background:white;padding:9px}.field input[type=range]{padding:0;accent-color:#86a477}.field input[type=file]{padding:6px}.field small{color:#897c6b;font-size:10px;line-height:1.4}.filebox{background:#fffdf7;border:1px dashed #cfbb91;border-radius:10px;padding:8px}.modal-actions{display:flex;justify-content:space-between;gap:7px;align-items:center;margin-top:14px;flex-wrap:wrap}.modal-actions .btn{font-size:12px}.actions-right{display:flex;gap:6px}.move-row{display:flex;gap:7px}.move-row button{flex:1}
+.category-list{display:grid;gap:7px}.category-line{display:grid;grid-template-columns:minmax(0,1fr) 40px 40px;gap:5px}.category-line input{width:100%;min-width:0;border:1px solid #d7c9ac;border-radius:9px;background:#fff;padding:8px}.category-line .tab-move{width:40px;padding:6px 0;font-size:14px;border-radius:9px}.category-note{font-size:10px;color:#897c6b;line-height:1.5}
+.category-line.moved input{animation:rowflash .7s ease-out}@keyframes rowflash{0%{background:#dcefd2;border-color:#86aa79}100%{background:#fff}}
+.confirm-back{z-index:15}.confirm-text{margin:0;font-size:13px;line-height:1.7;white-space:pre-line}#confirmYes{font-weight:700}
+.notice{position:fixed;z-index:20;bottom:14px;left:50%;width:max-content;max-width:92vw;transform:translate(-50%,15px);opacity:0;transition:.2s;background:#51483b;color:white;border-radius:999px;padding:9px 14px;box-shadow:var(--shadow);font-size:11px;pointer-events:none}.notice.show{opacity:1;transform:translate(-50%,0)}
+@media(pointer:coarse){input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea{font-size:16px!important}}
+@media(max-width:480px){.section-help,.note,.category-note{font-size:11.5px;line-height:1.55}.chip{font-size:11.5px;padding:5px 10px}.bgm-tabs{gap:5px}}
+@media(max-width:420px){.db-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.bgm-now{grid-template-columns:auto minmax(0,1fr) auto}.bgm-now-time{display:none}.prog-row #progEdit{flex:none;padding:7px 9px}}
+@media(max-width:390px){.emoji-head-controls{gap:3px}.emoji-mode select{max-width:86px}.section-title h2{font-size:13px}}
+@media(max-width:360px){.app{padding-left:6px;padding-right:6px}.shell{padding-left:8px;padding-right:8px}.emoji-grid{gap:4px;grid-auto-rows:49px}.emoji-pad{height:49px;font-size:22px}.text-grid{gap:4px}.text-pad{font-size:11px;padding:2px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><h1>筋肉室効果音ポン出し</h1><p>効果音・ボイス・BGMをその場で鳴らします <span class="ver">（2026-10-27 第1版）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" id="navMain">演奏画面</button><button class="pill" type="button" data-goto="settings" id="navSettings">音量の設定</button></nav></header>
+
+<!-- 1. 上部の操作欄（画面上部に固定） -->
+<section class="shell topbar" aria-label="操作"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content topbar-in">
+ <div class="prog-row"><div class="prog-chips" id="progChips" role="tablist" aria-label="番組"></div><button class="btn gold" type="button" id="progEdit">番組の設定</button></div>
+ <div class="out-row"><div class="meter-row"><span>出力</span><div class="meter"><i id="outMeter"></i><b id="outPeak"></b></div><output id="outDb">-∞ dB</output></div><button class="pill danger" type="button" id="stopAll">■ 全音停止</button></div>
+ <div class="bgm-now" id="bgmNow" data-state="idle"><span class="bgm-now-icon" aria-hidden="true">♪</span><div class="bgm-now-main" id="bgmNowMain" role="button" tabindex="0" title="押すとBGM欄へ移動"><div class="bgm-now-name" id="bgmNowName">BGM：なし</div><div class="bgm-now-track"><i id="bgmNowBar"></i></div></div><span class="bgm-now-time" id="bgmNowTime"></span><button class="btn" type="button" id="bgmNowStop" disabled>■ BGM停止</button></div>
+</div></section>
+
+<div class="minibar" id="miniBar" hidden><div class="minibar-in">
+ <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button></div>
+ <button class="mbtn danger" type="button" id="miniStopAll">■ 全音停止</button>
+</div></div>
+
+<!-- 2. 効果音・ボイス・BGM -->
+<main class="shell" id="boardShell"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content">
+<section class="section"><div class="section-title"><h2>絵文字の効果音 <span>6×7</span></h2><div class="emoji-head-controls"><label class="emoji-mode" for="playMode">連打 <select id="playMode"><option value="restart">鳴らし直す</option><option value="overlap">重ねる</option></select></label><button class="btn gold" type="button" id="editEmojiTabs">分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs"></div><div class="emoji-grid" id="emojiGrid"></div><p class="section-help">空欄を押して登録。登録後は長押し・右クリックで編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>文字の効果音 <span>最大4文字・4×6</span></h2><button class="btn gold" type="button" id="editTextTabs">分類名編集</button></div><div class="bgm-tabs" id="textTabs"></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。</p></section>
+<section class="section"><div class="section-title"><h2>ボイス <span>画像ボタン・5×5</span></h2></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
+<section class="section" id="bgmSection"><div class="section-title"><h2>BGM <span>各タブ15曲</span></h2><button class="btn gold" type="button" id="editBgmTabs">分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。</p></section>
+</div></main>
+
+<!-- 3. 設定（音量など） -->
+<section class="shell" id="settingsShell"><i class="bolt a"></i><i class="bolt b"></i><i class="bolt c"></i><i class="bolt d"></i><div class="content desk">
+ <div class="section-title" style="margin:0"><h2>音量の設定</h2><button class="btn primary" type="button" data-goto="main">← 演奏画面に戻る</button></div>
+
+ <section class="panel" aria-labelledby="mixTitle">
+  <h3 id="mixTitle">音量 <span>効果音・BGM・ボイスの釣り合い</span></h3>
+  <div class="volume-row"><label for="seVolume">効果音</label><input id="seVolume" type="range" min="-60" max="0" step="0.5"><output id="seVal"></output></div>
+  <div class="volume-row"><label for="bgmVolume">BGM</label><input id="bgmVolume" type="range" min="-60" max="0" step="0.5"><output id="bgmVal"></output></div>
+  <div class="volume-row"><label for="voVolume">ボイス</label><input id="voVolume" type="range" min="-60" max="0" step="0.5"><output id="voVal"></output></div>
+  <div class="db-steps"><button type="button" class="btn" data-db="se:-1">効果音 −1dB</button><button type="button" class="btn" data-db="se:1">効果音 ＋1dB</button><button type="button" class="btn" data-db="bgm:-1">BGM −1dB</button><button type="button" class="btn" data-db="bgm:1">BGM ＋1dB</button><button type="button" class="btn" data-db="vo:-1">ボイス −1dB</button><button type="button" class="btn" data-db="vo:1">ボイス ＋1dB</button></div>
+  <div class="try-row"><button type="button" class="btn" id="trySe">効果音を試す</button><button type="button" class="btn" id="tryVo">ボイスを試す</button><button type="button" class="btn" id="tryBgm">BGMを試す／止める</button></div>
+  <p class="note">効果音・BGM・ボイスはdB（デシベル）で調整します。0dBが音源そのままの大きさで、−6dBで約半分、−20dBで約10分の1、−40dBで約100分の1です。一番左（−60dB）は消音です。</p>
+  <div class="opts"><label><input type="checkbox" id="previewFull">一番大きいものを0dBに持ち上げて鳴らす（効果音・BGM・ボイスの比率はそのまま）</label></div>
+  <p class="note" id="previewInfo"></p>
+  <div class="opts"><label><input type="checkbox" id="bgmLevel">BGMごとの音量差をそろえる（音の大きい曲は下げ、小さい曲は上げる）</label></div>
+  <div class="volume-row"><label for="masterVolume">全体音量</label><input id="masterVolume" type="range" min="0" max="100"><output id="masterVal"></output></div>
+  <div class="opts"><label><input type="checkbox" id="optLimiter">音割れ防止リミッター</label></div>
+ </section>
+
+ <section class="panel" aria-labelledby="endTitle">
+  <h3 id="endTitle">BGMの締め</h3>
+  <div class="volume-row"><label for="bgmLowLevel">小さくした時</label><input id="bgmLowLevel" type="range" min="5" max="80"><output id="bgmLowVal"></output></div>
+  <div class="end-row"><label for="fadeSec">フェードアウトの長さ</label><select id="fadeSec"><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option><option value="12">12秒</option></select></div>
+  <p class="note">BGM欄の「BGMを小さくする」は約2秒かけて下げ、もう一度押すと元の音量へ戻します。</p>
+ </section>
+
+ <section class="panel" aria-labelledby="duckTitle">
+  <h3 id="duckTitle"><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" id="duckOn" style="accent-color:#809d73">ボイスを鳴らすとBGMを下げる</label><span class="duck-state" id="duckState">待機</span></h3>
+  <div class="volume-row"><label for="duckDepth">下げ幅</label><input id="duckDepth" type="range" min="3" max="30"><output id="duckDepthVal"></output></div>
+  <p class="note">ボイスが鳴っている間はBGMが下がり、鳴り終えて約0.5秒で戻ります。</p>
+ </section>
+
+ <section class="panel" aria-labelledby="fileTitle">
+  <h3 id="fileTitle">設定ファイル <span class="storage" id="storageInfo"></span></h3>
+  <div class="end-row"><button class="btn" type="button" id="exportBtn">設定を書き出す</button><button class="btn" type="button" id="importBtn">設定を読み込む</button></div>
+  <p class="note">効果音・ボイス・BGMを1つのファイルにまとめます。筋肉室ラジオ収録の設定ファイル（.kinniku）と、以前の効果音ポン出しの設定ファイル（.json）も読み込めます。この画面で書き出したファイルは、筋肉室ラジオ収録でも読み込めます。</p>
+ </section>
+</div></section>
+<p class="footer">設定と音源はこのブラウザ内に保存されます。</p>
+</div>
+
+<div class="modal-back" id="progModal"><form class="modal" id="progForm"><h2>番組の設定</h2>
+ <div class="field"><label for="progName">番組名</label><input id="progName" maxlength="30" required></div>
+ <div class="field"><span style="font-size:12px;font-weight:700">ボタンの色</span><div class="prog-colors" id="progColors"><label><input type="radio" name="progColor" value="">指定なし</label><label class="c-snow" title="淡い水色"><input type="radio" name="progColor" value="snow" aria-label="淡い水色">❄️</label><label class="c-leaf" title="淡い緑色"><input type="radio" name="progColor" value="leaf" aria-label="淡い緑色">🌿</label><label class="c-honey" title="淡い黄色"><input type="radio" name="progColor" value="honey" aria-label="淡い黄色">🍯</label></div></div>
+ <div class="field"><label for="progBgmSel">初期BGM</label><select id="progBgmSel"></select><small>BGM欄に登録した曲から選びます。BGM欄の一番上と、上部の操作欄に表示されます。</small></div>
+ <div class="field"><label>番組の並び順</label><div class="move-row"><button type="button" class="btn" id="progMovePrev">← 前へ</button><button type="button" class="btn" id="progMoveNext">次へ →</button></div></div>
+ <div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="progModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field" id="imageField" hidden><label for="imageFile">ボタンの画像</label><div class="filebox"><input id="imageFile" type="file" accept="image/*"><small id="currentImage"></small></div></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol"><span id="soundVolCaption">この効果音の音量：</span><span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="bgmModal"><form class="modal" id="bgmForm"><h2 id="bgmHeading">BGMの設定</h2><input type="hidden" id="bgmId"><div class="field"><label for="bgmNameInput">表示名</label><input id="bgmNameInput" maxlength="80" required placeholder="例：筋肉室の午後"></div><div class="field"><label for="bgmFile">音源ファイル</label><div class="filebox"><input id="bgmFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentBgmFile"></small></div></div><div class="field"><label for="bgmVolModal">この曲の音量：<span id="bgmVolModalVal"></span></label><input id="bgmVolModal" type="range" min="0" max="100"></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="bgmMovePrev">← 前へ</button><button type="button" class="btn" id="bgmMoveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="resetBgm">選択リセット</button><div class="actions-right"><button type="button" class="btn" data-close="bgmModal">キャンセル</button><button type="submit" class="btn gold">保存</button></div></div></form></div>
+<div class="modal-back" id="emojiTabsModal"><form class="modal" id="emojiTabsForm"><h2>絵文字SEのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。</p><div class="category-list" id="emojiTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="emojiTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="textTabsModal"><form class="modal" id="textTabsForm"><h2>文字SEのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。</p><div class="category-list" id="textTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="textTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="bgmTabsModal"><form class="modal" id="bgmTabsForm"><h2>BGMのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。</p><div class="category-list" id="bgmTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="bgmTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back confirm-back" id="confirmModal"><div class="modal" role="alertdialog" aria-labelledby="confirmTitle" aria-describedby="confirmText"><h2 id="confirmTitle">確認</h2><p id="confirmText" class="confirm-text"></p><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" id="confirmNo">キャンセル</button><button type="button" class="btn danger" id="confirmYes">削除する</button></div></div></div></div>
+<input id="importFile" type="file" hidden><div class="notice" id="notice" role="status"></div>
+
+<script>
+'use strict';
+/* ===================== 基本・保存 ===================== */
+// 以前の効果音ポン出しと同じ保存場所（kinniku-soundboard-db）を使うので、同じアドレス（オリジン）で開けば登録済みの音源をそのまま引き継げる
+const $=s=>document.querySelector(s), DB_NAME='kinniku-soundboard-db', STORE='assets';
+const KEY='kinniku-soundboard-config-v3', LEGACY_KEYS=['kinniku-soundboard-config-v2','kinniku-soundboard-config-v1'];
+const TABS=5,EMOJI_SLOTS=42,TEXT_SLOTS=24,BGM_SLOTS=15,VOICE_SLOTS=25,PROGRAMS=7;
+const LEGACY_PRESET_LABELS=new Set(['👏','💖','😂','😢','💪','✨','🔔','✅','🌿','🦌','🍪','📚','🌟','🌸','📯','⭕','✖️','🎹','🫢','🪨','🪞','🥊','💥','🎉','📛取得','📛進化','長攻撃','吹雪','扉開け','扉閉じ','拍手','正解','退場']);
+const BGM_TAB_DEFAULTS=['標準','明','暗','1','2'], TEXT_TAB_DEFAULTS=['標準','感謝','力業','1','2'], EMOJI_TAB_DEFAULTS=[...TEXT_TAB_DEFAULTS];
+const LEGACY_EMOJI_TABS=['標準','感謝','力業','1','2','その他'];
+const REC_DEFAULTS={limiter:true,duck:true,duckDepth:10,previewFull:true,bgmLevel:true,bgmLowLevel:35,fadeSec:3};
+const PROG_COLORS={snow:1,leaf:1,honey:1};
+const id=()=>globalThis.crypto?.randomUUID?.()||'s'+Date.now().toString(36)+Math.random().toString(36).slice(2);
+const graphemes=s=>[...new Intl.Segmenter('ja',{granularity:'grapheme'}).segment(String(s))].map(x=>x.segment);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const newSound=(type,label,order)=>({id:id(),type,label,category:'全て',volume:100,assetId:null,fileName:'',shortcut:'',configured:false,order});
+const newBgm=(tabIndex,slotIndex)=>({id:id(),name:'',volume:100,assetId:null,fileName:'',tabIndex,slotIndex});
+function defaultPrograms(){return Array.from({length:PROGRAMS},(_,i)=>({id:'prog'+(i+1),name:'番組'+(i+1),bgmId:null,color:''}))}
+const defaults=()=>({version:7,categories:[],sounds:[],emojiTabs:[...EMOJI_TAB_DEFAULTS],textTabs:[...TEXT_TAB_DEFAULTS],bgmTabs:[...BGM_TAB_DEFAULTS],bgms:[],master:100,seVolume:100,bgmVolume:100,playMode:'restart',seDb:-18,bgmDb:-30,voDb:-6,rec:{...REC_DEFAULTS},programs:defaultPrograms(),currentProgram:-1});
+const dbGain=db=>db<=-60?0:Math.pow(10,db/20);
+const pctToDb=p=>p<=0?-60:Math.max(-60,Math.min(0,Math.round(20*Math.log10(p/100)*2)/2));
+const fmtDb=db=>db<=-60?'消音':(db>0?'+':'')+(+db).toFixed(1)+'dB';
+function fmtTime(sec){sec=Math.max(0,sec);const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=Math.floor(sec)%60,p=n=>String(n).padStart(2,'0');return (h?h+':'+p(m):p(m))+':'+p(s)}
+let db,cfg,emojiTab=0,textTab=0,bgmTab=0,noticeTimer;
+let ctx,seBus,voBus,bgmBus,bgmTrim,duckGain,programBus,boostGain,limiter,masterBus,outAnalyser,bgmLow=false;
+let bgmPlaying=null,bgmSerial=0,bgmPendingId=null,bgmLoadingId=null,bgmError='',bgmFading=null;
+const soundSerial=new Map(), pendingText=new Set(), active=new Set();
+
+const finish=c=>ensureBgmSlots(ensureTextSlots(ensureEmojiSlots(ensureSlots(c))));
+function normalize(raw){
+ const base=defaults();if(!raw)return finish(base);
+ base.rec={...REC_DEFAULTS,...(raw.rec&&typeof raw.rec==='object'?raw.rec:{})};
+ if(Array.isArray(raw.programs)&&raw.programs.length){const defs=defaultPrograms(),used=new Set(raw.programs.map(x=>x&&x.id));const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...defs[i],...x}));for(const d of defs){if(kept.length>=PROGRAMS)break;if(!used.has(d.id))kept.push(d)}base.programs=kept}
+ base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<base.programs.length?raw.currentProgram:-1;
+ if(Array.isArray(raw.sounds)&&raw.sounds.some(x=>x.emoji)&&!raw.sounds.some(x=>x.type)){
+  base.sounds=raw.sounds.map((s,i)=>({...newSound('emoji',s.emoji||'🔔',i),...s,label:s.emoji||'🔔',type:'emoji',category:s.assetId?s.category||'全て':'全て',order:i}));
+  if(raw.bgm?.assetId||raw.bgm?.name)base.bgms=[{id:id(),name:raw.bgm.name||'BGM',volume:raw.bgm.volume??100,assetId:raw.bgm.assetId||null,fileName:raw.bgm.fileName||''}];
+  base.master=raw.master??100;base.playMode=raw.playMode||'restart';return finish(base);
+ }
+ base.sounds=Array.isArray(raw.sounds)?raw.sounds.map((s,i)=>({...newSound(s.type==='text'?'text':'emoji',s.label??'',i),...s})):base.sounds;
+ base.bgms=Array.isArray(raw.bgms)?raw.bgms:[];base.categories=Array.isArray(raw.categories)?raw.categories:base.categories;
+ const realSounds=t=>base.sounds.filter(x=>x.type===t&&(x.assetId||x.configured||(x.label&&!LEGACY_PRESET_LABELS.has(x.label))));
+ base.emojiTabs=fitTabs(raw.emojiTabs,EMOJI_TAB_DEFAULTS,realSounds('emoji'));
+ base.textTabs=fitTabs(raw.textTabs,TEXT_TAB_DEFAULTS,realSounds('text'));
+ base.bgmTabs=fitTabs(raw.bgmTabs,BGM_TAB_DEFAULTS,base.bgms.filter(b=>b.assetId||b.name));
+ for(const key of ['master','seVolume','bgmVolume'])base[key]=Number.isFinite(+raw[key])?+raw[key]:base[key];
+ base.voDb=Number.isFinite(+raw.voDb)&&raw.voDb!==null?+raw.voDb:base.voDb;
+ // 以前のポン出し（％指定）からの引き継ぎ：％をdBに直す
+ for(const [k,leg] of [['seDb','seVolume'],['bgmDb','bgmVolume']])base[k]=Number.isFinite(+raw[k])&&raw[k]!==null&&raw[k]!==undefined?+raw[k]:(Number.isFinite(+raw[leg])?pctToDb(+raw[leg]):base[k]);
+ base.playMode=raw.playMode==='overlap'?'overlap':'restart';return finish(base);
+}
+function ensureSlots(config){
+ for(const s of config.sounds){delete s.favorite;if(s.type==='text')s.category='全て';if(!s.assetId){
+   if(s.configured===true||(s.label&&!LEGACY_PRESET_LABELS.has(s.label)))s.configured=true;
+   else{Object.assign(s,{label:'',category:'全て',volume:100,shortcut:'',configured:false})}
+  }else s.configured=true}
+ return config}
+// タブ数を5つに合わせる。多い場合は「登録が一番少ないタブ」を1つ前のタブへまとめる（登録は消さない）
+function fitTabs(rawNames,defs,items){
+ let names=Array.isArray(rawNames)&&rawNames.length?rawNames.map((x,i)=>String(x||defs[i]||'タブ'+(i+1))):[...defs];
+ while(names.length>TABS){
+  const counts=names.map((_,t)=>items.filter(x=>x.tabIndex===t).length);
+  let drop=names.length-1;for(let t=names.length-1;t>=0;t--)if(counts[t]<counts[drop])drop=t;
+  const target=drop>0?drop-1:0;
+  for(const x of items){if(x.tabIndex===drop){x.tabIndex=target;x.slotIndex=-1}else if(x.tabIndex>drop)x.tabIndex--}
+  names.splice(drop,1);
+ }
+ while(names.length<TABS)names.push(defs[names.length]||'タブ'+(names.length+1));
+ return names;
+}
+function ensureGrid(config,type,SL,tabs=TABS){
+ const N=tabs*SL,isReal=s=>s.assetId||s.configured||s.imageId;
+ const real=config.sounds.filter(s=>s.type===type&&isReal(s)).sort((a,b)=>(a.tabIndex??0)-(b.tabIndex??0)||(a.slotIndex??a.order??0)-(b.slotIndex??b.order??0));
+ config.sounds=config.sounds.filter(s=>s.type!==type||isReal(s));
+ const taken=new Set();
+ for(const s of real){
+  let pref=Number.isInteger(s.tabIndex)&&s.tabIndex>=0?Math.min(s.tabIndex,tabs-1):0;
+  if(type==='emoji'&&!Number.isInteger(s.tabIndex)&&s.category&&s.category!=='全て'){const m=LEGACY_EMOJI_TABS.indexOf(s.category);pref=m>=0?Math.min(m,tabs-1):tabs-1}
+  let slot=Number.isInteger(s.slotIndex)&&s.slotIndex>=0&&s.slotIndex<SL&&s.tabIndex===pref?s.slotIndex:-1;
+  if(slot<0||taken.has(pref*SL+slot)){const free=Array.from({length:N},(_,i)=>(pref*SL+i)%N).find(i=>!taken.has(i));if(free===undefined)continue;pref=Math.floor(free/SL);slot=free%SL}
+  s.tabIndex=pref;s.slotIndex=slot;s.order=slot;taken.add(pref*SL+slot);
+ }
+ for(let tab=0;tab<tabs;tab++)for(let slot=0;slot<SL;slot++)if(!taken.has(tab*SL+slot))config.sounds.push({...newSound(type,'',slot),tabIndex:tab,slotIndex:slot});
+ return config;
+}
+const ensureEmojiSlots=config=>ensureGrid(config,'emoji',EMOJI_SLOTS);
+const ensureTextSlots=config=>ensureGrid(ensureGrid(config,'text',TEXT_SLOTS),'voice',VOICE_SLOTS,1);
+function ensureBgmSlots(config){
+ const N=TABS*BGM_SLOTS,prior=(config.bgms||[]).filter(b=>b.assetId||b.name);
+ const slots=Array.from({length:N},(_,i)=>newBgm(Math.floor(i/BGM_SLOTS),i%BGM_SLOTS)),taken=new Set();
+ const positioned=prior.some(b=>Number.isInteger(b.tabIndex)&&Number.isInteger(b.slotIndex));
+ const list=positioned?prior.sort((a,b)=>(a.tabIndex??0)-(b.tabIndex??0)||(a.slotIndex??0)-(b.slotIndex??0)):prior;
+ for(const b of list){
+  let pref=Number.isInteger(b.tabIndex)&&b.tabIndex>=0?Math.min(b.tabIndex,TABS-1):0;
+  let idx=Number.isInteger(b.slotIndex)&&b.slotIndex>=0&&b.slotIndex<BGM_SLOTS&&b.tabIndex===pref?pref*BGM_SLOTS+b.slotIndex:-1;
+  if(idx<0||taken.has(idx)){idx=Array.from({length:N},(_,i)=>(pref*BGM_SLOTS+i)%N).find(i=>!taken.has(i));if(idx===undefined)continue}
+  taken.add(idx);slots[idx]={...slots[idx],...b,tabIndex:Math.floor(idx/BGM_SLOTS),slotIndex:idx%BGM_SLOTS};
+ }
+ config.bgms=slots;return config;
+}
+
+function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE)};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+const putAsset=(key,blob)=>new Promise((resolve,reject)=>{const t=db.transaction(STORE,'readwrite');t.objectStore(STORE).put(blob,key);t.oncomplete=resolve;t.onerror=()=>reject(t.error);t.onabort=()=>reject(t.error)});
+const getAsset=key=>new Promise((resolve,reject)=>{if(!key)return resolve(null);const r=db.transaction(STORE,'readonly').objectStore(STORE).get(key);r.onsuccess=()=>resolve(r.result??null);r.onerror=()=>reject(r.error)});
+const deleteAsset=key=>new Promise(resolve=>{if(!key)return resolve();const t=db.transaction(STORE,'readwrite');t.objectStore(STORE).delete(key);t.oncomplete=resolve;t.onerror=resolve});
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(cfg))}catch(e){console.error(e)}}
+function toast(msg,ms=2400){const el=$('#notice');el.textContent=msg;el.classList.add('show');clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>el.classList.remove('show'),ms)}
+
+/* ===================== 音声エンジン ===================== */
+// 経路： 効果音 → seBus ┐
+//        ボイス → voBus ┤
+//        BGM → bgmBus → bgmTrim(小さくする) → duckGain(ボイスで下げる) ┴→ programBus → boostGain(持ち上げ) → limiter → masterBus(全体音量) → スピーカー
+function audioEngine(){
+ if(ctx)return;const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error('Web Audio非対応');
+ ctx=new C({latencyHint:'interactive'});
+ seBus=ctx.createGain();voBus=ctx.createGain();bgmBus=ctx.createGain();bgmTrim=ctx.createGain();duckGain=ctx.createGain();programBus=ctx.createGain();boostGain=ctx.createGain();limiter=ctx.createDynamicsCompressor();masterBus=ctx.createGain();
+ seBus.connect(programBus);voBus.connect(programBus);bgmBus.connect(bgmTrim);bgmTrim.connect(duckGain);duckGain.connect(programBus);
+ programBus.connect(boostGain);boostGain.connect(limiter);limiter.connect(masterBus);masterBus.connect(ctx.destination);
+ outAnalyser=ctx.createAnalyser();outAnalyser.fftSize=2048;masterBus.connect(outAnalyser);
+ if(bgmLow)bgmTrim.gain.value=cfg.rec.bgmLowLevel/100;
+ updateGains();setInterval(duckLoop,40);
+}
+function previewBoost(){if(!cfg.rec.previewFull)return 1;const top=Math.max(dbGain(cfg.seDb),dbGain(cfg.bgmDb),dbGain(cfg.voDb),0.001);return Math.min(20,1/top)}
+function updateGains(){
+ if(!ctx)return;const r=cfg.rec,t=ctx.currentTime;
+ masterBus.gain.value=cfg.master/100;boostGain.gain.cancelScheduledValues(t);boostGain.gain.setTargetAtTime(previewBoost(),t,.05);
+ seBus.gain.value=dbGain(cfg.seDb);bgmBus.gain.value=dbGain(cfg.bgmDb);voBus.gain.value=dbGain(cfg.voDb);
+ if(r.limiter){limiter.threshold.value=-2;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.002;limiter.release.value=.15}
+ else{limiter.threshold.value=0;limiter.knee.value=0;limiter.ratio.value=1}
+ if(!r.duck){duckGain.gain.cancelScheduledValues(t);duckGain.gain.setTargetAtTime(1,t,.1);ducked=false;renderDuck()}
+}
+/* 音源は一度だけ解析して使い回す（AudioBuffer）。audio要素を毎回作る方式だと、連打でブラウザの再生器の上限に達してBGMが鳴らなくなることがある */
+const bufCache=new Map(),bgmLru=[],bgmLoud=new Map();
+function measureRms(buf){let sum=0,n=0;const step=8;for(let c=0;c<buf.numberOfChannels;c++){const d=buf.getChannelData(c);for(let i=0;i<d.length;i+=step){sum+=d[i]*d[i];n++}}const rms=Math.sqrt(sum/Math.max(1,n));return rms>0?20*Math.log10(rms):-90}
+// BGMの音量差をそろえる：曲全体の平均の大きさを-20dB前後に合わせる（上げ下げは最大±12dBまで）
+function bgmItemGain(assetId,volume){let g=volume/100;if(cfg.rec.bgmLevel!==false&&bgmLoud.has(assetId)){const adj=Math.max(-12,Math.min(12,-20-bgmLoud.get(assetId)));g*=Math.pow(10,adj/20)}return g}
+function decodeAsset(assetId,isBgm){
+ if(bufCache.has(assetId)){if(isBgm){const i=bgmLru.indexOf(assetId);if(i>=0)bgmLru.splice(i,1);bgmLru.push(assetId)}return bufCache.get(assetId)}
+ const pr=(async()=>{const blob=await getAsset(assetId);if(!blob)throw Object.assign(Error('missing'),{userMessage:'保存音源が見つかりません。再登録してください'});
+  const data=await blob.arrayBuffer();audioEngine();
+  try{const buf=await new Promise((res,rej)=>{const r=ctx.decodeAudioData(data,res,rej);if(r&&r.then)r.then(res,rej)});if(isBgm)bgmLoud.set(assetId,measureRms(buf));return buf}
+  catch(e){throw Object.assign(Error('decode'),{userMessage:'この音源の形式を読み込めませんでした（'+(blob.type||'形式不明')+'）。mp3かwavで登録し直すと鳴る可能性があります'})}})();
+ bufCache.set(assetId,pr);pr.catch(()=>bufCache.delete(assetId));
+ if(isBgm){bgmLru.push(assetId);while(bgmLru.length>3){const old=bgmLru.shift();if(old!==bgmPlaying?.assetId)bufCache.delete(old)}}
+ return pr;
+}
+function release(inst){if(!inst||inst.released)return;inst.released=true;active.delete(inst);if(bgmPlaying===inst)bgmPlaying=null;try{inst.source.onended=null;inst.source.stop()}catch(_){}try{inst.source.disconnect();inst.gain.disconnect()}catch(_){}render();renderBgmNow()}
+function fadeStop(inst,duration=.34){if(!inst||inst.released||inst.fading)return Promise.resolve();inst.fading=true;active.delete(inst);if(bgmPlaying===inst){bgmPlaying=null;bgmFading=inst}render();renderBgmNow();return new Promise(resolve=>{if(!ctx||ctx.state!=='running'){release(inst);if(bgmFading===inst)bgmFading=null;resolve();return}const now=ctx.currentTime;inst.gain.gain.cancelScheduledValues(now);inst.gain.gain.setValueAtTime(inst.gain.gain.value,now);inst.gain.gain.linearRampToValueAtTime(0,now+duration);setTimeout(()=>{release(inst);if(bgmFading===inst)bgmFading=null;renderBgmNow();resolve()},duration*1000+35)})}
+function startBuffer(buffer,volume,bus,meta,{loop=false,offset=0}={}){
+ const source=ctx.createBufferSource(),gain=ctx.createGain();source.buffer=buffer;source.loop=loop;gain.gain.value=volume/100;source.connect(gain);gain.connect(bus);
+ const inst={source,gain,buffer,...meta,released:false,fading:false,startedAt:ctx.currentTime-offset};
+ source.onended=()=>release(inst);source.start(0,offset%buffer.duration);return inst;
+}
+async function ensureRunning(){audioEngine();if(ctx.state!=='running'){try{await Promise.race([ctx.resume(),sleep(1500)])}catch(_){}}}
+async function playSound(s){
+ if(!s.assetId){toast('このボタンの音源を長押しして登録してください');return}
+ if(s.type!=='emoji'){
+  const playingNow=[...active].filter(a=>a.soundId===s.id);
+  if(playingNow.length){soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);playingNow.forEach(a=>fadeStop(a));return}
+  if(pendingText.has(s.id)){soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);pendingText.delete(s.id);return}
+  pendingText.add(s.id);
+ }
+ const serial=(soundSerial.get(s.id)||0)+1;soundSerial.set(s.id,serial);
+ try{await ensureRunning();
+  if(s.type==='emoji'&&cfg.playMode==='restart')[...active].filter(a=>a.soundId===s.id).forEach(a=>release(a));
+  const buf=await decodeAsset(s.assetId,false);if(serial!==soundSerial.get(s.id)&&(s.type!=='emoji'||cfg.playMode==='restart'))return;
+  const inst=startBuffer(buf,s.volume,s.type==='voice'?voBus:seBus,{soundId:s.id,soundType:s.type});active.add(inst);render();
+ }catch(e){console.error(e);toast(e.userMessage||'効果音を再生できませんでした',5000)}
+ finally{if(s.type!=='emoji'&&serial===soundSerial.get(s.id))pendingText.delete(s.id)}
+}
+async function playBgm(b,{restart=false}={}){
+ if(!restart&&bgmPlaying?.trackId===b.id){bgmSerial++;fadeStop(bgmPlaying);return}
+ if(!restart&&bgmPendingId===b.id){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;render();renderBgmNow();return}
+ if(!b.assetId){toast('「設定」からBGM音源を登録してください');return}
+ const serial=++bgmSerial,previous=bgmPlaying;bgmPendingId=b.id;bgmLoadingId=b.id;bgmError='';render();renderBgmNow();
+ try{
+  await ensureRunning();
+  const bufP=decodeAsset(b.assetId,true);
+  if(previous)await fadeStop(previous,restart?.12:.38);
+  const buf=await bufP;if(serial!==bgmSerial)return;
+  const inst=startBuffer(buf,100,bgmBus,{trackId:b.id,assetId:b.assetId,name:b.name},{loop:true});inst.gain.gain.value=bgmItemGain(b.assetId,b.volume);
+  bgmPlaying=inst;render();
+ }catch(e){console.error(e);if(serial===bgmSerial){bgmError=(b.name||'BGM')+'：'+(e.userMessage||'再生できませんでした');toast(bgmError,6000)}}
+ finally{if(serial===bgmSerial){bgmPendingId=null;bgmLoadingId=null}renderBgmNow()}
+}
+function stopBgm(sec=.6){if(bgmLoadingId){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;render();renderBgmNow();return}if(bgmPlaying){bgmSerial++;fadeStop(bgmPlaying,sec)}}
+function stopAll(){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;for(const s of cfg.sounds)soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);pendingText.clear();const sounds=[...active];if(bgmPlaying)sounds.push(bgmPlaying);sounds.forEach(x=>fadeStop(x,.42));renderBgmNow();toast('すべての音をフェードアウトしました')}
+
+/* ===================== 上部のBGM表示・メーター・ダッキング ===================== */
+function renderBgmNow(){
+ const el=$('#bgmNow');if(!el||!cfg)return;
+ const name=$('#bgmNowName'),stopBtn=$('#bgmNowStop');let state='idle',label='BGM：なし';
+ if(bgmLoadingId){const b=cfg.bgms.find(x=>x.id===bgmLoadingId);state='loading';label='読み込み中：'+(b?.name||'')}
+ else if(bgmPlaying){state=bgmLow?'low':'playing';label=(bgmLow?'小さく再生中：':'再生中：')+bgmPlaying.name}
+ else if(bgmFading){state='fading';label='フェードアウト中：'+bgmFading.name}
+ else if(bgmError){state='error';label=bgmError}
+ const pb=progBgm();
+ if((state==='idle'||state==='error')&&pb){if(state==='idle')label='待機中｜初期BGM：'+pb.name;stopBtn.textContent='▶ 初期BGM';stopBtn.disabled=false;stopBtn.dataset.mode='play'}
+ else{stopBtn.textContent='■ BGM停止';stopBtn.disabled=!(bgmPlaying||bgmLoadingId);stopBtn.dataset.mode='stop'}
+ el.dataset.state=state;name.textContent=label;
+ if(state!=='playing'&&state!=='low'){$('#bgmNowTime').textContent='';$('#bgmNowBar').style.width='0%'}
+}
+function tickBgmNow(){
+ if(!bgmPlaying||!ctx)return;const d=bgmPlaying.buffer.duration,t=((ctx.currentTime-bgmPlaying.startedAt)%d+d)%d;
+ $('#bgmNowTime').textContent=fmtTime(t)+' / '+fmtTime(d);$('#bgmNowBar').style.width=(t/d*100).toFixed(2)+'%';
+}
+const outBuf=new Float32Array(2048),peakHold={v:-99,t:0};let clipUntil=0,ducked=false,forceDuck=false,lastVoiceAt=0;
+function drawMeter(db){
+ const now=performance.now(),h=peakHold;if(db>=h.v||now-h.t>1200){h.v=db;h.t=now}
+ const pct=v=>Math.max(0,Math.min(100,(v+60)/60*100));
+ $('#outMeter').style.clipPath=`inset(0 ${100-pct(db)}% 0 0)`;$('#outPeak').style.left=`calc(${pct(h.v)}% - 2px)`;
+ const out=$('#outDb');if(db>-0.5)clipUntil=now+1500;const clip=now<clipUntil;
+ out.classList.toggle('clip',clip);out.textContent=clip?'過大':(h.v<=-60?'-∞ dB':h.v.toFixed(1)+' dB');
+}
+function meterLoop(){
+ if(ctx){outAnalyser.getFloatTimeDomainData(outBuf);let p=0;for(let i=0;i<outBuf.length;i++){const a=Math.abs(outBuf[i]);if(a>p)p=a}drawMeter(p>0?20*Math.log10(p):-99)}
+ tickBgmNow();if(miniOn)syncMini();
+ requestAnimationFrame(meterLoop);
+}
+// ボイスが鳴っている間はBGMを下げ、鳴り終えて約0.5秒で戻す
+function duckLoop(){
+ if(!ctx||!cfg.rec.duck)return;const now=performance.now();
+ for(const a of active)if(a.soundType==='voice'&&!a.fading){lastVoiceAt=now;break}
+ const want=now-lastVoiceAt<500;
+ if(want!==ducked||forceDuck){ducked=want;forceDuck=false;const t=ctx.currentTime;duckGain.gain.cancelScheduledValues(t);duckGain.gain.setTargetAtTime(want?Math.pow(10,-cfg.rec.duckDepth/20):1,t,want?.06:.35);renderDuck()}
+}
+function renderDuck(){const el=$('#duckState');el.textContent=!cfg.rec.duck?'オフ':ducked?'BGMを下げています':'待機';el.classList.toggle('on',ducked&&cfg.rec.duck)}
+function renderPreviewInfo(){const k=previewBoost(),top=Math.max(cfg.seDb,cfg.bgmDb,cfg.voDb);$('#previewInfo').textContent=!cfg.rec.previewFull?'効果音・BGM・ボイスは、上のdBのとおりの大きさで鳴ります。':(k>1.001?`一番大きい${fmtDb(top)}を0dBとして、全体を約${k.toFixed(1)}倍にして鳴らしています。効果音・BGM・ボイスの比率は変わりません。`:'一番大きいものがすでに0dBのため、持ち上げは行っていません。')}
+
+/* ===================== 番組プリセット ===================== */
+const curProgram=()=>cfg.currentProgram>=0?cfg.programs?.[cfg.currentProgram]:null;
+const isFree=()=>cfg.currentProgram<0;
+function progBgm(){const pr=curProgram();return pr?.bgmId?cfg.bgms.find(b=>b.id===pr.bgmId&&b.assetId):null}
+function preloadProgBgm(){const pb=progBgm();if(pb&&db)setTimeout(()=>decodeAsset(pb.assetId,true).catch(()=>{}),300)}
+function renderPrograms(){
+ $('#progEdit').disabled=isFree();
+ $('#progChips').innerHTML=`<button class="prog-chip free ${isFree()?'active':''}" type="button" role="tab" aria-selected="${isFree()}" data-prog="-1" title="番組を使わない（初期BGMなし）">フリー</button>`+cfg.programs.map((pr,i)=>`<button class="prog-chip ${pr.color&&PROG_COLORS[pr.color]?'c-'+pr.color:''} ${i===cfg.currentProgram?'active':''}" type="button" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}">${esc(pr.name)}</button>`).join('');
+ {const act=$('#progChips .prog-chip.active');if(act){const c=$('#progChips');const l=act.offsetLeft-c.offsetLeft,rgt=l+act.offsetWidth;if(l<c.scrollLeft||rgt>c.scrollLeft+c.clientWidth)c.scrollLeft=Math.max(0,l-8)}}
+ const pb=progBgm(),box=$('#progBgm');
+ box.innerHTML=pb?`<p class="prog-bgm-label">「${esc(curProgram().name)}」の初期BGM</p><div class="bgm-card ${bgmPlaying?.trackId===pb.id||bgmLoadingId===pb.id?'active':''}"><div class="bgm-row" style="grid-template-columns:minmax(0,1fr)"><button class="bgm-play" type="button" data-play-bgm="${esc(pb.id)}"><span class="bgm-icon">${bgmPlaying?.trackId===pb.id?'■':bgmLoadingId===pb.id?'…':'▶'}</span><span class="bgm-name">${esc(pb.name)}</span></button></div></div>`
+  :isFree()?'':`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。上部の「番組の設定」で選べます。</div>`;
+ renderBgmNow();
+}
+$('#progChips').onclick=e=>{const c=e.target.closest('[data-prog]');if(!c)return;cfg.currentProgram=+c.dataset.prog;persist();renderPrograms();preloadProgBgm();toast(isFree()?'フリーに切り替えました（初期BGMなし）':'番組を「'+curProgram().name+'」に切り替えました')};
+$('#progBgm').onclick=e=>{const pbtn=e.target.closest('[data-play-bgm]');if(!pbtn)return;const b=cfg.bgms.find(x=>x.id===pbtn.dataset.playBgm);if(b)playBgm(b)};
+$('#progEdit').onclick=()=>{if(isFree())return;
+ const pr=curProgram();$('#progName').value=pr.name;
+ for(const rd of document.querySelectorAll('input[name=progColor]'))rd.checked=rd.value===(PROG_COLORS[pr.color]?pr.color:'');
+ const list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
+ $('#progBgmSel').innerHTML='<option value="">なし</option>'+list.map(b=>`<option value="${esc(b.id)}">${esc(cfg.bgmTabs[b.tabIndex]+'｜'+b.name)}</option>`).join('');
+ $('#progBgmSel').value=list.some(b=>b.id===pr.bgmId)?pr.bgmId:'';
+ updateProgMoveBtns();openModal('progModal');
+};
+function moveProgram(d){const i=cfg.currentProgram,j=i+d;if(i<0||j<0||j>=cfg.programs.length)return;[cfg.programs[i],cfg.programs[j]]=[cfg.programs[j],cfg.programs[i]];cfg.currentProgram=j;persist();renderPrograms();updateProgMoveBtns()}
+function updateProgMoveBtns(){$('#progMovePrev').disabled=cfg.currentProgram<=0;$('#progMoveNext').disabled=cfg.currentProgram===cfg.programs.length-1}
+$('#progMovePrev').onclick=()=>moveProgram(-1);$('#progMoveNext').onclick=()=>moveProgram(1);
+$('#progForm').onsubmit=e=>{e.preventDefault();const pr=curProgram();pr.name=$('#progName').value.trim()||pr.name;pr.bgmId=$('#progBgmSel').value||null;pr.color=document.querySelector('input[name=progColor]:checked')?.value||'';persist();closeModal('progModal');renderPrograms();preloadProgBgm();toast('番組の設定を保存しました')};
+
+/* ===================== 画面描画 ===================== */
+function renderVolumes(){
+ $('#masterVolume').value=cfg.master;$('#masterVal').textContent=cfg.master+'%';
+ for(const [name,key] of [['se','seDb'],['bgm','bgmDb'],['vo','voDb']]){$('#'+name+'Volume').value=cfg[key];$('#'+name+'Val').textContent=fmtDb(cfg[key])}
+ const r=cfg.rec;
+ $('#bgmLevel').checked=r.bgmLevel!==false;$('#previewFull').checked=r.previewFull!==false;$('#optLimiter').checked=!!r.limiter;$('#duckOn').checked=!!r.duck;
+ $('#duckDepth').value=r.duckDepth;$('#duckDepthVal').textContent='-'+r.duckDepth+'dB';
+ $('#bgmLowLevel').value=r.bgmLowLevel;$('#bgmLowVal').textContent=r.bgmLowLevel+'%';$('#fadeSec').value=String(r.fadeSec);
+ $('#playMode').value=cfg.playMode;renderBgmLow();renderDuck();renderPreviewInfo();
+}
+const imgUrls=new Map(),imgLoading=new Set();
+function imgUrl(key){if(imgUrls.has(key))return imgUrls.get(key);if(!imgLoading.has(key)&&db){imgLoading.add(key);getAsset(key).then(b=>{imgUrls.set(key,b?URL.createObjectURL(b):null);imgLoading.delete(key);render()}).catch(()=>imgLoading.delete(key))}return null}
+const isPlaying=sid=>[...active].some(a=>a.soundId===sid);
+function render(){
+ if(!cfg)return;queueMicrotask(renderPrograms);
+ $('#emojiTabs').innerHTML=cfg.emojiTabs.map((name,i)=>`<button class="chip ${i===emojiTab?'active':''}" type="button" data-emoji-tab="${i}">${esc(name)}</button>`).join('');
+ $('#textTabs').innerHTML=cfg.textTabs.map((name,i)=>`<button class="chip ${i===textTab?'active':''}" type="button" data-text-tab="${i}">${esc(name)}</button>`).join('');
+ for(const type of ['emoji','text']){
+  const list=cfg.sounds.filter(s=>s.type===type&&s.tabIndex===(type==='text'?textTab:emojiTab)).sort((a,b)=>a.order-b.order).slice(0,type==='text'?TEXT_SLOTS:EMOJI_SLOTS);
+  $('#'+type+'Grid').innerHTML=list.map(s=>`<button class="${type}-pad ${s.assetId?'loaded':''} ${isPlaying(s.id)?'playing':''}" type="button" data-sound="${esc(s.id)}" title="${esc(s.assetId?s.fileName+' · 長押しで編集':'空き枠 · 押して設定')}" aria-label="${esc(s.assetId?s.label||'効果音':'空き枠、押して設定')}">${s.assetId?esc(s.label||'♪'):''}${s.assetId&&s.shortcut?`<span class="shortcut">${esc(s.shortcut)}</span>`:''}</button>`).join('');
+ }
+ {const list=cfg.sounds.filter(s=>s.type==='voice').sort((a,b)=>a.order-b.order).slice(0,VOICE_SLOTS);
+  $('#voiceGrid').innerHTML=list.map(s=>{const loaded=!!s.assetId,img=s.imageId?imgUrl(s.imageId):null;return `<button class="voice-pad ${loaded||s.imageId?'loaded':''} ${isPlaying(s.id)?'playing':''}" type="button" data-sound="${esc(s.id)}" ${img?`style="background-image:url('${img}')"`:''} title="${esc(loaded?(s.label||s.fileName)+' · 長押しで編集':'空き枠 · 押して設定')}" aria-label="${esc(loaded?(s.label||'ボイス'):'空き枠、押して設定')}">${!img&&(loaded||s.label)?`<span class="vp-noimg">${esc(s.label||'♪')}</span>`:''}${img&&s.label?`<span class="vp-name">${esc(s.label)}</span>`:''}${loaded&&s.shortcut?`<span class="shortcut">${esc(s.shortcut)}</span>`:''}</button>`}).join('');}
+ $('#bgmTabs').innerHTML=cfg.bgmTabs.map((name,i)=>`<button class="chip ${i===bgmTab?'active':''}" type="button" data-bgm-tab="${i}">${esc(name)}</button>`).join('');
+ const focused=document.activeElement?.dataset?.bgmVolume;if(focused)return;// 曲音量を動かしている最中は作り直さない
+ $('#bgmList').innerHTML=cfg.bgms.filter(b=>b.tabIndex===bgmTab).sort((a,b)=>a.slotIndex-b.slotIndex).map(b=>`<div class="bgm-card ${b.assetId?'':'unset'} ${bgmPlaying?.trackId===b.id||bgmLoadingId===b.id?'active':''}" data-bgm-card="${esc(b.id)}"><div class="bgm-row"><button class="bgm-play" type="button" data-play-bgm="${esc(b.id)}" title="${esc(b.fileName||'空き枠・押して設定')}" aria-label="${esc(b.assetId?b.name:'空きBGM枠、押して設定')}"><span class="bgm-icon">${b.assetId?(bgmPlaying?.trackId===b.id?'■':bgmLoadingId===b.id?'…':'▶'):''}</span><span class="bgm-name">${b.assetId?esc(b.name):''}</span></button><button class="bgm-edit" type="button" data-edit-bgm="${esc(b.id)}">設定</button></div><div class="bgm-bottom"><label for="volume-${esc(b.id)}">曲音量</label><input id="volume-${esc(b.id)}" aria-label="${esc(b.name)}の音量" data-bgm-volume="${esc(b.id)}" type="range" min="0" max="100" value="${b.volume}"><output>${b.volume}%</output></div></div>`).join('');
+}
+function save(){persist();render()}
+
+/* ===================== 編集用の小窓 ===================== */
+function openSound(s,type){
+ const del=$('#deleteSound');clearTimeout(del._armTimer);del.dataset.armed='';del.classList.remove('armed');del.textContent='削除';
+ $('#soundForm').reset();$('#soundId').value=s?.id||'';$('#soundType').value=type;
+ $('#soundHeading').textContent=type==='voice'?'ボイスの編集':s?.assetId?'効果音の編集':'効果音を追加';
+ const configured=!!(s?.assetId||s?.configured);$('#labelInput').value=configured?s.label||'':'';$('#labelInput').maxLength=type==='emoji'?12:20;$('#labelInput').required=type!=='voice';
+ $('#labelCaption').textContent=type==='emoji'?'ボタン名（絵文字1文字）':type==='voice'?'ボタン名（なくても可・12文字まで）':'ボタン名（最大4文字）';
+ $('#labelHelp').textContent=type==='emoji'?'絵文字1文字を指定します。':type==='voice'?'画像の下に小さく表示されます。画像がないときはボタンに文字で表示します。':'絵文字も1文字として数えます。';
+ $('#imageField').hidden=type!=='voice';$('#imageFile').value='';$('#currentImage').textContent=s?.imageId?(s.imageName||'登録済み'):'画像未登録';
+ $('#soundVolCaption').textContent=type==='voice'?'このボイスの音量：':'この効果音の音量：';
+ const volume=configured?s.volume??100:100;$('#soundVol').value=volume;$('#soundVolVal').textContent=volume+'%';
+ $('#shortcutInput').value=configured?s.shortcut||'':'';$('#currentSoundFile').textContent=s?.fileName||'音源未登録';$('#soundFile').value='';
+ $('#deleteSound').hidden=!s;$('#movePrev').disabled=!s;$('#moveNext').disabled=!s;openModal('soundModal');
+}
+function openBgm(b){if(!b)return;{const rb=$('#resetBgm');clearTimeout(rb._armTimer);rb.dataset.armed='';rb.classList.remove('armed');rb.textContent='選択リセット'}$('#bgmForm').reset();$('#bgmId').value=b.id;$('#bgmHeading').textContent=b.assetId||b.name?'BGMの編集':'BGMを登録';$('#bgmNameInput').value=b.name||'';$('#currentBgmFile').textContent=b.fileName||'音源未登録';$('#bgmVolModal').value=b.volume??100;$('#bgmVolModalVal').textContent=(b.volume??100)+'%';$('#resetBgm').disabled=!b.assetId&&!b.name;$('#bgmMovePrev').disabled=b.slotIndex===0;$('#bgmMoveNext').disabled=b.slotIndex===BGM_SLOTS-1;openModal('bgmModal')}
+// 削除などは「もう一度押す」で確定する（ブラウザの確認ダイアログを使わない）
+function armButton(btn,label='もう一度押すと削除'){
+ if(btn.dataset.armed==='1'){clearTimeout(btn._armTimer);btn.dataset.armed='';btn.classList.remove('armed');return true}
+ btn.dataset.armed='1';btn.dataset.orig=btn.textContent;btn.textContent=label;btn.classList.add('armed');
+ btn._armTimer=setTimeout(()=>{btn.dataset.armed='';btn.textContent=btn.dataset.orig;btn.classList.remove('armed')},4000);return false;
+}
+let confirmResolve=null;
+function askConfirm(text,yesLabel='削除する',title='確認'){
+ if(confirmResolve)confirmResolve(false);
+ $('#confirmTitle').textContent=title;$('#confirmText').textContent=text;$('#confirmYes').textContent=yesLabel;openModal('confirmModal');setTimeout(()=>$('#confirmNo').focus(),0);
+ return new Promise(resolve=>{confirmResolve=resolve});
+}
+function closeConfirm(ok){closeModal('confirmModal');const f=confirmResolve;confirmResolve=null;f?.(ok)}
+$('#confirmYes').onclick=()=>closeConfirm(true);$('#confirmNo').onclick=()=>closeConfirm(false);
+$('#confirmModal').addEventListener('click',e=>{if(e.target.id==='confirmModal')closeConfirm(false)});
+function openModal(mid){$('#'+mid).classList.add('open')}
+function closeModal(mid){$('#'+mid).classList.remove('open')}
+document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(confirmResolve){closeConfirm(false);return}if(e.target.id==='shortcutInput')return;const open=document.querySelector('.modal-back.open');if(open)closeModal(open.id)});
+
+let longPress=null,ignoreClickId=null;
+function setupGrid(type){const g=$('#'+type+'Grid');
+ g.addEventListener('click',e=>{const b=e.target.closest('[data-sound]');if(!b)return;if(ignoreClickId===b.dataset.sound){ignoreClickId=null;return}const s=cfg.sounds.find(x=>x.id===b.dataset.sound);if(s){if(s.assetId)playSound(s);else openSound(s,type)}});
+ g.addEventListener('contextmenu',e=>{const b=e.target.closest('[data-sound]');if(!b)return;e.preventDefault();const s=cfg.sounds.find(x=>x.id===b.dataset.sound);if(s)openSound(s,type)});
+ g.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-sound]');if(!b||e.pointerType==='mouse')return;clearTimeout(longPress);longPress=setTimeout(()=>{ignoreClickId=b.dataset.sound;openSound(cfg.sounds.find(x=>x.id===b.dataset.sound),type)},550)});
+ for(const ev of ['pointerup','pointercancel','pointerleave'])g.addEventListener(ev,()=>clearTimeout(longPress));
+}
+setupGrid('emoji');setupGrid('text');setupGrid('voice');
+$('#emojiTabs').onclick=e=>{const tab=e.target.closest('[data-emoji-tab]');if(tab){emojiTab=+tab.dataset.emojiTab;render()}};
+$('#textTabs').onclick=e=>{const tab=e.target.closest('[data-text-tab]');if(tab){textTab=+tab.dataset.textTab;render()}};
+$('#bgmTabs').onclick=e=>{const tab=e.target.closest('[data-bgm-tab]');if(tab){bgmTab=+tab.dataset.bgmTab;render()}};
+// タブ名の編集と並べ替え（↑↓で行を動かし、保存するとタブの中身ごと順番が入れ替わる）
+function tabEditor(kind,label){
+ const k=kind.toLowerCase(),key=k+'Tabs',box=$('#'+k+'TabNames');
+ const syncBtns=()=>{const rows=[...box.children];rows.forEach((row,i)=>{row.querySelector('[data-up]').disabled=i===0;row.querySelector('[data-down]').disabled=i===rows.length-1;row.querySelector('input').setAttribute('aria-label',(i+1)+'番目の'+label+'分類名')})};
+ $('#edit'+kind+'Tabs').onclick=()=>{
+  box.replaceChildren(...cfg[key].map((name,i)=>{const row=document.createElement('div');row.className='category-line';row.dataset.orig=i;
+   const input=document.createElement('input');input.value=name;input.maxLength=20;input.id=k+'TabName'+i;
+   const up=document.createElement('button');up.type='button';up.className='btn tab-move';up.dataset.up='1';up.textContent='↑';up.setAttribute('aria-label','上へ');
+   const down=document.createElement('button');down.type='button';down.className='btn tab-move';down.dataset.down='1';down.textContent='↓';down.setAttribute('aria-label','下へ');
+   row.append(input,up,down);return row}));
+  syncBtns();openModal(k+'TabsModal');
+ };
+ box.onclick=e=>{const btn=e.target.closest('.tab-move');if(!btn)return;const row=btn.closest('.category-line');
+  if(btn.dataset.up&&row.previousElementSibling)box.insertBefore(row,row.previousElementSibling);
+  else if(btn.dataset.down&&row.nextElementSibling)box.insertBefore(row.nextElementSibling,row);
+  syncBtns();row.classList.remove('moved');void row.offsetWidth;row.classList.add('moved');row.scrollIntoView({block:'nearest'})};
+ $('#'+k+'TabsForm').onsubmit=e=>{e.preventDefault();
+  const rows=[...box.children],names=rows.map(r=>r.querySelector('input').value.trim()),order=rows.map(r=>+r.dataset.orig);
+  if(names.length!==TABS||names.some(x=>!x)||new Set(names).size!==TABS){toast('分類名は空欄や重複を避けてください');return}
+  const newIndex=new Map(order.map((orig,pos)=>[orig,pos]));
+  const items=kind==='Bgm'?cfg.bgms:cfg.sounds.filter(x=>x.type===(kind==='Emoji'?'emoji':'text'));
+  for(const x of items)if(newIndex.has(x.tabIndex))x.tabIndex=newIndex.get(x.tabIndex);
+  if(kind==='Emoji')emojiTab=newIndex.get(emojiTab)??0;else if(kind==='Text')textTab=newIndex.get(textTab)??0;else bgmTab=newIndex.get(bgmTab)??0;
+  const moved=order.some((o,i)=>o!==i);cfg[key]=names;save();closeModal(k+'TabsModal');toast(label+(moved?'のタブの名前と順番を保存しました':'の分類名を保存しました'))};
+}
+tabEditor('Emoji','絵文字SE');tabEditor('Text','文字SE');tabEditor('Bgm','BGM');
+$('#bgmList').onclick=e=>{const edit=e.target.closest('[data-edit-bgm]'),play=e.target.closest('[data-play-bgm]');if(edit){openBgm(cfg.bgms.find(b=>b.id===edit.dataset.editBgm));return}if(play){const b=cfg.bgms.find(x=>x.id===play.dataset.playBgm);if(b){if(b.assetId)playBgm(b);else openBgm(b)}}};
+function moveBgm(direction){const b=cfg.bgms.find(x=>x.id===$('#bgmId').value);if(!b)return;const target=b.slotIndex+direction,other=cfg.bgms.find(x=>x.tabIndex===b.tabIndex&&x.slotIndex===target);if(!other)return;[b.slotIndex,other.slotIndex]=[other.slotIndex,b.slotIndex];persist();render();$('#bgmMovePrev').disabled=b.slotIndex===0;$('#bgmMoveNext').disabled=b.slotIndex===BGM_SLOTS-1}
+$('#bgmMovePrev').onclick=()=>moveBgm(-1);$('#bgmMoveNext').onclick=()=>moveBgm(1);
+$('#bgmList').oninput=e=>{const slider=e.target.closest('[data-bgm-volume]');if(!slider)return;const b=cfg.bgms.find(x=>x.id===slider.dataset.bgmVolume);if(!b)return;b.volume=+slider.value;slider.nextElementSibling.textContent=b.volume+'%';if(bgmPlaying?.trackId===b.id)bgmPlaying.gain.gain.value=bgmItemGain(bgmPlaying.assetId,b.volume);persist()};
+
+/* ===================== 設定画面の操作 ===================== */
+const DB_KEY={se:'seDb',bgm:'bgmDb',vo:'voDb'};
+function setDb(kind,v){const key=DB_KEY[kind];cfg[key]=Math.max(-60,Math.min(0,Math.round(v*2)/2));if(kind!=='vo')cfg[kind==='se'?'seVolume':'bgmVolume']=Math.round(dbGain(cfg[key])*1000)/10;$('#'+kind+'Volume').value=cfg[key];$('#'+kind+'Val').textContent=fmtDb(cfg[key]);updateGains();renderPreviewInfo();persist()}
+$('#seVolume').oninput=e=>setDb('se',+e.target.value);$('#bgmVolume').oninput=e=>setDb('bgm',+e.target.value);$('#voVolume').oninput=e=>setDb('vo',+e.target.value);
+document.querySelector('.db-steps').onclick=e=>{const b=e.target.closest('[data-db]');if(!b)return;const [k,d]=b.dataset.db.split(':');setDb(k,cfg[DB_KEY[k]]+(+d))};
+$('#masterVolume').oninput=e=>{cfg.master=+e.target.value;$('#masterVal').textContent=cfg.master+'%';updateGains();persist()};
+$('#bgmLevel').onchange=e=>{cfg.rec.bgmLevel=e.target.checked;persist();if(bgmPlaying)bgmPlaying.gain.gain.value=bgmItemGain(bgmPlaying.assetId,cfg.bgms.find(x=>x.id===bgmPlaying.trackId)?.volume??100)};
+$('#previewFull').onchange=e=>{cfg.rec.previewFull=e.target.checked;persist();updateGains();renderPreviewInfo()};
+$('#optLimiter').onchange=e=>{cfg.rec.limiter=e.target.checked;persist();updateGains()};
+$('#duckOn').onchange=e=>{cfg.rec.duck=e.target.checked;persist();updateGains();renderDuck()};
+$('#duckDepth').oninput=e=>{cfg.rec.duckDepth=+e.target.value;$('#duckDepthVal').textContent='-'+cfg.rec.duckDepth+'dB';forceDuck=true;persist()};
+$('#bgmLowLevel').oninput=e=>{cfg.rec.bgmLowLevel=+e.target.value;$('#bgmLowVal').textContent=cfg.rec.bgmLowLevel+'%';if(bgmLow&&ctx)bgmTrim.gain.setTargetAtTime(cfg.rec.bgmLowLevel/100,ctx.currentTime,.2);renderBgmLow();persist()};
+$('#fadeSec').onchange=e=>{cfg.rec.fadeSec=+e.target.value;persist()};
+$('#playMode').onchange=e=>{cfg.playMode=e.target.value;persist()};
+$('#trySe').onclick=()=>{const s=cfg.sounds.find(x=>x.type==='emoji'&&x.assetId&&x.tabIndex===emojiTab)||cfg.sounds.find(x=>x.type!=='voice'&&x.assetId);if(s)playSound(s);else toast('登録済みの効果音がありません')};
+$('#tryVo').onclick=()=>{const s=cfg.sounds.find(x=>x.type==='voice'&&x.assetId);if(s)playSound(s);else toast('登録済みのボイスがありません')};
+$('#tryBgm').onclick=()=>{if(bgmPlaying||bgmLoadingId){stopBgm(.4);return}const b=progBgm()||cfg.bgms.find(x=>x.assetId);if(b)playBgm(b);else toast('登録済みのBGMがありません')};
+
+/* ===================== BGMの操作 ===================== */
+$('#bgmFadeBtn').onclick=()=>{if(!bgmPlaying){toast('再生中のBGMはありません');return}bgmSerial++;fadeStop(bgmPlaying,cfg.rec.fadeSec)};
+function setBgmLow(on){audioEngine();bgmLow=on;const t=ctx.currentTime;bgmTrim.gain.cancelScheduledValues(t);bgmTrim.gain.setTargetAtTime(on?cfg.rec.bgmLowLevel/100:1,t,.6);renderBgmLow();renderBgmNow()}
+function renderBgmLow(){$('#bgmLowBtn').classList.toggle('on',bgmLow);$('#bgmLowBtn').textContent=bgmLow?'BGMを元に戻す':'BGMを小さくする';$('#bgmLowState').textContent=bgmLow?'小さくしています（'+cfg.rec.bgmLowLevel+'%）':'通常の音量'}
+$('#bgmLowBtn').onclick=()=>setBgmLow(!bgmLow);
+$('#bgmNowStop').onclick=e=>{if(e.currentTarget.dataset.mode==='play'){const pb=progBgm();if(pb)playBgm(pb,{restart:true});return}stopBgm(.6)};
+$('#stopAll').onclick=stopAll;
+
+/* ===================== 効果音・BGMの登録 ===================== */
+$('#soundVol').oninput=e=>$('#soundVolVal').textContent=e.target.value+'%';$('#bgmVolModal').oninput=e=>$('#bgmVolModalVal').textContent=e.target.value+'%';
+$('#shortcutInput').onkeydown=e=>{if(e.key==='Tab')return;e.preventDefault();$('#shortcutInput').value=e.key==='Escape'?'':(e.key.length===1?e.key.toUpperCase():e.key)};
+function moveSound(direction){const s=cfg.sounds.find(x=>x.id===$('#soundId').value);if(!s)return;const list=cfg.sounds.filter(x=>x.type===s.type&&x.tabIndex===s.tabIndex).sort((a,b)=>a.order-b.order),index=list.findIndex(x=>x.id===s.id),other=list[index+direction];if(!other)return;const o=s.order;s.order=other.order;other.order=o;s.slotIndex=s.order;other.slotIndex=other.order;save()}
+$('#movePrev').onclick=()=>moveSound(-1);$('#moveNext').onclick=()=>moveSound(1);
+$('#soundForm').onsubmit=async e=>{e.preventDefault();const type=$('#soundType').value,label=$('#labelInput').value.trim(),length=graphemes(label).length;
+ if((type!=='voice'&&!label)||(type==='emoji'&&length!==1)||(type==='text'&&length>4)||(type==='voice'&&length>12)){toast(type==='emoji'?'絵文字1文字を入力してください':type==='voice'?'ボタン名は12文字以内にしてください':'ボタン名は4文字以内にしてください');return}
+ const old=cfg.sounds.find(x=>x.id===$('#soundId').value),file=$('#soundFile').files[0],previousAsset=old?.assetId;let assetId=previousAsset||null,fileName=old?.fileName||'';
+ if(!old){toast('空欄を押して登録してください');return}
+ if(!file&&!previousAsset){toast('音源ファイルを選んでください');return}
+ const imgFile=type==='voice'?$('#imageFile').files[0]:null,prevImg=old.imageId;let imageId=prevImg||null,imageName=old.imageName||'';
+ try{if(file){const nextId=id();await putAsset(nextId,file);assetId=nextId;fileName=file.name}
+  if(imgFile){const nid=id();await putAsset(nid,imgFile);imageId=nid;imageName=imgFile.name}
+  Object.assign(old,{label,volume:+$('#soundVol').value,assetId,fileName,shortcut:$('#shortcutInput').value.trim(),configured:true},type==='voice'?{imageId,imageName}:{});
+  save();closeModal('soundModal');
+  if(file&&previousAsset){await deleteAsset(previousAsset);bufCache.delete(previousAsset)}
+  if(imgFile&&prevImg){await deleteAsset(prevImg);imgUrls.delete(prevImg)}
+  toast(type==='voice'?'ボイスを保存しました':'効果音を保存しました')
+ }catch(err){console.error(err);toast('音源を保存できませんでした（'+errText(err)+'）',5000)}};
+$('#deleteSound').onclick=async e=>{const s=cfg.sounds.find(x=>x.id===$('#soundId').value);if(!s||!armButton(e.currentTarget,'もう一度押すと削除'))return;[...active].filter(a=>a.soundId===s.id).forEach(release);
+ const previousAsset=s.assetId,prevImg=s.imageId;Object.assign(s,{label:'',category:'全て',volume:100,assetId:null,fileName:'',shortcut:'',configured:false,imageId:null,imageName:''});
+ save();closeModal('soundModal');await deleteAsset(previousAsset);bufCache.delete(previousAsset);if(prevImg){await deleteAsset(prevImg);imgUrls.delete(prevImg)}toast('削除しました')};
+$('#bgmForm').onsubmit=async e=>{e.preventDefault();const old=cfg.bgms.find(x=>x.id===$('#bgmId').value);if(!old){toast('BGMの枠が見つかりません');return}const file=$('#bgmFile').files[0],previousAsset=old.assetId;let assetId=previousAsset||null,fileName=old.fileName||'';
+ if(!file&&!previousAsset){toast('音源ファイルを選んでください');return}
+ try{if(file){const nextId=id();await putAsset(nextId,file);assetId=nextId;fileName=file.name}
+  const next={name:$('#bgmNameInput').value.trim(),volume:+$('#bgmVolModal').value,assetId,fileName};Object.assign(old,next);
+  if(bgmPlaying?.trackId===old.id){if(file){bgmSerial++;fadeStop(bgmPlaying)}else bgmPlaying.gain.gain.value=bgmItemGain(bgmPlaying.assetId,next.volume)}
+  save();closeModal('bgmModal');if(file&&previousAsset){await deleteAsset(previousAsset);bufCache.delete(previousAsset)}toast('BGMを保存しました')
+ }catch(err){console.error(err);toast('音源を保存できませんでした（'+errText(err)+'）',5000)}};
+async function resetBgm(trackId){const b=cfg.bgms.find(x=>x.id===trackId);if(!b||(!b.assetId&&!b.name))return;const oldAsset=b.assetId;
+ Object.assign(b,{name:'',volume:100,assetId:null,fileName:''});bgmSerial++;if(bgmPendingId===trackId){bgmPendingId=null;bgmLoadingId=null}if(bgmPlaying?.trackId===trackId)fadeStop(bgmPlaying);
+ save();closeModal('bgmModal');await deleteAsset(oldAsset);bufCache.delete(oldAsset);toast('この枠の選択をリセットしました')}
+$('#resetBgm').onclick=e=>{if(armButton(e.currentTarget,'もう一度押すとリセット'))resetBgm($('#bgmId').value)};
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
+document.querySelectorAll('.modal-back:not(.confirm-back)').forEach(m=>m.onclick=e=>{if(e.target===m)closeModal(m.id)});
+document.addEventListener('keydown',e=>{if(e.repeat||e.altKey||e.ctrlKey||e.metaKey||document.querySelector('.modal-back.open')||e.target.closest('input,select,textarea,[contenteditable]'))return;const key=e.key.length===1?e.key.toUpperCase():e.key;const s=cfg.sounds.find(x=>x.assetId&&x.shortcut&&x.shortcut.toUpperCase()===key);if(s){e.preventDefault();playSound(s)}});
+
+/* ===================== 設定の書き出し・読み込み ===================== */
+// 筋肉室ラジオ収録と同じ形式：先頭8バイト "KNKRPACK" + 見出しJSONの長さ(4バイト) + 見出しJSON + 音源・画像をそのまま連結
+const PACK_MAGIC='KNKRPACK';
+function errText(e){if(!e)return '原因不明';if(e.name==='QuotaExceededError')return '端末の空き容量が足りません';if(e instanceof RangeError||/memory|allocation/i.test(e.message||''))return 'ファイルが大きく、この端末では一度に読み込めません';return e.userMessage||((e.name&&e.name!=='Error'?e.name+'：':'')+(e.message||String(e)))}
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+async function exportPack(){
+ try{toast('書き出しています…',60000);
+  const conf=JSON.parse(JSON.stringify(cfg)),assets=[],blobs=[];let off=0;
+  const add=async(key,kind)=>{const b=await getAsset(key);if(!b)return false;assets.push({key,kind,offset:off,size:b.size,type:b.type||''});blobs.push(b);off+=b.size;return true};
+  for(const item of [...conf.sounds,...conf.bgms])if(item.assetId&&!await add(item.assetId,'audio'))item.assetId=null;
+  for(const item of conf.sounds)if(item.imageId&&!await add(item.imageId,'image'))item.imageId=null;
+  const head=new TextEncoder().encode(JSON.stringify({format:'kinniku-radio-pack',version:1,app:'筋肉室効果音ポン出し',created:new Date().toISOString(),config:conf,assets}));
+  const len=new Uint8Array(4);new DataView(len.buffer).setUint32(0,head.length,true);
+  download(new Blob([PACK_MAGIC,len,head,...blobs],{type:'application/octet-stream'}),'筋肉室効果音ポン出し_設定.kinniku');
+  toast(`設定を書き出しました（音源${assets.filter(a=>a.kind==='audio').length}件・${(off/1048576).toFixed(1)}MB）`,4000);
+ }catch(e){console.error(e);toast('書き出しに失敗しました（'+errText(e)+'）',6000)}
+}
+function dataUrlToBlob(u){
+ const comma=u.indexOf(','),meta=u.slice(5,comma),type=meta.split(';')[0]||'',b64=meta.includes(';base64');const body=u.slice(comma+1);
+ if(!b64)return new Blob([decodeURIComponent(body)],{type});
+ const parts=[],STEP=1<<20;for(let i=0;i<body.length;i+=STEP){const bin=atob(body.slice(i,i+STEP));const a=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)a[j]=bin.charCodeAt(j);parts.push(a)}
+ return new Blob(parts,{type});
+}
+async function readPackHeader(file){
+ const first=new Uint8Array(await file.slice(0,12).arrayBuffer());
+ if(String.fromCharCode(...first.slice(0,8))!==PACK_MAGIC)return null;
+ const len=new DataView(first.buffer).getUint32(8,true);
+ const head=JSON.parse(new TextDecoder().decode(await file.slice(12,12+len).arrayBuffer()));
+ if(head.format!=='kinniku-radio-pack'||!head.config)throw Object.assign(Error(''),{userMessage:'設定ファイルの中身を読み取れませんでした'});
+ return {head,base:12+len};
+}
+async function applyImported(incoming,stored){
+ const oldAssets=[...cfg.sounds,...cfg.bgms].flatMap(x=>[x.assetId,x.imageId]).filter(Boolean);imgUrls.clear();bufCache.clear();
+ const keepRec=cfg.rec;stopAll();cfg=normalize(incoming);if(!incoming.rec)cfg.rec=keepRec;emojiTab=0;textTab=0;bgmTab=0;save();renderVolumes();updateGains();renderPrograms();
+ for(const assetId of oldAssets)await deleteAsset(assetId);updateStorage();
+ toast(`設定を読み込みました（音源${stored}件）`,4000);
+}
+$('#exportBtn').onclick=exportPack;$('#importBtn').onclick=()=>$('#importFile').click();
+$('#importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;const added=[];
+ try{
+  toast('設定ファイルを確認しています…',120000);
+  const pack=await readPackHeader(file);
+  if(pack){
+   if(!await askConfirm('現在の効果音・ボイス・BGMの設定を、読み込む内容で置き換えますか？','置き換える','設定の読み込み')){toast('読み込みを取り消しました');return}
+   const incoming=pack.head.config,map=new Map(),assets=pack.head.assets||[];let n=0;const total=assets.filter(a=>a.kind==='audio').length;
+   for(const a of assets){
+    if(a.kind==='cover')continue;// ラジオ収録の動画用サムネイルは使わない
+    const blob=file.slice(pack.base+a.offset,pack.base+a.offset+a.size,a.type);
+    if(blob.size!==a.size)throw Object.assign(Error(''),{userMessage:'ファイルが途中で切れています。書き出し直したファイルでお試しください'});
+    const nid=id();added.push(nid);await putAsset(nid,new Blob([await blob.arrayBuffer()],{type:a.type}));map.set(a.key,nid);if(a.kind==='audio')toast(`音源を取り込み中 ${++n}/${total}`,120000);
+   }
+   for(const item of [...(incoming.sounds||[]),...(incoming.bgms||[])]){item.assetId=item.assetId&&map.get(item.assetId)||null;if(item.imageId)item.imageId=map.get(item.imageId)||null}
+   await applyImported(incoming,n);return;
+  }
+  // 以前のJSON形式（効果音ポン出し・ラジオ収録のポン出し用JSON）
+  let pack2;try{pack2=JSON.parse(await file.text())}catch(err){throw Object.assign(err,{userMessage:err instanceof RangeError?'ファイルが大きく、この端末では一度に読み込めません。PCで読み込んでから「設定を書き出す」で新しい形式にすると、この端末でも読み込めます':'このアプリの設定ファイルではないか、ファイルが壊れています'})}
+  if(pack2.format!=='kinniku-soundboard'||!pack2.config)throw Object.assign(Error(''),{userMessage:'このアプリの設定ファイルではありません'});
+  if(!await askConfirm('現在の効果音・ボイス・BGMの設定を、読み込む内容で置き換えますか？','置き換える','設定の読み込み')){toast('読み込みを取り消しました');return}
+  const incoming=pack2.config,items=[...(incoming.sounds||[]),...(incoming.bgms||[])];if(incoming.bgm)items.push(incoming.bgm);
+  let n=0;const total=items.filter(x=>x.audioData).length;
+  for(const item of items){if(!item.audioData){item.assetId=null;continue}const blob=dataUrlToBlob(item.audioData);item.assetId=id();added.push(item.assetId);await putAsset(item.assetId,blob);delete item.audioData;toast(`音源を取り込み中 ${++n}/${total}`,120000)}
+  await applyImported(incoming,n);
+ }catch(err){console.error(err);for(const k of added)await deleteAsset(k);toast('設定ファイルを読み込めませんでした（'+errText(err)+'）',9000)}
+ finally{e.target.value=''}};
+async function updateStorage(){try{const est=await navigator.storage?.estimate?.();if(!est)return;const mb=x=>x>1073741824?(x/1073741824).toFixed(1)+'GB':Math.round(x/1048576)+'MB';$('#storageInfo').textContent=`保存 ${mb(est.usage)}／空き 約${mb(est.quota-est.usage)}`}catch(_){}}
+
+/* ===================== 画面の切り替え（演奏画面／音量の設定） ===================== */
+function applyPage(){const pg=location.hash==='#settings'?'settings':'main';document.body.dataset.page=pg;$('#navMain').classList.toggle('on',pg==='main');$('#navSettings').classList.toggle('on',pg==='settings');window.scrollTo(0,0)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-goto]');if(!b)return;if(b.dataset.goto==='settings'){if(location.hash!=='#settings')location.hash='settings'}else{if(location.hash==='#settings')history.replaceState(null,'',location.pathname+location.search);applyPage()}});
+window.addEventListener('hashchange',applyPage);applyPage();
+
+/* ===================== スクロール中の小さな操作欄・BGM欄への移動 ===================== */
+let miniOn=false;
+function syncMini(){
+ $('#miniBgm').dataset.state=$('#bgmNow').dataset.state;const nm=$('#bgmNowName').textContent;if($('#miniBgmName').textContent!==nm)$('#miniBgmName').textContent=nm;
+ const bb=$('#bgmNowStop'),mb=$('#miniBgmBtn');if(mb.textContent!==bb.textContent)mb.textContent=bb.textContent;mb.disabled=bb.disabled;
+}
+function setMini(on){miniOn=on;$('#miniBar').hidden=!on;if(on)syncMini()}
+if('IntersectionObserver' in window){new IntersectionObserver(([e])=>setMini(!e.isIntersecting&&e.boundingClientRect.top<0),{threshold:0}).observe(document.querySelector('.topbar'))}
+$('#miniBgmBtn').onclick=()=>$('#bgmNowStop').click();$('#miniStopAll').onclick=stopAll;
+function gotoBgm(){
+ if(document.body.dataset.page==='settings'){history.replaceState(null,'',location.pathname+location.search);applyPage()}
+ const y=$('#bgmSection').getBoundingClientRect().top+scrollY;
+ requestAnimationFrame(()=>{const bar=document.querySelector('.topbar');const stickyH=getComputedStyle(bar).position==='sticky'?bar.offsetHeight:($('#miniBar').offsetHeight||60);window.scrollTo({top:Math.max(0,y-stickyH-8),behavior:'smooth'})});
+}
+for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){el.onclick=gotoBgm;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();gotoBgm()}}}
+
+/* ===================== 起動 ===================== */
+(async()=>{
+ let migrated=false;
+ try{db=await openDB();let stored=null;
+  try{stored=localStorage.getItem(KEY);if(!stored){for(const k of LEGACY_KEYS){stored=localStorage.getItem(k);if(stored){migrated=true;break}}}}catch(_){}
+  cfg=normalize(stored?JSON.parse(stored):null);persist()}
+ catch(err){console.error(err);cfg=normalize(null);toast('ブラウザの保存領域を開けませんでした')}
+ renderVolumes();render();renderPrograms();updateStorage();requestAnimationFrame(meterLoop);
+ if(migrated)toast('以前の効果音ポン出しの登録を引き継ぎました',4000);
+ document.addEventListener('pointerdown',()=>{if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})});
+ setTimeout(preloadProgBgm,1500);
+})();
+</script>
+</body>
+</html>
