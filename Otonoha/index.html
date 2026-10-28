@@ -265,6 +265,10 @@ body:has(.modal-back.open){overflow:hidden}a{color:var(--accent)}.footer{font-si
 .section-title:has(.emoji-head-controls){align-items:flex-end}
 /* マイク欄へ案内したときの目印 */
 .panel.flash{animation:panelflash 1.6s ease-out 2}@keyframes panelflash{0%{box-shadow:0 0 0 4px var(--rec)}100%{box-shadow:0 0 0 0 transparent}}
+/* 小さな録音欄の「効果音・環境音を止める」 */
+.minibar .se-stop{flex:none;background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:800}
+/* 設定画面に移した「映像の演出」 */
+#settingsShell .film-panel{margin-top:0}
 </style>
 <script>
 'use strict';
@@ -331,7 +335,7 @@ let look=lookLoad();lookPaint(look);
 
 <div class="minibar" id="miniBar" hidden><div class="minibar-in">
  <div class="mini-row"><span class="mini-timer" id="miniTimer">00:00.0</span><button class="mbtn recbtn" type="button" id="miniRec">● 録音開始</button><button class="mbtn" type="button" id="miniStop">■ 停止</button><button class="mbtn" type="button" id="miniRetake">↺ 録り直し</button></div>
- <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button></div>
+ <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button><button class="mbtn se-stop" type="button" id="miniSeStop" title="鳴っている効果音と環境音を、まとめてフェードして止めます（BGMとボイスはそのまま）">■ 効果音＋環境音</button></div>
 </div></div>
 <!-- 2. 効果音・BGM -->
 <main class="shell" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span></div>
@@ -360,24 +364,7 @@ let look=lookLoad();lookPaint(look);
   </div>
  </div>
 
- <section class="film-panel" aria-labelledby="filmTitle">
-  <h3 id="filmTitle">窓辺の映像演出</h3>
-  <div class="film-controls">
-   <label>季節の演出<select id="videoEffect"><option value="none">なし（静止画）</option><option value="spring">春：はらはら桜</option><option value="summer">夏：ぷくぷくソーダ</option><option value="autumn">秋：ころころ木の実</option><option value="winter">冬：ふわふわ白雪</option></select></label>
-   <label>動かすもの<select id="effectSource"><option value="default">季節の絵（標準）</option><option value="image">好きな画像</option></select></label>
-   <label>映像のなめらかさ<select id="videoFps"><option value="8">8コマ / 秒（いちばん軽い）</option><option value="10">10コマ / 秒（軽い）</option><option value="12">12コマ / 秒</option><option value="24">24コマ / 秒</option><option value="30">30コマ / 秒（なめらか）</option></select></label>
-   <label>量 <output id="effectCountVal"></output><input id="effectCount" type="range" min="10" max="120" step="5" value="45"></label>
-   <label>速さ <output id="effectSpeedVal"></output><input id="effectSpeed" type="range" min="20" max="180" step="5" value="60"></label>
-   <label>大きさ <output id="effectScaleVal"></output><input id="effectScale" type="range" min="30" max="160" step="5" value="70"></label>
-   <label>不透明度 <output id="effectOpacityVal"></output><input id="effectOpacity" type="range" min="10" max="100" step="5" value="75"></label>
-  </div>
-  <div class="film-actions"><button class="btn" id="effectImagePick" type="button">動かす画像を選ぶ</button><button class="btn danger" id="effectImageClear" type="button">画像を外す</button><span id="effectImageName">未登録（透過PNGも使えます）</span></div>
-  <input id="effectImageFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
-  <div class="film-actions"><button class="btn" id="filmPreviewBtn" type="button" aria-pressed="false">▶ 演出をプレビュー</button><button class="btn" id="cancelVideoBtn" type="button" hidden>動画書き出しを中止</button></div>
-  <canvas class="film-preview" id="filmPreview" width="480" height="480" aria-label="共通サムネイルでの映像演出プレビュー" hidden></canvas>
-  <p class="film-status" id="filmStatus" role="status"></p>
-  <p class="note">演出は書き出す動画にも入ります。プレビューは共通画像で表示し、書き出しでは各テイク・番組の画像設定が優先されます。動きのある動画は静止画より変換時間と容量が増えます。</p>
- </section>
+  <div class="film-actions"><button class="btn" id="cancelVideoBtn" type="button" hidden>動画書き出しを中止</button></div>
  <input type="file" id="coverFile" accept="image/*" hidden><input type="file" id="takeCoverFile" accept="image/*" hidden>
  <p class="note">各テイクの「BGM操作の記録」には、BGMを流した・止めた・小さくした時刻が自動で残ります。編集ソフトで切り貼りするときの目安に使えます。録音は数秒ごとにブラウザ内へ保存されます。途中でタブが閉じても、そこまでの音声はテイク一覧に残ります。テイク名の左の四角を押すと、そのテイクだけ動画の画像を変えられます。</p>
 </div></section>
@@ -394,7 +381,7 @@ let look=lookLoad();lookPaint(look);
   <div class="volume-row"><label for="voVolume">ボイス</label><input id="voVolume" type="range" min="-60" max="0" step="0.5"><output id="voVal"></output></div>
   <div class="volume-row"><label for="envVolume">環境音</label><input id="envVolume" type="range" min="-60" max="0" step="0.5"><output id="envVal"></output></div>
   <div class="db-steps"><button type="button" class="btn" data-db="se:-1">効果音 −1dB</button><button type="button" class="btn" data-db="se:1">効果音 ＋1dB</button><button type="button" class="btn" data-db="bgm:-1">BGM −1dB</button><button type="button" class="btn" data-db="bgm:1">BGM ＋1dB</button><button type="button" class="btn" data-db="vo:-1">ボイス −1dB</button><button type="button" class="btn" data-db="vo:1">ボイス ＋1dB</button><button type="button" class="btn" data-db="env:-1">環境音 −1dB</button><button type="button" class="btn" data-db="env:1">環境音 ＋1dB</button></div>
-  <div class="try-row"><button type="button" class="btn" id="trySe">効果音を試す</button><button type="button" class="btn" id="tryVo">ボイスを試す</button><button type="button" class="btn" id="tryBgm">BGMを試す／止める</button></div>
+  <div class="try-row"><button type="button" class="btn" id="trySe">効果音を試す</button><button type="button" class="btn" id="tryVo">ボイスを試す</button><button type="button" class="btn" id="tryBgm">BGMを試す／止める</button><button type="button" class="btn" id="tryEnv">環境音を試す／止める</button></div>
   <p class="note">効果音・BGM・ボイスはdB（デシベル）で調整します。0dBが音源そのままの大きさで、−6dBで約半分、−20dBで約10分の1、−40dBで約100分の1です。一番左（−60dB）は消音です。</p>
   <div class="opts"><label><input type="checkbox" id="bgmLevel">BGMごとの音量差をそろえる（音の大きい曲は下げ、小さい曲は上げる）</label></div>
   <div class="volume-row"><label for="masterVolume">ヘッドホン</label><input id="masterVolume" type="range" min="0" max="100"><output id="masterVal"></output></div>
@@ -434,6 +421,24 @@ let look=lookLoad();lookPaint(look);
   <p class="note" id="micHelp">開くたびにマイクの許可を求められる場合は、許可の画面で「サイトにアクセスしている間は許可する」（Chrome）を選ぶか、ブラウザのサイト設定でマイクを「許可」にすると、次回から自動でつながります。</p>
  </section>
 
+ <section class="panel film-panel" aria-labelledby="filmTitle">
+  <h3 id="filmTitle">映像の演出</h3>
+  <div class="film-controls">
+   <label>季節の演出<select id="videoEffect"><option value="none">なし（静止画）</option><option value="spring">春：はらはら桜</option><option value="summer">夏：ぷくぷくソーダ</option><option value="autumn">秋：ころころ木の実</option><option value="winter">冬：ふわふわ白雪</option></select></label>
+   <label>動かすもの<select id="effectSource"><option value="default">季節の絵（標準）</option><option value="image">好きな画像</option></select></label>
+   <label>映像のなめらかさ<select id="videoFps"><option value="8">8コマ / 秒（いちばん軽い）</option><option value="10">10コマ / 秒（軽い）</option><option value="12">12コマ / 秒</option><option value="24">24コマ / 秒</option><option value="30">30コマ / 秒（なめらか）</option></select></label>
+   <label>量 <output id="effectCountVal"></output><input id="effectCount" type="range" min="10" max="120" step="5" value="45"></label>
+   <label>速さ <output id="effectSpeedVal"></output><input id="effectSpeed" type="range" min="20" max="180" step="5" value="60"></label>
+   <label>大きさ <output id="effectScaleVal"></output><input id="effectScale" type="range" min="30" max="160" step="5" value="70"></label>
+   <label>不透明度 <output id="effectOpacityVal"></output><input id="effectOpacity" type="range" min="10" max="100" step="5" value="75"></label>
+  </div>
+  <div class="film-actions"><button class="btn" id="effectImagePick" type="button">動かす画像を選ぶ</button><button class="btn danger" id="effectImageClear" type="button">画像を外す</button><span id="effectImageName">未登録（透過PNGも使えます）</span></div>
+  <input id="effectImageFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+  <div class="film-actions"><button class="btn" id="filmPreviewBtn" type="button" aria-pressed="false">▶ 演出をプレビュー</button></div>
+  <canvas class="film-preview" id="filmPreview" width="480" height="480" aria-label="共通サムネイルでの映像演出プレビュー" hidden></canvas>
+  <p class="film-status" id="filmStatus" role="status"></p>
+  <p class="note">演出は書き出す動画にも入ります。プレビューは共通画像で表示し、書き出しでは各テイク・番組の画像設定が優先されます。動きのある動画は静止画より変換時間と容量が増えます。</p>
+ </section>
  <section class="panel" aria-labelledby="lookTitle">
   <h3 id="lookTitle">名前と着せ替え <span id="lookState">保存済み</span></h3>
   <div class="look-names"><label>看板の上の小さな文字<input id="lookEyebrowIn" maxlength="30" autocomplete="off"></label><label>タイトル<input id="lookTitleIn" maxlength="30" autocomplete="off"></label><label>サブタイトル<input id="lookSubIn" maxlength="80" autocomplete="off"></label></div>
@@ -709,6 +714,8 @@ async function playBgm(b,{restart=false,quiet=false}={}){
  }catch(e){console.error(e);if(serial===bgmSerial){bgmError=(b.name||'BGM')+'：'+(e.userMessage||'再生できませんでした');if(!quiet)toast(bgmError,6000)}}
  finally{if(serial===bgmSerial){bgmPendingId=null;bgmLoadingId=null}renderBgmNow()}
 }
+// 効果音（絵文字・文字）と環境音だけを止める。BGMとボイスは止めない
+function stopSeEnv(){const list=[...active].filter(a=>['emoji','text','env'].includes(a.soundType));for(const s of cfg.sounds)if(['emoji','text','env'].includes(s.type))soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);pendingText.clear();list.forEach(x=>fadeStop(x,.3));toast(list.length?'効果音と環境音を止めました':'鳴っている効果音・環境音はありません')}
 function stopAll(){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;for(const s of cfg.sounds)soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);pendingText.clear();const sounds=[...active];if(bgmPlaying)sounds.push(bgmPlaying);sounds.forEach(x=>fadeStop(x,.42));toast('すべての音をフェードアウトしました')}
 // 録音欄のBGM表示
 let bgmAnalyser=null;const bgmBuf=new Float32Array(2048);
@@ -1775,11 +1782,12 @@ function clearPageHash(){
  pageOverride='main';
 }
 let pageOverride=null;
-function applyPage(){const pg=pageOverride||(location.hash==='#settings'?'settings':'main');pageOverride=null;if(pg==='settings')stopFilmPreview();document.body.dataset.page=pg;$('#navMain').classList.toggle('on',pg==='main');$('#navSettings').classList.toggle('on',pg==='settings');window.scrollTo(0,0)}
+function applyPage(){const pg=pageOverride||(location.hash==='#settings'?'settings':'main');pageOverride=null;if(pg!=='settings')stopFilmPreview();document.body.dataset.page=pg;$('#navMain').classList.toggle('on',pg==='main');$('#navSettings').classList.toggle('on',pg==='settings');window.scrollTo(0,0)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-goto]');if(!b)return;const pg=b.dataset.goto;if(pg==='settings'){if(location.hash!=='#settings')location.hash='settings'}else{if(location.hash==='#settings')clearPageHash();applyPage()}});
 window.addEventListener('hashchange',applyPage);applyPage();
 $('#trySe').onclick=()=>{const s=cfg.sounds.find(x=>x.type==='emoji'&&x.assetId&&x.tabIndex===emojiTab)||cfg.sounds.find(x=>x.type!=='voice'&&x.assetId);if(s)playSound(s);else toast('登録済みの効果音がありません')};
 $('#tryVo').onclick=()=>{const s=cfg.sounds.find(x=>x.type==='voice'&&x.assetId);if(s)playSound(s);else toast('登録済みのボイスがありません')};
+$('#tryEnv').onclick=()=>{const on=[...active].filter(a=>a.soundType==='env');if(on.length){on.forEach(a=>fadeStop(a,.4));return}const s=cfg.sounds.find(x=>x.type==='env'&&x.assetId);if(s)playSound(s);else toast('登録済みの環境音がありません')};
 $('#tryBgm').onclick=()=>{if(bgmPlaying||bgmLoadingId){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;if(bgmPlaying)fadeStop(bgmPlaying,.4);renderBgmNow();return}const b=progBgm()||cfg.bgms.find(x=>x.assetId);if(b)playBgm(b);else toast('登録済みのBGMがありません')};
 /* ===================== スクロール中の小さな録音欄・BGM欄への移動 ===================== */
 let miniOn=false;
@@ -1792,7 +1800,7 @@ function syncMini(){
 }
 function setMini(on){miniOn=on;$('#miniBar').hidden=!on;if(on)syncMini()}
 if('IntersectionObserver' in window){new IntersectionObserver(([e])=>setMini(!e.isIntersecting&&e.boundingClientRect.top<0),{threshold:0}).observe(document.querySelector('.recbar'))}
-$('#miniRec').onclick=()=>$('#recBtn').click();$('#miniStop').onclick=()=>$('#stopRecBtn').click();$('#miniRetake').onclick=()=>$('#retakeBtn').click();$('#miniBgmBtn').onclick=()=>$('#bgmNowStop').click();
+$('#miniRec').onclick=()=>$('#recBtn').click();$('#miniStop').onclick=()=>$('#stopRecBtn').click();$('#miniRetake').onclick=()=>$('#retakeBtn').click();$('#miniSeStop').onclick=stopSeEnv;$('#miniBgmBtn').onclick=()=>$('#bgmNowStop').click();
 function gotoBgm(){
  if(document.body.dataset.page==='settings'){clearPageHash();applyPage()}
  const sec=$('#bgmTabs').closest('.section');const y=sec.getBoundingClientRect().top+scrollY;
@@ -1808,7 +1816,7 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){el.onclick=gotoBgm;el.onke
   if(takes.some(t=>t.status==='recovered'))toast('前回途中で終了した録音を復旧しました',4000)}
  updateStorage();
  if(!navigator.mediaDevices?.getUserMedia){$('#micBtn').disabled=true;$('#micInfo').textContent='このブラウザではマイクを使えません'}
- else{try{const st=await navigator.permissions?.query?.({name:'microphone'});if(st?.state==='granted')enableMic(true)}catch(_){}}
+ else{let st=null;try{st=await navigator.permissions?.query?.({name:'microphone'})}catch(_){}if(st?.state==='denied')toast('マイクの使用がブロックされています。アドレスバーのサイト設定から許可してください',6000);else enableMic(true)}
  document.addEventListener('pointerdown',()=>{if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})});
  navigator.mediaDevices?.addEventListener?.('devicechange',()=>{listMics();if(micStream&&!micLive())enableMic(true)});
  setTimeout(preloadProgBgm,1500);renderBgmNow();if(db)await migrateProgCovers().catch(e=>console.error(e));renderPrograms();detectOutput();navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
