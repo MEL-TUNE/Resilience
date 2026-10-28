@@ -222,7 +222,7 @@ body{background:var(--bg)}
 #lookState.dirty{color:var(--rec);font-weight:700}
 
 /* 純喫茶：紙のメニュー、深緑の看板、真鍮の縁取り */
-body{background-color:var(--bg);background-image:repeating-linear-gradient(90deg,transparent 0 47px,color-mix(in srgb,var(--ink) 3%,transparent) 47px 48px);line-height:1.55}
+body{background:var(--bg);line-height:1.55}
 .app{width:min(100%,760px);padding:28px 18px 36px;gap:22px}
 .top{position:relative;overflow:hidden;padding:26px 20px 20px;border:1px solid var(--decor);border-radius:3px;background:var(--accent);color:var(--on-accent);box-shadow:inset 0 0 0 5px var(--accent),inset 0 0 0 6px var(--decor),0 8px 20px #2a201815}
 .shop-eyebrow{font:10px Georgia,serif;letter-spacing:.29em;opacity:.85}.top h1{margin-top:10px}
@@ -312,7 +312,7 @@ let look=lookLoad();lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">RADIO &amp; SOUND</div><h1 id="appTitle">純喫茶オトノハ</h1><p><span id="appSub"></span> <span class="ver">改良版 0.2</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" id="navMain">収録画面</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">RADIO &amp; SOUND</div><h1 id="appTitle">純喫茶オトノハ</h1><p><span id="appSub"></span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" id="navMain">収録画面</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><div class="content recbar-in">
@@ -426,7 +426,7 @@ let look=lookLoad();lookPaint(look);
   <div class="film-controls">
    <label>季節の演出<select id="videoEffect"><option value="none">なし（静止画）</option><option value="spring">春：はらはら桜</option><option value="summer">夏：ぷくぷくソーダ</option><option value="autumn">秋：ころころ木の実</option><option value="winter">冬：ふわふわ白雪</option></select></label>
    <label>動かすもの<select id="effectSource"><option value="default">季節の絵（標準）</option><option value="image">好きな画像</option></select></label>
-   <label>映像のなめらかさ<select id="videoFps"><option value="8">8コマ / 秒（いちばん軽い）</option><option value="10">10コマ / 秒（軽い）</option><option value="12">12コマ / 秒</option><option value="24">24コマ / 秒</option><option value="30">30コマ / 秒（なめらか）</option></select></label>
+   <label>映像のなめらかさ<select id="videoFps"><option value="8">8コマ / 秒（軽い）</option><option value="15">15コマ / 秒（ふつう）</option><option value="30">30コマ / 秒（なめらか）</option></select></label>
    <label>量 <output id="effectCountVal"></output><input id="effectCount" type="range" min="10" max="120" step="5" value="45"></label>
    <label>速さ <output id="effectSpeedVal"></output><input id="effectSpeed" type="range" min="20" max="180" step="5" value="60"></label>
    <label>大きさ <output id="effectScaleVal"></output><input id="effectScale" type="range" min="30" max="160" step="5" value="70"></label>
@@ -487,7 +487,7 @@ const emojiLabels=Array(EMOJI_SLOTS).fill(''), textLabels=Array(TEXT_SLOTS).fill
 const LEGACY_PRESET_LABELS=new Set(['👏','💖','😂','😢','💪','✨','🔔','✅','🌿','🦌','🍪','📚','🌟','🌸','📯','⭕','✖️','🎹','🫢','🪨','🪞','🥊','💥','🎉','📛取得','📛進化','長攻撃','吹雪','扉開け','扉閉じ','拍手','正解','退場']);
 const BGM_TAB_DEFAULTS=['明るい','穏やか','切ない','緊張','その他'], TEXT_TAB_DEFAULTS=['標準','感謝','力業','1','2'], EMOJI_TAB_DEFAULTS=[...TEXT_TAB_DEFAULTS];
 const LEGACY_EMOJI_TABS=['標準','感謝','力業','1','2','その他'];
-const REC_DEFAULTS={micVolume:100,micId:'',ec:false,ns:false,agc:false,monitor:false,limiter:true,duck:true,duckDepth:10,duckThresh:-42,keepVoice:true,keepProg:false,normalize:false,mp3Rate:192,monitorMode:'auto',previewFull:true,bgmLevel:true,bgmLowLevel:35,fadeSec:3,fadeOnStop:true,coverFit:'cover',videoSize:1080,videoEffect:'none',effectSource:'default',videoFps:24,effectCount:45,effectSpeed:60,effectScale:70,effectOpacity:75};
+const REC_DEFAULTS={micVolume:100,micId:'',ec:false,ns:false,agc:false,monitor:false,limiter:true,duck:true,duckDepth:10,duckThresh:-42,keepVoice:true,keepProg:false,normalize:false,mp3Rate:192,monitorMode:'auto',previewFull:true,bgmLevel:true,bgmLowLevel:35,fadeSec:3,fadeOnStop:true,coverFit:'cover',videoSize:1080,videoEffect:'none',effectSource:'default',videoFps:15,effectCount:45,effectSpeed:60,effectScale:70,effectOpacity:75};
 const id=()=>globalThis.crypto?.randomUUID?.()||'s'+Date.now().toString(36)+Math.random().toString(36).slice(2);
 const graphemes=s=>[...new Intl.Segmenter('ja',{granularity:'grapheme'}).segment(String(s))].map(x=>x.segment);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -514,7 +514,7 @@ function normalize(raw){
  base.rec={...REC_DEFAULTS,...(raw.rec&&typeof raw.rec==='object'?raw.rec:{})};
  {const v=base.rec.videoEffect;if(v==='snow'){base.rec.videoEffect='winter'}else if(v==='image'){base.rec.videoEffect='winter';base.rec.effectSource='image'}else if(!['none','spring','summer','autumn','winter'].includes(v))base.rec.videoEffect='none';if(!['default','image'].includes(base.rec.effectSource))base.rec.effectSource='default'}
  for(const [k,min,max] of [['effectCount',10,120],['effectSpeed',20,180],['effectScale',30,160],['effectOpacity',10,100]])base.rec[k]=Number.isFinite(+base.rec[k])?Math.max(min,Math.min(max,+base.rec[k])):REC_DEFAULTS[k];
- base.rec.videoFps=[8,10,12,24,30].includes(+base.rec.videoFps)?+base.rec.videoFps:24;base.rec.videoSize=+base.rec.videoSize===720?720:1080;
+ {const f=+base.rec.videoFps;base.rec.videoFps=!(f>0)?15:f<=10?8:f<=20?15:30}base.rec.videoSize=+base.rec.videoSize===720?720:1080;
  if(Array.isArray(raw.programs)&&raw.programs.length){const defs=defaultPrograms(),used=new Set(raw.programs.map(x=>x&&x.id));const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...defs[i],...x}));for(const d of defs){if(kept.length>=PROGRAMS)break;if(!used.has(d.id))kept.push(d)}base.programs=kept}
  base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<PROGRAMS?raw.currentProgram:(raw.currentProgram===-1?-1:0);
  if(Array.isArray(raw.sounds)&&raw.sounds.some(x=>x.emoji)&&!raw.sounds.some(x=>x.type)){
