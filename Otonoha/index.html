@@ -256,6 +256,15 @@ body:has(.modal-back.open){overflow:hidden}a{color:var(--accent)}.footer{font-si
 #voiceGrid .voice-pad.loaded{background-color:transparent;background-size:cover;background-repeat:no-repeat;background-position:center;padding:0}
 /* 見出しはすべて太字 */
 .menu-heading span,.section-title h2,.panel h3,.modal h2,.film-panel h3{font-weight:700}
+/* 全音停止：大きく、押しやすく */
+.head-btns .stop-all{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:800;font-size:13px;min-height:40px;padding:8px 14px;letter-spacing:.04em}
+.head-btns .stop-all:active{transform:scale(.97)}
+/* 絵文字の見出しの隣の「再生中に押したら」 */
+.emoji-head-controls .play-mode{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:10.5px;font-weight:700;color:var(--muted)}
+.emoji-head-controls .play-mode select{border:1.5px solid var(--line);border-radius:4px;background:var(--hi);padding:4px 6px;font-size:12px;color:var(--ink);font-weight:400}
+.section-title:has(.emoji-head-controls){align-items:flex-end}
+/* マイク欄へ案内したときの目印 */
+.panel.flash{animation:panelflash 1.6s ease-out 2}@keyframes panelflash{0%{box-shadow:0 0 0 4px var(--rec)}100%{box-shadow:0 0 0 0 transparent}}
 </style>
 <script>
 'use strict';
@@ -304,7 +313,7 @@ let look=lookLoad();lookPaint(look);
 <!-- 1. 録音（画面上部に固定） -->
 <section class="shell recbar" aria-label="録音"><div class="content recbar-in">
  <div class="prog-row"><div class="prog-chips" id="progChips" role="tablist" aria-label="番組"></div><button class="btn gold" type="button" id="progEdit" hidden>番組の設定</button></div>
- <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><div class="head-btns"><button class="pill" type="button" id="monBtn" title="ヘッドホン・スピーカーから出す音のオン／オフ（録音には影響しません）">モニター音：オン</button><button class="pill danger" id="stopAll">■ 全音停止</button></div></div>
+ <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><div class="head-btns"><button class="pill stop-all" type="button" id="stopAll" title="鳴っている効果音・BGM・環境音を、すべてフェードして止めます">■ 全音停止</button><button class="pill" type="button" id="monBtn" title="ヘッドホン・スピーカーから出す音のオン／オフ（録音には影響しません）">モニター音：オン</button></div></div>
  <div class="transport">
   <button class="tbtn recbtn" id="recBtn">● 録音開始</button>
   <button class="tbtn" id="stopRecBtn" disabled>■ 停止・保存</button>
@@ -326,11 +335,11 @@ let look=lookLoad();lookPaint(look);
 </div></div>
 <!-- 2. 効果音・BGM -->
 <main class="shell" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span></div>
-<section class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><label class="play-mode" for="playMode">再生中に押したら<select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></label><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
 <section class="section"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
-<section class="section"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
-<section class="section"><div class="section-title"><h2>環境音 <span>04 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
-<section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。最後の行まで埋まると枠が1行増えます。</p></section>
+<section class="section"><div class="section-title"><h2>BGM <span>04 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>環境音 <span>05 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
 </div></main>
 
 <!-- 3. 収録したテイク -->
@@ -356,7 +365,7 @@ let look=lookLoad();lookPaint(look);
   <div class="film-controls">
    <label>季節の演出<select id="videoEffect"><option value="none">なし（静止画）</option><option value="spring">春：はらはら桜</option><option value="summer">夏：ぷくぷくソーダ</option><option value="autumn">秋：ころころ木の実</option><option value="winter">冬：ふわふわ白雪</option></select></label>
    <label>動かすもの<select id="effectSource"><option value="default">季節の絵（標準）</option><option value="image">好きな画像</option></select></label>
-   <label>映像のなめらかさ<select id="videoFps"><option value="24">24コマ / 秒</option><option value="30">30コマ / 秒</option></select></label>
+   <label>映像のなめらかさ<select id="videoFps"><option value="8">8コマ / 秒（いちばん軽い）</option><option value="10">10コマ / 秒（軽い）</option><option value="12">12コマ / 秒</option><option value="24">24コマ / 秒</option><option value="30">30コマ / 秒（なめらか）</option></select></label>
    <label>量 <output id="effectCountVal"></output><input id="effectCount" type="range" min="10" max="120" step="5" value="45"></label>
    <label>速さ <output id="effectSpeedVal"></output><input id="effectSpeed" type="range" min="20" max="180" step="5" value="60"></label>
    <label>大きさ <output id="effectScaleVal"></output><input id="effectScale" type="range" min="30" max="160" step="5" value="70"></label>
@@ -376,15 +385,6 @@ let look=lookLoad();lookPaint(look);
 <!-- 4. 設定（音量・マイクなど） -->
 <section class="shell" id="settingsShell"><div class="content desk">
  <div class="section-title" style="margin:0"><h2>設定</h2><button class="btn primary" type="button" data-goto="main">← 収録画面に戻る</button></div>
-
- <section class="panel" aria-labelledby="lookTitle">
-  <h3 id="lookTitle">名前と着せ替え <span id="lookState">保存済み</span></h3>
-  <div class="look-names"><label>看板の上の小さな文字<input id="lookEyebrowIn" maxlength="30" autocomplete="off"></label><label>タイトル<input id="lookTitleIn" maxlength="30" autocomplete="off"></label><label>サブタイトル<input id="lookSubIn" maxlength="80" autocomplete="off"></label></div>
-  <div class="look-presets" id="lookPresets" role="radiogroup" aria-label="配色"></div>
-  <div class="look-colors"><label>地<input type="color" data-look="bg"></label><label>面<input type="color" data-look="paper"></label><label>差し色<input type="color" data-look="accent"></label><label>装飾<input type="color" data-look="decor"></label></div>
-  <p class="note">変更はすぐ画面に反映されます（収録画面でも確かめられます）。「保存」を押すまでは仮の表示で、ページを開き直すと保存済みの状態に戻ります。4色のどれかを変えると「カスタム」になります。文字の色は、背景の明るさから自動で決まります。</p>
-  <div class="end-row"><button class="btn primary" type="button" id="lookSave">保存</button><button class="btn" type="button" id="lookRevert">変更を取り消す</button><button class="btn" type="button" id="lookReset">初期状態に戻す</button></div>
- </section>
 
  <section class="panel" aria-labelledby="mixTitle">
   <h3 id="mixTitle">音量 <span>ヘッドホン音量は録音に影響しません</span></h3>
@@ -434,6 +434,15 @@ let look=lookLoad();lookPaint(look);
   <p class="note" id="micHelp">開くたびにマイクの許可を求められる場合は、許可の画面で「サイトにアクセスしている間は許可する」（Chrome）を選ぶか、ブラウザのサイト設定でマイクを「許可」にすると、次回から自動でつながります。</p>
  </section>
 
+ <section class="panel" aria-labelledby="lookTitle">
+  <h3 id="lookTitle">名前と着せ替え <span id="lookState">保存済み</span></h3>
+  <div class="look-names"><label>看板の上の小さな文字<input id="lookEyebrowIn" maxlength="30" autocomplete="off"></label><label>タイトル<input id="lookTitleIn" maxlength="30" autocomplete="off"></label><label>サブタイトル<input id="lookSubIn" maxlength="80" autocomplete="off"></label></div>
+  <div class="look-presets" id="lookPresets" role="radiogroup" aria-label="配色"></div>
+  <div class="look-colors"><label>地<input type="color" data-look="bg"></label><label>面<input type="color" data-look="paper"></label><label>差し色<input type="color" data-look="accent"></label><label>装飾<input type="color" data-look="decor"></label></div>
+  <p class="note">変更はすぐ画面に反映されます（収録画面でも確かめられます）。「保存」を押すまでは仮の表示で、ページを開き直すと保存済みの状態に戻ります。4色のどれかを変えると「カスタム」になります。文字の色は、背景の明るさから自動で決まります。</p>
+  <div class="end-row"><button class="btn primary" type="button" id="lookSave">保存</button><button class="btn" type="button" id="lookRevert">変更を取り消す</button><button class="btn" type="button" id="lookReset">初期状態に戻す</button></div>
+ </section>
+
  <section class="panel" aria-labelledby="fileTitle">
   <h3 id="fileTitle">設定ファイル <span>別の端末への引き継ぎ用</span></h3>
   <div class="end-row"><button class="btn" id="exportBtn">設定を書き出す</button><button class="btn" id="importBtn">設定を読み込む</button></div>
@@ -468,7 +477,7 @@ let look=lookLoad();lookPaint(look);
 /* ===================== 基本・保存 ===================== */
 const $=s=>document.querySelector(s), DB_NAME='meltune-kissa-studio-db';
 const KEY='meltune-kissa-studio-config-v1';
-const TABS=5,EMOJI_SLOTS=42,TEXT_SLOTS=25,BGM_SLOTS=20,VOICE_SLOTS=15,ENV_SLOTS=8;
+const TABS=5,EMOJI_SLOTS=42,TEXT_SLOTS=15,BGM_SLOTS=20,VOICE_SLOTS=10,ENV_SLOTS=8;
 const emojiLabels=Array(EMOJI_SLOTS).fill(''), textLabels=Array(TEXT_SLOTS).fill('');
 const LEGACY_PRESET_LABELS=new Set(['👏','💖','😂','😢','💪','✨','🔔','✅','🌿','🦌','🍪','📚','🌟','🌸','📯','⭕','✖️','🎹','🫢','🪨','🪞','🥊','💥','🎉','📛取得','📛進化','長攻撃','吹雪','扉開け','扉閉じ','拍手','正解','退場']);
 const BGM_TAB_DEFAULTS=['明るい','穏やか','切ない','緊張','その他'], TEXT_TAB_DEFAULTS=['標準','感謝','力業','1','2'], EMOJI_TAB_DEFAULTS=[...TEXT_TAB_DEFAULTS];
@@ -500,7 +509,7 @@ function normalize(raw){
  base.rec={...REC_DEFAULTS,...(raw.rec&&typeof raw.rec==='object'?raw.rec:{})};
  {const v=base.rec.videoEffect;if(v==='snow'){base.rec.videoEffect='winter'}else if(v==='image'){base.rec.videoEffect='winter';base.rec.effectSource='image'}else if(!['none','spring','summer','autumn','winter'].includes(v))base.rec.videoEffect='none';if(!['default','image'].includes(base.rec.effectSource))base.rec.effectSource='default'}
  for(const [k,min,max] of [['effectCount',10,120],['effectSpeed',20,180],['effectScale',30,160],['effectOpacity',10,100]])base.rec[k]=Number.isFinite(+base.rec[k])?Math.max(min,Math.min(max,+base.rec[k])):REC_DEFAULTS[k];
- base.rec.videoFps=+base.rec.videoFps===30?30:24;base.rec.videoSize=+base.rec.videoSize===720?720:1080;
+ base.rec.videoFps=[8,10,12,24,30].includes(+base.rec.videoFps)?+base.rec.videoFps:24;base.rec.videoSize=+base.rec.videoSize===720?720:1080;
  if(Array.isArray(raw.programs)&&raw.programs.length){const defs=defaultPrograms(),used=new Set(raw.programs.map(x=>x&&x.id));const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...defs[i],...x}));for(const d of defs){if(kept.length>=PROGRAMS)break;if(!used.has(d.id))kept.push(d)}base.programs=kept}
  base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<PROGRAMS?raw.currentProgram:(raw.currentProgram===-1?-1:0);
  if(Array.isArray(raw.sounds)&&raw.sounds.some(x=>x.emoji)&&!raw.sounds.some(x=>x.type)){
@@ -555,7 +564,7 @@ function ensureGrid(config,type,SL,tabs=TABS){
  return config;
 }
 // 効果音はタブなしの一続きの並び。以前のタブは「タブごとにまとめて、行の頭から」順に並べ直す
-const SE_COLS={emoji:6,text:5},SE_MIN={emoji:EMOJI_SLOTS,text:TEXT_SLOTS},SE_MAX=600;
+const SE_COLS={emoji:6,text:5,voice:5},SE_MIN={emoji:EMOJI_SLOTS,text:TEXT_SLOTS,voice:VOICE_SLOTS},SE_MAX=600;
 const isRealSound=s=>s.assetId||s.configured||s.imageId;
 function flattenSeTabs(config,type){
  const cols=SE_COLS[type],real=config.sounds.filter(s=>s.type===type&&isRealSound(s));
@@ -572,11 +581,11 @@ function flattenSeTabs(config,type){
 function seSlotsNeeded(config,type){const cols=SE_COLS[type];let max=-1;for(const s of config.sounds)if(s.type===type&&isRealSound(s)&&Number.isInteger(s.slotIndex))max=Math.max(max,s.slotIndex);return Math.min(SE_MAX,Math.max(SE_MIN[type],(Math.floor(max/cols)+2)*cols))}
 const ensureSe=(config,type)=>{flattenSeTabs(config,type);return ensureGrid(config,type,seSlotsNeeded(config,type),1)};
 // 最後の行まで埋まったら、空いた行を1行足す（既存の枠のIDは変えない）
-function growSe(){for(const type of ['emoji','text']){const have=cfg.sounds.filter(s=>s.type===type).length,need=seSlotsNeeded(cfg,type);for(let i=have;i<need;i++)cfg.sounds.push({...newSound(type,'',i),tabIndex:0,slotIndex:i})}}
+function growSe(){for(const type of ['emoji','text','voice']){const have=cfg.sounds.filter(s=>s.type===type).length,need=seSlotsNeeded(cfg,type);for(let i=have;i<need;i++)cfg.sounds.push({...newSound(type,'',i),tabIndex:0,slotIndex:i})}}
 const ensureEmojiSlots=config=>ensureSe(config,'emoji');
 // 文字の効果音とボイス（1タブ25枠）をまとめて整える
 function fixedSlots(config,type,min,cols){let max=-1;for(const s of config.sounds)if(s.type===type&&isRealSound(s)&&Number.isInteger(s.slotIndex))max=Math.max(max,s.slotIndex);const used=config.sounds.filter(s=>s.type===type&&isRealSound(s)).length;return Math.max(min,Math.ceil(Math.max(max+1,used)/cols)*cols)}
-const ensureTextSlots=config=>ensureGrid(ensureGrid(ensureSe(config,'text'),'voice',fixedSlots(config,'voice',VOICE_SLOTS,5),1),'env',fixedSlots(config,'env',ENV_SLOTS,4),1);
+const ensureTextSlots=config=>ensureGrid(ensureSe(ensureSe(config,'text'),'voice'),'env',fixedSlots(config,'env',ENV_SLOTS,4),1);
 function ensureBgmSlots(config){
  const N=TABS*BGM_SLOTS,prior=(config.bgms||[]).filter(b=>b.assetId||b.name);
  const slots=Array.from({length:N},(_,i)=>newBgm(Math.floor(i/BGM_SLOTS),i%BGM_SLOTS)),taken=new Set();
@@ -992,11 +1001,18 @@ async function retakeInner(){
  await startRec({noAutoBgm:true});
  if(rec.state==='recording'){rec.take.startBgmId=b?b.id:null;idbPut('takes',rec.take.id,{...rec.take}).catch(()=>{});if(b)await playBgm(b,{restart:true});toast(b?`録り直し中（BGM「${b.name}」を頭から）`:'録り直し中',3500)}
 }
+// マイクにつながらなかったとき：設定画面のマイク欄を開き、「マイクを有効にする」を目立たせる
+function goMicSettings(){
+ if(location.hash!=='#settings')location.hash='settings';else applyPage();
+ setTimeout(()=>{const panel=$('#micTitle').closest('.panel'),btn=$('#micBtn');panel.scrollIntoView({behavior:'smooth',block:'center'});panel.classList.remove('flash');void panel.offsetWidth;panel.classList.add('flash');btn.focus({preventScroll:true})},80);
+ toast('マイクにつながりませんでした。「マイクを有効にする」を押して、許可の画面で「許可」を選んでください',8000);
+}
 async function startRec(opts={}){
  try{
-  audioEngine();await ctx.resume();await ensureRecorder();
-  if(!micLive())await enableMic();
-  if(!micLive()){toast('マイクがつながっていないため、録音を始めませんでした。マイクの許可や接続を確かめてから、もう一度「録音開始」を押してください',7000);return}
+  audioEngine();
+  if(!micLive()){toast('マイクに接続しています…',3000);await enableMic()}
+  if(!micLive()){goMicSettings();return}
+  await ctx.resume();await ensureRecorder();
   navigator.storage?.persist?.().catch(()=>{});
   try{const est=await navigator.storage?.estimate?.();if(est&&est.quota&&est.quota-est.usage<150*1048576)toast(`ブラウザの空き容量が少なくなっています（残り約${Math.max(0,Math.round((est.quota-est.usage)/1048576))}MB）。長い録音は途中で保存できなくなる可能性があります`,7000)}catch(_){}
   const tracks=['mix'];if(cfg.rec.keepVoice)tracks.push('voice');if(cfg.rec.keepProg)tracks.push('prog');
@@ -1349,7 +1365,7 @@ async function startFilmPreview(){
   if(settings.mode!=='none'&&settings.source==='image'){const b=await getAsset(EFFECT_ASSET);if(!b)throw Error('動かす画像を選んでください');image=await createImageBitmap(b)}
   if(token!==previewToken){image?.close();return}
   previewImage=image;const c=$('#filmPreview');c.hidden=false;$('#filmPreviewBtn').textContent='■ プレビューを止める';$('#filmPreviewBtn').setAttribute('aria-pressed','true');$('#filmStatus').textContent='共通サムネイルのプレビュー';
-  let started;const tick=now=>{if(token!==previewToken)return;started??=now;drawEffectFrame(c,base,matchMedia('(prefers-reduced-motion: reduce)').matches?0:(now-started)/1000,settings,image);previewRaf=requestAnimationFrame(tick)};
+  let started;const tick=now=>{if(token!==previewToken)return;started??=now;drawEffectFrame(c,base,(now-started)/1000,settings,image);previewRaf=requestAnimationFrame(tick)};
   previewRaf=requestAnimationFrame(tick);
  }catch(e){image?.close();if(token===previewToken){stopFilmPreview();$('#filmStatus').textContent=e.message}}
 }
