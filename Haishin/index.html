@@ -7,90 +7,194 @@
 <meta name="robots" content="noindex, nofollow">
 <title>配信処オトノハ</title>
 <style>
-
 :root{--a-p-12:color-mix(in srgb,var(--accent) 12%,var(--paper));--a-p-20:color-mix(in srgb,var(--accent) 20%,var(--paper));--a-p-45:color-mix(in srgb,var(--accent) 45%,var(--paper));--a-p-6:color-mix(in srgb,var(--accent) 6%,var(--paper));--a-p-60:color-mix(in srgb,var(--accent) 60%,var(--paper));--a-p-75:color-mix(in srgb,var(--accent) 75%,var(--paper));--a-p-88:color-mix(in srgb,var(--accent) 88%,var(--paper));--d-p-12:color-mix(in srgb,var(--decor) 12%,var(--paper));--d-p-20:color-mix(in srgb,var(--decor) 20%,var(--paper));--d-p-30:color-mix(in srgb,var(--decor) 30%,var(--paper));--d-p-45:color-mix(in srgb,var(--decor) 45%,var(--paper));--d-p-60:color-mix(in srgb,var(--decor) 60%,var(--paper));--d-p-75:color-mix(in srgb,var(--decor) 75%,var(--paper));--d-p-88:color-mix(in srgb,var(--decor) 88%,var(--paper));--h-bg-30:color-mix(in srgb,var(--hi) 30%,var(--bg));--i-a-30:color-mix(in srgb,var(--ink) 30%,var(--accent));--i-a-45:color-mix(in srgb,var(--ink) 45%,var(--accent));--i-a-6:color-mix(in srgb,var(--ink) 6%,var(--accent));--i-a-75:color-mix(in srgb,var(--ink) 75%,var(--accent));--i-a-88:color-mix(in srgb,var(--ink) 88%,var(--accent));--i-d-20:color-mix(in srgb,var(--ink) 20%,var(--decor));--i-d-6:color-mix(in srgb,var(--ink) 6%,var(--decor));--i-d-60:color-mix(in srgb,var(--ink) 60%,var(--decor));--i-p-12:color-mix(in srgb,var(--ink) 12%,var(--paper));--i-p-30:color-mix(in srgb,var(--ink) 30%,var(--paper));--i-p-60:color-mix(in srgb,var(--ink) 60%,var(--paper));--i-p-75:color-mix(in srgb,var(--ink) 75%,var(--paper));--i-p-88:color-mix(in srgb,var(--ink) 88%,var(--paper));--i-r-45:color-mix(in srgb,var(--ink) 45%,var(--rec));--i-w-30:color-mix(in srgb,var(--ink) 30%,var(--warn));--i-w-60:color-mix(in srgb,var(--ink) 60%,var(--warn));--i-w-75:color-mix(in srgb,var(--ink) 75%,var(--warn));--i-w-88:color-mix(in srgb,var(--ink) 88%,var(--warn));--p-h-60:color-mix(in srgb,var(--paper) 60%,var(--hi));--p-h-75:color-mix(in srgb,var(--paper) 75%,var(--hi));--p-h-88:color-mix(in srgb,var(--paper) 88%,var(--hi));--r-p-12:color-mix(in srgb,var(--rec) 12%,var(--paper));--r-p-30:color-mix(in srgb,var(--rec) 30%,var(--paper));--r-p-45:color-mix(in srgb,var(--rec) 45%,var(--paper));--r-p-6:color-mix(in srgb,var(--rec) 6%,var(--paper));--w-p-12:color-mix(in srgb,var(--warn) 12%,var(--paper));--w-p-45:color-mix(in srgb,var(--warn) 45%,var(--paper));--w-p-6:color-mix(in srgb,var(--warn) 6%,var(--paper));--w-p-75:color-mix(in srgb,var(--warn) 75%,var(--paper));--w-p-88:color-mix(in srgb,var(--warn) 88%,var(--paper));--a-p-20:color-mix(in srgb,var(--accent) 20%,var(--paper));--a-p-30:color-mix(in srgb,var(--accent) 30%,var(--paper));--bg:#dff0de;--paper:#f8fcf6;--accent:#56a678;--decor:#e04a5c;--on-decor:#fbf3e8;--ink:#3d2a22;--on-accent:#fffaf4;--hi:#ffffff;--shade:#2a2018;--rec:#c8463b;--warn:#d39a3a;--muted:var(--i-p-60);--leaf:var(--accent);--leaf-pale:var(--a-p-12);--gold:var(--decor);--cream:var(--paper);--line:var(--d-p-45);--rec-pale:var(--r-p-12);--shadow:0 10px 28px color-mix(in srgb,var(--shade) 13%,transparent);--title-font:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP",serif}
-[hidden]{display:none!important}*{box-sizing:border-box}html{background:var(--bg);touch-action:manipulation;-webkit-text-size-adjust:100%}button,input,select,label,a{touch-action:manipulation}body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--h-bg-30);min-height:100vh}button,input,select{font:inherit;color:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--a-p-88);outline-offset:2px}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{background:var(--bg);touch-action:manipulation;-webkit-text-size-adjust:100%}
+button,input,select,label,a{touch-action:manipulation}
+body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--h-bg-30);min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{cursor:default;opacity:.45}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--a-p-88);outline-offset:2px}
 .app{width:min(100%,1010px);margin:0 auto;padding:13px 10px 26px}
-.top{text-align:center;margin-bottom:12px}.top h1{margin:0;font-size:19px;letter-spacing:.02em}.top p{margin:4px 0 9px;color:var(--muted);font-size:11px}.tools{display:flex;justify-content:center;flex-wrap:wrap;gap:5px}
-.pill,.btn{border:1px solid var(--d-p-75);border-radius:999px;padding:7px 10px;background:var(--hi);font-size:11px;white-space:nowrap}.danger{color:var(--i-r-45);border-color:var(--r-p-30);background:var(--r-p-6)}.primary{border-color:var(--a-p-60);background:var(--a-p-6);font-weight:700}.gold{border-color:var(--d-p-75);background:var(--d-p-12);font-weight:700}
+.top{text-align:center;margin-bottom:12px}
+.top h1{margin:0;font-size:19px;letter-spacing:.02em}
+.top p{margin:4px 0 9px;color:var(--muted);font-size:11px}
+.tools{display:flex;justify-content:center;flex-wrap:wrap;gap:5px}
+.pill,.btn{border:1px solid var(--d-p-75);border-radius:999px;padding:7px 10px;background:var(--hi);font-size:11px;white-space:nowrap}
+.danger{color:var(--i-r-45);border-color:var(--r-p-30);background:var(--r-p-6)}
+.primary{border-color:var(--a-p-60);background:var(--a-p-6);font-weight:700}
+.gold{border-color:var(--d-p-75);background:var(--d-p-12);font-weight:700}
 .studio{display:grid;grid-template-columns:minmax(0,440px) minmax(0,470px);gap:16px;justify-content:center;align-items:start}
-@media(max-width:940px){.studio{grid-template-columns:minmax(0,470px)}}
-.shell{position:relative;border:7px solid var(--decor);border-radius:25px;padding:14px 11px 13px;background:var(--paper)}.content{position:relative;z-index:1}
-.section{margin-top:15px}.section:first-child{margin-top:4px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:8px}.section-title h2{font-size:15px;margin:0}.section-title span{font-size:10px;color:var(--muted);font-weight:400}.section-title .btn{flex-shrink:0}
-.chip{border:1px solid var(--d-p-60);border-radius:999px;padding:4px 9px;background:var(--paper);white-space:nowrap;font-size:10px}.chip.active{background:var(--a-p-20);border-color:var(--a-p-60);color:var(--i-a-75);font-weight:700}
+@media(max-width:940px){
+  .studio{grid-template-columns:minmax(0,470px)}
+}
+.shell{position:relative;border:7px solid var(--decor);border-radius:25px;padding:14px 11px 13px;background:var(--paper)}
+.content{position:relative;z-index:1}
+.section{margin-top:15px}
+.section:first-child{margin-top:4px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:8px}
+.section-title h2{font-size:15px;margin:0}
+.section-title span{font-size:10px;color:var(--muted);font-weight:400}
+.section-title .btn{flex-shrink:0}
+.chip{border:1px solid var(--d-p-60);border-radius:999px;padding:4px 9px;background:var(--paper);white-space:nowrap;font-size:10px}
+.chip.active{background:var(--a-p-20);border-color:var(--a-p-60);color:var(--i-a-75);font-weight:700}
 .bgm-tabs{display:flex;gap:4px;overflow-x:auto;padding:2px 1px 7px;scrollbar-width:thin}
 .emoji-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;grid-auto-rows:54px;align-content:start}
-.emoji-pad{position:relative;min-width:0;height:54px;border:1px solid var(--a-p-45);border-radius:12px;background:var(--hi);display:grid;place-items:center;font-size:25px;user-select:none}.emoji-pad.loaded{background:var(--paper);border-color:var(--a-p-60)}
-.emoji-pad.playing,.text-pad.playing{border-color:var(--i-a-6);}.emoji-pad:active,.text-pad:active{transform:scale(.96)}
+.emoji-pad{position:relative;min-width:0;height:54px;border:1px solid var(--a-p-45);border-radius:12px;background:var(--hi);display:grid;place-items:center;font-size:25px;user-select:none}
+.emoji-pad.loaded{background:var(--paper);border-color:var(--a-p-60)}
+.emoji-pad.playing,.text-pad.playing{border-color:var(--i-a-6);}
+.emoji-pad:active,.text-pad:active{transform:scale(.96)}
 .emoji-pad .shortcut,.text-pad .shortcut{position:absolute;bottom:2px;right:3px;color:var(--i-p-75);font-size:8px}
-.text-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;min-height:130px;align-content:start}.text-pad{position:relative;min-width:0;height:40px;padding:3px 5px;border:1px solid var(--d-p-88);border-radius:12px;background:var(--p-h-88);font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none}.text-pad.loaded{border-color:var(--i-d-20)}
+.text-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;min-height:130px;align-content:start}
+.text-pad{position:relative;min-width:0;height:40px;padding:3px 5px;border:1px solid var(--d-p-88);border-radius:12px;background:var(--p-h-88);font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none}
+.text-pad.loaded{border-color:var(--i-d-20)}
 .emoji-pad:not(.loaded),.text-pad:not(.loaded){background:var(--p-h-60);border-style:dashed;}
 .section-help{margin:6px 0 0;color:var(--i-p-60);font-size:10px;line-height:1.45}
-.bgm-list{display:grid;gap:5px}.bgm-card{border:1px solid var(--i-d-6);border-radius:11px;padding:3px 4px;min-height:60px;background:var(--w-p-6);}.bgm-card.active{border-color:var(--a-p-88);background:var(--a-p-6)}
-.bgm-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:stretch}.bgm-play{width:100%;min-height:34px;border:0;border-radius:8px;background:color-mix(in srgb,var(--w-p-6) 79%,transparent);display:flex;align-items:center;gap:6px;text-align:left;padding:2px 5px}.bgm-icon{width:25px;height:25px;flex:none;display:grid;place-items:center;border:1px solid var(--i-d-20);border-radius:7px;background:var(--w-p-45);color:var(--i-w-88);font-size:12px}.bgm-card.active .bgm-icon{background:var(--a-p-45);border-color:var(--a-p-88)}.bgm-name{font-size:11px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bgm-edit,.bgm-remove{border:1px solid var(--d-p-88);border-radius:8px;background:var(--paper);padding:0 7px;font-size:10px}.bgm-remove{color:var(--i-r-45);border-color:var(--r-p-30)}
-.bgm-bottom{display:flex;align-items:center;gap:6px;margin:2px 5px 0;font-size:10px;height:18px}.bgm-bottom input{flex:1;min-width:50px;accent-color:var(--i-w-30)}.bgm-bottom output{min-width:30px;text-align:right;font-variant-numeric:tabular-nums}
-.bgm-card.unset{border-style:dashed;background:var(--p-h-60);box-shadow:none}.bgm-card.unset .bgm-play{background:transparent}.bgm-card.unset .bgm-bottom{visibility:hidden}.bgm-card.unset .bgm-icon{visibility:hidden;width:0;border:0}
+.bgm-list{display:grid;gap:5px}
+.bgm-card{border:1px solid var(--i-d-6);border-radius:11px;padding:3px 4px;min-height:60px;background:var(--w-p-6);}
+.bgm-card.active{border-color:var(--a-p-88);background:var(--a-p-6)}
+.bgm-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px;align-items:stretch}
+.bgm-play{width:100%;min-height:34px;border:0;border-radius:8px;background:color-mix(in srgb,var(--w-p-6) 79%,transparent);display:flex;align-items:center;gap:6px;text-align:left;padding:2px 5px}
+.bgm-icon{width:25px;height:25px;flex:none;display:grid;place-items:center;border:1px solid var(--i-d-20);border-radius:7px;background:var(--w-p-45);color:var(--i-w-88);font-size:12px}
+.bgm-card.active .bgm-icon{background:var(--a-p-45);border-color:var(--a-p-88)}
+.bgm-name{font-size:11px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bgm-card.unset{border-style:dashed;background:var(--p-h-60);box-shadow:none}
+.bgm-card.unset .bgm-play{background:transparent}
+.bgm-card.unset .bgm-icon{visibility:hidden;width:0;border:0}
 /* ---- 収録卓 ---- */
-.desk{display:grid;gap:12px}.content.desk{padding:6px 6px 2px}
+.desk{display:grid;gap:12px}
+.content.desk{padding:6px 6px 2px}
 .rec-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.lamp{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper)}.lamp i{width:9px;height:9px;border-radius:50%;background:var(--i-p-30)}
-.lamp.ready i{background:var(--leaf)}.lamp.rec{border-color:var(--r-p-45);background:var(--rec-pale);color:var(--i-r-45)}.lamp.rec i{background:var(--rec);animation:blink 1s steps(2,start) infinite}.lamp.pause{border-color:var(--w-p-45);background:var(--w-p-12)}.lamp.pause i{background:var(--warn)}
-@keyframes blink{to{opacity:.25}}@media(prefers-reduced-motion:reduce){.lamp.rec i{animation:none}}
+.lamp{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper)}
+.lamp i{width:9px;height:9px;border-radius:50%;background:var(--i-p-30)}
+.lamp.ready i{background:var(--leaf)}
+.lamp.rec{border-color:var(--r-p-45);background:var(--rec-pale);color:var(--i-r-45)}
+.lamp.rec i{background:var(--rec);animation:blink 1s steps(2,start) infinite}
+.lamp.pause{border-color:var(--w-p-45);background:var(--w-p-12)}
+.lamp.pause i{background:var(--warn)}
+@keyframes blink{to{opacity:.25}}
+@media(prefers-reduced-motion:reduce){
+  .lamp.rec i{animation:none}
+}
 .timer{font:700 38px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;letter-spacing:.01em;text-align:center;padding:10px 0 2px}
 .timer small{font-size:18px;color:var(--muted)}
 .transport{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:6px}
 .tbtn{height:48px;border-radius:13px;border:1px solid var(--d-p-75);background:var(--hi);font-weight:800;font-size:13px}
-.tbtn.recbtn{border-color:var(--r-p-45);background:var(--r-p-6);color:var(--i-r-45)}.tbtn.recbtn.on{background:var(--w-p-6);border-color:var(--w-p-75);color:var(--i-w-75)}
+.tbtn.recbtn{border-color:var(--r-p-45);background:var(--r-p-6);color:var(--i-r-45)}
+.tbtn.recbtn.on{background:var(--w-p-6);border-color:var(--w-p-75);color:var(--i-w-75)}
 .tbtn:active{transform:scale(.98)}
 .panel{border:1px solid var(--d-p-60);border-radius:15px;background:var(--p-h-75);padding:9px 10px;display:grid;gap:7px}
-.panel h3{margin:0;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:6px}.panel h3 span{font-weight:400;color:var(--muted);font-size:10px}
-.mic-row{display:flex;gap:6px;align-items:center}.mic-row select{flex:1;min-width:0;border:1px solid var(--d-p-75);border-radius:8px;padding:6px;background:var(--hi);font-size:11px}
+.panel h3{margin:0;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.panel h3 span{font-weight:400;color:var(--muted);font-size:10px}
+.mic-row{display:flex;gap:6px;align-items:center}
+.mic-row select{flex:1;min-width:0;border:1px solid var(--d-p-75);border-radius:8px;padding:6px;background:var(--hi);font-size:11px}
 .meter-row{display:grid;grid-template-columns:80px minmax(0,1fr) 52px;gap:7px;align-items:center;font-size:11px;font-weight:700}
 .meter{position:relative;height:11px;border-radius:6px;background:var(--i-p-12);overflow:hidden;}
 .meter i{position:absolute;inset:0;background:#8db37d 0;clip-path:inset(0 100% 0 0)}
 .meter b{position:absolute;top:0;bottom:0;width:2px;background:var(--i-w-88);left:0;opacity:.7}
 .meter-row output{font-variant-numeric:tabular-nums;font-weight:400;text-align:right;font-size:10px;color:var(--muted)}
 .meter-row output.clip{color:var(--rec);font-weight:800}
-.volume-row{display:grid;grid-template-columns:78px minmax(0,1fr) 42px;gap:7px;align-items:center;font-size:11px;font-weight:700}.volume-row input{width:100%;accent-color:var(--a-p-88)}.volume-row output{font-variant-numeric:tabular-nums;color:var(--i-a-45);text-align:right;font-weight:400}
-.opts{display:flex;flex-wrap:wrap;gap:5px 12px;font-size:11px}.opts label{display:inline-flex;align-items:center;gap:4px}.opts input{accent-color:var(--a-p-88)}
+.volume-row{display:grid;grid-template-columns:78px minmax(0,1fr) 42px;gap:7px;align-items:center;font-size:11px;font-weight:700}
+.volume-row input{width:100%;accent-color:var(--a-p-88)}
+.volume-row output{font-variant-numeric:tabular-nums;color:var(--i-a-45);text-align:right;font-weight:400}
+.opts{display:flex;flex-wrap:wrap;gap:5px 12px;font-size:11px}
+.opts label{display:inline-flex;align-items:center;gap:4px}
+.opts input{accent-color:var(--a-p-88)}
 .note{margin:0;font-size:10px;color:var(--i-p-60);line-height:1.5}
-.duck-state{font-size:10px;color:var(--muted);font-weight:400}.duck-state.on{color:var(--i-a-45);font-weight:700}
+.duck-state{font-size:10px;color:var(--muted);font-weight:400}
+.duck-state.on{color:var(--i-a-45);font-weight:700}
 .takes{display:grid;gap:7px}
-.end-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}.end-row select{border:1px solid var(--d-p-75);border-radius:8px;padding:5px;background:var(--hi);font-size:11px}
+.end-row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.end-row select{border:1px solid var(--d-p-75);border-radius:8px;padding:5px;background:var(--hi);font-size:11px}
 #bgmLowBtn.on{border-color:var(--a-p-88);background:var(--a-p-6)}
 .cover-row{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;align-items:start;border:1px solid var(--d-p-60);border-radius:13px;background:var(--p-h-75);padding:8px}
 .cover-thumb{width:96px;aspect-ratio:1;max-width:100%;border:1px dashed var(--d-p-88);border-radius:10px;background:var(--d-p-12) center/cover no-repeat;display:grid;place-items:center;font-size:10px;color:var(--muted);overflow:hidden}
 .cover-thumb.set{border-style:solid;color:transparent}
-.cover-ctl{display:grid;gap:5px;font-size:11px;min-width:0}.cover-ctl strong{font-size:12px}.cover-ctl select{border:1px solid var(--d-p-75);border-radius:8px;padding:4px;background:var(--hi);font-size:11px;max-width:100%}.cover-ctl .btns{display:flex;gap:4px;flex-wrap:wrap}
+.cover-ctl{display:grid;gap:5px;font-size:11px;min-width:0}
+.cover-ctl strong{font-size:12px}
+.cover-ctl select{border:1px solid var(--d-p-75);border-radius:8px;padding:4px;background:var(--hi);font-size:11px;max-width:100%}
+.cover-ctl .btns{display:flex;gap:4px;flex-wrap:wrap}
 .take-cover{width:38px;height:38px;flex:none;border:1px dashed var(--d-p-88);border-radius:8px;background:var(--d-p-12) center/cover no-repeat;font-size:9px;color:var(--muted);padding:0}
-.take-cover.own{border-style:solid;border-color:var(--a-p-88)}.take-cover.inherit{opacity:.55}
+.take-cover.own{border-style:solid;border-color:var(--a-p-88)}
+.take-cover.inherit{opacity:.55}
 .take{border:1px solid var(--d-p-60);border-radius:13px;background:var(--p-h-75);padding:8px 9px;display:grid;gap:6px}
 .take.live{border-color:var(--r-p-45);background:var(--paper)}
 .take-top{display:flex;gap:6px;align-items:center}
-.take-name{flex:1;min-width:0;border:1px solid transparent;border-radius:7px;background:transparent;font-weight:800;font-size:13px;padding:3px 4px}.take-name:hover,.take-name:focus{border-color:var(--d-p-75);background:var(--hi)}
+.take-name{flex:1;min-width:0;border:1px solid transparent;border-radius:7px;background:transparent;font-weight:800;font-size:13px;padding:3px 4px}
+.take-name:hover,.take-name:focus{border-color:var(--d-p-75);background:var(--hi)}
 .take-meta{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
 .take-meta .warn{color:var(--i-r-45);font-weight:700}
 .take audio{width:100%;height:34px}
-.take-actions{display:flex;flex-wrap:wrap;gap:4px}.take-actions .btn{padding:6px 9px;font-size:10.5px}
+.take-actions{display:flex;flex-wrap:wrap;gap:4px}
+.take-actions .btn{padding:6px 9px;font-size:10.5px}
 .take-progress{font-size:10px;color:var(--i-a-45);font-weight:700}
-.markers{font-size:10.5px}.markers summary{cursor:pointer;color:var(--muted)}.markers ol{margin:5px 0 0;padding-left:0;list-style:none;display:grid;gap:2px;font-variant-numeric:tabular-nums}.markers li{display:flex;gap:8px}.markers li time{color:var(--i-a-45);font-weight:700;min-width:58px}
+.markers{font-size:10.5px}
+.markers summary{cursor:pointer;color:var(--muted)}
+.markers ol{margin:5px 0 0;padding-left:0;list-style:none;display:grid;gap:2px;font-variant-numeric:tabular-nums}
+.markers li{display:flex;gap:8px}
+.markers li time{color:var(--i-a-45);font-weight:700;min-width:58px}
 .empty{padding:15px 9px;text-align:center;color:var(--i-p-60);border:1px dashed var(--d-p-75);border-radius:12px;font-size:11px;line-height:1.6}
-.export-opts{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:11px}.export-opts select{border:1px solid var(--d-p-75);border-radius:8px;padding:4px;background:var(--hi);font-size:11px}
+.export-opts{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:11px}
+.export-opts select{border:1px solid var(--d-p-75);border-radius:8px;padding:4px;background:var(--hi);font-size:11px}
 .storage{font-size:10px;color:var(--muted);text-align:right}
 .footer{text-align:center;color:var(--i-p-60);font-size:10px;line-height:1.6;margin:14px 5px 0}
-.modal-back{position:fixed;inset:0;background:#2d281fba;display:none;align-items:center;justify-content:center;padding:13px;z-index:10}.modal-back.open{display:flex}.modal{width:min(420px,100%);max-height:90vh;overflow-y:auto;border:6px solid var(--decor);border-radius:22px;background:var(--p-h-60);padding:17px;box-shadow:0 20px 50px #211a0e77}.modal h2{font-size:18px;margin:0 0 12px}.field{display:grid;gap:6px;margin:11px 0}.field label{font-size:12px;font-weight:700}.field input,.field select{width:100%;border:1px solid var(--d-p-75);border-radius:10px;background:var(--hi);padding:9px}.field input[type=range]{padding:0;accent-color:var(--a-p-88)}.field input[type=file]{padding:6px}.field small{color:var(--i-p-75);font-size:10px;line-height:1.4}.filebox{background:var(--paper);border:1px dashed var(--d-p-88);border-radius:10px;padding:8px}.modal-actions{display:flex;justify-content:space-between;gap:7px;align-items:center;margin-top:14px;flex-wrap:wrap}.modal-actions .btn{font-size:12px}.actions-right{display:flex;gap:6px}.move-row{display:flex;gap:7px}.move-row button{flex:1}
+.modal-back{position:fixed;inset:0;background:#2d281fba;display:none;align-items:center;justify-content:center;padding:13px;z-index:10}
+.modal-back.open{display:flex}
+.modal{width:min(420px,100%);max-height:90vh;overflow-y:auto;border:6px solid var(--decor);border-radius:22px;background:var(--p-h-60);padding:17px;box-shadow:0 20px 50px #211a0e77}
+.modal h2{font-size:18px;margin:0 0 12px}
+.field{display:grid;gap:6px;margin:11px 0}
+.field label{font-size:12px;font-weight:700}
+.field input,.field select{width:100%;border:1px solid var(--d-p-75);border-radius:10px;background:var(--hi);padding:9px}
+.field input[type=range]{padding:0;accent-color:var(--a-p-88)}
+.field input[type=file]{padding:6px}
+.field small{color:var(--i-p-75);font-size:10px;line-height:1.4}
+.filebox{background:var(--paper);border:1px dashed var(--d-p-88);border-radius:10px;padding:8px}
+.modal-actions{display:flex;justify-content:space-between;gap:7px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.modal-actions .btn{font-size:12px}
+.actions-right{display:flex;gap:6px}
+.move-row{display:flex;gap:7px}
+.move-row button{flex:1}
 .category-list{display:grid;gap:7px}
-.category-line.moved input{animation:rowflash .7s ease-out}@keyframes rowflash{0%{background:var(--a-p-20);border-color:var(--a-p-88)}100%{background:var(--hi)}}
-@media(max-width:480px){.section-help,.note,.take-meta,.category-note{font-size:11.5px;line-height:1.55}.chip{font-size:11.5px;padding:5px 10px}.meters .meter-row{font-size:11px}.bgm-tabs{gap:5px}}
-@media(pointer:coarse){input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea{font-size:16px!important}}.category-line{display:grid!important;grid-template-columns:minmax(0,1fr) 40px 40px;gap:5px}.category-line input{width:100%;min-width:0}.category-line .tab-move{width:40px;padding:6px 0;font-size:14px;border-radius:9px}.category-line{display:flex;gap:6px}.category-line input{min-width:0;flex:1;border:1px solid var(--d-p-75);border-radius:9px;background:var(--hi);padding:8px}.category-note{font-size:10px;color:var(--i-p-75);line-height:1.5}
-.emoji-head-controls{display:flex;align-items:center;gap:5px}.emoji-mode{display:flex;align-items:center;gap:4px;font-size:10px;white-space:nowrap}.emoji-mode select{min-width:0;max-width:100px;border:1px solid var(--d-p-75);border-radius:8px;background:var(--hi);padding:5px 3px;font-size:10px}
-.ver{color:var(--i-p-60);font-size:10px}.btn.armed{background:var(--rec);border-color:var(--rec);color:var(--on-accent);font-weight:700}
-.confirm-back{z-index:15}.confirm-text{margin:0;font-size:13px;line-height:1.7;white-space:pre-line}#confirmYes{font-weight:700}
-.notice{position:fixed;z-index:20;bottom:14px;left:50%;width:max-content;max-width:92vw;transform:translate(-50%,15px);opacity:0;transition:.2s;background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 14px;box-shadow:var(--shadow);font-size:11px;pointer-events:none}.notice.show{opacity:1;transform:translate(-50%,0)}
-@media(max-width:390px){.emoji-head-controls{gap:3px}.emoji-mode select{max-width:86px}.section-title h2{font-size:13px}.timer{font-size:32px}}
-@media(max-width:360px){.app{padding-left:6px;padding-right:6px}.shell{padding-left:8px;padding-right:8px}.emoji-grid{gap:4px;grid-auto-rows:49px}.emoji-pad{height:49px;font-size:22px}.text-grid{gap:4px}.text-pad{font-size:11px;padding:2px}}
-
+.category-line.moved input{animation:rowflash .7s ease-out}
+@keyframes rowflash{0%{background:var(--a-p-20);border-color:var(--a-p-88)}100%{background:var(--hi)}}
+@media(max-width:480px){
+  .section-help,.note,.take-meta,.category-note{font-size:11.5px;line-height:1.55}
+  .chip{font-size:11.5px;padding:5px 10px}
+  .meters .meter-row{font-size:11px}
+  .bgm-tabs{gap:5px}
+}
+@media(pointer:coarse){
+  input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea{font-size:16px!important}
+}
+.category-line{display:grid!important;grid-template-columns:minmax(0,1fr) 40px 40px;gap:5px}
+.category-line input{width:100%;min-width:0}
+.category-line .tab-move{width:40px;padding:6px 0;font-size:14px;border-radius:9px}
+.category-line{display:flex;gap:6px}
+.category-line input{min-width:0;flex:1;border:1px solid var(--d-p-75);border-radius:9px;background:var(--hi);padding:8px}
+.category-note{font-size:10px;color:var(--i-p-75);line-height:1.5}
+.emoji-head-controls{display:flex;align-items:center;gap:5px}
+.ver{color:var(--i-p-60);font-size:10px}
+.btn.armed{background:var(--rec);border-color:var(--rec);color:var(--on-accent);font-weight:700}
+.confirm-back{z-index:15}
+.confirm-text{margin:0;font-size:13px;line-height:1.7;white-space:pre-line}
+#confirmYes{font-weight:700}
+.notice{position:fixed;z-index:20;bottom:14px;left:50%;width:max-content;max-width:92vw;transform:translate(-50%,15px);opacity:0;transition:.2s;background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 14px;box-shadow:var(--shadow);font-size:11px;pointer-events:none}
+.notice.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:390px){
+  .emoji-head-controls{gap:3px}
+  .section-title h2{font-size:13px}
+  .timer{font-size:32px}
+}
+@media(max-width:360px){
+  .app{padding-left:6px;padding-right:6px}
+  .shell{padding-left:8px;padding-right:8px}
+  .emoji-grid{gap:4px;grid-auto-rows:49px}
+  .emoji-pad{height:49px;font-size:22px}
+  .text-grid{gap:4px}
+  .text-pad{font-size:11px;padding:2px}
+}
 /* 縦一列の並び */
 .app{width:min(100%,560px);display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 .app>*,.recbar-in>*,.content{min-width:0}
@@ -103,8 +207,22 @@
 .recbar .tbtn{height:46px}
 .meters{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
 .meters .meter-row{grid-template-columns:34px minmax(0,1fr) 46px;gap:5px;font-size:10px}
-@media(min-height:700px){.recbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}}
-@media(max-width:420px){.meters{grid-template-columns:1fr}.recbar .timer{font-size:26px;text-align:right}.rec-head{grid-template-columns:auto 1fr}.head-btns{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}.head-btns .pill{padding:7px 6px}.prog-row{flex-wrap:nowrap}.prog-row #progEdit{flex:none;padding:7px 9px}.cover-row{grid-template-columns:72px minmax(0,1fr)}.cover-thumb{width:72px}.cover-ctl label{display:grid;gap:3px}.cover-ctl select{width:100%}}
+@media(min-height:700px){
+  .recbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+}
+@media(max-width:420px){
+  .meters{grid-template-columns:1fr}
+  .recbar .timer{font-size:26px;text-align:right}
+  .rec-head{grid-template-columns:auto 1fr}
+  .head-btns{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}
+  .head-btns .pill{padding:7px 6px}
+  .prog-row{flex-wrap:nowrap}
+  .prog-row #progEdit{flex:none;padding:7px 9px}
+  .cover-row{grid-template-columns:72px minmax(0,1fr)}
+  .cover-thumb{width:72px}
+  .cover-ctl label{display:grid;gap:3px}
+  .cover-ctl select{width:100%}
+}
 .transport{grid-template-columns:1.35fr 1fr 1fr 1fr}
 .recbar .tbtn{font-size:12.5px;padding:0 4px}
 .tbtn.discardbtn:not(:disabled){color:var(--i-r-45);border-color:var(--r-p-30);background:var(--hi)}
@@ -112,26 +230,44 @@
 .bgm-now{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:8px;align-items:center;border:1px solid var(--d-p-60);border-radius:12px;padding:6px 8px;background:var(--paper)}
 .bgm-now-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--d-p-30);color:var(--i-d-60);font-weight:700}
 .bgm-now-name{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bgm-now-track{height:5px;border-radius:3px;background:var(--i-p-12);overflow:hidden;margin-top:3px}.bgm-now-track i{display:block;height:100%;width:0;background:var(--leaf)}
+.bgm-now-track{height:5px;border-radius:3px;background:var(--i-p-12);overflow:hidden;margin-top:3px}
+.bgm-now-track i{display:block;height:100%;width:0;background:var(--leaf)}
 .bgm-now-time{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .bgm-now .btn{padding:6px 9px}
 .bgm-now[data-state="idle"] .bgm-now-name{color:var(--muted);font-weight:400}
-.bgm-now[data-state="playing"]{border-color:var(--a-p-75);background:var(--a-p-6)}.bgm-now[data-state="playing"] .bgm-now-icon{background:var(--leaf);color:var(--on-accent);animation:pulse 1.6s ease-in-out infinite}
-.bgm-now[data-state="low"]{border-color:var(--w-p-75);background:var(--w-p-6)}.bgm-now[data-state="low"] .bgm-now-icon{background:var(--w-p-75);color:var(--on-accent)}.bgm-now[data-state="low"] .bgm-now-track i{background:var(--w-p-75)}
+.bgm-now[data-state="playing"]{border-color:var(--a-p-75);background:var(--a-p-6)}
+.bgm-now[data-state="playing"] .bgm-now-icon{background:var(--leaf);color:var(--on-accent);animation:pulse 1.6s ease-in-out infinite}
+.bgm-now[data-state="low"]{border-color:var(--w-p-75);background:var(--w-p-6)}
+.bgm-now[data-state="low"] .bgm-now-icon{background:var(--w-p-75);color:var(--on-accent)}
+.bgm-now[data-state="low"] .bgm-now-track i{background:var(--w-p-75)}
 .bgm-now[data-state="loading"] .bgm-now-icon{animation:pulse .8s ease-in-out infinite}
 .bgm-now[data-state="fading"]{border-color:var(--w-p-75)}
-.bgm-now[data-state="error"]{border-color:var(--r-p-45);background:var(--rec-pale)}.bgm-now[data-state="error"] .bgm-now-name{color:var(--i-r-45);white-space:normal}.bgm-now[data-state="error"] .bgm-now-icon{background:var(--rec);color:var(--on-accent)}
-@keyframes pulse{50%{opacity:.45}}@media(prefers-reduced-motion:reduce){.bgm-now-icon{animation:none!important}}
-.bgm-play{min-height:50px;padding:6px 8px;gap:10px}.bgm-icon{width:38px;height:38px;border-radius:10px;font-size:16px}.bgm-name{font-size:13px}
-.bgm-card{min-height:auto;padding:5px 6px}.bgm-card.active{border-color:var(--i-a-6);box-shadow:0 0 0 2px color-mix(in srgb,var(--a-p-60) 67%,transparent)}
-.bgm-edit,.bgm-remove{padding:0 9px}
-@media(max-width:420px){.transport{grid-template-columns:1fr 1fr}.bgm-now{grid-template-columns:auto minmax(0,1fr) auto}.bgm-now-time{display:none}}
+.bgm-now[data-state="error"]{border-color:var(--r-p-45);background:var(--rec-pale)}
+.bgm-now[data-state="error"] .bgm-now-name{color:var(--i-r-45);white-space:normal}
+.bgm-now[data-state="error"] .bgm-now-icon{background:var(--rec);color:var(--on-accent)}
+@keyframes pulse{50%{opacity:.45}}
+@media(prefers-reduced-motion:reduce){
+  .bgm-now-icon{animation:none!important}
+}
+.bgm-play{min-height:50px;padding:6px 8px;gap:10px}
+.bgm-icon{width:38px;height:38px;border-radius:10px;font-size:16px}
+.bgm-name{font-size:13px}
+.bgm-card{min-height:auto;padding:5px 6px}
+.bgm-card.active{border-color:var(--i-a-6);box-shadow:0 0 0 2px color-mix(in srgb,var(--a-p-60) 67%,transparent)}
+@media(max-width:420px){
+  .transport{grid-template-columns:1fr 1fr}
+  .bgm-now{grid-template-columns:auto minmax(0,1fr) auto}
+  .bgm-now-time{display:none}
+}
 .prog-row{display:flex;gap:6px;align-items:center;padding-right:2px}
-.prog-chips{display:flex;flex-wrap:nowrap;gap:4px;flex:1;min-width:0;padding:3px 2px;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none}.prog-chips::-webkit-scrollbar{display:none}.prog-chip{flex:none;scroll-snap-align:start}
+.prog-chips{display:flex;flex-wrap:nowrap;gap:4px;flex:1;min-width:0;padding:3px 2px;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none}
+.prog-chips::-webkit-scrollbar{display:none}
+.prog-chip{flex:none;scroll-snap-align:start}
 .prog-chip{border:1px solid var(--d-p-60);border-radius:999px;padding:6px 11px;background:var(--paper);white-space:nowrap;font-size:12px}
 .prog-chip.active{background:var(--a-p-20);border-color:var(--a-p-88);color:var(--i-a-88);font-weight:800;box-shadow:0 0 0 2px color-mix(in srgb,var(--a-p-60) 40%,transparent)}
 .prog-chip:disabled{opacity:.5}
-.prog-chip.free{border-style:dashed;color:var(--i-p-88)}.prog-chip.free.active{background:var(--d-p-20);border-style:solid;border-color:var(--i-p-60);color:var(--ink);}
+.prog-chip.free{border-style:dashed;color:var(--i-p-88)}
+.prog-chip.free.active{background:var(--d-p-20);border-style:solid;border-color:var(--i-p-60);color:var(--ink);}
 .prog-colors{display:flex;flex-wrap:wrap;gap:6px}
 .prog-colors label{display:flex;align-items:center;gap:5px;border:1px solid var(--d-p-75);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:400!important;background:var(--hi);cursor:pointer}
 .prog-colors input{width:auto!important;margin:0}
@@ -141,9 +277,17 @@
 .prog-bgm .bgm-card{border-width:2px;border-color:var(--w-p-88)}
 .prog-bgm .prog-bgm-label{font-size:10px;color:var(--i-w-60);font-weight:700;margin:0 0 3px 4px}
 .prog-bgm .empty{padding:9px}
-.db-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.db-steps .btn{padding:6px 2px;font-size:10.5px}
-@media(max-width:420px){.db-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.content.desk{grid-template-columns:minmax(0,1fr)}.takes{grid-template-columns:minmax(0,1fr)}.take{min-width:0}.take-top .take-name{width:0;min-width:0;flex:1 1 auto}.take-actions .btn{white-space:normal}.db-steps .btn,.try-row .btn,#settingsShell .section-title .btn{white-space:normal}
+.db-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.db-steps .btn{padding:6px 2px;font-size:10.5px}
+@media(max-width:420px){
+  .db-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+.content.desk{grid-template-columns:minmax(0,1fr)}
+.takes{grid-template-columns:minmax(0,1fr)}
+.take{min-width:0}
+.take-top .take-name{width:0;min-width:0;flex:1 1 auto}
+.take-actions .btn{white-space:normal}
+.db-steps .btn,.try-row .btn,#settingsShell .section-title .btn{white-space:normal}
 .pc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
 .pc-slot{position:relative;aspect-ratio:1;max-width:100%;border:1px dashed var(--d-p-88);border-radius:9px;background:var(--d-p-12) center/cover no-repeat;font-size:16px;color:var(--i-d-20);padding:0;display:grid;place-items:center}
 .pc-slot.set{border-style:solid;border-color:var(--d-p-75);color:transparent}
@@ -151,7 +295,9 @@
 .pc-slot.use::after{content:"使用中";position:absolute;left:2px;right:2px;bottom:2px;background:color-mix(in srgb,var(--accent) 90%,transparent);color:var(--on-accent);font-size:8.5px;border-radius:5px;text-align:center;line-height:1.5}
 .pc-slot .pc-n{position:absolute;top:1px;left:4px;font-size:9px;color:var(--i-d-60);text-shadow:0 0 3px #fff}
 .pc-actions{display:flex;flex-wrap:wrap;gap:5px}
-@media(max-width:420px){.pc-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:420px){
+  .pc-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
 .pagenav{display:flex;justify-content:center;gap:6px;margin-top:8px}
 .pagenav .pill.on{background:var(--a-p-20);border-color:var(--a-p-88);color:var(--i-a-88);font-weight:800}
 body[data-page="settings"] #boardShell,body[data-page="settings"] #takesShell{display:none}
@@ -167,19 +313,31 @@ body:not([data-page="settings"]) #settingsShell{display:none}
 .voice-pad:active{transform:scale(.96)}
 .voice-pad .shortcut{position:absolute;top:2px;left:4px;color:#fff;text-shadow:0 0 3px #000;font-size:9px}
 .try-row{display:flex;flex-wrap:wrap;gap:5px}
-.bgm-now-main,.mini-bgm-name{cursor:pointer}.bgm-now-main:hover .bgm-now-name,.mini-bgm-name:hover{text-decoration:underline}
-.save-warn{font-weight:400}.save-warn .warn-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.save-warn .btn{font-size:11.5px;white-space:normal}
+.bgm-now-main,.mini-bgm-name{cursor:pointer}
+.bgm-now-main:hover .bgm-now-name,.mini-bgm-name:hover{text-decoration:underline}
+.save-warn{font-weight:400}
+.save-warn .warn-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.save-warn .btn{font-size:11.5px;white-space:normal}
 .minibar{position:fixed;left:0;right:0;top:0;z-index:6;padding:calc(env(safe-area-inset-top,0px) + 6px) 10px 6px;background:color-mix(in srgb,var(--w-p-6) 96%,transparent);border-bottom:2px solid var(--decor);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .minibar-in{width:min(100%,540px);margin:0 auto;display:grid;gap:5px}
 .mini-row{display:flex;align-items:center;gap:5px;min-width:0}
-.mini-timer{font:700 17px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;flex:none}.mini-timer[data-st="recording"],.mini-timer[data-st="ending"]{color:var(--rec)}.mini-timer[data-st="paused"]{color:var(--i-w-30)}
-@media(max-width:360px){.mbtn{font-size:11px;padding:0 2px}.mini-timer{font-size:15px}}
+.mini-timer{font:700 17px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;flex:none}
+.mini-timer[data-st="recording"],.mini-timer[data-st="ending"]{color:var(--rec)}
+.mini-timer[data-st="paused"]{color:var(--i-w-30)}
+@media(max-width:360px){
+  .mbtn{font-size:11px;padding:0 2px}
+  .mini-timer{font-size:15px}
+}
 .mbtn{flex:1;min-width:0;height:36px;border:1px solid var(--d-p-75);border-radius:10px;background:var(--hi);font-size:12px;font-weight:800;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mbtn.recbtn{border-color:var(--r-p-45);background:var(--r-p-6);color:var(--i-r-45)}.mbtn.recbtn.on{background:var(--w-p-6);border-color:var(--w-p-75);color:var(--i-w-75)}.mbtn.armed{background:var(--rec);border-color:var(--rec);color:var(--on-accent)}
+.mbtn.recbtn{border-color:var(--r-p-45);background:var(--r-p-6);color:var(--i-r-45)}
+.mbtn.recbtn.on{background:var(--w-p-6);border-color:var(--w-p-75);color:var(--i-w-75)}
+.mbtn.armed{background:var(--rec);border-color:var(--rec);color:var(--on-accent)}
 .mini-bgm{display:flex;align-items:center;gap:6px;font-size:11.5px;border:1px solid var(--d-p-60);border-radius:9px;padding:3px 3px 3px 8px;background:var(--paper)}
 .mini-bgm-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
 .mini-bgm .mbtn{flex:none;height:28px;font-size:11px;padding:0 8px}
-.mini-bgm[data-state="playing"]{border-color:var(--a-p-75);background:var(--a-p-6)}.mini-bgm[data-state="low"]{border-color:var(--w-p-75);background:var(--w-p-6)}.mini-bgm[data-state="error"]{border-color:var(--r-p-45);background:var(--rec-pale);color:var(--i-r-45)}
+.mini-bgm[data-state="playing"]{border-color:var(--a-p-75);background:var(--a-p-6)}
+.mini-bgm[data-state="low"]{border-color:var(--w-p-75);background:var(--w-p-6)}
+.mini-bgm[data-state="error"]{border-color:var(--r-p-45);background:var(--rec-pale);color:var(--i-r-45)}
 .bgm-actions{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px}
 .bgm-low-state{font-size:10px;color:var(--muted)}
 .section-title .storage{font-size:10px}
@@ -187,30 +345,46 @@ body:not([data-page="settings"]) #settingsShell{display:none}
 /* ==== デザインB：看板とタイル ==== */
 body{background:var(--bg)}
 .top{background:var(--a-p-30);color:var(--ink);border-top:6px solid var(--accent);border-bottom:4px solid var(--decor);border-radius:8px;padding:12px 10px 10px}
-.top h1{font-size:22px;letter-spacing:.18em}.top p{color:inherit;opacity:.85}.top .ver{color:inherit}
-.pagenav .pill{background:transparent;color:inherit;border-color:currentColor}.pagenav .pill.on{background:var(--decor);border-color:var(--decor);color:var(--on-decor)}
+.top h1{font-size:22px;letter-spacing:.18em}
+.top p{color:inherit;opacity:.85}
+.top .ver{color:inherit}
+.pagenav .pill{background:transparent;color:inherit;border-color:currentColor}
+.pagenav .pill.on{background:var(--decor);border-color:var(--decor);color:var(--on-decor)}
 .shell{border:2px solid var(--accent);border-radius:8px;padding:12px 10px;background:var(--paper)}
 .section-title h2{border-left:5px solid var(--decor);padding-left:7px;line-height:1.3}
-.pill,.btn,.chip,.prog-chip,.tbtn,.mbtn,.bgm-edit,.bgm-remove,.lamp{border-radius:4px;border-width:1.5px}
+.pill,.btn,.chip,.prog-chip,.tbtn,.mbtn,.lamp{border-radius:4px;border-width:1.5px}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .chip.active,.prog-chip.active,.prog-chip.free.active{background:var(--accent);border-color:var(--accent);color:var(--on-accent);box-shadow:none}
 .emoji-pad,.text-pad,.voice-pad,.bgm-card,.pc-slot,.cover-thumb,.take,.panel,.cover-row,.bgm-now,.mini-bgm{border-radius:4px}
 .emoji-pad.loaded,.text-pad.loaded,.voice-pad.loaded{background:var(--hi);border:1.5px solid var(--accent)}
 .emoji-pad:not(.loaded),.text-pad:not(.loaded),.voice-pad:not(.loaded),.bgm-card.unset{background:transparent;border:1.5px dashed var(--a-p-30)}
 .emoji-pad.playing,.text-pad.playing,.voice-pad.playing,.bgm-card.active{background:var(--decor);border-color:var(--decor);color:var(--on-decor);box-shadow:none}
-.bgm-card{border:1.5px solid var(--accent);background:var(--hi)}.bgm-icon{border-radius:4px;background:var(--a-p-20);border-color:var(--accent);color:var(--ink)}.bgm-card.active .bgm-icon{background:var(--hi);border-color:var(--hi)}.bgm-play{background:transparent}
-.modal{border:3px solid var(--accent);border-radius:8px;background:var(--paper)}.modal h2{border-bottom:3px solid var(--decor);padding-bottom:6px}
+.bgm-card{border:1.5px solid var(--accent);background:var(--hi)}
+.bgm-icon{border-radius:4px;background:var(--a-p-20);border-color:var(--accent);color:var(--ink)}
+.bgm-card.active .bgm-icon{background:var(--hi);border-color:var(--hi)}
+.bgm-play{background:transparent}
+.modal{border:3px solid var(--accent);border-radius:8px;background:var(--paper)}
+.modal h2{border-bottom:3px solid var(--decor);padding-bottom:6px}
 .minibar{background:var(--paper);border-bottom:4px solid var(--decor)}
-.field input,.field select,.mic-row select,.end-row select,.cover-ctl select,.export-opts select,.emoji-mode select{border-radius:4px;background:var(--hi)}
+.field input,.field select,.mic-row select,.end-row select,.cover-ctl select,.export-opts select{border-radius:4px;background:var(--hi)}
 .bgm-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
 .bgm-tile{display:flex;align-items:center;gap:6px;height:34px;min-width:0;padding:0 8px;border:1.5px solid var(--accent);border-radius:4px;background:var(--hi);font-size:12px;text-align:left;user-select:none;-webkit-user-select:none}
-.bgm-tile .bt-ic{flex:none;width:14px;font-size:10px;color:var(--accent);text-align:center}.bgm-tile .bt-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
-.bgm-tile.unset{border:1.5px dashed var(--a-p-30);background:transparent}.bgm-tile.unset .bt-ic{color:var(--a-p-60)}
-.bgm-tile.active{background:var(--decor);border-color:var(--decor);color:var(--on-decor)}.bgm-tile.active .bt-ic{color:inherit}.bgm-tile:active{transform:scale(.97)}
-.env-grid{min-height:0}.env-pad{font-weight:700}
-.play-mode-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:8px;font-size:11.5px}.play-mode-row label{font-weight:700}.play-mode-row select{border:1.5px solid var(--line);border-radius:4px;background:var(--hi);padding:5px 6px;font-size:12px;max-width:100%}
-.text-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.env-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
-.prog-chip.pc{background:color-mix(in srgb,var(--pc) 20%,#fff);border-color:var(--pc);color:#2e211c}.prog-chip.pc.active{background:var(--pc);border-color:var(--pc);color:var(--pc-ink)}
+.bgm-tile .bt-ic{flex:none;width:14px;font-size:10px;color:var(--accent);text-align:center}
+.bgm-tile .bt-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+.bgm-tile.unset{border:1.5px dashed var(--a-p-30);background:transparent}
+.bgm-tile.unset .bt-ic{color:var(--a-p-60)}
+.bgm-tile.active{background:var(--decor);border-color:var(--decor);color:var(--on-decor)}
+.bgm-tile.active .bt-ic{color:inherit}
+.bgm-tile:active{transform:scale(.97)}
+.env-grid{min-height:0}
+.env-pad{font-weight:700}
+.play-mode-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:8px;font-size:11.5px}
+.play-mode-row label{font-weight:700}
+.play-mode-row select{border:1.5px solid var(--line);border-radius:4px;background:var(--hi);padding:5px 6px;font-size:12px;max-width:100%}
+.text-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.env-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.prog-chip.pc{background:color-mix(in srgb,var(--pc) 20%,#fff);border-color:var(--pc);color:#2e211c}
+.prog-chip.pc.active{background:var(--pc);border-color:var(--pc);color:var(--pc-ink)}
 .prog-colors label.pc{background:color-mix(in srgb,var(--pc) 20%,#fff);border:1.5px solid var(--pc);color:#2e211c}
 .footer.temp-note{color:var(--rec);font-weight:700}
 /* ---- 名前と着せ替え ---- */
@@ -218,42 +392,117 @@ body{background:var(--bg)}
 .look-presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px}
 .look-preset{display:grid;gap:5px;text-align:left;border:1px solid var(--line);border-radius:12px;padding:7px 8px;background:var(--paper);font-size:11.5px;line-height:1.3}
 .look-preset[aria-checked="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 45%,transparent);font-weight:700}
-.look-sw{display:flex;height:14px;border-radius:5px;overflow:hidden;border:1px solid color-mix(in srgb,var(--shade) 18%,transparent)}.look-sw i{flex:1}
-.look-colors{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.look-colors label{display:grid;gap:3px;justify-items:center;font-size:11px;font-weight:700}.look-colors input{width:100%;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--hi)}
-.look-names{display:grid;gap:6px}.look-names label{display:grid;gap:3px;font-size:11px;font-weight:700}.look-names input{width:100%;border:1px solid var(--line);border-radius:9px;background:var(--hi);padding:8px;font-weight:400}
+.look-sw{display:flex;height:14px;border-radius:5px;overflow:hidden;border:1px solid color-mix(in srgb,var(--shade) 18%,transparent)}
+.look-sw i{flex:1}
+.look-colors{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.look-colors label{display:grid;gap:3px;justify-items:center;font-size:11px;font-weight:700}
+.look-colors input{width:100%;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--hi)}
+.look-names{display:grid;gap:6px}
+.look-names label{display:grid;gap:3px;font-size:11px;font-weight:700}
+.look-names input{width:100%;border:1px solid var(--line);border-radius:9px;background:var(--hi);padding:8px;font-weight:400}
 #lookState.dirty{color:var(--rec);font-weight:700}
-
 /* 純喫茶：紙のメニュー、深緑の看板、真鍮の縁取り */
 body{background-color:var(--bg);background-image:repeating-linear-gradient(90deg,transparent 0 47px,color-mix(in srgb,var(--ink) 3%,transparent) 47px 48px);line-height:1.55}
 .app{width:min(100%,760px);padding:28px 18px 36px;gap:22px}
 .top{position:relative;overflow:hidden;padding:26px 20px 20px;border:1px solid var(--decor);border-radius:3px;background:var(--accent);color:var(--on-accent);box-shadow:inset 0 0 0 5px var(--accent),inset 0 0 0 6px var(--decor),0 8px 20px #2a201815}
-.shop-eyebrow{font:10px Georgia,serif;letter-spacing:.29em;opacity:.85}.top h1{margin-top:10px}
-.top h1{font-size:30px;letter-spacing:.15em;line-height:1.5;margin:0 0 5px}.top p{font-size:12px;letter-spacing:.06em;margin:0 0 15px}.top .ver{display:block;font:9px Georgia,serif;letter-spacing:.1em;margin-top:5px;opacity:.65}
-.pagenav{gap:8px}.pagenav .pill{padding:9px 24px;border-color:color-mix(in srgb,var(--on-accent) 45%,transparent);font-size:12px}.pagenav .pill.on{background:var(--paper);border-color:var(--paper);color:var(--ink)}
+.shop-eyebrow{font:10px Georgia,serif;letter-spacing:.29em;opacity:.85}
+.top h1{margin-top:10px}
+.top h1{font-size:30px;letter-spacing:.15em;line-height:1.5;margin:0 0 5px}
+.top p{font-size:12px;letter-spacing:.06em;margin:0 0 15px}
+.top .ver{display:block;font:9px Georgia,serif;letter-spacing:.1em;margin-top:5px;opacity:.65}
+.pagenav{gap:8px}
+.pagenav .pill{padding:9px 24px;border-color:color-mix(in srgb,var(--on-accent) 45%,transparent);font-size:12px}
+.pagenav .pill.on{background:var(--paper);border-color:var(--paper);color:var(--ink)}
 .shell{border:1px solid var(--decor);border-radius:3px;padding:20px;background:var(--paper);box-shadow:0 5px 15px #2a20180d}
-.recbar{border-top:4px solid var(--accent);padding:12px 14px;box-shadow:0 5px 18px #2a20181a}.recbar-in{padding:0;gap:12px}
-.recbar .timer{font-size:36px;letter-spacing:.03em}.rec-head{gap:8px}.head-btns{max-width:255px}.lamp{border:0;background:var(--a-p-6);font-size:11px}
-.section+.section{padding-top:24px;margin-top:26px;border-top:1px solid var(--d-p-30)}.section-title{margin-bottom:12px}.section-title h2{font-size:17px;border-left:0;padding:0}.section-title h2 span{display:block;margin-top:3px;font:9px Georgia,serif;letter-spacing:.13em}
-.menu-heading{display:flex;align-items:center;justify-content:space-between;border-bottom:3px double var(--decor);padding-bottom:14px;margin-bottom:24px}.menu-heading span{font:21px Georgia,serif;letter-spacing:.16em;color:var(--accent)}.menu-heading small{font-family:var(--title-font);font-size:11px;letter-spacing:.1em}
-.btn,.pill,.chip,.prog-chip{min-height:34px;font-size:12px;transition:background .15s,box-shadow .15s}.btn,.pill{padding:7px 12px}.btn:hover:not(:disabled),.pill:hover:not(:disabled){box-shadow:0 2px 5px #2a20181a;background:var(--d-p-12)}.btn.primary:hover:not(:disabled){background:var(--i-a-6)}
-.transport{gap:8px}.recbar .tbtn{height:50px;font-size:13px}.recbtn:not(.on){background:var(--rec);color:#fffaf4;border-color:var(--rec)}
-.emoji-grid{gap:8px;grid-auto-rows:60px}.emoji-pad{height:60px}.emoji-pad:not(.loaded),.text-pad:not(.loaded),.voice-pad:not(.loaded),.bgm-tile.unset{border-color:var(--d-p-45);background:var(--d-p-12)}
-.emoji-pad.loaded,.text-pad.loaded,.voice-pad.loaded{box-shadow:0 2px 0 var(--d-p-30)}.text-grid,.voice-grid{gap:8px}.bgm-tabs{gap:6px}.bgm-tile{height:42px}.bgm-list{gap:8px}.section-help,.note{font-size:11.5px;line-height:1.8;color:var(--muted)}
-.panel{border-color:var(--d-p-30);background:var(--p-h-60);padding:16px}.panel h3{font-family:var(--title-font);font-size:16px}.take{padding:14px;border-color:var(--d-p-45);background:var(--hi)}.take-name{font-family:var(--title-font)}.cover-row{padding:14px;background:var(--d-p-12);border-color:var(--d-p-30)}
-.bgm-now{padding:8px 10px;background:var(--d-p-12);border-color:var(--d-p-30)}.bgm-now-icon{border-radius:50%;background:var(--accent);color:var(--on-accent)}
-.modal{padding:24px;border:1px solid var(--decor);box-shadow:inset 0 0 0 4px var(--paper),inset 0 0 0 5px var(--d-p-45),0 20px 50px #211a0e77}.modal h2{font-family:var(--title-font);border-bottom:3px double var(--decor);padding-bottom:12px}
-body:has(.modal-back.open){overflow:hidden}a{color:var(--accent)}.footer{font-size:11px;letter-spacing:.03em}
-.film-panel{margin-top:16px;padding:16px;border:1px solid var(--d-p-45);background:var(--d-p-12);border-radius:4px}.film-panel h3{font:700 16px var(--title-font);margin:0 0 14px}.film-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}.film-controls label{display:grid;gap:5px;font-size:12px}.film-controls select{min-width:0;max-width:100%;padding:8px;border:1px solid var(--line);background:var(--paper);border-radius:3px}.film-controls input[type=range]{width:100%;accent-color:var(--accent)}.film-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}.film-actions span{font-size:11px;overflow-wrap:anywhere}.film-preview{display:block;width:min(100%,320px);height:auto;aspect-ratio:1;margin:14px auto 0;border:1px solid var(--decor);background:var(--paper)}.film-status{min-height:1.6em;font-size:11px;color:var(--muted)}
-@media(min-width:700px){.rec-head{grid-template-columns:auto 1fr auto}.recbar .timer{text-align:center}.emoji-grid{grid-auto-rows:68px}.emoji-pad{height:68px}.content.desk{gap:15px}}
-@media(max-width:480px){.app{padding:14px 10px 24px;gap:16px}.top{padding:22px 14px 18px}.top h1{font-size:24px}.shell{padding:14px}.recbar{padding:12px}.rec-head{grid-template-columns:auto 1fr}.head-btns{grid-column:1/-1;max-width:none;display:grid;grid-template-columns:1fr 1fr}.recbar .timer{text-align:right}.menu-heading{gap:8px}.menu-heading span{font-size:17px}.menu-heading small{font-size:10px}.btn,.pill{padding:7px 9px}.emoji-grid{gap:5px;grid-auto-rows:53px}.emoji-pad{height:53px}.section-title h2{font-size:16px}.section-title{align-items:start}.film-controls{gap:10px}.transport{grid-template-columns:1fr 1fr}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
-
-
+.recbar{border-top:4px solid var(--accent);padding:12px 14px;box-shadow:0 5px 18px #2a20181a}
+.recbar-in{padding:0;gap:12px}
+.recbar .timer{font-size:36px;letter-spacing:.03em}
+.rec-head{gap:8px}
+.head-btns{max-width:255px}
+.lamp{border:0;background:var(--a-p-6);font-size:11px}
+.section+.section{padding-top:24px;margin-top:26px;border-top:1px solid var(--d-p-30)}
+.section-title{margin-bottom:12px}
+.section-title h2{font-size:17px;border-left:0;padding:0}
+.section-title h2 span{display:block;margin-top:3px;font:9px Georgia,serif;letter-spacing:.13em}
+.menu-heading{display:flex;align-items:center;justify-content:space-between;border-bottom:3px double var(--decor);padding-bottom:14px;margin-bottom:24px}
+.menu-heading span{font:21px Georgia,serif;letter-spacing:.16em;color:var(--accent)}
+.menu-heading small{font-family:var(--title-font);font-size:11px;letter-spacing:.1em}
+.btn,.pill,.chip,.prog-chip{min-height:34px;font-size:12px;transition:background .15s,box-shadow .15s}
+.btn,.pill{padding:7px 12px}
+.btn:hover:not(:disabled),.pill:hover:not(:disabled){box-shadow:0 2px 5px #2a20181a;background:var(--d-p-12)}
+.btn.primary:hover:not(:disabled){background:var(--i-a-6)}
+.transport{gap:8px}
+.recbar .tbtn{height:50px;font-size:13px}
+.recbtn:not(.on){background:var(--rec);color:#fffaf4;border-color:var(--rec)}
+.emoji-grid{gap:8px;grid-auto-rows:60px}
+.emoji-pad{height:60px}
+.emoji-pad:not(.loaded),.text-pad:not(.loaded),.voice-pad:not(.loaded),.bgm-tile.unset{border-color:var(--d-p-45);background:var(--d-p-12)}
+.emoji-pad.loaded,.text-pad.loaded,.voice-pad.loaded{box-shadow:0 2px 0 var(--d-p-30)}
+.text-grid,.voice-grid{gap:8px}
+.bgm-tabs{gap:6px}
+.bgm-tile{height:42px}
+.bgm-list{gap:8px}
+.section-help,.note{font-size:11.5px;line-height:1.8;color:var(--muted)}
+.panel{border-color:var(--d-p-30);background:var(--p-h-60);padding:16px}
+.panel h3{font-family:var(--title-font);font-size:16px}
+.take{padding:14px;border-color:var(--d-p-45);background:var(--hi)}
+.take-name{font-family:var(--title-font)}
+.cover-row{padding:14px;background:var(--d-p-12);border-color:var(--d-p-30)}
+.bgm-now{padding:8px 10px;background:var(--d-p-12);border-color:var(--d-p-30)}
+.bgm-now-icon{border-radius:50%;background:var(--accent);color:var(--on-accent)}
+.modal{padding:24px;border:1px solid var(--decor);box-shadow:inset 0 0 0 4px var(--paper),inset 0 0 0 5px var(--d-p-45),0 20px 50px #211a0e77}
+.modal h2{font-family:var(--title-font);border-bottom:3px double var(--decor);padding-bottom:12px}
+body:has(.modal-back.open){overflow:hidden}
+a{color:var(--accent)}
+.footer{font-size:11px;letter-spacing:.03em}
+.film-panel{margin-top:16px;padding:16px;border:1px solid var(--d-p-45);background:var(--d-p-12);border-radius:4px}
+.film-panel h3{font:700 16px var(--title-font);margin:0 0 14px}
+.film-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.film-controls label{display:grid;gap:5px;font-size:12px}
+.film-controls select{min-width:0;max-width:100%;padding:8px;border:1px solid var(--line);background:var(--paper);border-radius:3px}
+.film-controls input[type=range]{width:100%;accent-color:var(--accent)}
+.film-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.film-actions span{font-size:11px;overflow-wrap:anywhere}
+.film-preview{display:block;width:min(100%,320px);height:auto;aspect-ratio:1;margin:14px auto 0;border:1px solid var(--decor);background:var(--paper)}
+.film-status{min-height:1.6em;font-size:11px;color:var(--muted)}
+@media(min-width:700px){
+  .rec-head{grid-template-columns:auto 1fr auto}
+  .recbar .timer{text-align:center}
+  .emoji-grid{grid-auto-rows:68px}
+  .emoji-pad{height:68px}
+  .content.desk{gap:15px}
+}
+@media(max-width:480px){
+  .app{padding:14px 10px 24px;gap:16px}
+  .top{padding:22px 14px 18px}
+  .top h1{font-size:24px}
+  .shell{padding:14px}
+  .recbar{padding:12px}
+  .rec-head{grid-template-columns:auto 1fr}
+  .head-btns{grid-column:1/-1;max-width:none;display:grid;grid-template-columns:1fr 1fr}
+  .recbar .timer{text-align:right}
+  .menu-heading{gap:8px}
+  .menu-heading span{font-size:17px}
+  .menu-heading small{font-size:10px}
+  .btn,.pill{padding:7px 9px}
+  .emoji-grid{gap:5px;grid-auto-rows:53px}
+  .emoji-pad{height:53px}
+  .section-title h2{font-size:16px}
+  .section-title{align-items:start}
+  .film-controls{gap:10px}
+  .transport{grid-template-columns:1fr 1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}
+}
 /* 番組ボタン：横に流さず折り返して、全部見えるようにする */
-.prog-row.prog-row{flex-wrap:wrap;align-items:flex-start}.prog-row .prog-chips{display:contents}.prog-row.prog-row{gap:4px}.prog-row #progEdit{margin-left:auto}
-
+.prog-row.prog-row{flex-wrap:wrap;align-items:flex-start}
+.prog-row .prog-chips{display:contents}
+.prog-row.prog-row{gap:4px}
+.prog-row #progEdit{margin-left:auto}
 /* 絵文字の効果音は正方形 */
-.emoji-grid.emoji-grid{grid-auto-rows:auto}.emoji-grid .emoji-pad{height:auto;aspect-ratio:1/1;font-size:clamp(20px,7vw,32px)}
+.emoji-grid.emoji-grid{grid-auto-rows:auto}
+.emoji-grid .emoji-pad{height:auto;aspect-ratio:1/1;font-size:clamp(20px,7vw,32px)}
 /* ボイス画像は全体を収める。透過画像は透けて下の地が見える */
 #voiceGrid .voice-pad.loaded{background-color:transparent;background-size:cover;background-repeat:no-repeat;background-position:center;padding:0}
 /* 見出しはすべて太字 */
@@ -366,47 +615,175 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.5.0 / 配信とラジオの分割・マスコット・表情差分</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" id="navLive">配信・録画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">ラジオ（音声のみ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.5.1 / コードと画面の整理</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" id="navLive">配信・録画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">ラジオ（音声のみ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <style>
+/* PNGTuberスタジオ（配信・録画）と、配置・設定画面の追加分 */
+.app{width:min(100%,1580px)}
+.top{padding-top:8px}
+.top h1{font-size:25px}
+.top .ver{font-size:11px}
+.pagenav{gap:8px}
+.studio-workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;margin-bottom:18px}
+.studio-card{border:1px solid var(--a-p-45);border-radius:18px;background:var(--paper);padding:16px;box-shadow:var(--shadow);min-width:0}
+.studio-card h2{margin:0 0 12px;font:700 17px var(--title-font)}
+.studio-kicker{font-size:10px;letter-spacing:.18em;color:var(--muted);margin:0 0 5px}
+.stage-wrap{background:repeating-conic-gradient(#e2e8df 0% 25%,#f5f7f1 0% 50%) 50% / 24px 24px;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
+.stage-wrap canvas{width:100%;height:100%;object-fit:contain;display:block}
+.studio-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0}
+.studio-row button,.studio-tabs button{border:1px solid var(--a-p-45);border-radius:9px;padding:9px 12px;background:var(--hi);font-size:12px;cursor:pointer}
+.studio-row .accent,.studio-tabs .selected{background:var(--accent);color:var(--on-accent)}
+.studio-tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.studio-note{font-size:11px;line-height:1.8;color:var(--muted);margin:8px 0}
+.studio-field{display:block;font-size:12px;margin:12px 0}
+.studio-field input[type=range]{display:block;width:100%;margin-top:7px}
+.studio-field select,.studio-field input[type=text],.studio-field textarea,.studio-textarea{width:100%;border:1px solid var(--a-p-45);background:var(--hi);border-radius:8px;padding:9px;font:inherit;color:var(--ink)}
+.studio-textarea{min-height:105px;resize:vertical}
+.png-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.png-slot{position:relative;border:1px dashed var(--a-p-60);border-radius:10px;padding:8px;min-width:0;display:block;cursor:pointer;font-size:11px;line-height:1.8}
+.png-slot img{width:100%;height:60px;object-fit:contain;display:block}
+.png-slot input{width:100%;font-size:10px}
+.png-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;color:var(--muted)}
+.studio-divider{border:0;border-top:1px solid var(--a-p-20);margin:16px 0}
+.studio-state{font-size:11px;margin-left:auto;color:var(--muted)}
+.studio-meter{height:6px;background:var(--a-p-12);border-radius:10px;overflow:hidden}
+.studio-meter i{display:block;height:100%;width:0;background:var(--accent)}
+.studio-inline{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.studio-tray{max-height:170px;overflow:auto}
+.studio-take{padding:8px 0;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--a-p-20);font-size:12px}
+.studio-take a{color:var(--accent)}
+.studio-take span{flex:1}
+.studio-card details summary{cursor:pointer;font-size:12px}
+.studio-header-line{display:flex;justify-content:space-between;align-items:center}
+.studio-header-line small{font-size:10px;color:var(--muted)}
+.mode-section{display:none}
+.mode-section.on{display:block}
+body[data-studio-mode=plan] .recbar,body[data-studio-mode=plan] .studio{display:none}
+body[data-page=settings] .studio-extension{display:none}
+.studio-live-box{border:1px solid var(--a-p-45);border-radius:9px;padding:12px;white-space:pre-wrap;min-height:48px;margin-top:10px;font-size:13px}
+.stage-actions .recording{background:var(--rec);color:white}
+.kara-h{font-size:15px;margin:2px 0 6px}
+.kara-channels{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.kara-ch{display:flex;flex-direction:column;align-items:flex-start;gap:2px;max-width:100%;text-align:left;padding:7px 11px;border-radius:12px}
+.kara-ch small{font-size:10px;opacity:.75;white-space:normal;line-height:1.4}
+.kara-edit-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto;gap:4px;margin:6px 0;align-items:center}
+.kara-edit-row input{min-width:0;width:100%}
+.kara-edit-row .kara-memo{grid-column:1/3}
+.kara-edit-row .kara-btns{grid-column:3;grid-row:1/3;display:flex;flex-direction:column;gap:3px}
+.kara-edit-row button{font-size:11px;padding:3px 7px}
+@media(max-width:520px){
+  .kara-edit-row{grid-template-columns:1fr auto}
+  .kara-edit-row .kara-memo{grid-column:1}
+  .kara-edit-row .kara-url{grid-column:1}
+}
+.char-panel{border:1px solid var(--a-p-30);border-radius:12px;padding:10px;margin:8px 0 12px}
+.char-chips{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}
+.char-chips button{border-radius:999px;padding:5px 11px;font-size:12px}
+.char-chips button.selected{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.char-chips button .char-thumb{width:20px;height:20px;object-fit:contain;vertical-align:middle;margin-right:4px}
+.char-bar select{max-width:11em;font-size:12px;padding:5px 8px;border-radius:8px;border:1px solid var(--a-p-45);background:var(--hi);color:var(--ink)}
+.char-bar .char-chips{margin:0}
+.char-tools button{font-size:11px;padding:5px 9px}
+.png-slot[hidden]{display:none!important}
+.pad-size{font-size:11px;display:flex;align-items:center;gap:6px;color:var(--muted)}
+.pad-size select{font-size:11px;padding:3px 6px}
+body{--pad-e:60px;--pad-t:104px;--pad-v:92px}
+body[data-pad="s"]{--pad-e:46px;--pad-t:84px;--pad-v:70px}
+body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
+#boardShell .emoji-grid{grid-template-columns:repeat(auto-fill,minmax(var(--pad-e),1fr))!important}
+#boardShell .emoji-grid .emoji-pad{font-size:calc(var(--pad-e) * .42)!important}
+#boardShell .text-grid{grid-template-columns:repeat(auto-fill,minmax(var(--pad-t),1fr))!important}
+#boardShell .voice-grid{grid-template-columns:repeat(auto-fill,minmax(var(--pad-v),1fr))!important}
+#boardShell .bgm-list{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.studio-setlist{padding-left:24px;font-size:13px;line-height:2}
+.studio-setlist li{margin-bottom:5px}
+.studio-setlist button{border:0;background:transparent;cursor:pointer;color:var(--accent);font-size:11px}
+.studio-help{max-width:960px;margin:0 auto 18px}
+.studio-help summary{font-size:13px;cursor:pointer}
+.studio-help p{font-size:12px;line-height:1.9}
+@media(min-width:1100px){
+  .studio{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .recbar{position:relative!important;top:auto!important}
+  .shell{border-width:4px}
+  .studio-workspace{grid-template-columns:minmax(0,1fr) 340px}
+}
+@media(max-width:780px){
+  .studio-workspace{grid-template-columns:1fr}
+  .studio-card{padding:12px}
+  .studio-inline{grid-template-columns:1fr}
+  .stage-actions button{flex:1}
+  .top h1{font-size:21px}
+  .studio-state{width:100%;margin:0}
+  .studio-tabs button{flex:1}
+}
+@media(min-width:1100px){
+  .app{padding-top:8px}
+  .top{padding:10px!important;margin-bottom:6px!important}
+  .top h1{font-size:21px!important}
+  .top p{margin:3px!important}
+  .top .shop-eyebrow{display:none}
+  .top .pagenav{margin:5px 0 0!important}
+  .top .pagenav button{padding:5px 12px!important}
+  .studio-tabs{margin:8px 0}
+  .studio-workspace{grid-template-columns:minmax(0,1fr) 320px;align-items:start}
+  .studio-workspace>div>.studio-card:first-child{padding:12px}
+  .stage-wrap{max-height:45vh}
+  .studio-card h2{margin-bottom:8px}
+  .studio-row{margin:7px 0}
+  .studio-note{line-height:1.5}
+  .studio-kicker{font-size:9px}
+}
 
-/* Studio extension: original sound engine and controls remain in this document. */
-.app{width:min(100%,1580px)}.top{padding-top:8px}.top h1{font-size:25px}.top .ver{font-size:11px}.pagenav{gap:8px}.studio-workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;margin-bottom:18px}.studio-card{border:1px solid var(--a-p-45);border-radius:18px;background:var(--paper);padding:16px;box-shadow:var(--shadow);min-width:0}.studio-card h2{margin:0 0 12px;font:700 17px var(--title-font)}.studio-kicker{font-size:10px;letter-spacing:.18em;color:var(--muted);margin:0 0 5px}.stage-wrap{background:repeating-conic-gradient(#e2e8df 0% 25%,#f5f7f1 0% 50%) 50% / 24px 24px;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}.stage-wrap canvas{width:100%;height:100%;object-fit:contain;display:block}.studio-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0}.studio-row button,.studio-tabs button,.studio-file{border:1px solid var(--a-p-45);border-radius:9px;padding:9px 12px;background:var(--hi);font-size:12px;cursor:pointer}.studio-row .accent,.studio-tabs .selected{background:var(--accent);color:var(--on-accent)}.studio-tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:12px 0}.studio-note{font-size:11px;line-height:1.8;color:var(--muted);margin:8px 0}.studio-field{display:block;font-size:12px;margin:12px 0}.studio-field input[type=range]{display:block;width:100%;margin-top:7px}.studio-field select,.studio-field input[type=text],.studio-field textarea,.studio-textarea{width:100%;border:1px solid var(--a-p-45);background:var(--hi);border-radius:8px;padding:9px;font:inherit;color:var(--ink)}.studio-textarea{min-height:105px;resize:vertical}.png-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.png-slot{position:relative;border:1px dashed var(--a-p-60);border-radius:10px;padding:8px;min-width:0;display:block;cursor:pointer;font-size:11px;line-height:1.8}.png-slot img{width:100%;height:60px;object-fit:contain;display:block}.png-slot input{width:100%;font-size:10px}.png-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;color:var(--muted)}.studio-divider{border:0;border-top:1px solid var(--a-p-20);margin:16px 0}.studio-state{font-size:11px;margin-left:auto;color:var(--muted)}.studio-led{display:inline-block;width:7px;height:7px;background:var(--accent);border-radius:50%;margin-right:6px}.studio-meter{height:6px;background:var(--a-p-12);border-radius:10px;overflow:hidden}.studio-meter i{display:block;height:100%;width:0;background:var(--accent)}.studio-inline{display:grid;grid-template-columns:1fr 1fr;gap:10px}.studio-tray{max-height:170px;overflow:auto}.studio-take{padding:8px 0;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--a-p-20);font-size:12px}.studio-take a{color:var(--accent)}.studio-take span{flex:1}.studio-card details summary{cursor:pointer;font-size:12px}.studio-header-line{display:flex;justify-content:space-between;align-items:center}.studio-header-line small{font-size:10px;color:var(--muted)}.studio-project{border-left:3px solid var(--accent);padding-left:12px}.mode-section{display:none}.mode-section.on{display:block}body[data-studio-mode=plan] .recbar,body[data-studio-mode=plan] .studio,body[data-studio-mode=plan] .takes-section{display:none}body[data-page=settings] .studio-extension{display:none}.studio-live-box{border:1px solid var(--a-p-45);border-radius:9px;padding:12px;white-space:pre-wrap;min-height:48px;margin-top:10px;font-size:13px}.stage-actions .recording{background:var(--rec);color:white}.studio-caption{font-size:11px;line-height:1.7}.kara-h{font-size:15px;margin:2px 0 6px}.kara-channels{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.kara-ch{display:flex;flex-direction:column;align-items:flex-start;gap:2px;max-width:100%;text-align:left;padding:7px 11px;border-radius:12px}.kara-ch small{font-size:10px;opacity:.75;white-space:normal;line-height:1.4}.kara-edit-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto;gap:4px;margin:6px 0;align-items:center}.kara-edit-row input{min-width:0;width:100%}.kara-edit-row .kara-memo{grid-column:1/3}.kara-edit-row .kara-btns{grid-column:3;grid-row:1/3;display:flex;flex-direction:column;gap:3px}.kara-edit-row button{font-size:11px;padding:3px 7px}@media(max-width:520px){.kara-edit-row{grid-template-columns:1fr auto}.kara-edit-row .kara-memo{grid-column:1}.kara-edit-row .kara-url{grid-column:1}}
-.char-panel{border:1px solid var(--a-p-30);border-radius:12px;padding:10px;margin:8px 0 12px}.char-chips{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}.char-chips button{border-radius:999px;padding:5px 11px;font-size:12px}.char-chips button.selected{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}.char-chips button .char-thumb{width:20px;height:20px;object-fit:contain;vertical-align:middle;margin-right:4px}.char-bar select{max-width:11em;font-size:12px;padding:5px 8px;border-radius:8px;border:1px solid var(--a-p-45);background:var(--hi);color:var(--ink)}.char-bar .char-chips{margin:0}.char-tools button{font-size:11px;padding:5px 9px}.png-slot[hidden]{display:none!important}.pad-size{font-size:11px;display:flex;align-items:center;gap:6px;color:var(--muted)}.pad-size select{font-size:11px;padding:3px 6px}body{--pad-e:60px;--pad-t:104px;--pad-v:92px}body[data-pad="s"]{--pad-e:46px;--pad-t:84px;--pad-v:70px}body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}#boardShell .emoji-grid{grid-template-columns:repeat(auto-fill,minmax(var(--pad-e),1fr))!important}#boardShell .emoji-grid .emoji-pad{font-size:calc(var(--pad-e) * .42)!important}#boardShell .text-grid{grid-template-columns:repeat(auto-fill,minmax(var(--pad-t),1fr))!important}#boardShell .voice-grid{grid-template-columns:repeat(auto-fill,minmax(var(--pad-v),1fr))!important}#boardShell .bgm-list{grid-template-columns:repeat(3,minmax(0,1fr))!important}
-.studio-setlist{padding-left:24px;font-size:13px;line-height:2}.studio-setlist li{margin-bottom:5px}.studio-setlist button{border:0;background:transparent;cursor:pointer;color:var(--accent);font-size:11px}.studio-help{max-width:960px;margin:0 auto 18px}.studio-help summary{font-size:13px;cursor:pointer}.studio-help p{font-size:12px;line-height:1.9}.studio-noasset{font-size:12px;text-align:center;color:var(--muted)}
-@media(min-width:1100px){.studio{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.recbar{position:relative!important;top:auto!important}.shell{border-width:4px}.studio-workspace{grid-template-columns:minmax(0,1fr) 340px}}
-@media(max-width:780px){.studio-workspace{grid-template-columns:1fr}.studio-card{padding:12px}.studio-inline{grid-template-columns:1fr}.stage-actions button{flex:1}.top h1{font-size:21px}.studio-state{width:100%;margin:0}.studio-tabs button{flex:1}}
-
-.quick-sound{border-top:1px solid var(--a-p-20);padding-top:10px;margin-top:10px}.quick-sound strong{font-size:12px}.quick-pads{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin-top:8px}.quick-pads button{border:1px solid var(--a-p-45);border-radius:8px;background:var(--hi);padding:10px 4px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}.quick-pads button.playing{background:var(--accent);color:var(--on-accent)}#studioQuickBgm{max-width:50%;flex:1;min-width:100px;padding:7px;border-radius:8px;border:1px solid var(--a-p-45);background:var(--hi)}
-@media(min-width:1100px){.app{padding-top:8px}.top{padding:10px!important;margin-bottom:6px!important}.top h1{font-size:21px!important}.top p{margin:3px!important}.top .shop-eyebrow{display:none}.top .pagenav{margin:5px 0 0!important}.top .pagenav button{padding:5px 12px!important}.studio-tabs{margin:8px 0}.studio-workspace{grid-template-columns:minmax(0,1fr) 320px;align-items:start}.studio-workspace>aside{max-height:calc(100vh - 170px);overflow-y:auto}.studio-workspace>div>.studio-card:first-child{padding:12px}.stage-wrap{max-height:45vh}.studio-card h2{margin-bottom:8px}.studio-row{margin:7px 0}.studio-note{line-height:1.5}.studio-kicker{font-size:9px}.quick-pads button{padding:8px 4px}}
-/* v0.4.2 scene / mute / broadcast output */
-.scene-bar{flex-wrap:wrap;gap:6px}.scene-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.scene-bar{flex-wrap:wrap;gap:6px}
+.scene-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 #studioMute[aria-pressed="true"]{background:var(--decor);color:var(--on-decor);border-color:var(--decor)}
 .scene-sep{width:1px;align-self:stretch;background:var(--a-p-45);margin:0 4px}
-.scene-details{margin:8px 0;border-top:1px solid var(--a-p-20);padding-top:8px}.scene-details summary{cursor:pointer;font-size:13px}
-.scene-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.scene-set{border:1px solid var(--a-p-45);border-radius:12px;padding:8px 10px;min-width:0}.scene-set legend{font-size:12px;padding:0 4px}
-.scene-text{min-height:60px}#studioSinkSel{flex:1;min-width:160px;max-width:100%}
+.scene-details{margin:8px 0;border-top:1px solid var(--a-p-20);padding-top:8px}
+.scene-details summary{cursor:pointer;font-size:13px}
+.scene-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.scene-set{border:1px solid var(--a-p-45);border-radius:12px;padding:8px 10px;min-width:0}
+.scene-set legend{font-size:12px;padding:0 4px}
+.scene-text{min-height:60px}
+#studioSinkSel{flex:1;min-width:160px;max-width:100%}
 body:not([data-studio-mode="live"]) .live-only{display:none}
-@media(max-width:780px){.scene-grid{grid-template-columns:1fr}.scene-bar button{flex:1}.scene-sep{display:none}}
-/* v0.4.3 aspect / motion / image slots */
-body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;height:min(72vh,820px)!important;max-height:none!important;width:auto;max-width:100%;margin:0 auto}
-.motion-bar{flex-wrap:wrap;gap:6px}.motion-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}.studio-mini{font-size:12px;color:var(--muted);margin-right:4px}
-.fx-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.fx-slot img{height:44px}.fx-remove{margin-top:4px;font-size:11px;padding:2px 8px}
-.prompt-helper{margin:6px 0 10px}.prompt-helper summary{cursor:pointer;font-size:12px}.prompt-out{white-space:pre-wrap;font-size:11px;line-height:1.6;max-height:220px;overflow:auto;border:1px solid var(--a-p-45);border-radius:8px;padding:8px;background:var(--hi)}
-@media(max-width:780px){.motion-bar .studio-mini{width:100%}.motion-bar button,.scene-bar button{flex:1 1 auto;white-space:nowrap;padding-left:8px;padding-right:8px;font-size:12px}#studioMute{flex-basis:100%}.studio-tabs button{font-size:12px;white-space:nowrap;padding-left:4px;padding-right:4px}.fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:780px){
+  .scene-grid{grid-template-columns:1fr}
+  .scene-bar button{flex:1}
+  .scene-sep{display:none}
+}
 
-/* v0.4.8 layout / performance */
+body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;height:min(72vh,820px)!important;max-height:none!important;width:auto;max-width:100%;margin:0 auto}
+.motion-bar{flex-wrap:wrap;gap:6px}
+.motion-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.studio-mini{font-size:12px;color:var(--muted);margin-right:4px}
+.fx-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.fx-slot img{height:44px}
+.fx-remove{margin-top:4px;font-size:11px;padding:2px 8px}
+.prompt-helper{margin:6px 0 10px}
+.prompt-helper summary{cursor:pointer;font-size:12px}
+.prompt-out{white-space:pre-wrap;font-size:11px;line-height:1.6;max-height:220px;overflow:auto;border:1px solid var(--a-p-45);border-radius:8px;padding:8px;background:var(--hi)}
+@media(max-width:780px){
+  .motion-bar .studio-mini{width:100%}
+  .motion-bar button,.scene-bar button{flex:1 1 auto;white-space:nowrap;padding-left:8px;padding-right:8px;font-size:12px}
+  #studioMute{flex-basis:100%}
+  .studio-tabs button{font-size:12px;white-space:nowrap;padding-left:4px;padding-right:4px}
+  .fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
 .app{width:min(100%,1840px)}
 @media(min-width:1100px){
- .studio-workspace{--stage-col:clamp(520px,calc(50vh*16/9 + 26px),1306px);grid-template-columns:var(--stage-col) minmax(0,1fr)!important;align-items:start}
- body[data-studio-aspect="portrait"] .studio-workspace{--stage-col:clamp(400px,calc(min(72vh,820px)*9/16 + 26px),720px)}
- .stage-wrap{max-height:none!important}
- #boardShell.in-workspace{position:sticky;top:calc(var(--mini-h,0px) + 10px);max-height:calc(100vh - var(--mini-h,0px) - 20px);overflow-y:auto;overscroll-behavior:contain}
+  .studio-workspace{--stage-col:clamp(520px,calc(50vh*16/9 + 26px),1306px);grid-template-columns:var(--stage-col) minmax(0,1fr)!important;align-items:start}
+  body[data-studio-aspect="portrait"] .studio-workspace{--stage-col:clamp(400px,calc(min(72vh,820px)*9/16 + 26px),720px)}
+  .stage-wrap{max-height:none!important}
+  #boardShell.in-workspace{position:sticky;top:calc(var(--mini-h,0px) + 10px);max-height:calc(100vh - var(--mini-h,0px) - 20px);overflow-y:auto;overscroll-behavior:contain}
 }
-@media(max-width:1099px){.studio-workspace{grid-template-columns:minmax(0,1fr)!important}}
+@media(max-width:1099px){
+  .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
+}
 #boardShell.in-workspace{margin:0;min-width:0}
 #gotoLook{font-size:12px;padding:4px 10px}
-.motion-set{margin:10px 0}.motion-set legend{font-size:12px}
+.motion-set{margin:10px 0}
+.motion-set legend{font-size:12px}
 .studio-settings{padding:12px}
 .ss-grid{display:grid;grid-template-columns:minmax(260px,520px) minmax(0,1fr);gap:16px;align-items:start}
 .ss-prev{position:sticky;top:calc(var(--mini-h,0px) + 10px)}
@@ -414,14 +791,16 @@ body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;heig
 #settingsPreview{width:100%;height:auto;display:block;max-height:70vh;object-fit:contain}
 .studio-settings aside.studio-card{box-shadow:none;max-height:none;overflow:visible}
 .film-in-settings{margin-top:0}
-@media(max-width:860px){.ss-grid{grid-template-columns:1fr}.ss-prev{position:sticky;top:var(--mini-h,0px);z-index:3;background:var(--paper);padding-bottom:6px}#settingsPreview{max-height:28vh}}
+@media(max-width:860px){
+  .ss-grid{grid-template-columns:1fr}
+  .ss-prev{position:sticky;top:var(--mini-h,0px);z-index:3;background:var(--paper);padding-bottom:6px}
+  #settingsPreview{max-height:28vh}
+}
 body[data-light] *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;animation:none!important;transition:none!important}
 
-/* v0.4.9 image presets */
 body:not([data-fxp]) .fxp-only{display:none!important}
 .fx-preset{margin:6px 0 4px}
 
-/* v0.5.0 */
 body[data-app="live"] .recbar,body[data-app="live"] #takesShell{display:none!important}
 body[data-app="radio"] .studio-workspace>div:first-child,body[data-app="radio"] .studio-tabs,body[data-app="radio"] .studio-help{display:none!important}
 body[data-app="radio"] .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
@@ -446,7 +825,24 @@ body{padding-top:var(--mini-h,0px)}
 
 </style>
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
-<nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">配信スタジオ</button><button data-mode="record">収録スタジオ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
+<nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
+<section class="shell recbar" aria-label="録音"><div class="content recbar-in">
+ <div class="prog-row"><div class="prog-chips" id="progChips" role="tablist" aria-label="番組"></div><button class="btn gold" type="button" id="progEdit" hidden>番組の設定</button></div>
+ <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><div class="head-btns"><button class="pill" type="button" id="monBtn" title="ヘッドホン・スピーカーから出す音のオン／オフ（録音には影響しません）">モニター音：オン</button><button class="pill danger" id="stopAll">■ 全音停止</button></div></div>
+ <div class="transport">
+  <button class="tbtn recbtn" id="recBtn">● 録音開始</button>
+  <button class="tbtn" id="stopRecBtn" disabled>■ 停止・保存</button>
+  <button class="tbtn" id="retakeBtn" disabled title="今のテイク（または直前のテイク）を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button>
+  <button class="tbtn discardbtn" id="discardBtn" disabled title="録音を止めて、保存せずに捨てます">✕ 停止して破棄</button>
+ </div>
+ <div class="voice-warn" id="voiceWarn" role="alert" hidden></div>
+ <div class="voice-warn save-warn" id="saveWarn" role="alert" hidden></div>
+ <div class="bgm-now" id="bgmNow" data-state="idle"><span class="bgm-now-icon" aria-hidden="true">♪</span><div class="bgm-now-main" id="bgmNowMain" role="button" tabindex="0" title="押すとBGM欄へ移動"><div class="bgm-now-name" id="bgmNowName">BGM：なし</div><div class="bgm-now-track"><i id="bgmNowBar"></i></div></div><span class="bgm-now-time" id="bgmNowTime"></span><button class="btn" id="bgmNowStop" disabled>■ BGM停止</button></div>
+ <div class="meters">
+  <div class="meter-row"><span>マイク</span><div class="meter"><i id="micMeter"></i><b id="micPeak"></b></div><output id="micDb">-∞ dB</output></div>
+  <div class="meter-row"><span>録音</span><div class="meter"><i id="mixMeter"></i><b id="mixPeak"></b></div><output id="mixDb">-∞ dB</output></div>
+ </div>
+</div></section>
 <div class="studio-workspace">
 <div>
 <section class="studio-card">
@@ -456,7 +852,7 @@ body{padding-top:var(--mini-h,0px)}
 <div class="studio-meter" aria-label="マイク音量"><i id="studioMeter"></i></div>
 <div class="studio-row scene-bar" role="group" aria-label="配信の状態"><button id="studioMute" aria-pressed="false">マイク：オン</button><span class="scene-sep" aria-hidden="true"></span><button data-scene="live" class="selected" aria-pressed="true">配信中</button><button data-scene="standby" aria-pressed="false">準備中</button><button data-scene="away" aria-pressed="false">離席中</button><button data-scene="end" aria-pressed="false">配信終了</button><span id="studioSceneState" class="studio-state" role="status">配信中</span></div>
 <div class="studio-row char-bar" role="group" aria-label="名義とキャラクター"><span class="studio-mini">名義</span><select id="profileQuick" aria-label="名義を切り替える"></select><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">表情と演出の設定</button></div> <div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button></div><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div><details class="scene-details" id="quickTune"><summary>見た目をその場で調整（プレビューを見ながら）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">プレビューの立ち絵・マスコットはドラッグで動かせます。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
-<details class="scene-details" id="sceneSettings" open><summary>準備中・離席中・配信終了の画面</summary><p class="studio-note">「準備中」「離席中」「配信終了」に切り替えるとマイクはミュートになり、BGMは下の分だけ大きめに流れます。「配信中」に戻すと、切り替え前のマイク状態に戻ります。ミュートはこのアプリを通る声（動画収録・録音・配信用出力・口パク）に効きます。配信ソフトでマイクを直接取り込んでいる場合、そちらの音は止まりません。</p><div class="scene-grid"><fieldset class="scene-set"><legend>準備中</legend><label class="studio-field">BGM<select id="scene_standby_bgm" data-scene-bgm="standby"></select></label><label class="studio-field">演出<select id="scene_standby_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_standby_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_standby_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：まもなく始まります"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_standby_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="準備中の画像"></label><span class="png-name" id="scene_standby_imgName">未登録</span><button type="button" class="fx-remove" id="scene_standby_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_standby_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_standby_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_standby_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_standby_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_standby_imgY" min="-100" max="100" step="1"></label></div></fieldset><fieldset class="scene-set"><legend>離席中</legend><label class="studio-field">BGM<select id="scene_away_bgm" data-scene-bgm="away"></select></label><label class="studio-field">演出<select id="scene_away_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_away_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_away_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：現在お茶を淹れています……！"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_away_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="離席中の画像"></label><span class="png-name" id="scene_away_imgName">未登録</span><button type="button" class="fx-remove" id="scene_away_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_away_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_away_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_away_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_away_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_away_imgY" min="-100" max="100" step="1"></label></div></fieldset><fieldset class="scene-set"><legend>配信終了</legend><label class="studio-field">BGM<select id="scene_end_bgm" data-scene-bgm="end"></select></label><label class="studio-field">演出<select id="scene_end_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_end_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_end_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：ご視聴ありがとうございました"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_end_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="配信終了の画像"></label><span class="png-name" id="scene_end_imgName">未登録</span><button type="button" class="fx-remove" id="scene_end_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_end_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_end_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_end_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_end_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_end_imgY" min="-100" max="100" step="1"></label></div></fieldset></div><label class="studio-field">切り替えたときのBGMの大きさ <output id="sceneBoostVal"></output><input type="range" id="sceneBoost" min="0" max="12" step="1"></label><label class="studio-field"><input type="checkbox" id="sceneRestoreBgm"> 「配信中」に戻すとき、切り替え前のBGMに戻す（曲は頭から再生）</label></details>
+
 <details class="scene-details live-only" id="studioSinkBox"><summary>配信に届く音（配信用の出力先）</summary>
 <p class="studio-note">「配信スタジオ」表示中は、試聴用の音量の持ち上げを止め、効果音・BGMを配信・収録と同じ音量で鳴らします。</p>
 <p class="studio-note">配信用の出力先を選ぶと、マイク＋効果音・BGM・環境音のミックス（ダッキング・リミッター・ミュート反映済み。動画収録に入る音と同じ経路）を、その音声機器へ別に送ります。仮想オーディオ機器を選び、配信ソフトではその機器だけを音声として取り込む構成を想定しています。普段のイヤホン・ヘッドホンを選ぶと、自分の声が遅れて聞こえます。</p>
@@ -497,6 +893,55 @@ body{padding-top:var(--mini-h,0px)}
 <label class="studio-field"><input id="karaAutoFade" type="checkbox" checked> 伴奏が鳴り始めたら（歌い始めたら）BGMと効果音を自動でフェードアウトする</label><label class="studio-field"><input id="karaFadeEnv" type="checkbox"> 環境音（雨音など）も一緒に止める</label><div class="studio-row"><button id="karaSingStart" type="button">歌い始め：BGM・効果音をフェードアウト</button></div><p class="studio-note">自動のフェードアウトは、取り込んだ伴奏タブの音が約2秒以上の無音のあとに鳴り始めたときに働きます。購入音源をアプリの外で流すときなど、伴奏を取り込んでいない場合は「歌い始め」ボタンを使います。</p><p class="studio-note">選ぶ画面では「Chromeタブ」（Edgeでは「タブ」）から伴奏のタブを選び、「タブの音声も共有する」をオンにします。パソコン版のChrome・Edge向けの機能で、スマートフォンでは使えません。伴奏は効果音・BGMと同じく自動で小さくなる処理（ダッキング）の対象外です。モニター音がオフ（スピーカー判定など）のときは、上の「タブ側では鳴らさない」をオンにしていると伴奏が聞こえません。</p>
 </div></section>
 </div>
+<main class="shell in-workspace" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span><label class="pad-size">ボタンの大きさ<select id="padSize"><option value="s">小</option><option value="m">中</option><option value="l">大</option></select></label></div>
+<section class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
+<section class="section"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>環境音 <span>04 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
+<section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
+</div></main>
+</div>
+<details class="studio-card studio-help"><summary>使い方・収録時の注意</summary><p>① 「設定」の「表情と演出」で立ち絵を登録（4枚の表情差分か1枚）→ ② マイクをつなぐ（ページを開くと自動でつなぎます）→ ③ 声を出して口の反応を調整 → ④ 効果音・BGMを登録 → ⑤ 「映像だけ別窓」を配信ソフトで取り込むか、「映像＋音声を収録」で動画にします。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>動画にはマイクとこのアプリの効果音・BGM・環境音が入ります。マイクはスピーカーへ返さず、ヘッドホンで確認してください。動画収録中のモニター音は、設定「録音中のモニター音」に従います。別窓は映像専用です。配信側でブラウザの音とマイクをそれぞれ取り込み、同じ音を二重に入れないよう調整してください。</p><p>動画は停止時にダウンロードし、この画面を開いている間は再ダウンロードできます。長時間の動画はメモリを使うため、短いテストから確認してください。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別のブラウザや別のURLへは自動で引き継がないので、「設定」の「すべてを書き出す（.live）」で書き出してから移してください。</p></details>
+</section>
+
+<!-- 1. 録音（画面上部に固定） -->
+
+
+<div class="minibar" id="miniBar" hidden><div class="minibar-in">
+ <div class="mini-row" id="miniAudioRow"><span class="mini-timer" id="miniTimer">00:00.0</span><button class="mbtn recbtn" type="button" id="miniRec">● 録音開始</button><button class="mbtn" type="button" id="miniStop">■ 停止</button><button class="mbtn" type="button" id="miniRetake">↺ 録り直し</button></div><div class="mini-row" id="miniVideoRow" hidden><span class="mini-timer" id="miniVideoTime">映像を収録中</span><button class="mbtn" type="button" id="miniVideoStop">■ 映像の収録を停止</button></div>
+ <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button><button class="mbtn" type="button" id="miniAllStop">全音停止</button></div>
+</div></div>
+<!-- 2. 効果音・BGM -->
+
+
+<!-- 3. 収録したテイク -->
+<section class="shell" id="takesShell"><div class="content desk">
+ <div class="section-title" style="margin:0"><h2>収録したテイク</h2><span class="storage" id="storageInfo"></span></div>
+ <div class="takes" id="takes"></div>
+ <div class="export-opts">
+  <label><input type="checkbox" id="optNormalize" style="accent-color:var(--accent)">書き出し時に音量を最大化（ピーク-1dB）</label>
+  <label>MP3 <select id="mp3Rate"><option value="128">128kbps</option><option value="192">192kbps</option><option value="256">256kbps</option></select></label>
+ </div>
+ <div class="cover-row">
+  <div class="cover-thumb" id="coverPreview">画像なし</div>
+  <div class="cover-ctl">
+   <strong>動画用サムネイル（正方形）</strong>
+   <div class="btns"><button class="btn" type="button" id="coverPick">画像を選ぶ</button><button class="btn danger" type="button" id="coverClear">外す</button></div>
+   <label>収め方 <select id="coverFit"><option value="cover">中央を正方形に切り抜く</option><option value="contain">全体を収める（余白はぼかし）</option></select></label>
+   <label>動画サイズ <select id="videoSize"><option value="1080">1080×1080</option><option value="720">720×720</option></select></label>
+  </div>
+ </div>
+
+ 
+ <input type="file" id="coverFile" accept="image/*" hidden><input type="file" id="takeCoverFile" accept="image/*" hidden>
+ <p class="note">各テイクの「BGM操作の記録」には、BGMを流した・止めた・小さくした時刻が自動で残ります。編集ソフトで切り貼りするときの目安に使えます。録音は数秒ごとにブラウザ内へ保存されます。途中でタブが閉じても、そこまでの音声はテイク一覧に残ります。テイク名の左の四角を押すと、そのテイクだけ動画の画像を変えられます。</p>
+</div></section>
+
+<!-- 4. 設定（音量・マイクなど） -->
+<section class="shell" id="settingsShell"><div class="content desk">
+ <div class="section-title" style="margin:0"><h2>設定</h2><button class="btn primary" type="button" data-goto="main">← 戻る</button></div>
+ <h2 class="set-group" id="setLive">配信・録画（PNGTuber）の設定</h2>
+ <section class="panel studio-settings" id="studioSettings" aria-label="表情と演出"><div class="ss-grid"><div class="ss-prev"><div class="ss-prev-box"><canvas id="settingsPreview" width="640" height="360" aria-label="映像のプレビュー"></canvas></div><p class="studio-note">配信画面と同じ映像です。右の設定を変えるとここに反映されます。</p></div>
 <aside class="studio-card">
 <p class="studio-kicker">AVATAR & SCENE</p><h2>表情と演出</h2>
 <div class="studio-inline"><label class="studio-field">映像のなめらかさ<select id="studioFps"><option value="30">30fps（なめらか）</option><option value="15">15fps</option><option value="10">10fps（軽い）</option></select></label><label class="studio-field perf-light"><input id="studioLight" type="checkbox"> 軽量モード（低スペックPC向け）</label></div><p class="studio-note">10fpsでは映像を描く回数が30fpsの3分の1になります。収録する動画もこのコマ数になります。軽量モードでは、降らせる演出を最大40個に抑え、画面の飾りのアニメーションと音量メーターの更新を間引きます。</p><label class="studio-field">映像の向き<select id="studioAspect"><option value="landscape">横 16:9（1280×720）</option><option value="portrait">縦 9:16（720×1280・縦型配信／ショート向け）</option></select></label>
@@ -538,63 +983,20 @@ body{padding-top:var(--mini-h,0px)}
 <p class="studio-note">動画の透過保持は保証しません。背景を抜く収録・配信には緑／青を選んでください。</p>
 <details><summary>設定の持ち出し</summary><div class="studio-row"><button id="studioExport">すべてを書き出す（.live）</button></div><label class="studio-field">設定を読み込む（.live／.kissa／以前のスタジオ設定 .json）<input type="file" id="studioImport" accept=".live,.kissa,application/json,.json"></label><p class="studio-note">.live には、効果音・BGM・名前と着せ替えに加えて、立ち絵・名義・降らせる画像・背景・台本・映像設定が入ります。録音したテイクと収録済みの動画は入りません。.kissa は効果音・BGMだけの形式で、純喫茶オトノハと共通です。以前の版で書き出したスタジオ設定（.json）も読み込めます。</p></details>
 </aside>
-<section class="studio-card mascot-card" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット</h2><p class="studio-note">立ち絵とは別に、小さな画像を最大8体まで置けます。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ マスコットを追加</button><button type="button" id="mascotDel">このマスコットを削除</button></div><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> 表示する</label><label class="studio-field"><input type="checkbox" id="mscTalk"> 話者ボタンに出す（声でぴこぴこ）</label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
-</div>
-<details class="studio-card studio-help"><summary>使い方・収録時の注意</summary><p>① 目開き／目閉じ × 口閉じ／口開きの4枚を登録 → ② マイクを接続 → ③ 声を出して口の反応を調整 → ④ 効果音・BGMを登録 → ⑤ 別窓を配信ソフトで取り込むか、映像＋音声を収録します。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>動画にはマイク＋このアプリの効果音・BGM・環境音が入ります。マイクはスピーカーへ返さず、ヘッドホンで確認してください。動画収録中のモニター音は、従来の録音と同じく設定「録音中のモニター音」に従います（既定ではイヤホンと判定できない出力先では自動で消えます。動画に入る音は変わりません）。別窓は映像専用です。配信側でブラウザ音声とマイクをそれぞれ取り込み、同じ音を二重に入れないよう調整してください。</p><p>収録はMediaRecorder対応ブラウザで利用できます。動画は停止時にダウンロードし、この画面を開いている間だけ再ダウンロードできます。長時間の動画はメモリを使うため、短いテストから確認してください。スマートフォンでは別窓やバックグラウンド時の挙動に制限があります。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別ブラウザや別URLへは自動で引き継ぎません。音源・画像を含め、移行前に書き出してください。</p></details>
-</section>
-
-<!-- 1. 録音（画面上部に固定） -->
-<section class="shell recbar" aria-label="録音"><div class="content recbar-in">
- <div class="prog-row"><div class="prog-chips" id="progChips" role="tablist" aria-label="番組"></div><button class="btn gold" type="button" id="progEdit" hidden>番組の設定</button></div>
- <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><div class="head-btns"><button class="pill" type="button" id="monBtn" title="ヘッドホン・スピーカーから出す音のオン／オフ（録音には影響しません）">モニター音：オン</button><button class="pill danger" id="stopAll">■ 全音停止</button></div></div>
- <div class="transport">
-  <button class="tbtn recbtn" id="recBtn">● 録音開始</button>
-  <button class="tbtn" id="stopRecBtn" disabled>■ 停止・保存</button>
-  <button class="tbtn" id="retakeBtn" disabled title="今のテイク（または直前のテイク）を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button>
-  <button class="tbtn discardbtn" id="discardBtn" disabled title="録音を止めて、保存せずに捨てます">✕ 停止して破棄</button>
- </div>
- <div class="voice-warn" id="voiceWarn" role="alert" hidden></div>
- <div class="voice-warn save-warn" id="saveWarn" role="alert" hidden></div>
- <div class="bgm-now" id="bgmNow" data-state="idle"><span class="bgm-now-icon" aria-hidden="true">♪</span><div class="bgm-now-main" id="bgmNowMain" role="button" tabindex="0" title="押すとBGM欄へ移動"><div class="bgm-now-name" id="bgmNowName">BGM：なし</div><div class="bgm-now-track"><i id="bgmNowBar"></i></div></div><span class="bgm-now-time" id="bgmNowTime"></span><button class="btn" id="bgmNowStop" disabled>■ BGM停止</button></div>
- <div class="meters">
-  <div class="meter-row"><span>マイク</span><div class="meter"><i id="micMeter"></i><b id="micPeak"></b></div><output id="micDb">-∞ dB</output></div>
-  <div class="meter-row"><span>録音</span><div class="meter"><i id="mixMeter"></i><b id="mixPeak"></b></div><output id="mixDb">-∞ dB</output></div>
- </div>
 </div></section>
-
-<div class="minibar" id="miniBar" hidden><div class="minibar-in">
- <div class="mini-row" id="miniAudioRow"><span class="mini-timer" id="miniTimer">00:00.0</span><button class="mbtn recbtn" type="button" id="miniRec">● 録音開始</button><button class="mbtn" type="button" id="miniStop">■ 停止</button><button class="mbtn" type="button" id="miniRetake">↺ 録り直し</button></div><div class="mini-row" id="miniVideoRow" hidden><span class="mini-timer" id="miniVideoTime">映像を収録中</span><button class="mbtn" type="button" id="miniVideoStop">■ 映像の収録を停止</button></div>
- <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button><button class="mbtn" type="button" id="miniAllStop">全音停止</button></div>
-</div></div>
-<!-- 2. 効果音・BGM -->
-<main class="shell" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span><label class="pad-size">ボタンの大きさ<select id="padSize"><option value="s">小</option><option value="m">中</option><option value="l">大</option></select></label></div>
-<section class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
-<section class="section"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
-<section class="section"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
-<section class="section"><div class="section-title"><h2>環境音 <span>04 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
-<section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
-</div></main>
-
-<!-- 3. 収録したテイク -->
-<section class="shell" id="takesShell"><div class="content desk">
- <div class="section-title" style="margin:0"><h2>収録したテイク</h2><span class="storage" id="storageInfo"></span></div>
- <div class="takes" id="takes"></div>
- <div class="export-opts">
-  <label><input type="checkbox" id="optNormalize" style="accent-color:var(--accent)">書き出し時に音量を最大化（ピーク-1dB）</label>
-  <label>MP3 <select id="mp3Rate"><option value="128">128kbps</option><option value="192">192kbps</option><option value="256">256kbps</option></select></label>
- </div>
- <div class="cover-row">
-  <div class="cover-thumb" id="coverPreview">画像なし</div>
-  <div class="cover-ctl">
-   <strong>動画用サムネイル（正方形）</strong>
-   <div class="btns"><button class="btn" type="button" id="coverPick">画像を選ぶ</button><button class="btn danger" type="button" id="coverClear">外す</button></div>
-   <label>収め方 <select id="coverFit"><option value="cover">中央を正方形に切り抜く</option><option value="contain">全体を収める（余白はぼかし）</option></select></label>
-   <label>動画サイズ <select id="videoSize"><option value="1080">1080×1080</option><option value="720">720×720</option></select></label>
-  </div>
- </div>
-
- <section class="film-panel" aria-labelledby="filmTitle">
+<section class="studio-card mascot-card" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット</h2><p class="studio-note">立ち絵とは別に、小さな画像を最大8体まで置けます。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ マスコットを追加</button><button type="button" id="mascotDel">このマスコットを削除</button></div><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> 表示する</label><label class="studio-field"><input type="checkbox" id="mscTalk"> 話者ボタンに出す（声でぴこぴこ）</label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
+<section class="studio-card scene-card"><details class="scene-details" id="sceneSettings" open><summary>準備中・離席中・配信終了の画面</summary><p class="studio-note">「準備中」「離席中」「配信終了」に切り替えるとマイクはミュートになり、BGMは下の分だけ大きめに流れます。「配信中」に戻すと、切り替え前のマイク状態に戻ります。ミュートはこのアプリを通る声（動画収録・録音・配信用出力・口パク）に効きます。配信ソフトでマイクを直接取り込んでいる場合、そちらの音は止まりません。</p><div class="scene-grid"><fieldset class="scene-set"><legend>準備中</legend><label class="studio-field">BGM<select id="scene_standby_bgm" data-scene-bgm="standby"></select></label><label class="studio-field">演出<select id="scene_standby_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_standby_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_standby_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：まもなく始まります"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_standby_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="準備中の画像"></label><span class="png-name" id="scene_standby_imgName">未登録</span><button type="button" class="fx-remove" id="scene_standby_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_standby_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_standby_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_standby_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_standby_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_standby_imgY" min="-100" max="100" step="1"></label></div></fieldset><fieldset class="scene-set"><legend>離席中</legend><label class="studio-field">BGM<select id="scene_away_bgm" data-scene-bgm="away"></select></label><label class="studio-field">演出<select id="scene_away_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_away_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_away_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：現在お茶を淹れています……！"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_away_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="離席中の画像"></label><span class="png-name" id="scene_away_imgName">未登録</span><button type="button" class="fx-remove" id="scene_away_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_away_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_away_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_away_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_away_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_away_imgY" min="-100" max="100" step="1"></label></div></fieldset><fieldset class="scene-set"><legend>配信終了</legend><label class="studio-field">BGM<select id="scene_end_bgm" data-scene-bgm="end"></select></label><label class="studio-field">演出<select id="scene_end_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_end_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_end_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：ご視聴ありがとうございました"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_end_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="配信終了の画像"></label><span class="png-name" id="scene_end_imgName">未登録</span><button type="button" class="fx-remove" id="scene_end_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_end_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_end_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_end_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_end_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_end_imgY" min="-100" max="100" step="1"></label></div></fieldset></div><label class="studio-field">切り替えたときのBGMの大きさ <output id="sceneBoostVal"></output><input type="range" id="sceneBoost" min="0" max="12" step="1"></label><label class="studio-field"><input type="checkbox" id="sceneRestoreBgm"> 「配信中」に戻すとき、切り替え前のBGMに戻す（曲は頭から再生）</label></details></section>
+ <h2 class="set-group" id="setRadio">ラジオ（音声のみ）の設定</h2>
+ <section class="panel" aria-labelledby="endTitle">
+  <h3 id="endTitle">BGMの締め</h3>
+  <div class="volume-row"><label for="bgmLowLevel">小さくした時</label><input id="bgmLowLevel" type="range" min="5" max="80"><output id="bgmLowVal"></output></div>
+  <div class="end-row"><label for="fadeSec">フェードアウトの長さ</label><select id="fadeSec"><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option><option value="12">12秒</option></select></div>
+  <div class="opts"><label><input type="checkbox" id="fadeOnStop">「停止・保存」でBGMをフェードアウトしてから録音を止める</label></div>
+  <p class="note">BGM欄の「BGMを小さくする」は約2秒かけて下げ、もう一度押すと元の音量へ戻します。</p>
+ </section>
+ <section class="film-panel film-in-settings" aria-labelledby="filmTitle">
   <h3 id="filmTitle">窓辺の映像演出</h3>
+  <p class="note">収録したテイク（音声）を動画として書き出すときの演出です。</p>
   <div class="film-controls">
    <label>季節の演出<select id="videoEffect"><option value="none">なし（静止画）</option><option value="spring">春：薄絹の桜</option><option value="summer">夏：虹彩の泡</option><option value="autumn">秋：琥珀の紅葉</option><option value="winter">冬：銀雪の結晶</option></select></label>
    <label>動かすもの<select id="effectSource"><option value="default">季節の絵（標準）</option><option value="image">好きな画像</option></select></label>
@@ -611,14 +1013,7 @@ body{padding-top:var(--mini-h,0px)}
   <p class="film-status" id="filmStatus" role="status"></p>
   <p class="note">演出は書き出す動画にも入ります。プレビューは共通画像で表示し、書き出しでは各テイク・番組の画像設定が優先されます。動きのある動画は静止画より変換時間と容量が増えます。</p>
  </section>
- <input type="file" id="coverFile" accept="image/*" hidden><input type="file" id="takeCoverFile" accept="image/*" hidden>
- <p class="note">各テイクの「BGM操作の記録」には、BGMを流した・止めた・小さくした時刻が自動で残ります。編集ソフトで切り貼りするときの目安に使えます。録音は数秒ごとにブラウザ内へ保存されます。途中でタブが閉じても、そこまでの音声はテイク一覧に残ります。テイク名の左の四角を押すと、そのテイクだけ動画の画像を変えられます。</p>
-</div></section>
-
-<!-- 4. 設定（音量・マイクなど） -->
-<section class="shell" id="settingsShell"><div class="content desk">
- <div class="section-title" style="margin:0"><h2>設定</h2><button class="btn primary" type="button" data-goto="main">← 戻る</button></div>
-
+ <h2 class="set-group" id="setCommon">共通の設定<small>配信・ラジオの両方で使います</small></h2>
  <section class="panel" aria-labelledby="lookTitle">
   <h3 id="lookTitle">名前と着せ替え <span id="lookState">保存済み</span></h3>
   <div class="look-names"><label>看板の上の小さな文字<input id="lookEyebrowIn" maxlength="30" autocomplete="off"></label><label>タイトル<input id="lookTitleIn" maxlength="30" autocomplete="off"></label><label>サブタイトル<input id="lookSubIn" maxlength="80" autocomplete="off"></label></div>
@@ -627,7 +1022,6 @@ body{padding-top:var(--mini-h,0px)}
   <p class="note">変更はすぐ画面に反映されます（収録画面でも確かめられます）。「保存」を押すまでは仮の表示で、ページを開き直すと保存済みの状態に戻ります。4色のどれかを変えると「カスタム」になります。文字の色は、背景の明るさから自動で決まります。</p>
   <div class="end-row"><button class="btn primary" type="button" id="lookSave">保存</button><button class="btn" type="button" id="lookRevert">変更を取り消す</button><button class="btn" type="button" id="lookReset">初期状態に戻す</button></div>
  </section>
-
  <section class="panel" aria-labelledby="mixTitle">
   <h3 id="mixTitle">音量 <span>ヘッドホン音量は録音に影響しません</span></h3>
   <div class="volume-row"><label for="micVolume">マイク</label><input id="micVolume" type="range" min="0" max="300"><output id="micVal"></output></div>
@@ -646,22 +1040,12 @@ body{padding-top:var(--mini-h,0px)}
   <div class="end-row"><label for="monitorMode">録音中のモニター音</label><select id="monitorMode"><option value="auto">自動（イヤホンでなければ消す）</option><option value="muteRec">録音中は必ず消す</option><option value="always">消さない</option></select></div>
   <p class="note" id="outputInfo">出力先を確認中…</p>
  </section>
-
- <section class="panel" aria-labelledby="endTitle">
-  <h3 id="endTitle">BGMの締め</h3>
-  <div class="volume-row"><label for="bgmLowLevel">小さくした時</label><input id="bgmLowLevel" type="range" min="5" max="80"><output id="bgmLowVal"></output></div>
-  <div class="end-row"><label for="fadeSec">フェードアウトの長さ</label><select id="fadeSec"><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option><option value="12">12秒</option></select></div>
-  <div class="opts"><label><input type="checkbox" id="fadeOnStop">「停止・保存」でBGMをフェードアウトしてから録音を止める</label></div>
-  <p class="note">BGM欄の「BGMを小さくする」は約2秒かけて下げ、もう一度押すと元の音量へ戻します。</p>
- </section>
-
  <section class="panel" aria-labelledby="duckTitle">
   <h3 id="duckTitle"><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" id="duckOn" style="accent-color:var(--accent)">話すとBGMを下げる</label><span class="duck-state" id="duckState">待機</span></h3>
   <div class="volume-row"><label for="duckDepth">下げ幅</label><input id="duckDepth" type="range" min="3" max="30"><output id="duckDepthVal"></output></div>
   <div class="volume-row"><label for="duckThresh">反応する声</label><input id="duckThresh" type="range" min="-65" max="-15"><output id="duckThreshVal"></output></div>
   <p class="note">マイクの音が「反応する声」を超えるとBGMが下がり、話し終えて約0.5秒で戻ります。右へ動かすほど大きな声にだけ反応します。</p>
  </section>
-
  <section class="panel" aria-labelledby="micTitle">
   <h3 id="micTitle">マイク <span id="micInfo">未接続</span></h3>
   <div class="mic-row"><select id="micSelect" aria-label="使うマイク"><option value="">既定のマイク</option></select><button class="btn primary" id="micBtn">マイクを有効にする</button></div>
@@ -675,12 +1059,24 @@ body{padding-top:var(--mini-h,0px)}
   <p class="note">エコー除去などはブラウザの通話向け処理です。声質が変わるため初期値は切ってあります。スピーカーで収録するときは、BGMや効果音がマイクに回り込まないよう、録音中のモニター音が自動で消えます（上の「音量」欄で変更できます）。</p>
   <p class="note" id="micHelp">開くたびにマイクの許可を求められる場合は、許可の画面で「サイトにアクセスしている間は許可する」（Chrome）を選ぶか、ブラウザのサイト設定でマイクを「許可」にすると、次回から自動でつながります。</p>
  </section>
-
  <section class="panel" aria-labelledby="fileTitle">
   <h3 id="fileTitle">設定ファイル <span>別の端末への引き継ぎ用</span></h3>
   <div class="end-row"><button class="btn" id="exportBtn">すべてを書き出す（.live）</button><button class="btn" id="exportKissaBtn">効果音・BGMだけ書き出す（.kissa）</button><button class="btn" id="importBtn">設定を読み込む（.live／.kissa）</button></div>
   <p class="note">.live：効果音・ボイス・BGM・動画用サムネイル・名前と着せ替えに、立ち絵・名義・降らせる画像・背景・台本・映像設定まで、すべてを1つのファイルにまとめます。<br>.kissa：効果音・ボイス・BGM・動画用サムネイル・名前と着せ替えだけ。純喫茶オトノハと同じ形式で、どちらのアプリでも読み込めます。<br>どちらにも、録音したテイクと収録済みの動画は入りません。</p>
  </section>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
 </div></section>
 <p class="footer">設定・音源・録音はこのブラウザ内に保存されます。</p>
 </div>
@@ -706,6 +1102,7 @@ body{padding-top:var(--mini-h,0px)}
 <input id="importFile" type="file" accept=".live,.kissa" hidden><div class="notice" id="notice" role="status"></div>
 
 <script>
+/* --- 00-basics.js --- */
 'use strict';
 /* ===================== 基本・保存 ===================== */
 
@@ -1278,6 +1675,7 @@ function toast(msg,ms=2400){
   noticeTimer=setTimeout(()=>el.classList.remove('show'),ms)
 }
 
+/* --- 01-engine.js --- */
 /* ===================== 音声エンジン ===================== */
 // 経路： 効果音 → seBus ┐
 //        BGM → bgmBus → duckGain ┴→ programBus →(聴く) masterBus → スピーカー/ヘッドホン
@@ -1751,6 +2149,8 @@ function tickBgmNow(){
   $('#bgmNowBar').style.width=(t/d*100).toFixed(2)+'%';
 
 }
+
+/* --- 02-mic.js --- */
 /* ===================== マイク・メーター・ダッキング ===================== */
 
 let micStream=null,
@@ -1921,6 +2321,8 @@ function duckLoop(){
   }
 
 }
+
+/* --- 03-programs.js --- */
 /* ===================== 番組プリセット ===================== */
 
 const curProgram=()=>cfg.currentProgram>=0?cfg.programs?.[cfg.currentProgram]:null;
@@ -2206,6 +2608,7 @@ $('#progForm').onsubmit=e=>{
   toast('番組の設定を保存しました')
 };
 
+/* --- 04-monitor.js --- */
 /* ===================== モニター音（ヘッドホン・スピーカー） ===================== */
 
 let monitorManualOff=false,
@@ -2370,6 +2773,7 @@ function renderDuck(){
   el.classList.toggle('on',ducked&&cfg.rec.duck)
 }
 
+/* --- 05-recording.js --- */
 /* ===================== 録音 ===================== */
 
 const WORKLET=`class R extends AudioWorkletProcessor{constructor(){super();this.on=false;this.N=8192;this.b=[0,1,2,3,4].map(()=>new Float32Array(this.N));this.n=0;this.port.onmessage=e=>{const m=e.data;if(m==='start')this.on=true;else if(m==='pause'){this.on=false;this.flush()}else if(m==='stop'){this.on=false;this.flush();this.port.postMessage({done:true})}}}
@@ -3082,6 +3486,7 @@ function markerList(ms){
   return ms.length?ms.map(m=>`<li><time>${fmtTime(m.t,true)}</time><span>${esc(m.label)}</span></li>`).join(''):'<li>なし</li>'
 }
 
+/* --- 06-takes.js --- */
 /* ===================== テイク一覧・書き出し ===================== */
 
 const TRACK_INFO={mix:{label:'ミックス',ch:2},voice:{label:'声だけ',ch:1},prog:{label:'BGM＋効果音',ch:2}};
@@ -3316,6 +3721,8 @@ async function buildMp3(t,track,progress){
   return new Blob(out,{type:'audio/mpeg'});
 
 }
+
+/* --- 07-container.js --- */
 /* ===================== 動画の入れ物（WebM / MP4）を組み立てる ===================== */
 
 const Mux=(()=>{
@@ -3585,6 +3992,7 @@ const Mux=(()=>{
 
 })();
 
+/* --- 08-video-export.js --- */
 /* ===================== サムネイルと動画書き出し ===================== */
 
 const coverUrls=new Map();
@@ -4920,6 +5328,7 @@ async function updateStorage(){
   }catch(_){}
 }
 
+/* --- 09-board.js --- */
 /* ===================== 画面描画（ポン出し） ===================== */
 
 function renderVolumes(){
@@ -5826,6 +6235,7 @@ window.addEventListener('beforeunload',e=>{
   }
 });
 
+/* --- 10-files.js --- */
 /* ===================== 設定の書き出し・読み込み ===================== */
 // 形式：先頭8バイト（.kissa は "MTKSPACK"、.live は "OTNHLIVE"）+ 見出しJSONの長さ(4バイト) + 見出しJSON + 音源・画像をそのまま連結
 // .kissa は効果音・BGMのみ（純喫茶オトノハと共通）。.live はそれに立ち絵・降らせる画像・背景・台本・映像設定（kind:'studio'）を加えたもの。
@@ -6129,6 +6539,7 @@ $('#importFile').onchange=async e=>{
   }
 };
 
+/* --- 11-look.js --- */
 /* ===================== 名前と着せ替え（設定画面） ===================== */
 
 let lookSaved={...look};
@@ -6235,6 +6646,7 @@ $('#lookReset').onclick=()=>{
 lookPaint(look);
 lookRenderUI();
 
+/* --- 12-pages.js --- */
 /* ===================== 画面の切り替え（収録画面／音量・マイクの設定） ===================== */
 
 function clearPageHash(){
@@ -6314,6 +6726,8 @@ $('#tryBgm').onclick=()=>{
   const b=progBgm()||cfg.bgms.find(x=>x.assetId);
   if(b)playBgm(b);else toast('登録済みのBGMがありません')
 };
+
+/* --- 13-minibar.js --- */
 /* ===================== スクロール中の小さな録音欄・BGM欄への移動 ===================== */
 
 let miniOn=false;
@@ -6483,72 +6897,22 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
 
 </script>
 <script>
-/* v0.4.8 layout: 表情と演出 and 窓辺の映像演出 live in 設定; 音のお品書き sits beside the stage. */
-
-(function(){
-  const ws=document.querySelector('.studio-workspace'),
-    aside=ws&&ws.querySelector(':scope>aside'),
-    board=document.getElementById('boardShell'),
-    setC=document.querySelector('#settingsShell .content'),
-    film=document.querySelector('#takesShell .film-panel');
-  if(!ws||!aside||!board||!setC)return;
- 
-  const sec=document.createElement('section');
-  sec.className='panel studio-settings';
-  sec.id='studioSettings';
-  sec.setAttribute('aria-label','表情と演出');
- 
-  sec.innerHTML='<div class="ss-grid"><div class="ss-prev"><div class="ss-prev-box"><canvas id="settingsPreview" width="640" height="360" aria-label="映像のプレビュー"></canvas></div><p class="studio-note">配信画面と同じ映像です。右の設定を変えるとここに反映されます。</p></div></div>';
- 
-  sec.querySelector('.ss-grid').append(aside);
-  const title=setC.querySelector(':scope>.section-title');
-  if(title)title.after(sec);else setC.prepend(sec);
- 
-    {
-      const grp=(id,title,sub)=>{const h=document.createElement('h2');h.className='set-group';h.id=id;h.innerHTML=title+(sub?'<small>'+sub+'</small>':'');return h};
-      const panel=lbl=>setC.querySelector(':scope>section.panel[aria-labelledby="'+lbl+'"]');
-      const gLive=grp('setLive','配信・録画（PNGTuber）の設定',''),gRadio=grp('setRadio','ラジオ（音声のみ）の設定',''),gCommon=grp('setCommon','共通の設定','配信・ラジオの両方で使います');
-      sec.before(gLive);
-      let last=sec;
-      const mp=document.getElementById('mascotPanel');
-      if(mp){last.after(mp);last=mp}
-      const sd=document.getElementById('sceneSettings');
-      if(sd){const w=document.createElement('section');w.className='studio-card scene-card';w.append(sd);last.after(w);last=w}
-      last.after(gRadio);last=gRadio;
-      const endP=panel('endTitle');if(endP){last.after(endP);last=endP}
-      if(film){film.classList.add('film-in-settings');const n=document.createElement('p');n.className='note';n.textContent='収録したテイク（音声）を動画として書き出すときの演出です。';film.querySelector('h3')?.after(n);last.after(film);last=film}
-      last.after(gCommon);last=gCommon;
-      for(const l of ['lookTitle','mixTitle','duckTitle','micTitle','fileTitle']){const p=panel(l);if(p){last.after(p);last=p}}
-    }
-    if(false&&film){
-    film.classList.add('film-in-settings');
-    const n=document.createElement('p');
-    n.className='note';
-    n.textContent='収録したテイク（音声）を動画として書き出すときの演出です。';
-    film.querySelector('h3')?.after(n);
-    sec.after(film)
-  }
- 
-  ws.append(board);
-  board.classList.add('in-workspace');
-  const rb=document.querySelector('.recbar');
-  if(rb)ws.before(rb);
- 
-  const mb=document.getElementById('miniBar'),
-    upd=()=>document.documentElement.style.setProperty('--mini-h',(mb&&!mb.hidden?mb.offsetHeight:0)+'px');
-  if(mb){
-    new MutationObserver(upd).observe(mb,{attributes:true,attributeFilter:['hidden']});
-    if(window.ResizeObserver)new ResizeObserver(upd).observe(mb)
-  }
-  upd()
-})();
-
-/* Otonoha visual studio 0.4.3 — uses the original page's audio buses and asset DB.
-   0.4.1: video capture shares the original monitor protection (studioCapturing), frames keep running while the tab is hidden (scheduleFrame), registered image types match the JSON importer. */
-
 (()=>{
+'use strict';
+/* --- 00-basics.js --- */
+/* 基本：状態の読み込み・保存・検証、画像の登録 */
 
-  'use strict';
+  // 上部の小さな録音欄の高さを --mini-h に入れる（固定表示の欄と重ならないように使う）
+  {
+    const mb=document.getElementById('miniBar'),
+      upd=()=>document.documentElement.style.setProperty('--mini-h',(mb&&!mb.hidden?mb.offsetHeight:0)+'px');
+    if(mb){
+      new MutationObserver(upd).observe(mb,{attributes:true,attributeFilter:['hidden']});
+      if(window.ResizeObserver)new ResizeObserver(upd).observe(mb)
+    }
+    upd()
+  }
+
 
   const E=id=>document.getElementById(id),
     KEY_S=(typeof OTONOHA_NS==='string'&&OTONOHA_NS)?'haishin-visual-studio-v1':'otonoha-visual-studio-v1',
@@ -7031,7 +7395,11 @@ for(const [id,k]of Object.entries(bindings)){
       }
       list.append(li)
     })
-  } /* ===================== v0.4.4: カラオケ音源を探す・伴奏タブの音を取り込む ===================== */
+  }
+
+/* --- 10-karaoke.js --- */
+/* 歌枠ノート：カラオケ音源の検索、伴奏タブの取り込み、歌い始めのフェード */
+/* ===================== カラオケ音源を探す・伴奏タブの音を取り込む ===================== */
  
   function karaDefaults(){
     return [
@@ -7447,16 +7815,10 @@ for(const [id,k]of Object.entries(bindings)){
       }
     }
   },100);
- 
-  window.__otonohaSingFade=singFade;
- 
-  window.__otonohaKara={get stream(){
-      return karaStream
-    },get gain(){
-      return karaGain
-    }};
 
- /* ===================== v0.4.5: 名義・キャラクター ===================== */
+/* --- 20-characters.js --- */
+/* 名義とキャラクター */
+/* ===================== 名義・キャラクター ===================== */
  
   function cleanChar(c){
     const o={
@@ -8074,7 +8436,7 @@ for(const q of particles)q.beh='';
     document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('selected',b.dataset.mode===mode));
     E('studioPlan').classList.toggle('on',mode==='plan');
     E('studioSongs').classList.toggle('on',mode==='songs');
-    E('studioModeHelp').textContent=mode==='record'?'PNGTuber・演出・マイク・効果音をまとめて動画収録できます。音声だけの収録には下の録音欄を使ってください。':mode==='plan'?'企画文をAIへ渡し、返答を台本欄に貼り付けて進行できます。AIと自動通信する機能はありません。':'配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。'
+    E('studioModeHelp').textContent=mode==='plan'?'企画文をAIへ渡し、返答を台本欄に貼り付けて進行できます。AIと自動通信する機能はありません。':'配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。'
   }
 
   document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
@@ -8113,7 +8475,10 @@ for(const q of particles)q.beh='';
     outputWindow.document.close();
     outContext=outputWindow.document.querySelector('canvas').getContext('2d')
   };
-// ---------- v0.4.3 drawing: aspect, avatar motion, seasonal motion ----------
+
+/* --- 30-drawing.js --- */
+/* 描画：立ち絵の位置と動き、降らせる演出、背景 */
+
 // Canvas size follows state.aspect. Everything below draws in W×H pixels.
 
   let W=1280,
@@ -8674,7 +9039,9 @@ for(const q of particles)q.beh='';
     visible.forEach((s,i)=>g.fillText(s+(i===4&&lines.length>5?'…':''),85,H-60-h+42+i*38))
   }
 
-/* ---------- v0.4.3: aspect, avatar motion buttons, image prompt helper ---------- */
+/* --- 40-motion-prompt.js --- */
+/* 映像の向き・立ち絵の動きボタン・画像生成AI用のプロンプト */
+
 
   function applyAspect(){
     const v=state.aspect==='portrait';
@@ -8758,7 +9125,9 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
     E('promptOut').hidden=false
   };
 
-/* ---------- v0.4.2: mute, standby / away scenes, broadcast output ---------- */
+/* --- 50-scenes.js --- */
+/* マイクのミュート、準備中・離席中・配信終了の画面、配信用の出力先 */
+
 
   let scene='live',
     muteBefore=null,
@@ -9043,7 +9412,9 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
 
   navigator.mediaDevices?.addEventListener?.('devicechange',listSinks);
 
-// Frame scheduling (0.4.1). A hidden tab stops requestAnimationFrame and throttles timers to ~1/s, which froze
+/* --- 60-loop-capture-files.js --- */
+/* 描画ループ、映像の収録、スタジオ設定の読み込み */
+// Frame scheduling. A hidden tab stops requestAnimationFrame and throttles timers to ~1/s, which froze
 // the separate output window and the video capture. While hidden, drive frames from the visible output window's
 // rAF, otherwise from a Worker timer (Worker timers are not subject to the same background-tab throttling).
 // Only one pending callback is valid at a time (frameToken); a watchdog restarts the chain if it stalls.
@@ -9391,7 +9762,9 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     }catch{}
   });
 
- // ---------- v0.4.8 ----------
+/* --- 70-effects-perf.js --- */
+/* 季節の演出・画像のプリセット、なめらかさ（fps）・軽量モード、設定画面のプレビュー */
+
  
   const FXK=['count','speed','fxSize','fxOpacity','imageMotion'],
     FXI={count:'studioCount',speed:'studioSpeed',fxSize:'studioFxSize',fxOpacity:'studioFxOpacity',imageMotion:'studioImageMotion'};
@@ -9593,8 +9966,9 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
   renderEffectOptions();
   seasonLoad();
 
+/* --- 80-expressions.js --- */
+/* 表情差分 */
 
- // ---------- v0.5.0: expressions, mascots, scene images, quick tuning, drag ----------
   let curExpr='';
   function charSlots(cid){
     const c=state.chars&&state.chars[cid];
@@ -9682,7 +10056,9 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     save();renderExprUI()
   };
 
-  // ----- mascots -----
+/* --- 81-mascots.js --- */
+/* マスコット */
+
   let mscSel='',mscLast=0;const mscEnv={};
   function mscCur(){return (state.mascots||[]).find(m=>m.id===mscSel)||null}
   function drawMascots(now){
@@ -9777,7 +10153,9 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
   E('mscMotion').onchange=e=>{const m=mscCur();if(m){m.motion=e.target.value;save()}};
   for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])E(id).addEventListener('input',e=>{const m=mscCur();if(m){m[k]=Number(e.target.value);save();renderMascotUI()}});
 
-  // ----- scene images / BGM boost -----
+/* --- 82-scene-images.js --- */
+/* 準備中・離席中・配信終了の画像とBGMの大きさ */
+
   for(const k of ['standby','away','end']){
     E('scene_'+k+'_imgFile').onchange=async e=>{
       const f=e.target.files[0];if(!f)return;
@@ -9791,7 +10169,9 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     save()
   });
 
-  // ----- quick tuning on the stage (mirrors the controls in 設定) -----
+/* --- 83-tuning-drag.js --- */
+/* その場で調整（設定画面の項目と連動）、プレビュー上のドラッグ */
+
   const QT=[['studioScale','大きさ','%'],['studioX','左右',''],['studioY','上下',''],['studioMotionSing','歌うゆらぎの大きさ','%'],['studioMotionSingSpeed','歌うゆらぎの速さ','%'],['studioMotionHop','ぴょんぴょんの大きさ','%'],['studioMotionShake','ガタガタの大きさ','%'],['studioMotionAmt','呼吸・話すときの動き','%'],['studioEffect','季節の演出・画像のプリセット',''],['studioCount','演出の量',''],['studioSpeed','演出の速さ',''],['studioFxSize','演出の大きさ',''],['studioFxOpacity','演出の濃さ','']];
   (function buildQuickTune(){
     const box=E('quickTuneBody');
@@ -9849,11 +10229,16 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
   const endDrag=()=>{if(!drag)return;drag=null;canvas.classList.remove('dragging');save()};
   canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
 
-  // ----- app mode -----
+/* --- 84-app-mode.js --- */
+/* 配信・録画／ラジオの切り替え */
+
   window.__otonohaAppChanged=app=>{
     if(app==='radio'){studioLiveMode=false;applyMonitor()}
     else setMode(document.body.dataset.studioMode||'live')
   };
+
+/* --- 90-startup.js --- */
+/* 起動処理 */
 
   applyPerf();
   renderMotionOut();
@@ -9893,7 +10278,6 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
   })();
 
 })();
-
 </script>
 </body>
 </html>

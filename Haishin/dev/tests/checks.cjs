@@ -7,8 +7,9 @@ const acorn = require('internal/deps/acorn/acorn/dist/acorn');
 const walk = require('internal/deps/acorn/acorn-walk/dist/walk');
 const original = process.argv.includes('--original');
 const originalBlocks = original ? [...fs.readFileSync(__dirname + '/../original/index-original.html','utf8').matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]) : null;
-const audio = original ? originalBlocks[1] : fs.readFileSync(__dirname + '/../source/js/audio-studio.js', 'utf8');
-const visual = original ? originalBlocks[2] : fs.readFileSync(__dirname + '/../source/js/visual-studio.js', 'utf8');
+const readDir = d => fs.readdirSync(d).filter(f => f.endsWith('.js')).sort().map(f => fs.readFileSync(d + '/' + f, 'utf8')).join('\n');
+const audio = original ? originalBlocks[1] : readDir(__dirname + '/../source/js/audio');
+const visual = original ? originalBlocks[2] : '(()=>{' + readDir(__dirname + '/../source/js/visual') + '})();';
 const parse = code => acorn.parse(code, { ecmaVersion: 'latest' });
 function find(code, type, name) {
   let result;
