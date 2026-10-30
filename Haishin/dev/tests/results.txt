@@ -1,0 +1,11 @@
+PASS All three JavaScript blocks parse
+PASS Empty imported profile retains its generated character
+PASS Duplicate character reference is repaired without a dangling profile
+PASS Motion settings survive sanitization
+PASS More than 200 valid characters survive reload sanitization
+PASS Null or array visual configuration is safely normalized
+PASS Pack reader rejects duplicate asset keys
+PASS Stopping an audio recording keeps the microphone muted
+PASS Audio recording startup prevents duplicate simultaneous starts
+PASS Studio JSON import refuses changes during capture
+{"mode":"revised","passed":10,"failed":0}

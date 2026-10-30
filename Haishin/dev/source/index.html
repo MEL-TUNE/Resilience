@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- 2026-10-30 整理版。既存の保存キー・バックアップ形式を維持。 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>配信処オトノハ</title>
+<link rel="stylesheet" href="css/base.css">
+<script src="js/theme.js"></script>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">RADIO &amp; SOUND</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.4.9 / .live形式・画像のプリセット</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" id="navMain">収録画面</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+
+<link rel="stylesheet" href="css/studio.css">
+<section class="studio-extension" aria-label="PNGTuberスタジオ">
+<nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">配信スタジオ</button><button data-mode="record">収録スタジオ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
+<div class="studio-workspace">
+<div>
+<section class="studio-card">
+<div class="studio-header-line"><div><p class="studio-kicker">OTONOHA / VISUAL STUDIO</p><h2>声に、表情と季節を。</h2></div><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
+<div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas></div>
+<div class="studio-row stage-actions"><button id="studioMic" class="accent">マイクを接続</button><button id="studioTest">口パクを試す</button><button id="studioOutput">映像だけ別窓</button><button id="studioFullscreen">全画面</button><span id="studioState" class="studio-state">マイク未接続</span></div>
+<div class="studio-meter" aria-label="マイク音量"><i id="studioMeter"></i></div>
+<div class="studio-row scene-bar" role="group" aria-label="配信の状態"><button id="studioMute" aria-pressed="false">マイク：オン</button><span class="scene-sep" aria-hidden="true"></span><button data-scene="live" class="selected" aria-pressed="true">配信中</button><button data-scene="standby" aria-pressed="false">待機画面</button><button data-scene="away" aria-pressed="false">離席画面</button><span id="studioSceneState" class="studio-state" role="status">配信中</span></div>
+<div class="studio-row char-bar" role="group" aria-label="名義とキャラクター"><span class="studio-mini">名義</span><select id="profileQuick" aria-label="名義を切り替える"></select><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">表情と演出の設定</button></div> <div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button></div>
+<details class="scene-details"><summary>待機画面・離席画面の設定</summary>
+<p class="studio-note">切り替えるとマイクはミュートになり、「配信中」に戻すと切り替え前のマイク状態に戻ります。ミュートはこのアプリを通る声（動画収録・録音・配信用出力・口パク）に効きます。配信ソフトでマイクを直接取り込んでいる場合、そちらの音は止まりません。</p>
+<div class="scene-grid"><fieldset class="scene-set"><legend>待機画面</legend>
+<label class="studio-field">BGM<select id="scene_standby_bgm" data-scene-bgm="standby"></select></label>
+<label class="studio-field">演出<select id="scene_standby_effect"><option value="keep">配信中と同じ</option><option value="none">なし</option><option value="spring">春 / 薄絹の桜</option><option value="summer">夏 / 虹彩の泡</option><option value="autumn">秋 / 琥珀の紅葉</option><option value="winter">冬 / 銀雪の結晶</option><option value="image">登録した画像を降らせる</option></select></label>
+<label class="studio-field"><input type="checkbox" id="scene_standby_avatar"> 立ち絵を表示する</label>
+<label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_standby_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：まもなく始まります"></textarea></label>
+</fieldset><fieldset class="scene-set"><legend>離席画面</legend>
+<label class="studio-field">BGM<select id="scene_away_bgm" data-scene-bgm="away"></select></label>
+<label class="studio-field">演出<select id="scene_away_effect"><option value="keep">配信中と同じ</option><option value="none">なし</option><option value="spring">春 / 薄絹の桜</option><option value="summer">夏 / 虹彩の泡</option><option value="autumn">秋 / 琥珀の紅葉</option><option value="winter">冬 / 銀雪の結晶</option><option value="image">登録した画像を降らせる</option></select></label>
+<label class="studio-field"><input type="checkbox" id="scene_away_avatar"> 立ち絵を表示する</label>
+<label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_away_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：現在お茶を淹れています……！"></textarea></label>
+</fieldset></div>
+<label class="studio-field"><input type="checkbox" id="sceneRestoreBgm"> 「配信中」に戻すとき、切り替え前のBGMに戻す（曲は頭から再生）</label>
+</details>
+<details class="scene-details live-only" id="studioSinkBox"><summary>配信に届く音（配信用の出力先）</summary>
+<p class="studio-note">「配信スタジオ」表示中は、試聴用の音量の持ち上げを止め、効果音・BGMを配信・収録と同じ音量で鳴らします。</p>
+<p class="studio-note">配信用の出力先を選ぶと、マイク＋効果音・BGM・環境音のミックス（ダッキング・リミッター・ミュート反映済み。動画収録に入る音と同じ経路）を、その音声機器へ別に送ります。仮想オーディオ機器を選び、配信ソフトではその機器だけを音声として取り込む構成を想定しています。普段のイヤホン・ヘッドホンを選ぶと、自分の声が遅れて聞こえます。</p>
+<div class="studio-row"><select id="studioSinkSel" aria-label="配信用の出力先"><option value="">使わない</option></select><button id="studioSinkList">一覧を更新</button><button id="studioSinkToggle">送出を開始</button></div>
+<p class="studio-note" id="studioSinkInfo">停止中</p>
+</details>
+<div class="studio-row stage-actions"><button id="studioRec" class="accent">● 映像＋音声を収録</button><button id="studioStop" disabled>■ 停止・ダウンロード</button><span id="studioRecTime" role="status" class="studio-state">未収録</span></div>
+<p class="studio-note" id="studioModeHelp">配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。</p>
+<p class="studio-note">立ち絵・季節の演出・背景は「設定」の「表情と演出」で登録します。未登録時は動作確認用の図形を表示します。音声収録は従来の録音欄、PNGTuber入り動画は上のボタンを使います。</p>
+<div class="quick-sound"><div class="studio-header-line"><strong>音の操作卓</strong><small>登録したSEをここから再生</small></div><div id="studioQuickPads" class="quick-pads"></div><div class="studio-row"><select id="studioQuickBgm" aria-label="BGMを選ぶ"><option value="">BGMを選択</option></select><button id="studioQuickBgmPlay">再生／停止</button><button id="studioQuickStop">全音停止</button></div></div><div id="studioVideos" class="studio-tray" aria-label="この画面で収録した動画"></div>
+</section>
+<section class="studio-card mode-section" id="studioPlan" style="margin-top:16px">
+<p class="studio-kicker">PLANNING / AI HANDOFF</p><h2>企画卓</h2>
+<div class="studio-inline"><label class="studio-field">企画タイトル<input type="text" id="planTitle" placeholder="例：彼岸リオと四季の喫茶便り"></label><label class="studio-field">進行中のコーナー<input type="text" id="planCue" placeholder="例：お便り紹介 → 即興トーク"></label></div>
+<label class="studio-field">AIに渡す設定・依頼<textarea id="planPrompt" class="studio-textarea" placeholder="人格設定、話し方、今回のテーマ、回答の長さなど"></textarea></label>
+<div class="studio-row"><button id="planCopy" class="accent">企画文をコピー</button><a href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPTを開く</a><a href="https://claude.ai/" target="_blank" rel="noopener">Claudeを開く</a></div>
+<label class="studio-field">台本・AIの返答を貼り付け<textarea id="planScript" class="studio-textarea" placeholder="AIからの返答や進行台本をここへ。自動送受信は行いません。"></textarea></label>
+<div class="studio-row"><button id="planNext">次の段落</button><button id="planReset">先頭に戻る</button><label><input id="planShow" type="checkbox"> 進行中の段落を映像にも表示</label></div>
+<div id="planCurrent" class="studio-live-box" aria-live="polite">台本を入力すると、段落ごとに確認できます。</div>
+<p class="studio-note">台本は空行で区切ります。文字のない映像が必要なときは表示チェックを外してください。AI音声の再生・自動口パク連動は今後の拡張です。</p>
+</section>
+<section class="studio-card mode-section" id="studioSongs" style="margin-top:16px"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><p class="studio-note">手入力のセトリと外部検索の入口です。歌詞の自動取得・表示は未実装です。伴奏は下の「伴奏の音をアプリに取り込む」で別タブの音を混ぜられます（v0.4.4）。</p><div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text"></label><label class="studio-field">アーティスト<input id="songArtist" type="text"></label></div><div class="studio-row"><button id="songAdd" class="accent">セトリに追加</button><button id="songSearch">曲名＋歌詞でWeb検索</button><button id="songCopy">セトリをコピー</button></div><ol id="songList" class="studio-setlist"></ol>
+<div class="kara-block" id="karaBlock">
+<hr class="studio-divider">
+<p class="studio-kicker">KARAOKE / SEARCH</p><h3 class="kara-h">カラオケ音源を探す</h3>
+<p class="studio-note">登録したチャンネルの中を、YouTubeの検索画面で開きます（アプリの中には表示しません）。同じ窓を使い回すので、検索のたびに窓は増えません。</p>
+<div class="studio-inline"><label class="studio-field">探す言葉（曲名・アニメ名など）<input id="karaQuery" type="search" autocomplete="off"></label><label class="studio-field">開き方<select id="karaOpen"><option value="popup">別ウィンドウ</option><option value="tab">新しいタブ</option></select></label></div>
+<div class="studio-row"><button id="karaFromSong" type="button">上の曲名欄から入れる</button><button id="karaAll" type="button">YouTube全体で「カラオケ」付き検索</button></div>
+<div id="karaChannels" class="kara-channels"></div>
+<p class="studio-note">チャンネルの利用条件メモは参考情報です。歌枠管理シート・提供者の最新案内とは自動連動しません。</p><details><summary>チャンネルを編集</summary><div id="karaEdit" class="kara-edit"></div><div class="studio-row"><button id="karaAdd" type="button">チャンネルを追加</button><button id="karaReset" type="button">初期の6件に戻す</button></div><p class="studio-note">URLは「https://www.youtube.com/@名前」か「https://www.youtube.com/channel/UC…」の形で入れます（@名前だけでも可）。メモは使用条件の控えです。初期値は歌枠管理シートの提供者タブ（2026年10月30日時点）から写したもので、規約が変わることがあるため、使う前に提供者の原文で確かめる想定です。</p></details>
+<hr class="studio-divider">
+<p class="studio-kicker">KARAOKE / SOUND</p><h3 class="kara-h">伴奏の音をアプリに取り込む</h3>
+<p class="studio-note">YouTubeなどを開いた別のタブの音を、このアプリの音（モニター・録音・動画・配信用の出力）に混ぜます。再生・一時停止・シークはそのタブ側で、音量はここで調整します。埋め込みは使いません。</p>
+<div class="studio-row"><button id="karaCapture" class="accent" type="button">伴奏タブの音を取り込む</button><button id="karaStop" type="button" disabled>取り込みをやめる</button></div>
+<p class="studio-note" id="karaCapInfo" aria-live="polite">停止中</p>
+<label class="studio-field">伴奏の音量 <output id="karaVolVal">100%</output><input id="karaVol" type="range" min="0" max="150" step="1" value="100"></label>
+<label class="studio-field"><input id="karaSuppress" type="checkbox" checked> 取り込んだタブ側では音を鳴らさない（アプリのモニター音で聞く。二重に聞こえるのを防ぎます。次に取り込むときから反映）</label>
+<label class="studio-field"><input id="karaAutoFade" type="checkbox" checked> 伴奏が鳴り始めたら（歌い始めたら）BGMと効果音を自動でフェードアウトする</label><label class="studio-field"><input id="karaFadeEnv" type="checkbox"> 環境音（雨音など）も一緒に止める</label><div class="studio-row"><button id="karaSingStart" type="button">歌い始め：BGM・効果音をフェードアウト</button></div><p class="studio-note">自動のフェードアウトは、取り込んだ伴奏タブの音が約2秒以上の無音のあとに鳴り始めたときに働きます。購入音源をアプリの外で流すときなど、伴奏を取り込んでいない場合は「歌い始め」ボタンを使います。</p><p class="studio-note">選ぶ画面では「Chromeタブ」（Edgeでは「タブ」）から伴奏のタブを選び、「タブの音声も共有する」をオンにします。パソコン版のChrome・Edge向けの機能で、スマートフォンでは使えません。伴奏は効果音・BGMと同じく自動で小さくなる処理（ダッキング）の対象外です。モニター音がオフ（スピーカー判定など）のときは、上の「タブ側では鳴らさない」をオンにしていると伴奏が聞こえません。</p>
+</div></section>
+</div>
+<aside class="studio-card">
+<p class="studio-kicker">AVATAR & SCENE</p><h2>表情と演出</h2>
+<div class="studio-inline"><label class="studio-field">映像のなめらかさ<select id="studioFps"><option value="30">30fps（なめらか）</option><option value="15">15fps</option><option value="10">10fps（軽い）</option></select></label><label class="studio-field perf-light"><input id="studioLight" type="checkbox"> 軽量モード（低スペックPC向け）</label></div><p class="studio-note">10fpsでは映像を描く回数が30fpsの3分の1になります。収録する動画もこのコマ数になります。軽量モードでは、降らせる演出を最大40個に抑え、画面の飾りのアニメーションと音量メーターの更新を間引きます。</p><label class="studio-field">映像の向き<select id="studioAspect"><option value="landscape">横 16:9（1280×720）</option><option value="portrait">縦 9:16（720×1280・縦型配信／ショート向け）</option></select></label>
+<div class="char-panel">
+<div class="studio-header-line"><strong>名義とキャラクター</strong></div>
+<div class="studio-inline"><label class="studio-field">名義<select id="profileSel"></select></label><label class="studio-field">名義の名前<input id="profileName" type="text" maxlength="40"></label></div>
+<div class="studio-row char-tools"><button id="profileAdd" type="button">名義を追加</button><button id="profileDel" type="button">この名義を削除</button></div>
+<p class="studio-note">名義を切り替えると、その名義のキャラクター・背景の設定・季節の演出・待機／離席画面の設定がまとめて切り替わります。</p>
+<div class="studio-field">キャラクター（押すと切り替え）<div id="charList" class="char-chips"></div></div>
+<div class="studio-row char-tools"><button id="charAdd" type="button">キャラクターを追加</button><button id="charDup" type="button">複製</button><button id="charLeft" type="button" aria-label="前へ移動">←</button><button id="charRight" type="button" aria-label="後ろへ移動">→</button><button id="charDel" type="button">削除</button></div>
+<div class="studio-inline"><label class="studio-field">キャラクターの名前<input id="charName" type="text" maxlength="40"></label><label class="studio-field">立ち絵の種類<select id="charMode"><option value="four">表情差分あり（目×口の4枚）</option><option value="single">1枚だけ（差分なし・動きで表現）</option></select></label></div>
+<div class="png-grid" id="studioSlots"></div>
+<p class="studio-note" id="singleNote" hidden>1枚だけのキャラクターは、1の枠に登録した画像を使い、声に合わせて画像ごと動かします。</p>
+<div class="studio-inline"><label class="studio-field" id="charTalkWrap">話すときの動き<select id="charTalk"><option value="hop">弾む</option><option value="sway">左右に揺れる</option><option value="none">動かない</option></select></label><label class="studio-field">切り替え方<select id="switchFx"><option value="fade">ふわっと（0.25秒）</option><option value="cut">パッと</option></select></label></div>
+<label class="studio-field"><input id="charBreath" type="checkbox"> 待機中も呼吸のようにゆっくり揺れる</label><label class="studio-field"><input id="charTrim" type="checkbox" checked> 透明な余白を自動で詰めて、人物の部分を基準に大きさを決める（おすすめ）</label>
+<div class="studio-inline"><label class="studio-field">このキャラクターの背景<select id="charBg"><option value="inherit">全体の背景設定に従う</option><option value="own">このキャラクター専用の背景画像</option><option value="cafe">喫茶のグラデーション</option><option value="transparent">透過</option><option value="green">クロマキー / 緑</option><option value="blue">クロマキー / 青</option><option value="black">黒</option></select></label><label class="studio-field">別の名義へ移す<select id="charMove"></select></label></div>
+<div class="studio-field">専用の背景画像（登録すると「専用の背景画像」に切り替わります）<label class="bg-pick"><input type="file" id="charBgFile" accept="image/png,image/webp,image/jpeg" aria-label="このキャラクターの背景画像"></label><span class="png-name" id="charBgName">未登録</span><button type="button" id="charBgRemove" class="fx-remove" hidden>専用の背景画像を外す</button></div>
+<p class="studio-note">口が開く音量・口を閉じるまで・まばたき・位置と大きさ・動きの大きさは、キャラクターごとに保存されます。</p>
+</div>
+<label class="studio-field">口が開く音量 <output id="thresholdValue">−38 dB</output><input type="range" id="studioThreshold" min="-65" max="-5" step="1" value="-38"></label>
+<label class="studio-field">口を閉じるまで <output id="holdValue">140 ms</output><input type="range" id="studioHold" min="40" max="600" step="10" value="140"></label>
+<label class="studio-field"><input id="studioBlink" type="checkbox" checked> 自動まばたき（約3〜6秒おき）</label>
+<details><summary>位置・サイズを調整</summary><label class="studio-field">大きさ <output id="scaleVal">85%</output><input id="studioScale" type="range" min="10" max="500" value="85"></label><label class="studio-field">左右<input id="studioX" type="range" min="-300" max="300" value="0"></label><label class="studio-field">上下（大きくした立ち絵の頭が切れるときは右へ動かすと下がります） <output id="yVal">0%</output><input id="studioY" type="range" min="-200" max="500" value="0"></label><label class="studio-field"><input id="studioBounce" type="checkbox" checked> 発話時に少し弾む</label></details><fieldset class="scene-set motion-set"><legend>動きの大きさ・速さ（キャラクターごとに保存）</legend><label class="studio-field">歌うゆらぎの大きさ <output data-out="studioMotionSing"></output><input id="studioMotionSing" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">歌うゆらぎの速さ <output data-out="studioMotionSingSpeed"></output><input id="studioMotionSingSpeed" type="range" min="40" max="200" step="5" value="100"></label><label class="studio-field">ぴょんぴょんの大きさ <output data-out="studioMotionHop"></output><input id="studioMotionHop" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">ガタガタの大きさ <output data-out="studioMotionShake"></output><input id="studioMotionShake" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">呼吸・話すときの動きの大きさ <output data-out="studioMotionAmt"></output><input id="studioMotionAmt" type="range" min="0" max="200" step="5" value="100"></label><p class="studio-note">どの動きも立ち絵の縦横比は変えず、位置の移動と傾きだけで動かします。0%にするとその動きは止まります。動きを切り替えるときは0.3秒ほどかけてなめらかに移ります。</p></fieldset>
+<hr class="studio-divider">
+<label class="studio-field">季節の演出・画像のプリセット（量・速さ・大きさ・濃さは、季節とプリセットごとに保存。名義・キャラクターを切り替えても変わりません）<select id="studioEffect"><option value="none">なし</option></select></label><div class="fx-preset"><div class="studio-row"><button type="button" id="fxPresetNew">＋ 画像のプリセットを作る</button><button type="button" id="fxPresetDup" class="fxp-only">複製</button><button type="button" id="fxPresetDel" class="fxp-only">このプリセットを削除</button></div><label class="studio-field fxp-only">プリセットの名前<input id="fxPresetName" type="text" maxlength="30" placeholder="例：彼岸花／マカロン"></label></div>
+<div class="studio-field fxp-only">このプリセットの画像（最大6枚・登録した画像を混ぜて降らせます）<div class="png-grid fx-grid" id="particleSlots"></div></div>
+<label class="studio-field fxp-only">画像の動き<select id="studioImageMotion"><option value="flutter">はらはら舞う（花びら向き）</option><option value="leaf">ゆらゆら落ちる（葉・花向き）</option><option value="rise">下から浮かぶ（泡・光向き）</option><option value="snow">ゆっくり降る（雪・粒向き）</option><option value="roll">下を転がる（木の実・お菓子向き）</option></select></label>
+<details class="prompt-helper fxp-only"><summary>画像生成AI用のプロンプトを作る</summary>
+<label class="studio-field">モチーフ<input type="text" id="promptMotif" placeholder="例：彼岸花の花／どんぐり／淡い色のマカロン"></label>
+<label class="studio-field">動き（形と向きの指定に使います）<select id="promptMotion"><option value="flutter">はらはら舞う</option><option value="leaf">ゆらゆら落ちる</option><option value="rise">下から浮かぶ</option><option value="snow">ゆっくり降る</option><option value="roll">下を転がる</option></select></label>
+<label class="studio-field">色の指定（任意）<input type="text" id="promptColor" placeholder="例：深い紅に、花芯へ向かって淡い朱"></label>
+<div class="studio-row"><button type="button" id="promptCopy" class="accent">プロンプトをコピー</button><button type="button" id="promptPreview">内容を表示</button></div>
+<pre id="promptOut" class="prompt-out" hidden></pre>
+<p class="studio-note">ChatGPT等へ貼り付けて使う文章を作るだけで、AIへの送信は行いません。透過になっているかは、登録前に確かめてください（背景付きの画像は四角く表示されます）。</p>
+</details>
+<div class="studio-inline"><label class="studio-field">量<input id="studioCount" type="range" min="5" max="100" value="35"></label><label class="studio-field">速さ<input id="studioSpeed" type="range" min="10" max="150" value="40"></label></div>
+<div class="studio-inline"><label class="studio-field">演出の大きさ<input id="studioFxSize" type="range" min="35" max="200" value="100"></label><label class="studio-field">演出の濃さ<input id="studioFxOpacity" type="range" min="10" max="100" value="72"></label></div><p class="studio-note">透ける花弁・虹彩の泡・葉脈の紅葉・銀の結晶。人物の手前と奥で舞い方を変え、顔まわりは淡く描きます。</p><label class="studio-field">背景<select id="studioBg"><option value="cafe">喫茶のグラデーション</option><option value="transparent">透過（別窓の表示用）</option><option value="green">クロマキー / 緑</option><option value="blue">クロマキー / 青</option><option value="black">黒</option><option value="image">登録した背景画像</option></select></label>
+<div class="studio-field">背景画像（登録すると背景が「登録した背景画像」に切り替わります）<label class="bg-pick"><input type="file" id="studioBackground" accept="image/png,image/webp,image/jpeg" aria-label="背景画像"></label><span class="png-name" id="backgroundName">未登録</span><button type="button" id="backgroundRemove" class="fx-remove" hidden>背景画像を外す</button><small class="studio-note">横向き1920×1080、縦向き1080×1920程度が目安。比率が違う画像は中央を基準に切り抜いて敷きます。</small></div>
+<p class="studio-note">動画の透過保持は保証しません。背景を抜く収録・配信には緑／青を選んでください。</p>
+<details><summary>設定の持ち出し</summary><div class="studio-row"><button id="studioExport">すべてを書き出す（.live）</button></div><label class="studio-field">設定を読み込む（.live／.kissa／以前のスタジオ設定 .json）<input type="file" id="studioImport" accept=".live,.kissa,application/json,.json"></label><p class="studio-note">.live には、効果音・BGM・名前と着せ替えに加えて、立ち絵・名義・降らせる画像・背景・台本・映像設定が入ります。録音したテイクと収録済みの動画は入りません。.kissa は効果音・BGMだけの形式で、純喫茶オトノハと共通です。以前の版で書き出したスタジオ設定（.json）も読み込めます。</p></details>
+</aside>
+</div>
+<details class="studio-card studio-help"><summary>使い方・収録時の注意</summary><p>① 目開き／目閉じ × 口閉じ／口開きの4枚を登録 → ② マイクを接続 → ③ 声を出して口の反応を調整 → ④ 効果音・BGMを登録 → ⑤ 別窓を配信ソフトで取り込むか、映像＋音声を収録します。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>動画にはマイク＋このアプリの効果音・BGM・環境音が入ります。マイクはスピーカーへ返さず、ヘッドホンで確認してください。動画収録中のモニター音は、従来の録音と同じく設定「録音中のモニター音」に従います（既定ではイヤホンと判定できない出力先では自動で消えます。動画に入る音は変わりません）。別窓は映像専用です。配信側でブラウザ音声とマイクをそれぞれ取り込み、同じ音を二重に入れないよう調整してください。</p><p>収録はMediaRecorder対応ブラウザで利用できます。動画は停止時にダウンロードし、この画面を開いている間だけ再ダウンロードできます。長時間の動画はメモリを使うため、短いテストから確認してください。スマートフォンでは別窓やバックグラウンド時の挙動に制限があります。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別ブラウザや別URLへは自動で引き継ぎません。音源・画像を含め、移行前に書き出してください。</p></details>
+</section>
+
+<!-- 1. 録音（画面上部に固定） -->
+<section class="shell recbar" aria-label="録音"><div class="content recbar-in">
+ <div class="prog-row"><div class="prog-chips" id="progChips" role="tablist" aria-label="番組"></div><button class="btn gold" type="button" id="progEdit" hidden>番組の設定</button></div>
+ <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><div class="head-btns"><button class="pill" type="button" id="monBtn" title="ヘッドホン・スピーカーから出す音のオン／オフ（録音には影響しません）">モニター音：オン</button><button class="pill danger" id="stopAll">■ 全音停止</button></div></div>
+ <div class="transport">
+  <button class="tbtn recbtn" id="recBtn">● 録音開始</button>
+  <button class="tbtn" id="stopRecBtn" disabled>■ 停止・保存</button>
+  <button class="tbtn" id="retakeBtn" disabled title="今のテイク（または直前のテイク）を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button>
+  <button class="tbtn discardbtn" id="discardBtn" disabled title="録音を止めて、保存せずに捨てます">✕ 停止して破棄</button>
+ </div>
+ <div class="voice-warn" id="voiceWarn" role="alert" hidden></div>
+ <div class="voice-warn save-warn" id="saveWarn" role="alert" hidden></div>
+ <div class="bgm-now" id="bgmNow" data-state="idle"><span class="bgm-now-icon" aria-hidden="true">♪</span><div class="bgm-now-main" id="bgmNowMain" role="button" tabindex="0" title="押すとBGM欄へ移動"><div class="bgm-now-name" id="bgmNowName">BGM：なし</div><div class="bgm-now-track"><i id="bgmNowBar"></i></div></div><span class="bgm-now-time" id="bgmNowTime"></span><button class="btn" id="bgmNowStop" disabled>■ BGM停止</button></div>
+ <div class="meters">
+  <div class="meter-row"><span>マイク</span><div class="meter"><i id="micMeter"></i><b id="micPeak"></b></div><output id="micDb">-∞ dB</output></div>
+  <div class="meter-row"><span>録音</span><div class="meter"><i id="mixMeter"></i><b id="mixPeak"></b></div><output id="mixDb">-∞ dB</output></div>
+ </div>
+</div></section>
+
+<div class="minibar" id="miniBar" hidden><div class="minibar-in">
+ <div class="mini-row"><span class="mini-timer" id="miniTimer">00:00.0</span><button class="mbtn recbtn" type="button" id="miniRec">● 録音開始</button><button class="mbtn" type="button" id="miniStop">■ 停止</button><button class="mbtn" type="button" id="miniRetake">↺ 録り直し</button></div>
+ <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button></div>
+</div></div>
+<!-- 2. 効果音・BGM -->
+<main class="shell" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span><label class="pad-size">ボタンの大きさ<select id="padSize"><option value="s">小</option><option value="m">中</option><option value="l">大</option></select></label></div>
+<section class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
+<section class="section"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>環境音 <span>04 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
+<section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
+</div></main>
+
+<!-- 3. 収録したテイク -->
+<section class="shell" id="takesShell"><div class="content desk">
+ <div class="section-title" style="margin:0"><h2>収録したテイク</h2><span class="storage" id="storageInfo"></span></div>
+ <div class="takes" id="takes"></div>
+ <div class="export-opts">
+  <label><input type="checkbox" id="optNormalize" style="accent-color:var(--accent)">書き出し時に音量を最大化（ピーク-1dB）</label>
+  <label>MP3 <select id="mp3Rate"><option value="128">128kbps</option><option value="192">192kbps</option><option value="256">256kbps</option></select></label>
+ </div>
+ <div class="cover-row">
+  <div class="cover-thumb" id="coverPreview">画像なし</div>
+  <div class="cover-ctl">
+   <strong>動画用サムネイル（正方形）</strong>
+   <div class="btns"><button class="btn" type="button" id="coverPick">画像を選ぶ</button><button class="btn danger" type="button" id="coverClear">外す</button></div>
+   <label>収め方 <select id="coverFit"><option value="cover">中央を正方形に切り抜く</option><option value="contain">全体を収める（余白はぼかし）</option></select></label>
+   <label>動画サイズ <select id="videoSize"><option value="1080">1080×1080</option><option value="720">720×720</option></select></label>
+  </div>
+ </div>
+
+ <section class="film-panel" aria-labelledby="filmTitle">
+  <h3 id="filmTitle">窓辺の映像演出</h3>
+  <div class="film-controls">
+   <label>季節の演出<select id="videoEffect"><option value="none">なし（静止画）</option><option value="spring">春：薄絹の桜</option><option value="summer">夏：虹彩の泡</option><option value="autumn">秋：琥珀の紅葉</option><option value="winter">冬：銀雪の結晶</option></select></label>
+   <label>動かすもの<select id="effectSource"><option value="default">季節の絵（標準）</option><option value="image">好きな画像</option></select></label>
+   <label>映像のなめらかさ<select id="videoFps"><option value="24">24コマ / 秒</option><option value="30">30コマ / 秒</option></select></label>
+   <label>量 <output id="effectCountVal"></output><input id="effectCount" type="range" min="10" max="120" step="5" value="45"></label>
+   <label>速さ <output id="effectSpeedVal"></output><input id="effectSpeed" type="range" min="20" max="180" step="5" value="60"></label>
+   <label>大きさ <output id="effectScaleVal"></output><input id="effectScale" type="range" min="30" max="160" step="5" value="70"></label>
+   <label>不透明度 <output id="effectOpacityVal"></output><input id="effectOpacity" type="range" min="10" max="100" step="5" value="75"></label>
+  </div>
+  <div class="film-actions"><button class="btn" id="effectImagePick" type="button">動かす画像を選ぶ</button><button class="btn danger" id="effectImageClear" type="button">画像を外す</button><span id="effectImageName">未登録（透過PNGも使えます）</span></div>
+  <input id="effectImageFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+  <div class="film-actions"><button class="btn" id="filmPreviewBtn" type="button" aria-pressed="false">▶ 演出をプレビュー</button><button class="btn" id="cancelVideoBtn" type="button" hidden>動画書き出しを中止</button></div>
+  <canvas class="film-preview" id="filmPreview" width="480" height="480" aria-label="共通サムネイルでの映像演出プレビュー" hidden></canvas>
+  <p class="film-status" id="filmStatus" role="status"></p>
+  <p class="note">演出は書き出す動画にも入ります。プレビューは共通画像で表示し、書き出しでは各テイク・番組の画像設定が優先されます。動きのある動画は静止画より変換時間と容量が増えます。</p>
+ </section>
+ <input type="file" id="coverFile" accept="image/*" hidden><input type="file" id="takeCoverFile" accept="image/*" hidden>
+ <p class="note">各テイクの「BGM操作の記録」には、BGMを流した・止めた・小さくした時刻が自動で残ります。編集ソフトで切り貼りするときの目安に使えます。録音は数秒ごとにブラウザ内へ保存されます。途中でタブが閉じても、そこまでの音声はテイク一覧に残ります。テイク名の左の四角を押すと、そのテイクだけ動画の画像を変えられます。</p>
+</div></section>
+
+<!-- 4. 設定（音量・マイクなど） -->
+<section class="shell" id="settingsShell"><div class="content desk">
+ <div class="section-title" style="margin:0"><h2>設定</h2><button class="btn primary" type="button" data-goto="main">← 収録画面に戻る</button></div>
+
+ <section class="panel" aria-labelledby="lookTitle">
+  <h3 id="lookTitle">名前と着せ替え <span id="lookState">保存済み</span></h3>
+  <div class="look-names"><label>看板の上の小さな文字<input id="lookEyebrowIn" maxlength="30" autocomplete="off"></label><label>タイトル<input id="lookTitleIn" maxlength="30" autocomplete="off"></label><label>サブタイトル<input id="lookSubIn" maxlength="80" autocomplete="off"></label></div>
+  <div class="look-presets" id="lookPresets" role="radiogroup" aria-label="配色"></div>
+  <div class="look-colors"><label>地<input type="color" data-look="bg"></label><label>面<input type="color" data-look="paper"></label><label>差し色<input type="color" data-look="accent"></label><label>装飾<input type="color" data-look="decor"></label></div>
+  <p class="note">変更はすぐ画面に反映されます（収録画面でも確かめられます）。「保存」を押すまでは仮の表示で、ページを開き直すと保存済みの状態に戻ります。4色のどれかを変えると「カスタム」になります。文字の色は、背景の明るさから自動で決まります。</p>
+  <div class="end-row"><button class="btn primary" type="button" id="lookSave">保存</button><button class="btn" type="button" id="lookRevert">変更を取り消す</button><button class="btn" type="button" id="lookReset">初期状態に戻す</button></div>
+ </section>
+
+ <section class="panel" aria-labelledby="mixTitle">
+  <h3 id="mixTitle">音量 <span>ヘッドホン音量は録音に影響しません</span></h3>
+  <div class="volume-row"><label for="micVolume">マイク</label><input id="micVolume" type="range" min="0" max="300"><output id="micVal"></output></div>
+  <div class="volume-row"><label for="seVolume">効果音</label><input id="seVolume" type="range" min="-60" max="0" step="0.5"><output id="seVal"></output></div>
+  <div class="volume-row"><label for="bgmVolume">BGM</label><input id="bgmVolume" type="range" min="-60" max="0" step="0.5"><output id="bgmVal"></output></div>
+  <div class="volume-row"><label for="voVolume">ボイス</label><input id="voVolume" type="range" min="-60" max="0" step="0.5"><output id="voVal"></output></div>
+  <div class="volume-row"><label for="envVolume">環境音</label><input id="envVolume" type="range" min="-60" max="0" step="0.5"><output id="envVal"></output></div>
+  <div class="db-steps"><button type="button" class="btn" data-db="se:-1">効果音 −1dB</button><button type="button" class="btn" data-db="se:1">効果音 ＋1dB</button><button type="button" class="btn" data-db="bgm:-1">BGM −1dB</button><button type="button" class="btn" data-db="bgm:1">BGM ＋1dB</button><button type="button" class="btn" data-db="vo:-1">ボイス −1dB</button><button type="button" class="btn" data-db="vo:1">ボイス ＋1dB</button><button type="button" class="btn" data-db="env:-1">環境音 −1dB</button><button type="button" class="btn" data-db="env:1">環境音 ＋1dB</button></div>
+  <div class="try-row"><button type="button" class="btn" id="trySe">効果音を試す</button><button type="button" class="btn" id="tryVo">ボイスを試す</button><button type="button" class="btn" id="tryBgm">BGMを試す／止める</button></div>
+  <p class="note">効果音・BGM・ボイスはdB（デシベル）で調整します。0dBが音源そのままの大きさで、−6dBで約半分、−20dBで約10分の1、−40dBで約100分の1です。一番左（−60dB）は消音です。</p>
+  <div class="opts"><label><input type="checkbox" id="bgmLevel">BGMごとの音量差をそろえる（音の大きい曲は下げ、小さい曲は上げる）</label></div>
+  <div class="volume-row"><label for="masterVolume">ヘッドホン</label><input id="masterVolume" type="range" min="0" max="100"><output id="masterVal"></output></div>
+  <div class="opts"><label><input type="checkbox" id="optLimiter">音割れ防止リミッター</label></div>
+  <div class="opts"><label><input type="checkbox" id="previewFull">録音していないときは、効果音とBGMを端末の音量いっぱいで鳴らす（比率はそのまま）</label></div>
+  <p class="note" id="previewInfo"></p>
+  <div class="end-row"><label for="monitorMode">録音中のモニター音</label><select id="monitorMode"><option value="auto">自動（イヤホンでなければ消す）</option><option value="muteRec">録音中は必ず消す</option><option value="always">消さない</option></select></div>
+  <p class="note" id="outputInfo">出力先を確認中…</p>
+ </section>
+
+ <section class="panel" aria-labelledby="endTitle">
+  <h3 id="endTitle">BGMの締め</h3>
+  <div class="volume-row"><label for="bgmLowLevel">小さくした時</label><input id="bgmLowLevel" type="range" min="5" max="80"><output id="bgmLowVal"></output></div>
+  <div class="end-row"><label for="fadeSec">フェードアウトの長さ</label><select id="fadeSec"><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option><option value="12">12秒</option></select></div>
+  <div class="opts"><label><input type="checkbox" id="fadeOnStop">「停止・保存」でBGMをフェードアウトしてから録音を止める</label></div>
+  <p class="note">BGM欄の「BGMを小さくする」は約2秒かけて下げ、もう一度押すと元の音量へ戻します。</p>
+ </section>
+
+ <section class="panel" aria-labelledby="duckTitle">
+  <h3 id="duckTitle"><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" id="duckOn" style="accent-color:var(--accent)">話すとBGMを下げる</label><span class="duck-state" id="duckState">待機</span></h3>
+  <div class="volume-row"><label for="duckDepth">下げ幅</label><input id="duckDepth" type="range" min="3" max="30"><output id="duckDepthVal"></output></div>
+  <div class="volume-row"><label for="duckThresh">反応する声</label><input id="duckThresh" type="range" min="-65" max="-15"><output id="duckThreshVal"></output></div>
+  <p class="note">マイクの音が「反応する声」を超えるとBGMが下がり、話し終えて約0.5秒で戻ります。右へ動かすほど大きな声にだけ反応します。</p>
+ </section>
+
+ <section class="panel" aria-labelledby="micTitle">
+  <h3 id="micTitle">マイク <span id="micInfo">未接続</span></h3>
+  <div class="mic-row"><select id="micSelect" aria-label="使うマイク"><option value="">既定のマイク</option></select><button class="btn primary" id="micBtn">マイクを有効にする</button></div>
+  <div class="opts">
+   <label><input type="checkbox" id="optEc">エコー除去</label>
+   <label><input type="checkbox" id="optNs">ノイズ抑制</label>
+   <label><input type="checkbox" id="optAgc">自動音量調整</label>
+   <label><input type="checkbox" id="optMon">自分の声を聴く</label>
+  </div>
+  <div class="opts"><span style="font-weight:700">録音と同時に保存：</span><label><input type="checkbox" id="keepVoice">声だけ</label><label><input type="checkbox" id="keepProg">BGM＋効果音だけ</label></div>
+  <p class="note">エコー除去などはブラウザの通話向け処理です。声質が変わるため初期値は切ってあります。スピーカーで収録するときは、BGMや効果音がマイクに回り込まないよう、録音中のモニター音が自動で消えます（上の「音量」欄で変更できます）。</p>
+  <p class="note" id="micHelp">開くたびにマイクの許可を求められる場合は、許可の画面で「サイトにアクセスしている間は許可する」（Chrome）を選ぶか、ブラウザのサイト設定でマイクを「許可」にすると、次回から自動でつながります。</p>
+ </section>
+
+ <section class="panel" aria-labelledby="fileTitle">
+  <h3 id="fileTitle">設定ファイル <span>別の端末への引き継ぎ用</span></h3>
+  <div class="end-row"><button class="btn" id="exportBtn">すべてを書き出す（.live）</button><button class="btn" id="exportKissaBtn">効果音・BGMだけ書き出す（.kissa）</button><button class="btn" id="importBtn">設定を読み込む（.live／.kissa）</button></div>
+  <p class="note">.live：効果音・ボイス・BGM・動画用サムネイル・名前と着せ替えに、立ち絵・名義・降らせる画像・背景・台本・映像設定まで、すべてを1つのファイルにまとめます。<br>.kissa：効果音・ボイス・BGM・動画用サムネイル・名前と着せ替えだけ。純喫茶オトノハと同じ形式で、どちらのアプリでも読み込めます。<br>どちらにも、録音したテイクと収録済みの動画は入りません。</p>
+ </section>
+</div></section>
+<p class="footer">設定・音源・録音はこのブラウザ内に保存されます。</p>
+</div>
+
+<div class="modal-back" id="progModal"><form class="modal" id="progForm"><h2>番組の設定</h2>
+ <div class="field"><label for="progName">番組名</label><input id="progName" maxlength="30" required><small>テイク名の先頭にも使われます。</small></div>
+ <div class="field"><span style="font-size:12px;font-weight:700">ボタンの色</span><div class="prog-colors" id="progColors"></div></div>
+ <div class="field"><label for="progBgmSel">初期BGM</label><select id="progBgmSel"></select><small>BGM欄に登録した曲から選びます。BGM欄の一番上と、録音欄に表示されます。</small></div>
+ <div class="field"><label style="display:flex;gap:6px;align-items:center;font-weight:400"><input type="checkbox" id="progAuto" style="width:auto">録音開始と同時に初期BGMを頭から流す</label></div>
+ <div class="field"><label>この番組の動画用サムネイル（8枚まで）</label>
+  <div class="pc-grid" id="progCovers"></div>
+  <div class="pc-actions"><button type="button" class="btn" id="pcReplace" disabled>選んだ画像を差し替え</button><button type="button" class="btn danger" id="pcRemove" disabled>選んだ画像を外す</button><button type="button" class="btn" id="pcUseDefault">共通の画像を使う</button></div>
+  <small>空き枠を押すと画像を登録できます。登録済みの画像を押すと、それが動画に使われます（緑の枠）。どれも選ばない場合は「動画用サムネイル」の共通画像を使います。</small></div>
+ <div class="field"><label>番組の並び順</label><div class="move-row"><button type="button" class="btn" id="progMovePrev">← 前へ</button><button type="button" class="btn" id="progMoveNext">次へ →</button></div></div>
+ <div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="progModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<input type="file" id="progCoverFile" accept="image/*" hidden>
+<div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field" id="imageField" hidden><label for="imageFile">ボタンの画像</label><div class="filebox"><input id="imageFile" type="file" accept="image/*"><small id="currentImage"></small></div></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="bgmModal"><form class="modal" id="bgmForm"><h2 id="bgmHeading">BGMの設定</h2><input type="hidden" id="bgmId"><div class="field"><label for="bgmNameInput">表示名</label><input id="bgmNameInput" maxlength="80" required placeholder="例：午後の喫茶店"></div><div class="field"><label for="bgmFile">音源ファイル</label><div class="filebox"><input id="bgmFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentBgmFile"></small></div></div><div class="field"><label for="bgmVolModal">この曲の音量：<span id="bgmVolModalVal"></span></label><input id="bgmVolModal" type="range" min="0" max="100"></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="bgmMovePrev">← 前へ</button><button type="button" class="btn" id="bgmMoveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="resetBgm">選択リセット</button><div class="actions-right"><button type="button" class="btn" data-close="bgmModal">キャンセル</button><button type="submit" class="btn gold">保存</button></div></div></form></div>
+<div class="modal-back" id="emojiTabsModal"><form class="modal" id="emojiTabsForm"><h2>絵文字SEのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="emojiTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="emojiTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="bgmTabsModal"><form class="modal" id="bgmTabsForm"><h2>BGMのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの曲は各タブに残ります。</p><div class="category-list" id="bgmTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="bgmTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="textTabsModal"><form class="modal" id="textTabsForm"><h2>文字SEのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="textTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="textTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back confirm-back" id="confirmModal"><div class="modal" role="alertdialog" aria-labelledby="confirmTitle" aria-describedby="confirmText"><h2 id="confirmTitle">確認</h2><p id="confirmText" class="confirm-text"></p><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" id="confirmNo">キャンセル</button><button type="button" class="btn danger" id="confirmYes">削除する</button></div></div></div></div>
+<input id="importFile" type="file" accept=".live,.kissa" hidden><div class="notice" id="notice" role="status"></div>
+
+<script src="js/audio-studio.js"></script>
+<script src="js/visual-studio.js"></script>
+</body>
+</html>
