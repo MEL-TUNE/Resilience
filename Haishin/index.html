@@ -615,7 +615,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.5.2 / マスコット10体・走り回る動き・位置のロック</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" id="navLive">配信・録画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">ラジオ（音声のみ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.5.3 / 収録・保存の見直しと画面の整理</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" id="navLive">配信・録画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">ラジオ（音声のみ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <style>
 /* PNGTuberスタジオ（配信・録画）と、配置・設定画面の追加分 */
@@ -826,6 +826,42 @@ body{padding-top:var(--mini-h,0px)}
 .mascot-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 #studioCanvas.locked{cursor:default}
 
+/* 配信画面：操作の並び（上：マイクなど、プレビュー、収録、画面の状態、立ち絵） */
+.stage-card .stage-tools{margin:0 0 6px}
+.stage-card .stage-head{display:flex;justify-content:flex-end;margin:6px 0 4px}
+.rec-panel{border:2px solid var(--accent);border-radius:12px;padding:10px;margin:10px 0;background:var(--hi)}
+.rec-main{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rec-big{border:1px solid var(--a-p-45);border-radius:10px;padding:14px 10px;font-size:15px;font-weight:700;cursor:pointer;background:var(--paper);color:var(--ink)}
+.rec-start{background:var(--rec,#c8463c);border-color:var(--rec,#c8463c);color:#fff}
+.rec-start.recording{opacity:.55}
+.rec-stop:not(:disabled){background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.rec-big:disabled{opacity:.45;cursor:default}
+.rec-sub{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;font-size:12px}
+.rec-time{font-weight:700;min-width:7em}
+.rec-opt select{margin-left:4px;font-size:12px;padding:3px 6px;border-radius:6px;border:1px solid var(--a-p-45);background:var(--paper);color:var(--ink)}
+.rec-panel .studio-tray{margin-top:6px}
+.studio-take .vbtn{border:1px solid var(--a-p-45);border-radius:8px;padding:6px 10px;background:var(--paper);font-size:12px;cursor:pointer;color:var(--ink);text-decoration:none}
+.studio-take .vbtn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.stage-group{border-top:1px solid var(--a-p-20);padding-top:4px;margin-top:4px}
+.msc-pick{border:1px solid var(--a-p-30);border-radius:10px;padding:8px;margin:8px 0}
+#boardShell .text-grid{min-height:0}
+.rec-opt{display:flex;align-items:center;gap:4px;max-width:100%}
+.rec-opt select{max-width:100%;min-width:0}
+@media(max-width:600px){
+  .top .pagenav{flex-wrap:wrap;justify-content:center}
+  .top .pagenav .pill{font-size:12px;padding:6px 9px!important;white-space:nowrap}
+  .top .ver{display:block;font-size:10px}
+  .stage-tools{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .stage-tools button{width:100%;padding:8px 4px;font-size:12px}
+  .stage-tools .studio-state{grid-column:1/-1;margin:0}
+  .rec-big{font-size:14px;padding:12px 6px}
+  .rec-sub{display:grid;grid-template-columns:1fr;gap:6px}
+  .rec-opt select{flex:1 1 0;width:0;font-size:13px}
+  .studio-take{flex-wrap:wrap}
+  .studio-take span{flex-basis:100%;word-break:break-all}
+  .scene-bar button,.motion-bar button,.char-bar button,.expr-bar button,.speaker-bar button{padding:7px 9px;font-size:12px}
+}
+
 </style>
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -848,24 +884,15 @@ body{padding-top:var(--mini-h,0px)}
 </div></section>
 <div class="studio-workspace">
 <div>
-<section class="studio-card">
-<div class="studio-header-line stage-head"><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
-<div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas></div>
-<div class="studio-row stage-actions"><button id="studioMic" class="accent">マイクを接続</button><button id="studioTest">口パクを試す</button><button id="studioOutput">映像だけ別窓</button><button id="studioFullscreen">全画面</button><span id="studioState" class="studio-state">マイク未接続</span></div>
+<section class="studio-card stage-card">
+<div class="studio-row stage-tools"><button id="studioMic" class="accent">マイクを接続</button><button id="studioTest">口パクを試す</button><button id="studioOutput">映像だけ別窓</button><button id="studioFullscreen">全画面</button><span id="studioState" class="studio-state">マイク未接続</span></div>
 <div class="studio-meter" aria-label="マイク音量"><i id="studioMeter"></i></div>
-<div class="studio-row scene-bar" role="group" aria-label="配信の状態"><button id="studioMute" aria-pressed="false">マイク：オン</button><span class="scene-sep" aria-hidden="true"></span><button data-scene="live" class="selected" aria-pressed="true">配信中</button><button data-scene="standby" aria-pressed="false">準備中</button><button data-scene="away" aria-pressed="false">離席中</button><button data-scene="end" aria-pressed="false">配信終了</button><span id="studioSceneState" class="studio-state" role="status">配信中</span></div>
-<div class="studio-row char-bar" role="group" aria-label="名義とキャラクター"><span class="studio-mini">名義</span><select id="profileQuick" aria-label="名義を切り替える"></select><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">表情と演出の設定</button></div> <div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button></div><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div><div class="studio-row mascot-bar" role="group" aria-label="画面に出すマスコット" id="mascotBar" hidden></div><details class="scene-details" id="quickTune"><summary>見た目をその場で調整（開いているあいだだけ、プレビューの立ち絵・マスコットをドラッグで動かせます）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">この欄を閉じると位置はロックされ、プレビューに触れても動きません。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
-
-<details class="scene-details live-only" id="studioSinkBox"><summary>配信に届く音（配信用の出力先）</summary>
-<p class="studio-note">「配信スタジオ」表示中は、試聴用の音量の持ち上げを止め、効果音・BGMを配信・収録と同じ音量で鳴らします。</p>
-<p class="studio-note">配信用の出力先を選ぶと、マイク＋効果音・BGM・環境音のミックス（ダッキング・リミッター・ミュート反映済み。動画収録に入る音と同じ経路）を、その音声機器へ別に送ります。仮想オーディオ機器を選び、配信ソフトではその機器だけを音声として取り込む構成を想定しています。普段のイヤホン・ヘッドホンを選ぶと、自分の声が遅れて聞こえます。</p>
-<div class="studio-row"><select id="studioSinkSel" aria-label="配信用の出力先"><option value="">使わない</option></select><button id="studioSinkList">一覧を更新</button><button id="studioSinkToggle">送出を開始</button></div>
-<p class="studio-note" id="studioSinkInfo">停止中</p>
-</details>
-<div class="studio-row stage-actions"><button id="studioRec" class="accent">● 映像＋音声を収録</button><button id="studioStop" disabled>■ 停止・ダウンロード</button><span id="studioRecTime" role="status" class="studio-state">未収録</span></div>
-<p class="studio-note" id="studioModeHelp">配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。</p>
-<p class="studio-note">立ち絵・表情差分・マスコット・画面の切り替えは「設定」で登録します。未登録時は動作確認用の図形を表示します。音声だけの収録は上の「ラジオ（音声のみ）」で行います。</p>
-<div id="studioVideos"class="studio-tray" aria-label="この画面で収録した動画"></div>
+<div class="stage-head"><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
+<div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas></div>
+<div class="rec-panel" aria-label="映像の収録"><div class="rec-main"><button id="studioRec" class="rec-big rec-start" type="button">● 収録開始</button><button id="studioStop" class="rec-big rec-stop" type="button" disabled>■ 停止して保存</button></div><div class="rec-sub"><span id="studioRecTime" role="status" class="rec-time">未収録</span><label class="rec-opt">形式<select id="vidFormat"><option value="mp4">MP4（写真アプリ向け）</option><option value="webm">WebM</option></select></label><label class="rec-opt">画質<select id="vidQuality"><option value="8">高画質</option><option value="16">最高画質（容量大）</option><option value="4.5">標準</option></select></label></div><div id="studioVideos" class="studio-tray" aria-label="この画面で収録した動画"></div></div>
+<div class="stage-group"><div class="studio-row scene-bar" role="group" aria-label="配信の状態"><button id="studioMute" aria-pressed="false">マイク：オン</button><span class="scene-sep" aria-hidden="true"></span><button data-scene="live" class="selected" aria-pressed="true">配信中</button><button data-scene="standby" aria-pressed="false">準備中</button><button data-scene="away" aria-pressed="false">離席中</button><button data-scene="end" aria-pressed="false">配信終了</button><span id="studioSceneState" class="studio-state" role="status">配信中</span></div></div>
+<div class="stage-group"><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">設定</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button></div><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
+<details class="scene-details" id="quickTune"><summary>見た目をその場で調整（開いているあいだだけ、プレビューの立ち絵・マスコットをドラッグで動かせます）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">この欄を閉じると位置はロックされ、プレビューに触れても動きません。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
 </section>
 <section class="studio-card mode-section" id="studioPlan" style="margin-top:16px">
 <p class="studio-kicker">PLANNING / AI HANDOFF</p><h2>企画卓</h2>
@@ -987,7 +1014,12 @@ body{padding-top:var(--mini-h,0px)}
 <details><summary>設定の持ち出し</summary><div class="studio-row"><button id="studioExport">すべてを書き出す（.live）</button></div><label class="studio-field">設定を読み込む（.live／.kissa／以前のスタジオ設定 .json）<input type="file" id="studioImport" accept=".live,.kissa,application/json,.json"></label><p class="studio-note">.live には、効果音・BGM・名前と着せ替えに加えて、立ち絵・名義・降らせる画像・背景・台本・映像設定が入ります。録音したテイクと収録済みの動画は入りません。.kissa は効果音・BGMだけの形式で、純喫茶オトノハと共通です。以前の版で書き出したスタジオ設定（.json）も読み込めます。</p></details>
 </aside>
 </div></section>
-<section class="studio-card mascot-card" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット</h2><p class="studio-note">立ち絵とは別に、小さな画像を最大10体まで登録できます。画面に出せるのは同時に2体までで、配信画面の「マスコット」ボタンで入れ替えられます。マスコットは立ち絵の後ろに表示します。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ マスコットを追加</button><button type="button" id="mascotDel">このマスコットを削除</button></div><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> 画面に出す（同時に2体まで）</label><label class="studio-field"><input type="checkbox" id="mscTalk"> 話者ボタンに出す（声でぴこぴこ）</label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="run">画面中を走り回る</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><label class="studio-field">走り回るときの向き<select id="mscFace"><option value="none">左右を反転しない</option><option value="right">元の画像が右向き（左へ走るときは反転）</option><option value="left">元の画像が左向き（右へ走るときは反転）</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
+<section class="studio-card mascot-card" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット</h2><p class="studio-note">立ち絵とは別に、小さな画像を最大10体まで登録できます。画面に出すのは名義ごとに2体までで、下の「この名義で画面に出すマスコット」で選びます。マスコットは立ち絵の後ろに表示します。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div class="msc-pick"><strong>この名義で画面に出すマスコット（2体まで）</strong><div class="studio-row mascot-bar" role="group" aria-label="画面に出すマスコット" id="mascotBar"></div></div><div class="studio-mini">登録したマスコット（押すと下で編集）</div><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ マスコットを追加</button><button type="button" id="mascotDel">このマスコットを削除</button></div><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> この名義で画面に出す（2体まで）</label><label class="studio-field"><input type="checkbox" id="mscTalk"> 話者ボタンに出す（声でぴこぴこ）</label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="run">画面中を走り回る</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><label class="studio-field">走り回るときの向き<select id="mscFace"><option value="none">左右を反転しない</option><option value="right">元の画像が右向き（左へ走るときは反転）</option><option value="left">元の画像が左向き（右へ走るときは反転）</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
+<section class="studio-card scene-card"><details class="scene-details" id="studioSinkBox" open><summary>配信に届く音（配信用の出力先）</summary>
+<p class="studio-note">配信用の出力先を選ぶと、マイク＋効果音・BGM・環境音のミックス（ダッキング・リミッター・ミュート反映済み。動画収録に入る音と同じ経路）を、その音声機器へ別に送ります。仮想オーディオ機器を選び、配信ソフトではその機器だけを音声として取り込む構成を想定しています。普段のイヤホン・ヘッドホンを選ぶと、自分の声が遅れて聞こえます。</p>
+<div class="studio-row"><select id="studioSinkSel" aria-label="配信用の出力先"><option value="">使わない</option></select><button id="studioSinkList">一覧を更新</button><button id="studioSinkToggle">送出を開始</button></div>
+<p class="studio-note" id="studioSinkInfo">停止中</p>
+</details></section>
 <section class="studio-card scene-card"><details class="scene-details" id="sceneSettings" open><summary>準備中・離席中・配信終了の画面</summary><p class="studio-note">「準備中」「離席中」「配信終了」に切り替えるとマイクはミュートになり、BGMは下の分だけ大きめに流れます。「配信中」に戻すと、切り替え前のマイク状態に戻ります。ミュートはこのアプリを通る声（動画収録・録音・配信用出力・口パク）に効きます。配信ソフトでマイクを直接取り込んでいる場合、そちらの音は止まりません。</p><div class="scene-grid"><fieldset class="scene-set"><legend>準備中</legend><label class="studio-field">BGM<select id="scene_standby_bgm" data-scene-bgm="standby"></select></label><label class="studio-field">演出<select id="scene_standby_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_standby_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_standby_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：まもなく始まります"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_standby_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="準備中の画像"></label><span class="png-name" id="scene_standby_imgName">未登録</span><button type="button" class="fx-remove" id="scene_standby_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_standby_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_standby_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_standby_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_standby_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_standby_imgY" min="-100" max="100" step="1"></label></div></fieldset><fieldset class="scene-set"><legend>離席中</legend><label class="studio-field">BGM<select id="scene_away_bgm" data-scene-bgm="away"></select></label><label class="studio-field">演出<select id="scene_away_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_away_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_away_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：現在お茶を淹れています……！"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_away_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="離席中の画像"></label><span class="png-name" id="scene_away_imgName">未登録</span><button type="button" class="fx-remove" id="scene_away_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_away_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_away_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_away_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_away_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_away_imgY" min="-100" max="100" step="1"></label></div></fieldset><fieldset class="scene-set"><legend>配信終了</legend><label class="studio-field">BGM<select id="scene_end_bgm" data-scene-bgm="end"></select></label><label class="studio-field">演出<select id="scene_end_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_end_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_end_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：ご視聴ありがとうございました"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_end_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="配信終了の画像"></label><span class="png-name" id="scene_end_imgName">未登録</span><button type="button" class="fx-remove" id="scene_end_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_end_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_end_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_end_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_end_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_end_imgY" min="-100" max="100" step="1"></label></div></fieldset></div><label class="studio-field">切り替えたときのBGMの大きさ <output id="sceneBoostVal"></output><input type="range" id="sceneBoost" min="0" max="12" step="1"></label><label class="studio-field"><input type="checkbox" id="sceneRestoreBgm"> 「配信中」に戻すとき、切り替え前のBGMに戻す（曲は頭から再生）</label></details></section>
  <h2 class="set-group" id="setRadio">ラジオ（音声のみ）の設定</h2>
  <section class="panel" aria-labelledby="endTitle">
@@ -5372,6 +5404,25 @@ function renderVolumes(){
 
 }
 
+// 空き枠は「使っている最後の行」＋1行だけ表示する（最後の行が埋まると1行増える）。列の数は画面幅で決まる。
+function gridCols(el){
+  if(!el||!el.isConnected)return 0;
+  const tpl=getComputedStyle(el).gridTemplateColumns;
+  return tpl&&tpl!=='none'?tpl.split(' ').filter(Boolean).length:0
+}
+function trimSlots(type,list){
+  const cols=gridCols(document.getElementById(type+'Grid'));
+  if(!cols)return list;
+  let last=-1;
+  list.forEach((s,i)=>{if(s.assetId||s.configured||s.imageId)last=i});
+  return list.slice(0,Math.min(list.length,(Math.floor((last+1)/cols)+1)*cols))
+}
+let gridColsSeen='';
+if(window.ResizeObserver)new ResizeObserver(()=>{
+  const sig=['emoji','text','voice','env'].map(t=>gridCols(document.getElementById(t+'Grid'))).join(',');
+  if(sig!==gridColsSeen){gridColsSeen=sig;if(typeof cfg!=='undefined'&&cfg)render()}
+}).observe(document.getElementById('boardShell'));
+
 function render(){
   if(cfg?.programs&&document.getElementById('progChips'))queueMicrotask(renderPrograms);
  
@@ -5381,14 +5432,14 @@ function render(){
  
   for(const type of ['emoji','text','env']){
   
-    const list=cfg.sounds.filter(s=>s.type===type&&s.tabIndex===(type==='text'?textTab:emojiTab)).sort((a,b)=>a.order-b.order);
+    const list=trimSlots(type,cfg.sounds.filter(s=>s.type===type&&s.tabIndex===(type==='text'?textTab:emojiTab)).sort((a,b)=>a.order-b.order));
   
     $('#'+type+'Grid').innerHTML=list.map(s=>`<button class="${type==='env'?'text-pad env-pad':type+'-pad'} ${s.assetId?'loaded':''} ${[...active].some(a=>a.soundId===s.id)?'playing':''}" data-sound="${esc(s.id)}" title="${esc(s.assetId?s.fileName+' · 長押しで編集':'空き枠 · 押して設定')}" aria-label="${esc(s.assetId?s.label||'効果音':'空き枠、押して設定')}">${s.assetId?esc(s.label||'♪'):''}${s.assetId&&s.shortcut?`<span class="shortcut">${esc(s.shortcut)}</span>`:''}</button>`).join('');
  
   }
  
   {
-    const list=cfg.sounds.filter(s=>s.type==='voice').sort((a,b)=>a.order-b.order);
+    const list=trimSlots('voice',cfg.sounds.filter(s=>s.type==='voice').sort((a,b)=>a.order-b.order));
   
     $('#voiceGrid').innerHTML=list.map(s=>{
       const loaded=!!s.assetId,
@@ -6960,6 +7011,8 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
     fxPresets:null,
 fps:30,
     light:false,
+    vidFormat:'mp4',
+    vidQuality:8,
     imageMotion:'flutter',
     karaChannels:null,
     karaOpen:'popup',
@@ -7093,6 +7146,8 @@ fps:30,
     }
 out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     out.light=v.light===true;
+    out.vidFormat=v.vidFormat==='webm'?'webm':'mp4';
+    out.vidQuality=[4.5,8,16].includes(Number(v.vidQuality))?Number(v.vidQuality):8;
     {const MV=['float','sway','hop','run','shake','still'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];
      if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,10)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40),face:['none','right','left'].includes(m.face)?m.face:'none'})}
      {let shown=0;for(const m of out.mascots)if(m.show&&++shown>2)m.show=false}
@@ -7103,7 +7158,8 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
       name:String(p.name||'名義').slice(0,40),
       chars:Array.isArray(p.chars)?p.chars.filter(c=>typeof c==='string'&&/^[a-z0-9]{1,24}$/.test(c)).slice(0,60):[],
       cur:typeof p.cur==='string'?p.cur:'',
-      snap:p.snap&&typeof p.snap==='object'?p.snap:{}
+      snap:p.snap&&typeof p.snap==='object'?p.snap:{},
+      mscShow:Array.isArray(p.mscShow)?p.mscShow.filter(x=>typeof x==='string'&&/^[a-z0-9]{1,12}$/.test(x)).slice(0,2):null
     }));
     if(v.chars&&typeof v.chars==='object'){
       out.chars={};
@@ -8011,6 +8067,7 @@ for(const q of particles)q.beh='';
     activateChar(p.cur,true);
     switchAt=performance.now();
     renderSceneForm();
+    renderMascotUI();
     toast('名義「'+p.name+'」に切り替えました')
   }
  
@@ -8055,7 +8112,7 @@ for(const q of particles)q.beh='';
     const p=curProfile(),
       c=curChar();
   
-    for(const sel of [E('profileSel'),E('profileQuick')]){
+    for(const sel of [E('profileSel')].filter(Boolean)){
       sel.replaceChildren();
       for(const q of state.profiles)sel.add(new Option(q.name||'名義',q.id));
       sel.value=state.profileId
@@ -8210,7 +8267,6 @@ for(const q of particles)q.beh='';
   }
  
   E('profileSel').onchange=e=>activateProfile(e.target.value);
-  E('profileQuick').onchange=e=>activateProfile(e.target.value);
  
   E('profileName').oninput=e=>{
     const p=curProfile();
@@ -8230,7 +8286,7 @@ for(const q of particles)q.beh='';
     const pid=newProfileId(),
       cid=newCharId();
     state.chars[cid]=cleanChar({name:'キャラクター1',...pickValues()});
-    state.profiles.push({id:pid,name:'新しい名義',chars:[cid],cur:cid,snap:profileSnap()});
+    state.profiles.push({id:pid,name:'新しい名義',chars:[cid],cur:cid,snap:profileSnap(),mscShow:[]});
     activateProfile(pid);
     E('profileName').focus();
     E('profileName').select()
@@ -8440,7 +8496,7 @@ for(const q of particles)q.beh='';
     document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('selected',b.dataset.mode===mode));
     E('studioPlan').classList.toggle('on',mode==='plan');
     E('studioSongs').classList.toggle('on',mode==='songs');
-    E('studioModeHelp').textContent=mode==='plan'?'企画文をAIへ渡し、返答を台本欄に貼り付けて進行できます。AIと自動通信する機能はありません。':'配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。'
+    if(E('studioModeHelp'))E('studioModeHelp').textContent=mode==='plan'?'企画文をAIへ渡し、返答を台本欄に貼り付けて進行できます。AIと自動通信する機能はありません。':'配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。'
   }
 
   document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
@@ -8912,7 +8968,8 @@ for(const q of particles)q.beh='';
   
       const faceMask=Math.exp(-(((x-geo.cx)/(185*faceR))**2+((y-geo.faceY)/(170*faceR))**2));
   
-      const alpha=(S.fxOpacity/100)*(.35+p.depth*.65)*(layer==='front'?1-faceMask*.65:1);
+      const op=S.fxOpacity/100,
+        alpha=isP(fx)?(op>=1?1:op*(.55+p.depth*.45)):op*(.35+p.depth*.65)*(layer==='front'?1-faceMask*.65:1); // 画像のプリセットは「濃さ」最大で不透明
   
       let kind=fx==='spring'?(p.variant===2&&i%9===2?'blossom':'petal'):fx==='summer'?'bubble':fx==='autumn'?(beh==='roll'?'acorn':'leaf'):fx==='winter'?'snow':'image';
   
@@ -9539,7 +9596,7 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
       E('studioMeter').style.width=Math.max(0,Math.min(100,(dbLevel+70)/70*100))+'%';
       E('studioState').textContent=testing?'口パクをテスト中':!ready?'準備中':micLive()?(micMuted?'ミュート中':`${mouth?'発話中':'待機中'} / ${dbLevel<-90?'−∞':dbLevel.toFixed(0)} dB`):'マイク未接続';
       E('studioMic').textContent=ready&&micLive()?'マイクを再接続':'マイクを接続';
-      if(mediaRecorder&&mediaRecorder.state==='recording')E('studioRecTime').textContent='収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
+      if(mediaRecorder&&mediaRecorder.state==='recording')E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
     }
     scheduleFrame()
   }
@@ -9549,6 +9606,7 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     mediaRecorder=null;
     E('studioAspect').disabled=false;
     E('studioFps').disabled=false;
+    E('vidFormat').disabled=false;E('vidQuality').disabled=false;
     if(studioCapturing){
       studioCapturing=false;
       applyMonitor();
@@ -9579,50 +9637,48 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
       await ensureRunning();
       if(!micLive())await enableMic();
       if(!micLive())throw Error('マイクが接続されていません');
-      const type=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(t=>MediaRecorder.isTypeSupported(t));
+      const MP4=['video/mp4;codecs="avc1.640028,mp4a.40.2"','video/mp4;codecs=avc1,mp4a.40.2','video/mp4'],WEBM=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+      const want=state.vidFormat==='webm'?[...WEBM,...MP4]:[...MP4,...WEBM];
+      const type=want.find(t=>MediaRecorder.isTypeSupported(t));
       if(!type)throw Error('利用できる動画形式がありません');
+      if(state.vidFormat==='mp4'&&!type.startsWith('video/mp4'))toast('このブラウザはMP4で収録できないため、WebMで収録します',5000);
       videoStream=canvas.captureStream(state.fps||30);
       videoDest=ctx.createMediaStreamDestination();
       limOut.connect(videoDest);
       videoDest.stream.getAudioTracks().forEach(t=>videoStream.addTrack(t));
-      mediaRecorder=new MediaRecorder(videoStream,{mimeType:type,videoBitsPerSecond:4500000});
+      mediaRecorder=new MediaRecorder(videoStream,{mimeType:type,videoBitsPerSecond:Math.round((state.vidQuality||8)*1e6),audioBitsPerSecond:192000});
+      const rec=mediaRecorder;
       recordChunks=[];
-      let failed=false;
-      mediaRecorder.ondataavailable=e=>{
-        if(e.data.size)recordChunks.push(e.data)
+      let failed=false,finished=false;
+      rec.ondataavailable=e=>{
+        if(e.data&&e.data.size)recordChunks.push(e.data)
       };
-      mediaRecorder.onerror=e=>{
+      rec.onerror=e=>{
         failed=true;
         toast('収録エラー。取得できた部分を保存します：'+(e.error?.message||'不明'),6000);
-        if(mediaRecorder.state!=='inactive')mediaRecorder.stop()
+        try{if(rec.state!=='inactive')rec.stop()}catch(_){finish()}
       };
-      mediaRecorder.onstop=()=>{
-        const blob=new Blob(recordChunks,{type:mediaRecorder.mimeType});
+      // 停止の完了は onstop で受け取る。端末によって onstop が来ないことがあるので、停止後は時間切れでも取得済みの分で仕上げる
+      const finish=()=>{
+        if(finished)return;
+        finished=true;
+        clearTimeout(stopWatch);
+        const mime=(rec.mimeType||type).split(';')[0],
+          blob=new Blob(recordChunks,{type:mime});
         recordChunks=[];
-        const ext=type.startsWith('video/mp4')?'mp4':'webm',
+        const ext=mime==='video/mp4'?'mp4':'webm',
           name='otonoha_'+new Date().toISOString().replace(/[:.]/g,'-')+(failed?'_partial':'')+'.'+ext;
         cleanupCapture();
-        if(blob.size){
-          const url=URL.createObjectURL(blob);
-          videoUrls.push(url);
-          const row=document.createElement('div');
-          row.className='studio-take';
-          const span=document.createElement('span');
-          span.textContent=name+' / '+(blob.size/1048576).toFixed(1)+' MB';
-          const link=document.createElement('a');
-          link.href=url;
-          link.download=name;
-          link.textContent='保存';
-          const remove=document.createElement('button'); remove.type='button'; remove.textContent='一覧から外す'; remove.title='この画面で保持している動画を解放します。ダウンロード済みファイルは削除しません'; remove.onclick=()=>{URL.revokeObjectURL(url);videoUrls=videoUrls.filter(u=>u!==url);row.remove()}; row.append(span,link,remove);
-          E('studioVideos').prepend(row);
-          link.click();
-          toast('動画を作成しました。必要なら「保存」から再ダウンロードできます',6000)
-        }else toast('動画データを取得できませんでした',5000)
+        if(blob.size)addVideoRow(blob,name);else toast('動画データを取得できませんでした',5000)
       };
+      let stopWatch=0;
+      rec.onstop=finish;
+      rec.__finishSoon=()=>{stopWatch=setTimeout(finish,6000)};
       mediaRecorder.start(1000);
       captureStarting=false;
       E('studioAspect').disabled=true;
       E('studioFps').disabled=true;
+      E('vidFormat').disabled=true;E('vidQuality').disabled=true;
       studioCapturing=true;
       boostHold=true;
       applyMonitor();
@@ -9630,7 +9686,7 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
       recordStart=performance.now();
       E('studioStop').disabled=false;
       E('studioRec').classList.add('recording');
-      E('studioRecTime').textContent='収録中 0:00'
+      E('studioRecTime').textContent='● 収録中 0:00'
     }catch(err){
       cleanupCapture();
       toast(err.message||'動画収録を開始できませんでした',6000)
@@ -9638,12 +9694,46 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
   };
 
   E('studioStop').onclick=()=>{
-    if(mediaRecorder?.state==='recording'){
-      E('studioStop').disabled=true;
-      E('studioRecTime').textContent='動画を保存中';
-      mediaRecorder.stop()
-    }
+    const rec=mediaRecorder;
+    if(!rec||rec.state==='inactive')return;
+    E('studioStop').disabled=true;
+    E('studioRecTime').textContent='動画を保存中…';
+    try{rec.requestData()}catch(_){}
+    try{rec.stop()}catch(_){}
+    rec.__finishSoon?.()
   };
+
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  function addVideoRow(blob,name){
+    const url=URL.createObjectURL(blob);
+    videoUrls.push(url);
+    const row=document.createElement('div');
+    row.className='studio-take';
+    const span=document.createElement('span');
+    span.textContent=name+' / '+(blob.size/1048576).toFixed(1)+' MB';
+    const link=document.createElement('a');
+    link.href=url;link.download=name;link.className='vbtn';link.textContent='ファイルに保存';
+    row.append(span);
+    const file=new File([blob],name,{type:blob.type});
+    if(navigator.canShare?.({files:[file]})){
+      const sh=document.createElement('button');
+      sh.type='button';sh.className='vbtn primary';sh.textContent=isIOS?'写真に保存（共有）':'共有';
+      sh.title='共有の画面で「ビデオを保存」を選ぶと、写真アプリに入ります';
+      sh.onclick=async()=>{try{await navigator.share({files:[file]})}catch(e){if(e?.name!=='AbortError')toast('共有できませんでした。「ファイルに保存」をお使いください',5000)}};
+      row.append(sh)
+    }
+    const remove=document.createElement('button');
+    remove.type='button';remove.className='vbtn';remove.textContent='一覧から外す';
+    remove.title='この画面で保持している動画を解放します。保存済みのファイルは消えません';
+    remove.onclick=()=>{URL.revokeObjectURL(url);videoUrls=videoUrls.filter(u=>u!==url);row.remove()};
+    row.append(link,remove);
+    E('studioVideos').prepend(row);
+    if(isIOS)toast('収録できました。「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります',7000);
+    else{link.click();toast('動画を保存しました。もう一度保存するときは「ファイルに保存」を押します',6000)}
+  }
+  E('vidFormat').value=state.vidFormat;E('vidQuality').value=String(state.vidQuality);
+  E('vidFormat').onchange=e=>{state.vidFormat=e.target.value==='webm'?'webm':'mp4';save()};
+  E('vidQuality').onchange=e=>{state.vidQuality=Number(e.target.value)||8;save()};
 
   function blobData(blob){
     return new Promise((resolve,reject)=>{
@@ -10082,8 +10172,9 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
       if(m.motion==='run'){
         // 画面中を走り回る：ランダムな目的地へ向かい、着いたら次の目的地へ（ときどき立ち止まる）
         const r=mscRun[m.id]||(mscRun[m.id]={x,y,tx:x,ty:y,wait:.4,dir:1,ph:0});
-        const minX=w/2,maxX=Math.max(minX,W-w/2),minY=h/2,maxY=Math.max(minY,H-h/2);
-        r.x=Math.max(minX,Math.min(maxX,r.x));r.y=Math.max(minY,Math.min(maxY,r.y));
+        const minX=w/2,maxX=Math.max(minX,W-w/2),minY=h/2,maxY=Math.max(minY,H-h/2),cl=(v,a,b)=>Number.isFinite(v)?Math.max(a,Math.min(b,v)):(a+b)/2;
+        // 目的地も画面内に収める（大きさや画面の向きが変わったときに、画面外の目的地へ向かって端で止まり続けないように）
+        r.x=cl(r.x,minX,maxX);r.y=cl(r.y,minY,maxY);r.tx=cl(r.tx,minX,maxX);r.ty=cl(r.ty,minY,maxY);
         if(drag&&drag.target===m){r.tx=r.x;r.ty=r.y;r.wait=.6}
         else if(r.wait>0)r.wait-=dtp;
         else{const ddx=r.tx-r.x,ddy=r.ty-r.y,dist=Math.hypot(ddx,ddy),v=240*u*sp;
@@ -10132,6 +10223,7 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     }
   }
   function renderMascotUI(){
+    syncMascotsFromProfile();
     const list=state.mascots||[];
     if(!list.some(m=>m.id===mscSel))mscSel=list[0]?.id||'';
     const chips=E('mascotChips');chips.replaceChildren();
@@ -10148,16 +10240,25 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     renderSpeakerBar();
     renderMascotBar()
   }
+  // 画面に出すマスコットは名義ごと（名義の mscShow に最大2体）
+  function syncMascotsFromProfile(){
+    const p=curProfile(),list=state.mascots||[];
+    if(!p)return;
+    if(state.profiles.some(q=>!Array.isArray(q.mscShow))){const old=list.filter(m=>m.show).map(m=>m.id).slice(0,MSC_ON_SCREEN);for(const q of state.profiles)if(!Array.isArray(q.mscShow))q.mscShow=q===p?old:[]}
+    p.mscShow=p.mscShow.filter(id=>list.some(m=>m.id===id)).slice(0,MSC_ON_SCREEN);
+    for(const m of list)m.show=p.mscShow.includes(m.id)
+  }
   function shownCount(except){return (state.mascots||[]).filter(m=>m.show&&m!==except).length}
   function setMascotShow(m,on){
     if(on&&!m.show&&shownCount(m)>=MSC_ON_SCREEN){toast('画面に出せるマスコットは同時に2体までです。ほかのマスコットを先に外してください',4500);return false}
-    m.show=on;if(!on&&state.speaker===m.id)state.speaker='self';save();renderMascotUI();return true
+    m.show=on;if(!on&&state.speaker===m.id)state.speaker='self';
+    const p=curProfile();if(p)p.mscShow=(state.mascots||[]).filter(x=>x.show).map(x=>x.id).slice(0,MSC_ON_SCREEN);
+    save();renderMascotUI();return true
   }
   function renderMascotBar(){
     const bar=E('mascotBar'),list=(state.mascots||[]).filter(m=>images['msc-'+m.id]);
-    bar.hidden=!list.length;bar.replaceChildren();
-    if(!list.length)return;
-    const lab=document.createElement('span');lab.className='studio-mini';lab.textContent='マスコット（2体まで）';bar.append(lab);
+    bar.replaceChildren();
+    if(!list.length){bar.textContent='画像を登録したマスコットがここに並びます';return}
     for(const m of list){const b=document.createElement('button');b.type='button';b.textContent=m.name;b.setAttribute('aria-pressed',String(m.show));b.onclick=()=>setMascotShow(m,!m.show);bar.append(b)}
   }
   E('mascotAdd').onclick=()=>{
@@ -10165,7 +10266,9 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     if(state.mascots.length>=MSC_MAX){toast('マスコットは10体までです');return}
     let id;do id=Math.random().toString(36).slice(2,8);while(state.mascots.some(m=>m.id===id));
     const n=state.mascots.length;
-    state.mascots.push({id,name:'マスコット'+(n+1),show:shownCount()<MSC_ON_SCREEN,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40,face:'none'});
+    const pp=curProfile(),canShow=shownCount()<MSC_ON_SCREEN;
+    state.mascots.push({id,name:'マスコット'+(n+1),show:canShow,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40,face:'none'});
+    if(canShow&&pp){pp.mscShow=[...(pp.mscShow||[]),id].slice(0,MSC_ON_SCREEN)}
     mscSel=id;save();renderMascotUI();toast('マスコットを追加しました。画像を登録してください')
   };
   E('mascotDel').onclick=e=>{
@@ -10264,7 +10367,8 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     }
   });
   const endDrag=()=>{if(!drag)return;drag=null;canvas.classList.remove('dragging');save()};
-  canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
+  canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);canvas.addEventListener('lostpointercapture',endDrag);
+  E('quickTune').addEventListener('toggle',()=>{if(!E('quickTune').open)endDrag()});
 
 /* --- 84-app-mode.js --- */
 /* 配信・録画／ラジオの切り替え */
