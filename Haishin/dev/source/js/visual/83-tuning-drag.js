@@ -59,4 +59,5 @@
     }
   });
   const endDrag=()=>{if(!drag)return;drag=null;canvas.classList.remove('dragging');save()};
-  canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
+  canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);canvas.addEventListener('lostpointercapture',endDrag);
+  E('quickTune').addEventListener('toggle',()=>{if(!E('quickTune').open)endDrag()});

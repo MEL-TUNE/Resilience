@@ -188,6 +188,7 @@ for(const q of particles)q.beh='';
     activateChar(p.cur,true);
     switchAt=performance.now();
     renderSceneForm();
+    renderMascotUI();
     toast('名義「'+p.name+'」に切り替えました')
   }
  
@@ -232,7 +233,7 @@ for(const q of particles)q.beh='';
     const p=curProfile(),
       c=curChar();
   
-    for(const sel of [E('profileSel'),E('profileQuick')]){
+    for(const sel of [E('profileSel')].filter(Boolean)){
       sel.replaceChildren();
       for(const q of state.profiles)sel.add(new Option(q.name||'名義',q.id));
       sel.value=state.profileId
@@ -387,7 +388,6 @@ for(const q of particles)q.beh='';
   }
  
   E('profileSel').onchange=e=>activateProfile(e.target.value);
-  E('profileQuick').onchange=e=>activateProfile(e.target.value);
  
   E('profileName').oninput=e=>{
     const p=curProfile();
@@ -407,7 +407,7 @@ for(const q of particles)q.beh='';
     const pid=newProfileId(),
       cid=newCharId();
     state.chars[cid]=cleanChar({name:'キャラクター1',...pickValues()});
-    state.profiles.push({id:pid,name:'新しい名義',chars:[cid],cur:cid,snap:profileSnap()});
+    state.profiles.push({id:pid,name:'新しい名義',chars:[cid],cur:cid,snap:profileSnap(),mscShow:[]});
     activateProfile(pid);
     E('profileName').focus();
     E('profileName').select()
@@ -617,7 +617,7 @@ for(const q of particles)q.beh='';
     document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('selected',b.dataset.mode===mode));
     E('studioPlan').classList.toggle('on',mode==='plan');
     E('studioSongs').classList.toggle('on',mode==='songs');
-    E('studioModeHelp').textContent=mode==='plan'?'企画文をAIへ渡し、返答を台本欄に貼り付けて進行できます。AIと自動通信する機能はありません。':'配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。'
+    if(E('studioModeHelp'))E('studioModeHelp').textContent=mode==='plan'?'企画文をAIへ渡し、返答を台本欄に貼り付けて進行できます。AIと自動通信する機能はありません。':'配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。'
   }
 
   document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));

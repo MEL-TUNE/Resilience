@@ -38,6 +38,25 @@ function renderVolumes(){
 
 }
 
+// 空き枠は「使っている最後の行」＋1行だけ表示する（最後の行が埋まると1行増える）。列の数は画面幅で決まる。
+function gridCols(el){
+  if(!el||!el.isConnected)return 0;
+  const tpl=getComputedStyle(el).gridTemplateColumns;
+  return tpl&&tpl!=='none'?tpl.split(' ').filter(Boolean).length:0
+}
+function trimSlots(type,list){
+  const cols=gridCols(document.getElementById(type+'Grid'));
+  if(!cols)return list;
+  let last=-1;
+  list.forEach((s,i)=>{if(s.assetId||s.configured||s.imageId)last=i});
+  return list.slice(0,Math.min(list.length,(Math.floor((last+1)/cols)+1)*cols))
+}
+let gridColsSeen='';
+if(window.ResizeObserver)new ResizeObserver(()=>{
+  const sig=['emoji','text','voice','env'].map(t=>gridCols(document.getElementById(t+'Grid'))).join(',');
+  if(sig!==gridColsSeen){gridColsSeen=sig;if(typeof cfg!=='undefined'&&cfg)render()}
+}).observe(document.getElementById('boardShell'));
+
 function render(){
   if(cfg?.programs&&document.getElementById('progChips'))queueMicrotask(renderPrograms);
  
@@ -47,14 +66,14 @@ function render(){
  
   for(const type of ['emoji','text','env']){
   
-    const list=cfg.sounds.filter(s=>s.type===type&&s.tabIndex===(type==='text'?textTab:emojiTab)).sort((a,b)=>a.order-b.order);
+    const list=trimSlots(type,cfg.sounds.filter(s=>s.type===type&&s.tabIndex===(type==='text'?textTab:emojiTab)).sort((a,b)=>a.order-b.order));
   
     $('#'+type+'Grid').innerHTML=list.map(s=>`<button class="${type==='env'?'text-pad env-pad':type+'-pad'} ${s.assetId?'loaded':''} ${[...active].some(a=>a.soundId===s.id)?'playing':''}" data-sound="${esc(s.id)}" title="${esc(s.assetId?s.fileName+' · 長押しで編集':'空き枠 · 押して設定')}" aria-label="${esc(s.assetId?s.label||'効果音':'空き枠、押して設定')}">${s.assetId?esc(s.label||'♪'):''}${s.assetId&&s.shortcut?`<span class="shortcut">${esc(s.shortcut)}</span>`:''}</button>`).join('');
  
   }
  
   {
-    const list=cfg.sounds.filter(s=>s.type==='voice').sort((a,b)=>a.order-b.order);
+    const list=trimSlots('voice',cfg.sounds.filter(s=>s.type==='voice').sort((a,b)=>a.order-b.order));
   
     $('#voiceGrid').innerHTML=list.map(s=>{
       const loaded=!!s.assetId,

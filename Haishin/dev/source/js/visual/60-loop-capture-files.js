@@ -120,7 +120,7 @@
       E('studioMeter').style.width=Math.max(0,Math.min(100,(dbLevel+70)/70*100))+'%';
       E('studioState').textContent=testing?'口パクをテスト中':!ready?'準備中':micLive()?(micMuted?'ミュート中':`${mouth?'発話中':'待機中'} / ${dbLevel<-90?'−∞':dbLevel.toFixed(0)} dB`):'マイク未接続';
       E('studioMic').textContent=ready&&micLive()?'マイクを再接続':'マイクを接続';
-      if(mediaRecorder&&mediaRecorder.state==='recording')E('studioRecTime').textContent='収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
+      if(mediaRecorder&&mediaRecorder.state==='recording')E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
     }
     scheduleFrame()
   }
@@ -130,6 +130,7 @@
     mediaRecorder=null;
     E('studioAspect').disabled=false;
     E('studioFps').disabled=false;
+    E('vidFormat').disabled=false;E('vidQuality').disabled=false;
     if(studioCapturing){
       studioCapturing=false;
       applyMonitor();
@@ -160,50 +161,48 @@
       await ensureRunning();
       if(!micLive())await enableMic();
       if(!micLive())throw Error('マイクが接続されていません');
-      const type=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(t=>MediaRecorder.isTypeSupported(t));
+      const MP4=['video/mp4;codecs="avc1.640028,mp4a.40.2"','video/mp4;codecs=avc1,mp4a.40.2','video/mp4'],WEBM=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+      const want=state.vidFormat==='webm'?[...WEBM,...MP4]:[...MP4,...WEBM];
+      const type=want.find(t=>MediaRecorder.isTypeSupported(t));
       if(!type)throw Error('利用できる動画形式がありません');
+      if(state.vidFormat==='mp4'&&!type.startsWith('video/mp4'))toast('このブラウザはMP4で収録できないため、WebMで収録します',5000);
       videoStream=canvas.captureStream(state.fps||30);
       videoDest=ctx.createMediaStreamDestination();
       limOut.connect(videoDest);
       videoDest.stream.getAudioTracks().forEach(t=>videoStream.addTrack(t));
-      mediaRecorder=new MediaRecorder(videoStream,{mimeType:type,videoBitsPerSecond:4500000});
+      mediaRecorder=new MediaRecorder(videoStream,{mimeType:type,videoBitsPerSecond:Math.round((state.vidQuality||8)*1e6),audioBitsPerSecond:192000});
+      const rec=mediaRecorder;
       recordChunks=[];
-      let failed=false;
-      mediaRecorder.ondataavailable=e=>{
-        if(e.data.size)recordChunks.push(e.data)
+      let failed=false,finished=false;
+      rec.ondataavailable=e=>{
+        if(e.data&&e.data.size)recordChunks.push(e.data)
       };
-      mediaRecorder.onerror=e=>{
+      rec.onerror=e=>{
         failed=true;
         toast('収録エラー。取得できた部分を保存します：'+(e.error?.message||'不明'),6000);
-        if(mediaRecorder.state!=='inactive')mediaRecorder.stop()
+        try{if(rec.state!=='inactive')rec.stop()}catch(_){finish()}
       };
-      mediaRecorder.onstop=()=>{
-        const blob=new Blob(recordChunks,{type:mediaRecorder.mimeType});
+      // 停止の完了は onstop で受け取る。端末によって onstop が来ないことがあるので、停止後は時間切れでも取得済みの分で仕上げる
+      const finish=()=>{
+        if(finished)return;
+        finished=true;
+        clearTimeout(stopWatch);
+        const mime=(rec.mimeType||type).split(';')[0],
+          blob=new Blob(recordChunks,{type:mime});
         recordChunks=[];
-        const ext=type.startsWith('video/mp4')?'mp4':'webm',
+        const ext=mime==='video/mp4'?'mp4':'webm',
           name='otonoha_'+new Date().toISOString().replace(/[:.]/g,'-')+(failed?'_partial':'')+'.'+ext;
         cleanupCapture();
-        if(blob.size){
-          const url=URL.createObjectURL(blob);
-          videoUrls.push(url);
-          const row=document.createElement('div');
-          row.className='studio-take';
-          const span=document.createElement('span');
-          span.textContent=name+' / '+(blob.size/1048576).toFixed(1)+' MB';
-          const link=document.createElement('a');
-          link.href=url;
-          link.download=name;
-          link.textContent='保存';
-          const remove=document.createElement('button'); remove.type='button'; remove.textContent='一覧から外す'; remove.title='この画面で保持している動画を解放します。ダウンロード済みファイルは削除しません'; remove.onclick=()=>{URL.revokeObjectURL(url);videoUrls=videoUrls.filter(u=>u!==url);row.remove()}; row.append(span,link,remove);
-          E('studioVideos').prepend(row);
-          link.click();
-          toast('動画を作成しました。必要なら「保存」から再ダウンロードできます',6000)
-        }else toast('動画データを取得できませんでした',5000)
+        if(blob.size)addVideoRow(blob,name);else toast('動画データを取得できませんでした',5000)
       };
+      let stopWatch=0;
+      rec.onstop=finish;
+      rec.__finishSoon=()=>{stopWatch=setTimeout(finish,6000)};
       mediaRecorder.start(1000);
       captureStarting=false;
       E('studioAspect').disabled=true;
       E('studioFps').disabled=true;
+      E('vidFormat').disabled=true;E('vidQuality').disabled=true;
       studioCapturing=true;
       boostHold=true;
       applyMonitor();
@@ -211,7 +210,7 @@
       recordStart=performance.now();
       E('studioStop').disabled=false;
       E('studioRec').classList.add('recording');
-      E('studioRecTime').textContent='収録中 0:00'
+      E('studioRecTime').textContent='● 収録中 0:00'
     }catch(err){
       cleanupCapture();
       toast(err.message||'動画収録を開始できませんでした',6000)
@@ -219,12 +218,46 @@
   };
 
   E('studioStop').onclick=()=>{
-    if(mediaRecorder?.state==='recording'){
-      E('studioStop').disabled=true;
-      E('studioRecTime').textContent='動画を保存中';
-      mediaRecorder.stop()
-    }
+    const rec=mediaRecorder;
+    if(!rec||rec.state==='inactive')return;
+    E('studioStop').disabled=true;
+    E('studioRecTime').textContent='動画を保存中…';
+    try{rec.requestData()}catch(_){}
+    try{rec.stop()}catch(_){}
+    rec.__finishSoon?.()
   };
+
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  function addVideoRow(blob,name){
+    const url=URL.createObjectURL(blob);
+    videoUrls.push(url);
+    const row=document.createElement('div');
+    row.className='studio-take';
+    const span=document.createElement('span');
+    span.textContent=name+' / '+(blob.size/1048576).toFixed(1)+' MB';
+    const link=document.createElement('a');
+    link.href=url;link.download=name;link.className='vbtn';link.textContent='ファイルに保存';
+    row.append(span);
+    const file=new File([blob],name,{type:blob.type});
+    if(navigator.canShare?.({files:[file]})){
+      const sh=document.createElement('button');
+      sh.type='button';sh.className='vbtn primary';sh.textContent=isIOS?'写真に保存（共有）':'共有';
+      sh.title='共有の画面で「ビデオを保存」を選ぶと、写真アプリに入ります';
+      sh.onclick=async()=>{try{await navigator.share({files:[file]})}catch(e){if(e?.name!=='AbortError')toast('共有できませんでした。「ファイルに保存」をお使いください',5000)}};
+      row.append(sh)
+    }
+    const remove=document.createElement('button');
+    remove.type='button';remove.className='vbtn';remove.textContent='一覧から外す';
+    remove.title='この画面で保持している動画を解放します。保存済みのファイルは消えません';
+    remove.onclick=()=>{URL.revokeObjectURL(url);videoUrls=videoUrls.filter(u=>u!==url);row.remove()};
+    row.append(link,remove);
+    E('studioVideos').prepend(row);
+    if(isIOS)toast('収録できました。「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります',7000);
+    else{link.click();toast('動画を保存しました。もう一度保存するときは「ファイルに保存」を押します',6000)}
+  }
+  E('vidFormat').value=state.vidFormat;E('vidQuality').value=String(state.vidQuality);
+  E('vidFormat').onchange=e=>{state.vidFormat=e.target.value==='webm'?'webm':'mp4';save()};
+  E('vidQuality').onchange=e=>{state.vidQuality=Number(e.target.value)||8;save()};
 
   function blobData(blob){
     return new Promise((resolve,reject)=>{

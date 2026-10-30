@@ -19,8 +19,9 @@
       if(m.motion==='run'){
         // 画面中を走り回る：ランダムな目的地へ向かい、着いたら次の目的地へ（ときどき立ち止まる）
         const r=mscRun[m.id]||(mscRun[m.id]={x,y,tx:x,ty:y,wait:.4,dir:1,ph:0});
-        const minX=w/2,maxX=Math.max(minX,W-w/2),minY=h/2,maxY=Math.max(minY,H-h/2);
-        r.x=Math.max(minX,Math.min(maxX,r.x));r.y=Math.max(minY,Math.min(maxY,r.y));
+        const minX=w/2,maxX=Math.max(minX,W-w/2),minY=h/2,maxY=Math.max(minY,H-h/2),cl=(v,a,b)=>Number.isFinite(v)?Math.max(a,Math.min(b,v)):(a+b)/2;
+        // 目的地も画面内に収める（大きさや画面の向きが変わったときに、画面外の目的地へ向かって端で止まり続けないように）
+        r.x=cl(r.x,minX,maxX);r.y=cl(r.y,minY,maxY);r.tx=cl(r.tx,minX,maxX);r.ty=cl(r.ty,minY,maxY);
         if(drag&&drag.target===m){r.tx=r.x;r.ty=r.y;r.wait=.6}
         else if(r.wait>0)r.wait-=dtp;
         else{const ddx=r.tx-r.x,ddy=r.ty-r.y,dist=Math.hypot(ddx,ddy),v=240*u*sp;
@@ -69,6 +70,7 @@
     }
   }
   function renderMascotUI(){
+    syncMascotsFromProfile();
     const list=state.mascots||[];
     if(!list.some(m=>m.id===mscSel))mscSel=list[0]?.id||'';
     const chips=E('mascotChips');chips.replaceChildren();
@@ -85,16 +87,25 @@
     renderSpeakerBar();
     renderMascotBar()
   }
+  // 画面に出すマスコットは名義ごと（名義の mscShow に最大2体）
+  function syncMascotsFromProfile(){
+    const p=curProfile(),list=state.mascots||[];
+    if(!p)return;
+    if(state.profiles.some(q=>!Array.isArray(q.mscShow))){const old=list.filter(m=>m.show).map(m=>m.id).slice(0,MSC_ON_SCREEN);for(const q of state.profiles)if(!Array.isArray(q.mscShow))q.mscShow=q===p?old:[]}
+    p.mscShow=p.mscShow.filter(id=>list.some(m=>m.id===id)).slice(0,MSC_ON_SCREEN);
+    for(const m of list)m.show=p.mscShow.includes(m.id)
+  }
   function shownCount(except){return (state.mascots||[]).filter(m=>m.show&&m!==except).length}
   function setMascotShow(m,on){
     if(on&&!m.show&&shownCount(m)>=MSC_ON_SCREEN){toast('画面に出せるマスコットは同時に2体までです。ほかのマスコットを先に外してください',4500);return false}
-    m.show=on;if(!on&&state.speaker===m.id)state.speaker='self';save();renderMascotUI();return true
+    m.show=on;if(!on&&state.speaker===m.id)state.speaker='self';
+    const p=curProfile();if(p)p.mscShow=(state.mascots||[]).filter(x=>x.show).map(x=>x.id).slice(0,MSC_ON_SCREEN);
+    save();renderMascotUI();return true
   }
   function renderMascotBar(){
     const bar=E('mascotBar'),list=(state.mascots||[]).filter(m=>images['msc-'+m.id]);
-    bar.hidden=!list.length;bar.replaceChildren();
-    if(!list.length)return;
-    const lab=document.createElement('span');lab.className='studio-mini';lab.textContent='マスコット（2体まで）';bar.append(lab);
+    bar.replaceChildren();
+    if(!list.length){bar.textContent='画像を登録したマスコットがここに並びます';return}
     for(const m of list){const b=document.createElement('button');b.type='button';b.textContent=m.name;b.setAttribute('aria-pressed',String(m.show));b.onclick=()=>setMascotShow(m,!m.show);bar.append(b)}
   }
   E('mascotAdd').onclick=()=>{
@@ -102,7 +113,9 @@
     if(state.mascots.length>=MSC_MAX){toast('マスコットは10体までです');return}
     let id;do id=Math.random().toString(36).slice(2,8);while(state.mascots.some(m=>m.id===id));
     const n=state.mascots.length;
-    state.mascots.push({id,name:'マスコット'+(n+1),show:shownCount()<MSC_ON_SCREEN,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40,face:'none'});
+    const pp=curProfile(),canShow=shownCount()<MSC_ON_SCREEN;
+    state.mascots.push({id,name:'マスコット'+(n+1),show:canShow,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40,face:'none'});
+    if(canShow&&pp){pp.mscShow=[...(pp.mscShow||[]),id].slice(0,MSC_ON_SCREEN)}
     mscSel=id;save();renderMascotUI();toast('マスコットを追加しました。画像を登録してください')
   };
   E('mascotDel').onclick=e=>{

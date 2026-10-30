@@ -429,7 +429,8 @@
   
       const faceMask=Math.exp(-(((x-geo.cx)/(185*faceR))**2+((y-geo.faceY)/(170*faceR))**2));
   
-      const alpha=(S.fxOpacity/100)*(.35+p.depth*.65)*(layer==='front'?1-faceMask*.65:1);
+      const op=S.fxOpacity/100,
+        alpha=isP(fx)?(op>=1?1:op*(.55+p.depth*.45)):op*(.35+p.depth*.65)*(layer==='front'?1-faceMask*.65:1); // 画像のプリセットは「濃さ」最大で不透明
   
       let kind=fx==='spring'?(p.variant===2&&i%9===2?'blossom':'petal'):fx==='summer'?'bubble':fx==='autumn'?(beh==='roll'?'acorn':'leaf'):fx==='winter'?'snow':'image';
   
