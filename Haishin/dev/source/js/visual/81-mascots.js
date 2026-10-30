@@ -19,13 +19,13 @@
       if(m.motion==='run'){
         // 画面中を走り回る：ランダムな目的地へ向かい、着いたら次の目的地へ（ときどき立ち止まる）
         const r=mscRun[m.id]||(mscRun[m.id]={x,y,tx:x,ty:y,wait:.4,dir:1,ph:0});
-        const minX=w/2,maxX=Math.max(minX,W-w/2),minY=h/2,maxY=Math.max(minY,H-h/2),cl=(v,a,b)=>Number.isFinite(v)?Math.max(a,Math.min(b,v)):(a+b)/2;
+        const minX=w*.38,maxX=Math.max(minX,W-w*.38),minY=h*.38,maxY=Math.max(minY,H-h*.38),cl=(v,a,b)=>Number.isFinite(v)?Math.max(a,Math.min(b,v)):(a+b)/2;
         // 目的地も画面内に収める（大きさや画面の向きが変わったときに、画面外の目的地へ向かって端で止まり続けないように）
         r.x=cl(r.x,minX,maxX);r.y=cl(r.y,minY,maxY);r.tx=cl(r.tx,minX,maxX);r.ty=cl(r.ty,minY,maxY);
         if(drag&&drag.target===m){r.tx=r.x;r.ty=r.y;r.wait=.6}
         else if(r.wait>0)r.wait-=dtp;
         else{const ddx=r.tx-r.x,ddy=r.ty-r.y,dist=Math.hypot(ddx,ddy),v=240*u*sp;
-          if(dist<=v*dtp+1){r.x=r.tx;r.y=r.ty;r.wait=Math.random()<.35?.3+Math.random()*1.1:0;r.tx=minX+Math.random()*(maxX-minX);r.ty=minY+Math.random()*(maxY-minY)}
+          if(dist<=v*dtp+1){r.x=r.tx;r.y=r.ty;r.wait=Math.random()<.35?.3+Math.random()*1.1:0;const nt=runTarget(r,w,h,minX,maxX,minY,maxY);r.tx=nt.x;r.ty=nt.y}
           else{r.x+=ddx/dist*v*dtp;r.y+=ddy/dist*v*dtp;if(Math.abs(ddx)>.5)r.dir=ddx>0?1:-1;r.ph+=dtp*v/(26*u)}}
         x=r.x;y=r.y;
         if(r.wait<=0){dy=-Math.abs(Math.sin(r.ph))*10*u*a;rot=Math.sin(r.ph*2)*2.5*deg*a}
@@ -44,6 +44,30 @@
       g.restore();
       m._box={x:x-w/2,y:y-h/2,w,h}
     }
+  }
+  // 走り回る先：画面の四辺に沿った帯から選ぶ（立ち絵の範囲には止まらず、横切るのもときどきだけ）
+  function runTarget(r,w,h,minX,maxX,minY,maxY){
+    let box=null;
+    if(sceneAvatar()&&(images.png0||images.png1)){const gg=avatarGeom(),px=w*.45,py=h*.45;box={x0:gg.cx-gg.w/2-px,x1:gg.cx+gg.w/2+px,y0:gg.bottom-gg.h-py,y1:gg.bottom+py}}
+    const inBox=(x,y)=>box&&x>box.x0&&x<box.x1&&y>box.y0&&y<box.y1;
+    const crosses=(x,y)=>{if(!box)return false;for(let k=1;k<10;k++){const f=k/10;if(inBox(r.x+(x-r.x)*f,r.y+(y-r.y)*f))return true}return false};
+    const bx=Math.max(1,(maxX-minX)*.22),by=Math.max(1,(maxY-minY)*.26);
+    const cur=r.x-minX<bx?'l':maxX-r.x<bx?'r':r.y-minY<by?'t':maxY-r.y<by?'b':'';
+    const near={l:['l','t','b'],r:['r','t','b'],t:['t','l','r'],b:['b','l','r'],'':['l','r','t','b']}[cur];
+    let best=null;
+    for(let k=0;k<24;k++){
+      const side=Math.random()<.5?near[Math.floor(Math.random()*near.length)]:'lrtb'[Math.floor(Math.random()*4)];
+      let x,y;
+      if(side==='l'){x=minX+Math.random()*bx;y=minY+Math.random()*(maxY-minY)}
+      else if(side==='r'){x=maxX-Math.random()*bx;y=minY+Math.random()*(maxY-minY)}
+      else if(side==='t'){x=minX+Math.random()*(maxX-minX);y=minY+Math.random()*by}
+      else{x=minX+Math.random()*(maxX-minX);y=maxY-Math.random()*by}
+      if(Math.hypot(x-r.x,y-r.y)<Math.min(W,H)*.12)continue;
+      if(inBox(x,y))continue;
+      if(!crosses(x,y)||Math.random()<.3)return {x,y};  // 立ち絵の後ろを横切るのはときどきだけ
+      best=best||{x,y}
+    }
+    return best||{x:minX+Math.random()*(maxX-minX),y:minY+Math.random()*(maxY-minY)}
   }
   function drawSceneImage(now){
     if(scene==='live')return;

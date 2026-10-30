@@ -120,12 +120,13 @@
       E('studioMeter').style.width=Math.max(0,Math.min(100,(dbLevel+70)/70*100))+'%';
       E('studioState').textContent=testing?'口パクをテスト中':!ready?'準備中':micLive()?(micMuted?'ミュート中':`${mouth?'発話中':'待機中'} / ${dbLevel<-90?'−∞':dbLevel.toFixed(0)} dB`):'マイク未接続';
       E('studioMic').textContent=ready&&micLive()?'マイクを再接続':'マイクを接続';
-      if(mediaRecorder&&mediaRecorder.state==='recording')E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
+      if(mediaRecorder&&mediaRecorder.state==='recording'&&!mediaRecorder.__ending)E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
     }
     scheduleFrame()
   }
 
   function cleanupCapture(){
+    if(micGain)updateGains();
     captureStarting=false;
     mediaRecorder=null;
     E('studioAspect').disabled=false;
@@ -200,6 +201,7 @@
       rec.__finishSoon=()=>{stopWatch=setTimeout(finish,6000)};
       mediaRecorder.start(1000);
       captureStarting=false;
+      {const pb=progBgm();if(curProgram()?.autoBgm&&pb&&!bgmPlaying&&!bgmLoadingId)playBgm(pb,{restart:true})}
       E('studioAspect').disabled=true;
       E('studioFps').disabled=true;
       E('vidFormat').disabled=true;E('vidQuality').disabled=true;
@@ -217,10 +219,22 @@
     }
   };
 
-  E('studioStop').onclick=()=>{
+  E('studioStop').onclick=async()=>{
     const rec=mediaRecorder;
-    if(!rec||rec.state==='inactive')return;
+    if(!rec||rec.state==='inactive'||rec.__ending)return;
+    rec.__ending=true;
     E('studioStop').disabled=true;
+    // ラジオの「停止・保存」と同じ設定（設定の「BGMの締め」）で、鳴っている音をすべてフェードアウトしてから止める
+    const insts=[...active];
+    if(bgmPlaying)insts.push(bgmPlaying);
+    if(cfg.rec.fadeOnStop&&(insts.length||micLive())){
+      const fs=Number(cfg.rec.fadeSec)||3;
+      E('studioRecTime').textContent='フェードアウト中…（'+fs+'秒）';
+      if(micGain){const t0=ctx.currentTime;micGain.gain.cancelScheduledValues(t0);micGain.gain.setValueAtTime(micGain.gain.value,t0);micGain.gain.linearRampToValueAtTime(0,t0+fs)}
+      bgmSerial++;
+      await Promise.all(insts.map(x=>fadeStop(x,fs)));
+      await new Promise(r=>setTimeout(r,500))
+    }
     E('studioRecTime').textContent='動画を保存中…';
     try{rec.requestData()}catch(_){}
     try{rec.stop()}catch(_){}
@@ -255,6 +269,25 @@
     if(isIOS)toast('収録できました。「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります',7000);
     else{link.click();toast('動画を保存しました。もう一度保存するときは「ファイルに保存」を押します',6000)}
   }
+  // 番組（ラジオと共通）：選ぶと、その番組の初期BGMを収録開始と同時に流せる
+  let vidProgSig='';
+  function renderVidProg(){
+    if(!cfg)return;
+    const sel=E('vidProg'),pr=curProgram(),pb=progBgm();
+    const sig=JSON.stringify([cfg.currentProgram,cfg.programs.map(p=>[p.name,p.bgmId,p.autoBgm]),pb?.name||'',studioCapturing]);
+    if(sig===vidProgSig)return;
+    vidProgSig=sig;
+    sel.replaceChildren(new Option('フリー（初期BGMなし）','-1'),...cfg.programs.map((p,i)=>new Option(p.name,String(i))));
+    sel.value=String(cfg.currentProgram);
+    sel.disabled=studioCapturing||captureStarting||rec.state!=='idle';
+    E('vidProgNote').textContent=!pr?'番組は「ラジオ」の番組ボタン（長押し・右クリックで編集）と共通です。':pb?(pr.autoBgm?'収録開始と同時に「'+pb.name+'」を頭から流します。':'初期BGM「'+pb.name+'」は、番組の設定で「録音開始と同時に初期BGMを頭から流す」をオンにすると収録開始と同時に流れます。'):'この番組には初期BGMが設定されていません（ラジオの番組ボタンを長押し・右クリックで設定）。'
+  }
+  E('vidProg').onchange=e=>{
+    if(rec.state!=='idle'||studioCapturing)return;
+    cfg.currentProgram=Number(e.target.value);
+    persist();renderPrograms();preloadProgBgm();renderVidProg()
+  };
+  setInterval(renderVidProg,700);
   E('vidFormat').value=state.vidFormat;E('vidQuality').value=String(state.vidQuality);
   E('vidFormat').onchange=e=>{state.vidFormat=e.target.value==='webm'?'webm':'mp4';save()};
   E('vidQuality').onchange=e=>{state.vidQuality=Number(e.target.value)||8;save()};
