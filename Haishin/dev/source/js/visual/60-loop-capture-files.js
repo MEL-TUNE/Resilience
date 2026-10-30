@@ -96,8 +96,8 @@
     background();
     effects(dt,now,'back');
     if(sceneAvatar()){
-      drawAvatar(now,mouth&&selfSpeak(),blink);
-      drawMascots(now,dt)
+      drawMascots(now);
+      drawAvatar(now,mouth&&selfSpeak(),blink)
     }
     drawSceneImage(now);
     effects(dt,now,'front');

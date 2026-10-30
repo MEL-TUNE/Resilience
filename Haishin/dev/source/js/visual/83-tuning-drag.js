@@ -30,8 +30,11 @@
     const r=canvas.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H),ox=(r.width-W*s)/2,oy=(r.height-H*s)/2;
     return {x:(e.clientX-r.left-ox)/s,y:(e.clientY-r.top-oy)/s}
   }
+  const dragOn=()=>E('quickTune').open;
+  const lockView=()=>canvas.classList.toggle('locked',!dragOn());
+  E('quickTune').addEventListener('toggle',lockView);lockView();
   canvas.addEventListener('pointerdown',e=>{
-    if(e.button!==0)return;
+    if(e.button!==0||!dragOn())return;
     const p=stagePoint(e);
     let target=null;
     for(const m of [...(state.mascots||[])].reverse())if(m._box&&p.x>=m._box.x&&p.x<=m._box.x+m._box.w&&p.y>=m._box.y&&p.y<=m._box.y+m._box.h){target=m;break}
@@ -51,6 +54,7 @@
     }else{
       drag.target.x=Math.max(-100,Math.min(100,Math.round(drag.ox+dx/W*200)));
       drag.target.y=Math.max(-100,Math.min(100,Math.round(drag.oy+dy/H*200)));
+      const r=mscRun[drag.target.id];if(r){r.x=W/2+drag.target.x*W/200;r.y=H/2+drag.target.y*H/200}
       E('mscX').value=drag.target.x;E('mscY').value=drag.target.y
     }
   });

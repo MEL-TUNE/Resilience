@@ -1,6 +1,7 @@
 /* マスコット */
 
-  let mscSel='',mscLast=0;const mscEnv={};
+  let mscSel='',mscLast=0;const mscEnv={},mscRun={};
+  const MSC_MAX=10,MSC_ON_SCREEN=2;
   function mscCur(){return (state.mascots||[]).find(m=>m.id===mscSel)||null}
   function drawMascots(now){
     const list=state.mascots||[];
@@ -13,8 +14,22 @@
       const im=images['msc-'+m.id];
       if(!im)continue;
       const seed=(m.id.charCodeAt(0)+m.id.charCodeAt(m.id.length-1))*.173,a=m.amp/100,sp=m.speed/100,
-        h=H*m.size/100,f=h/im.height,w=im.width*f,x=W/2+m.x*W/200,y=H/2+m.y*H/200;
-      let dx=0,dy=0,rot=0;
+        h=H*m.size/100,f=h/im.height,w=im.width*f;
+      let x=W/2+m.x*W/200,y=H/2+m.y*H/200,dx=0,dy=0,rot=0,flip=false;
+      if(m.motion==='run'){
+        // 画面中を走り回る：ランダムな目的地へ向かい、着いたら次の目的地へ（ときどき立ち止まる）
+        const r=mscRun[m.id]||(mscRun[m.id]={x,y,tx:x,ty:y,wait:.4,dir:1,ph:0});
+        const minX=w/2,maxX=Math.max(minX,W-w/2),minY=h/2,maxY=Math.max(minY,H-h/2);
+        r.x=Math.max(minX,Math.min(maxX,r.x));r.y=Math.max(minY,Math.min(maxY,r.y));
+        if(drag&&drag.target===m){r.tx=r.x;r.ty=r.y;r.wait=.6}
+        else if(r.wait>0)r.wait-=dtp;
+        else{const ddx=r.tx-r.x,ddy=r.ty-r.y,dist=Math.hypot(ddx,ddy),v=240*u*sp;
+          if(dist<=v*dtp+1){r.x=r.tx;r.y=r.ty;r.wait=Math.random()<.35?.3+Math.random()*1.1:0;r.tx=minX+Math.random()*(maxX-minX);r.ty=minY+Math.random()*(maxY-minY)}
+          else{r.x+=ddx/dist*v*dtp;r.y+=ddy/dist*v*dtp;if(Math.abs(ddx)>.5)r.dir=ddx>0?1:-1;r.ph+=dtp*v/(26*u)}}
+        x=r.x;y=r.y;
+        if(r.wait<=0){dy=-Math.abs(Math.sin(r.ph))*10*u*a;rot=Math.sin(r.ph*2)*2.5*deg*a}
+        flip=(m.face==='right'&&r.dir<0)||(m.face==='left'&&r.dir>0)
+      }else delete mscRun[m.id];
       if(m.motion==='float'){dy=Math.sin(t*TAU*.3*sp+seed)*12*u*a;dx=Math.sin(t*TAU*.17*sp+seed*2)*6*u*a;rot=Math.sin(t*TAU*.23*sp+seed)*3*deg*a}
       else if(m.motion==='sway'){const s=Math.sin(t*TAU*.45*sp+seed);rot=s*6*deg*a;dy=-Math.abs(s)*3*u*a}
       else if(m.motion==='hop'){const ph=(t*1.5*sp+seed)%1;dy=-4*ph*(1-ph)*18*u*a}
@@ -23,7 +38,7 @@
       mscEnv[m.id]=e1;
       if(e1>.01){dy-=e1*(5+Math.abs(Math.sin(t*TAU*4.2))*10)*u;rot+=Math.sin(t*TAU*4.2)*e1*3*deg}
       const spc=avSprite(im,{x:0,y:0,w:im.width,h:im.height},f);
-      g.save();g.translate(x+dx,y+dy);g.rotate(rot);g.imageSmoothingEnabled=true;g.imageSmoothingQuality=state.light?'medium':'high';
+      g.save();g.translate(x+dx,y+dy);g.rotate(rot);if(flip)g.scale(-1,1);g.imageSmoothingEnabled=true;g.imageSmoothingQuality=state.light?'medium':'high';
       if(spc)g.drawImage(spc.c,-spc.dw/2,-spc.dh/2);else g.drawImage(im,-w/2,-h/2,w,h);
       g.restore();
       m._box={x:x-w/2,y:y-h/2,w,h}
@@ -62,19 +77,32 @@
     E('mascotEdit').hidden=!m;E('mascotDel').disabled=!m;
     if(m){
       if(document.activeElement!==E('mscName'))E('mscName').value=m.name;
-      E('mscShow').checked=m.show;E('mscTalk').checked=m.talk;E('mscMotion').value=m.motion;
+      E('mscShow').checked=m.show;E('mscTalk').checked=m.talk;E('mscMotion').value=m.motion;E('mscFace').value=m.face||'none';
       for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])if(document.activeElement!==E(id))E(id).value=m[k];
       E('mscAmpVal').textContent=m.amp+'%';E('mscSpeedVal').textContent=m.speed+'%';E('mscSizeVal').textContent=m.size+'%';
       E('mscFileName').textContent=assetBlobs['msc-'+m.id]?(state.assetNames['msc-'+m.id]||'画像'):'未登録'
     }
-    renderSpeakerBar()
+    renderSpeakerBar();
+    renderMascotBar()
+  }
+  function shownCount(except){return (state.mascots||[]).filter(m=>m.show&&m!==except).length}
+  function setMascotShow(m,on){
+    if(on&&!m.show&&shownCount(m)>=MSC_ON_SCREEN){toast('画面に出せるマスコットは同時に2体までです。ほかのマスコットを先に外してください',4500);return false}
+    m.show=on;if(!on&&state.speaker===m.id)state.speaker='self';save();renderMascotUI();return true
+  }
+  function renderMascotBar(){
+    const bar=E('mascotBar'),list=(state.mascots||[]).filter(m=>images['msc-'+m.id]);
+    bar.hidden=!list.length;bar.replaceChildren();
+    if(!list.length)return;
+    const lab=document.createElement('span');lab.className='studio-mini';lab.textContent='マスコット（2体まで）';bar.append(lab);
+    for(const m of list){const b=document.createElement('button');b.type='button';b.textContent=m.name;b.setAttribute('aria-pressed',String(m.show));b.onclick=()=>setMascotShow(m,!m.show);bar.append(b)}
   }
   E('mascotAdd').onclick=()=>{
     state.mascots=state.mascots||[];
-    if(state.mascots.length>=8){toast('マスコットは8体までです');return}
+    if(state.mascots.length>=MSC_MAX){toast('マスコットは10体までです');return}
     let id;do id=Math.random().toString(36).slice(2,8);while(state.mascots.some(m=>m.id===id));
     const n=state.mascots.length;
-    state.mascots.push({id,name:'マスコット'+(n+1),show:true,talk:false,motion:'float',amp:100,speed:100,size:22,x:60-n*25,y:40});
+    state.mascots.push({id,name:'マスコット'+(n+1),show:shownCount()<MSC_ON_SCREEN,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40,face:'none'});
     mscSel=id;save();renderMascotUI();toast('マスコットを追加しました。画像を登録してください')
   };
   E('mascotDel').onclick=e=>{
@@ -89,7 +117,8 @@
     try{if(!ready)throw Error('保存領域の準備中です');await installAsset('msc-'+m.id,f,f.name);renderMascotUI();toast('「'+m.name+'」の画像を登録しました')}catch(err){toast(err.message,5000)}finally{e.target.value=''}
   };
   E('mscName').oninput=e=>{const m=mscCur();if(m){m.name=e.target.value.slice(0,20)||'マスコット';save();renderMascotUI()}};
-  E('mscShow').onchange=e=>{const m=mscCur();if(m){m.show=e.target.checked;save();renderMascotUI()}};
+  E('mscShow').onchange=e=>{const m=mscCur();if(m&&!setMascotShow(m,e.target.checked))e.target.checked=m.show};
+  E('mscFace').onchange=e=>{const m=mscCur();if(m){m.face=e.target.value;save()}};
   E('mscTalk').onchange=e=>{const m=mscCur();if(m){m.talk=e.target.checked;save();renderMascotUI()}};
   E('mscMotion').onchange=e=>{const m=mscCur();if(m){m.motion=e.target.value;save()}};
   for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])E(id).addEventListener('input',e=>{const m=mscCur();if(m){m[k]=Number(e.target.value);save();renderMascotUI()}});
