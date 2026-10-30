@@ -19,7 +19,23 @@
   const title=setC.querySelector(':scope>.section-title');
   if(title)title.after(sec);else setC.prepend(sec);
  
-  if(film){
+    {
+      const grp=(id,title,sub)=>{const h=document.createElement('h2');h.className='set-group';h.id=id;h.innerHTML=title+(sub?'<small>'+sub+'</small>':'');return h};
+      const panel=lbl=>setC.querySelector(':scope>section.panel[aria-labelledby="'+lbl+'"]');
+      const gLive=grp('setLive','配信・録画（PNGTuber）の設定',''),gRadio=grp('setRadio','ラジオ（音声のみ）の設定',''),gCommon=grp('setCommon','共通の設定','配信・ラジオの両方で使います');
+      sec.before(gLive);
+      let last=sec;
+      const mp=document.getElementById('mascotPanel');
+      if(mp){last.after(mp);last=mp}
+      const sd=document.getElementById('sceneSettings');
+      if(sd){const w=document.createElement('section');w.className='studio-card scene-card';w.append(sd);last.after(w);last=w}
+      last.after(gRadio);last=gRadio;
+      const endP=panel('endTitle');if(endP){last.after(endP);last=endP}
+      if(film){film.classList.add('film-in-settings');const n=document.createElement('p');n.className='note';n.textContent='収録したテイク（音声）を動画として書き出すときの演出です。';film.querySelector('h3')?.after(n);last.after(film);last=film}
+      last.after(gCommon);last=gCommon;
+      for(const l of ['lookTitle','mixTitle','duckTitle','micTitle','fileTitle']){const p=panel(l);if(p){last.after(p);last=p}}
+    }
+    if(false&&film){
     film.classList.add('film-in-settings');
     const n=document.createElement('p');
     n.className='note';
@@ -30,6 +46,8 @@
  
   ws.append(board);
   board.classList.add('in-workspace');
+  const rb=document.querySelector('.recbar');
+  if(rb)ws.before(rb);
  
   const mb=document.getElementById('miniBar'),
     upd=()=>document.documentElement.style.setProperty('--mini-h',(mb&&!mb.hidden?mb.offsetHeight:0)+'px');
@@ -74,7 +92,10 @@
     show:false,
     songs:[],
     assetNames:{},
-    scenes:{standby:{bgm:'keep',effect:'keep',avatar:true,text:''},away:{bgm:'keep',effect:'keep',avatar:false,text:''}},
+    scenes:{standby:{bgm:'keep',effect:'keep',avatar:true,text:''},away:{bgm:'keep',effect:'keep',avatar:false,text:''},end:{bgm:'keep',effect:'keep',avatar:false,text:'ご視聴ありがとうございました'}},
+    mascots:[],
+    speaker:'self',
+    sceneBoost:6,
     restoreBgm:true,
     sinkId:'',
     aspect:'landscape',
@@ -176,16 +197,7 @@ fps:30,
     if(Array.isArray(v.songs))out.songs=v.songs.slice(0,300).filter(x=>x&&typeof x.title==='string').map(x=>({title:x.title.slice(0,200),artist:String(x.artist||'').slice(0,200)}));
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
     out.scenes={};
-    for(const k of ['standby','away']){
-      const d=defaults.scenes[k],
-        x=v.scenes&&typeof v.scenes==='object'&&v.scenes[k]&&typeof v.scenes[k]==='object'?v.scenes[k]:{};
-      out.scenes[k]={
-        bgm:typeof x.bgm==='string'&&x.bgm?x.bgm.slice(0,100):d.bgm,
-        effect:(x.effect==='image'?'p:img':(x.effect==='keep'||(['none','spring','summer','autumn','winter'].includes(x.effect)||/^p:[a-z0-9]{1,24}$/.test(x.effect)))?x.effect:d.effect),
-        avatar:typeof x.avatar==='boolean'?x.avatar:d.avatar,
-        text:typeof x.text==='string'?x.text.slice(0,200):d.text
-      }
-    }
+    for(const k of ['standby','away','end'])out.scenes[k]=sceneClean(k,v.scenes&&typeof v.scenes==='object'?v.scenes[k]:null);
     if(typeof v.restoreBgm==='boolean')out.restoreBgm=v.restoreBgm;
     if(typeof v.sinkId==='string')out.sinkId=v.sinkId.slice(0,300);
     if(['landscape','portrait'].includes(v.aspect))out.aspect=v.aspect;
@@ -225,10 +237,14 @@ fps:30,
       else{const x=src.image&&typeof src.image==='object'?src.image:{imageMotion:out.imageMotion};out.fxPresets.push(mk(x,'img','好きな画像'))}
       const okP=e=>!/^p:/.test(e)||out.fxPresets.some(p=>'p:'+p.id===e);
       if(!okP(out.effect))out.effect='none';
-      for(const k of ['standby','away'])if(!okP(out.scenes[k].effect))out.scenes[k].effect='keep'
+      for(const k of ['standby','away','end'])if(!okP(out.scenes[k].effect))out.scenes[k].effect='keep'
     }
 out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     out.light=v.light===true;
+    {const MV=['float','sway','hop','shake','still'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];
+     if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,8)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40)})}
+     out.speaker=typeof v.speaker==='string'&&(v.speaker==='self'||out.mascots.some(m=>m.id===v.speaker))?v.speaker:'self';
+     out.sceneBoost=num(v.sceneBoost,0,12,6)}
     if(Array.isArray(v.profiles))out.profiles=v.profiles.slice(0,20).filter(p=>p&&typeof p==='object'&&typeof p.id==='string'&&/^[a-z0-9]{1,24}$/.test(p.id)).map(p=>({
       id:p.id,
       name:String(p.name||'名義').slice(0,40),
@@ -250,7 +266,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
   state=sanitize(state);
 
   function assetName(id){
-    return ['png0','png1','png2','png3'].includes(id)?slotNames[+id.slice(-1)]:id.startsWith('particle')?'降らせる画像'+(id==='particle'?1:+id.slice(8)+1):id.startsWith('fxp-')?'降らせる画像'+(+id.slice(-1)+1):'背景画像'
+    return ['png0','png1','png2','png3'].includes(id)?slotNames[+id.slice(-1)]:id.startsWith('particle')?'降らせる画像'+(id==='particle'?1:+id.slice(8)+1):id.startsWith('fxp-')?'降らせる画像'+(+id.slice(-1)+1):id.startsWith('scene-')?'画面の画像':id.startsWith('msc-')?'マスコットの画像':'背景画像'
   }
 
   E('studioSlots').innerHTML=slotNames.map((n,i)=>`<label class="png-slot">${i+1}. ${n}<img id="pngPreview${i}" alt="${n}" hidden><span id="pngName${i}" class="png-name">未登録</span><input type="file" id="pngFile${i}" accept="image/png" aria-label="${n}のPNG"></label>`).join('');
@@ -353,6 +369,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
       E('fxName'+i).textContent=b?(state.assetNames[id]||assetName(id)):'未登録';
       E('fxRemove'+i).hidden=!b
     });
+    for(const k of ['standby','away','end']){const n=E('scene_'+k+'_imgName');if(!n)continue;const id='scene-'+k;n.textContent=assetBlobs[id]?(state.assetNames[id]||'画像'):'未登録';E('scene_'+k+'_imgDel').hidden=!assetBlobs[id]}
     E('backgroundName').textContent=assetBlobs.background?(state.assetNames.background||'背景画像'):'未登録';
     E('backgroundRemove').hidden=!assetBlobs.background
   }
@@ -963,7 +980,8 @@ for(const [id,k]of Object.entries(bindings)){
       talk:['hop','sway','none'].includes(c.talk)?c.talk:'hop',
       breath:c.breath===true,
       bgMode:['inherit','own','cafe','transparent','green','blue','black'].includes(c.bgMode)?c.bgMode:'inherit',
-      trim:c.trim!==false
+      trim:c.trim!==false,
+      exprs:Array.isArray(c.exprs)?c.exprs.filter(e=>e&&typeof e==='object'&&typeof e.id==='string'&&/^[a-z0-9]{1,8}$/.test(e.id)).slice(0,12).map(e=>({id:e.id,name:String(e.name||'表情').slice(0,20),motion:['none','shake','hop','sing'].includes(e.motion)?e.motion:'none'})):[]
     };
     for(const k of CHAR_KEYS){
       if(k==='blink'||k==='bounce'){
@@ -986,7 +1004,7 @@ for(const [id,k]of Object.entries(bindings)){
   }
  
   function charKey(cid,slot){
-    return cid==='c1'&&slot!=='bg'?'png'+slot:'ch-'+cid+'-'+slot
+    return cid==='c1'&&/^[0-3]$/.test(String(slot))?'png'+slot:'ch-'+cid+'-'+slot
   }
  
   function curChar(){
@@ -1013,17 +1031,25 @@ for(const [id,k]of Object.entries(bindings)){
  
   function normScenes(x){
     const out={};
-    for(const k of ['standby','away']){
-      const d=defaults.scenes[k],
-        v=x&&typeof x==='object'&&x[k]&&typeof x[k]==='object'?x[k]:{};
-      out[k]={
-        bgm:typeof v.bgm==='string'&&v.bgm?v.bgm.slice(0,100):d.bgm,
-        effect:(v.effect==='image'?'p:img':(v.effect==='keep'||(['none','spring','summer','autumn','winter'].includes(v.effect)||/^p:[a-z0-9]{1,24}$/.test(v.effect)))?v.effect:d.effect),
-        avatar:typeof v.avatar==='boolean'?v.avatar:d.avatar,
-        text:typeof v.text==='string'?v.text.slice(0,200):d.text
-      }
-    }
+    for(const k of ['standby','away','end'])out[k]=sceneClean(k,x&&typeof x==='object'?x[k]:null);
     return out
+  }
+  function sceneClean(k,x){
+    const d=defaults.scenes[k];
+    x=x&&typeof x==='object'?x:{};
+    const num=(v,a,b,df)=>{const n=Number(v);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},
+      ef=x.effect==='image'?'p:img':x.effect;
+    return {
+      bgm:typeof x.bgm==='string'&&x.bgm?x.bgm.slice(0,100):d.bgm,
+      effect:(ef==='keep'||['none','spring','summer','autumn','winter'].includes(ef)||/^p:[a-z0-9]{1,24}$/.test(ef||''))?ef:d.effect,
+      avatar:typeof x.avatar==='boolean'?x.avatar:d.avatar,
+      text:typeof x.text==='string'?x.text.slice(0,200):d.text,
+      imgMotion:['float','sway','still'].includes(x.imgMotion)?x.imgMotion:'float',
+      imgAmp:num(x.imgAmp,0,200,100),
+      imgSize:num(x.imgSize,10,150,60),
+      imgX:num(x.imgX,-100,100,0),
+      imgY:num(x.imgY,-100,100,0)
+    }
   }
  
   function ensureProfiles(){
@@ -1081,7 +1107,7 @@ for(const [id,k]of Object.entries(bindings)){
   }
  
   async function loadChar(cid){
-    for(const slot of [0,1,2,3,'bg']){
+    for(const slot of charSlots(cid)){
       const key=charKey(cid,slot);
       if(charImgs[key])continue;
       try{
@@ -1171,6 +1197,7 @@ for(const q of particles)q.beh='';
  
   function renderCharUI(){
     if(!E('charList'))return;
+    queueMicrotask(()=>{try{renderExprUI()}catch(_){}});
     ensureProfiles();
     charUrls.forEach(u=>URL.revokeObjectURL(u));
     charUrls=[];
@@ -1320,7 +1347,7 @@ for(const q of particles)q.beh='';
   }
  
   async function dropCharAssets(cid){
-    for(const slot of [0,1,2,3,'bg']){
+    for(const slot of charSlots(cid)){
       const key=charKey(cid,slot);
       try{
         await deleteAsset(ASSET+key)
@@ -1402,7 +1429,7 @@ for(const q of particles)q.beh='';
     const cid=newCharId();
     state.chars[cid]=cleanChar({...state.chars[src],name:(state.chars[src].name||'キャラクター')+'（複製）'});
     try{
-      for(const slot of [0,1,2,3,'bg']){
+      for(const slot of charSlots(src)){
         const b=charBlobs[charKey(src,slot)];
         if(b){
           const key=charKey(cid,slot);
@@ -1553,42 +1580,7 @@ for(const q of particles)q.beh='';
 
   let quickSignature='';
 
-  function renderQuick(){
-    if(!ready||!cfg)return;
-    const sounds=cfg.sounds.filter(s=>s.assetId),
-      bgms=cfg.bgms.filter(b=>b.assetId);
-    const sig=JSON.stringify([sounds.map(s=>[s.id,s.label,s.type]),bgms.map(b=>[b.id,b.name]),[...active].map(a=>a.soundId)]);
-    if(sig===quickSignature)return;
-    quickSignature=sig;
-    const pads=E('studioQuickPads');
-    pads.replaceChildren();
-    for(let i=0;i<12;i++){
-      const s=sounds[i],
-        b=document.createElement('button');
-      b.textContent=s?(s.label||'ボイス'):'+ 登録';
-      b.title=s?(s.fileName||s.label):'効果音の登録画面へ';
-      b.classList.toggle('playing',!!s&&[...active].some(a=>a.soundId===s.id));
-      b.onclick=()=>{
-        if(s)playSound(s);else {
-          E('boardShell').scrollIntoView({behavior:'smooth'});
-          toast('空き枠を押して音源を登録してください')
-        }
-      };
-      pads.append(b)
-    }
-    const select=E('studioQuickBgm'),
-      selected=select.value;
-    select.replaceChildren(new Option('BGMを選択',''));
-    for(const b of bgms)select.add(new Option(b.name||'BGM',b.id));
-    if(bgms.some(b=>b.id===selected))select.value=selected;
-  }
 
-  E('studioQuickBgmPlay').onclick=()=>{
-    const b=cfg?.bgms.find(b=>b.id===E('studioQuickBgm').value);
-    if(b)playBgm(b);else toast('BGMは下の操作盤で登録してから選択してください')
-  };
-  E('studioQuickStop').onclick=()=>stopAll();
-  setInterval(renderQuick,400);
 
   function setMode(mode){
     document.body.dataset.studioMode=mode;
@@ -1753,10 +1745,10 @@ for(const q of particles)q.beh='';
  
     const ease=(v,to,tc)=>v+(to-v)*(1-Math.exp(-dtp/tc));
  
-    envS=ease(envS,talkEnv,talkEnv>envS?.16:.6);
+    {const te=selfSpeak()?talkEnv:0;envS=ease(envS,te,te>envS?.16:.6)}
     popS=ease(popS,talking&&state.bounce?1:0,talking?.05:.12);
  
-    for(const m in mw)mw[m]=ease(mw[m],motion===m?1:0,.28);
+    {const em=effMotion();for(const m in mw)mw[m]=ease(mw[m],em===m?1:0,.28)}
  
     const k=state.motionAmt/100;
     let dx=0,
@@ -1782,19 +1774,17 @@ for(const q of particles)q.beh='';
  
     if(mw.hop>.001){
       const kH=state.motionHop/100*mw.hop;
-      hopPh+=dtp/.64;
-      const n=Math.floor(hopPh),
-        ph=hopPh-n,
-        air=.76,
-        x=ph<air?ph/air:1;
-  
-      dy-=4*x*(1-x)*26*u*kH;
-      const side=n%2?1:-1,
-        tl=Math.sin(x*Math.PI);
-      rot+=side*tl*5*u/arm*kH;
-      dx+=side*tl*3*u*kH
+      hopPh+=dtp/.74;
+      const ph=hopPh%1,
+        J=Math.max(16*u,Math.min(64*u,geo.h*.055)),
+        D=J*.2;
+      let y=0;
+      if(ph<.16)y=D*Math.sin(ph/.16*Math.PI);
+      else if(ph<.66){const x=(ph-.16)/.5;y=-4*x*(1-x)*J}
+      else if(ph<.82)y=D*1.15*Math.sin((ph-.66)/.16*Math.PI);
+      dy+=y*kH
     }
- 
+
     if(mw.shake>.001){
       const kX=state.motionShake/100*mw.shake,
         f=t*13;
@@ -1853,7 +1843,7 @@ for(const q of particles)q.beh='';
     const __c=curChar(),
       __single=!!(__c&&__c.mode==='single'),
       idx=__single?0:(blink?2:0)+(talking?1:0),
-      im=__single?images.png0:images['png'+idx]||images['png'+(talking?1:0)]||images.png0,
+      im=exprImage(talking)||(__single?images.png0:images['png'+idx]||images['png'+(talking?1:0)]||images.png0),
       pose=avatarPose(now,talking),
       geo=avatarGeom();
  
@@ -2290,7 +2280,7 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
     bgmBefore=null,
     sceneBgmId=null;
 
-  const SCENE_LABEL={live:'配信中',standby:'待機画面',away:'離席画面'};
+  const SCENE_LABEL={live:'配信中',standby:'準備中',away:'離席中',end:'配信終了'};
 
   function curEffect(){
     if(scene!=='live'){
@@ -2379,6 +2369,8 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
  
     }
  
+    window.__sceneBgmBoost=name==='live'?0:(state.sceneBoost||0);
+    updateGains();
     renderScene();
     toast(SCENE_LABEL[name]+'に切り替えました');
 
@@ -2387,11 +2379,11 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
   document.querySelectorAll('[data-scene]').forEach(b=>b.onclick=()=>enterScene(b.dataset.scene));
 // Scene settings form
 
-  const SCENE_FIELDS=['bgm','effect','avatar','text'];
+  const SCENE_FIELDS=['bgm','effect','avatar','text','imgMotion','imgAmp','imgSize','imgX','imgY'];
 
   function renderSceneBgmOptions(){
     if(!cfg)return;
-    for(const k of ['standby','away']){
+    for(const k of ['standby','away','end']){
       const sel=E(`scene_${k}_bgm`),
         bgms=cfg.bgms.filter(b=>b.assetId),
         sig=JSON.stringify(bgms.map(b=>[b.id,b.name]));
@@ -2407,19 +2399,21 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
 
   function renderSceneForm(){
     renderEffectOptions();
-for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
+for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
       const el=E(`scene_${k}_${f}`);
       if(f==='bgm')continue;
       if(el.type==='checkbox')el.checked=state.scenes[k][f];else if(document.activeElement!==el)el.value=state.scenes[k][f]
     }
     E('sceneRestoreBgm').checked=state.restoreBgm;
+    E('sceneBoost').value=state.sceneBoost;
+    E('sceneBoostVal').textContent='+'+state.sceneBoost+' dB';
     renderSceneBgmOptions()
   }
 
-  for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
+  for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     const el=E(`scene_${k}_${f}`);
     el.addEventListener(el.tagName==='SELECT'||el.type==='checkbox'?'change':'input',()=>{
-      state.scenes[k][f]=el.type==='checkbox'?el.checked:el.value.slice(0,200);
+      state.scenes[k][f]=el.type==='checkbox'?el.checked:el.type==='range'?Number(el.value):el.value.slice(0,200);
       save();
       if(f==='bgm'&&scene===k&&ready){
         if(el.value==='stop'){
@@ -2464,7 +2458,7 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
       h=vis.length*lh+44,
       w=Math.min(W-80,Math.max(...vis.map(l=>g.measureText(l).width))+120),
       x=(W-w)/2,
-      y=sceneAvatar()?H-80-h:(H-h)/2;
+      y=sceneAvatar()||images['scene-'+scene]?H-80-h:(H-h)/2;
     g.fillStyle='rgba(22,34,29,.62)';
     g.beginPath();
     g.roundRect(x,y,w,h,18);
@@ -2660,7 +2654,11 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
     updateSeasonParticles(dt,now);
     background();
     effects(dt,now,'back');
-    if(sceneAvatar())drawAvatar(now,mouth,blink);
+    if(sceneAvatar()){
+      drawAvatar(now,mouth&&selfSpeak(),blink);
+      drawMascots(now,dt)
+    }
+    drawSceneImage(now);
     effects(dt,now,'front');
     if(scene==='live')caption();else sceneCaption();
     if(outputWindow&&!outputWindow.closed&&outContext){
@@ -2798,7 +2796,7 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
 
   E('studioExport').onclick=()=>exportLive();
 
-  function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg)$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)}
+  function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg|[xy][a-z0-9]{1,8})$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)||/^scene-(?:standby|away|end)$/.test(id)||/^msc-[a-z0-9]{1,12}$/.test(id)}
   async function studioValidate(decoded){
     for(const[id,b]of Object.entries(decoded)){
       if(!studioAssetId(id))throw Error('未対応の画像データです');
@@ -2843,11 +2841,14 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
       ensureProfiles();
       await loadAllChars();
       activateChar(state.charId,true);
+      renderMascotUI();
+      renderExprUI();
       paragraph=0;
       renderValues();
       save();
   }
   function studioCollect(){syncChar();const assets={};for(const[id,b]of Object.entries(assetBlobs))if(!/^png[0-3]$/.test(id))assets[id]=b;for(const[id,b]of Object.entries(charBlobs))assets[id]=b;return {state:JSON.parse(JSON.stringify(state)),assets}}
+  window.__otonohaVideoRec=()=>studioCapturing||captureStarting;
   window.__otonohaStudio={collect:studioCollect,validate:studioValidate,apply:async(s,d)=>{await studioApply(s,d);toast('立ち絵・映像設定も読み込みました')},busy:()=>studioCapturing||captureStarting};
 
   E('studioImport').onchange=async e=>{
@@ -2942,7 +2943,7 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
       if(sel.value!==val)sel.value=extra.length?extra[0][0]:'none'
     };
     fill(E('studioEffect'),[],state.effect);
-    if(state.scenes)for(const k of ['standby','away'])fill(E('scene_'+k+'_effect'),[['keep','配信中と同じ']],state.scenes[k]?.effect||'keep');
+    if(state.scenes)for(const k of ['standby','away','end'])fill(E('scene_'+k+'_effect'),[['keep','配信中と同じ']],state.scenes[k]?.effect||'keep');
     document.body.toggleAttribute('data-fxp',isP(state.effect))
   }
 
@@ -2997,7 +2998,7 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
     armed(e.currentTarget,'もう一度押すと「'+p.name+'」と画像を削除',async()=>{
       for(let n=0;n<6;n++){const id=pimg(p.id,n);try{await deleteAsset(ASSET+id)}catch(_){}delete images[id];delete assetBlobs[id];delete state.assetNames[id]}
       state.fxPresets=state.fxPresets.filter(x=>x!==p);
-      for(const k of ['standby','away'])if(state.scenes[k].effect==='p:'+p.id)state.scenes[k].effect='keep';
+      for(const k of ['standby','away','end'])if(state.scenes[k].effect==='p:'+p.id)state.scenes[k].effect='keep';
       selectEffect('none');
       renderSceneForm();
       toast('プリセットを削除しました')
@@ -3107,8 +3108,273 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
   renderEffectOptions();
   seasonLoad();
 
+
+ // ---------- v0.5.0: expressions, mascots, scene images, quick tuning, drag ----------
+  let curExpr='';
+  function charSlots(cid){
+    const c=state.chars&&state.chars[cid];
+    return [0,1,2,3,'bg',...((c&&c.exprs)||[]).flatMap(e=>['x'+e.id,'y'+e.id])]
+  }
+  function curExprObj(){
+    const c=curChar();
+    return curExpr&&c&&c.exprs?c.exprs.find(e=>e.id===curExpr)||null:null
+  }
+  function exprImage(talking){
+    const e=curExprObj();
+    if(!e)return null;
+    const im=charImgs[charKey(state.charId,'x'+e.id)];
+    if(!im)return null;
+    const mo=charImgs[charKey(state.charId,'y'+e.id)];
+    return talking&&mo?mo:im
+  }
+  function effMotion(){
+    const e=curExprObj();
+    return e&&e.motion!=='none'?e.motion:motion
+  }
+  function selfSpeak(){
+    const s=state.speaker;
+    return !s||s==='self'||!(state.mascots||[]).some(m=>m.id===s&&m.talk&&m.show)
+  }
+  function setExpr(id){
+    curExpr=id||'';
+    switchAt=performance.now();
+    renderExprBar()
+  }
+  function renderExprBar(){
+    const bar=E('exprBar'),c=curChar(),list=(c&&c.exprs)||[];
+    if(curExpr&&!list.some(e=>e.id===curExpr))curExpr='';
+    bar.hidden=!list.length;
+    bar.replaceChildren();
+    if(!list.length)return;
+    const lab=document.createElement('span');lab.className='studio-mini';lab.textContent='表情';bar.append(lab);
+    for(const [id,name] of [['','通常'],...list.map(e=>[e.id,e.name])]){
+      const b=document.createElement('button');b.type='button';b.textContent=name;b.setAttribute('aria-pressed',String(curExpr===id));
+      b.onclick=()=>setExpr(id);bar.append(b)
+    }
+  }
+  const EXPR_MOTION=[['none','動かさない（そのままの動き）'],['shake','ガタガタ'],['hop','ぴょんぴょん'],['sing','歌うゆらぎ']];
+  function exprThumb(cid,slot){
+    const b=charBlobs[charKey(cid,slot)];
+    if(!b)return '';
+    const u=URL.createObjectURL(b);charUrls.push(u);return u
+  }
+  function renderExprUI(){
+    renderExprBar();
+    const box=E('exprList'),c=curChar();
+    if(!box)return;
+    box.replaceChildren();
+    if(!c)return;
+    c.exprs=c.exprs||[];
+    c.exprs.forEach((e,i)=>{
+      const row=document.createElement('div');row.className='expr-row';
+      const u1=exprThumb(state.charId,'x'+e.id),u2=exprThumb(state.charId,'y'+e.id);
+      row.innerHTML=`<div class="studio-inline"><label class="studio-field">表情の名前<input type="text" maxlength="20" data-k="name"></label><label class="studio-field">連動する動き<select data-k="motion">${EXPR_MOTION.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></label></div>`
+        +`<div class="expr-imgs"><label>表情の画像 ${u1?`<img src="${u1}" alt="">`:'（未登録）'}<input type="file" accept="image/png,image/webp,image/jpeg" data-f="x"></label><label>口を開いた画像（任意） ${u2?`<img src="${u2}" alt="">`:'（なし）'}<input type="file" accept="image/png,image/webp,image/jpeg" data-f="y"></label></div>`
+        +`<div class="studio-row"><button type="button" data-a="del">この表情を削除</button>${u2?'<button type="button" data-a="dely">口を開いた画像を外す</button>':''}</div>`;
+      row.querySelector('[data-k=name]').value=e.name;
+      row.querySelector('[data-k=motion]').value=e.motion;
+      row.querySelector('[data-k=name]').oninput=ev=>{e.name=ev.target.value.slice(0,20)||'表情';save();renderExprBar()};
+      row.querySelector('[data-k=motion]').onchange=ev=>{e.motion=ev.target.value;save()};
+      row.querySelectorAll('input[type=file]').forEach(inp=>inp.onchange=async ev=>{
+        const f=ev.target.files[0];if(!f)return;
+        try{if(!ready)throw Error('保存領域の準備中です');await storeCharImage(state.charId,inp.dataset.f+e.id,f);save();renderExprUI();toast('「'+e.name+'」の画像を登録しました')}catch(err){toast(err.message,5000)}finally{ev.target.value=''}
+      });
+      row.querySelector('[data-a=del]').onclick=ev=>armed(ev.currentTarget,'もう一度押すと「'+e.name+'」を削除',async()=>{
+        for(const s of ['x'+e.id,'y'+e.id]){const key=charKey(state.charId,s);try{await deleteAsset(ASSET+key)}catch(_){}delete charBlobs[key];delete charImgs[key];delete state.assetNames[key]}
+        c.exprs=c.exprs.filter(x=>x!==e);if(curExpr===e.id)curExpr='';save();renderExprUI()
+      });
+      const dy=row.querySelector('[data-a=dely]');
+      if(dy)dy.onclick=async()=>{const key=charKey(state.charId,'y'+e.id);try{await deleteAsset(ASSET+key)}catch(_){}delete charBlobs[key];delete charImgs[key];save();renderExprUI()};
+      box.append(row)
+    })
+  }
+  E('exprAdd').onclick=()=>{
+    const c=curChar();if(!c)return;
+    c.exprs=c.exprs||[];
+    if(c.exprs.length>=12){toast('表情差分は1体につき12個までです');return}
+    let id;do id=Math.random().toString(36).slice(2,7);while(c.exprs.some(e=>e.id===id));
+    c.exprs.push({id,name:['青ざめ','驚き','赤面','怒り'][c.exprs.length]||('表情'+(c.exprs.length+1)),motion:c.exprs.length===0?'shake':'none'});
+    save();renderExprUI()
+  };
+
+  // ----- mascots -----
+  let mscSel='',mscLast=0;const mscEnv={};
+  function mscCur(){return (state.mascots||[]).find(m=>m.id===mscSel)||null}
+  function drawMascots(now){
+    const list=state.mascots||[];
+    const dtp=mscLast?Math.min(.1,(now-mscLast)/1000):0;mscLast=now;
+    if(!list.length)return;
+    const u=H/720,t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
+    for(const m of list){
+      m._box=null;
+      if(!m.show)continue;
+      const im=images['msc-'+m.id];
+      if(!im)continue;
+      const seed=(m.id.charCodeAt(0)+m.id.charCodeAt(m.id.length-1))*.173,a=m.amp/100,sp=m.speed/100,
+        h=H*m.size/100,f=h/im.height,w=im.width*f,x=W/2+m.x*W/200,y=H/2+m.y*H/200;
+      let dx=0,dy=0,rot=0;
+      if(m.motion==='float'){dy=Math.sin(t*TAU*.3*sp+seed)*12*u*a;dx=Math.sin(t*TAU*.17*sp+seed*2)*6*u*a;rot=Math.sin(t*TAU*.23*sp+seed)*3*deg*a}
+      else if(m.motion==='sway'){const s=Math.sin(t*TAU*.45*sp+seed);rot=s*6*deg*a;dy=-Math.abs(s)*3*u*a}
+      else if(m.motion==='hop'){const ph=(t*1.5*sp+seed)%1;dy=-4*ph*(1-ph)*18*u*a}
+      else if(m.motion==='shake'){const s=Math.floor(t*11*sp);dx=(rnd(s+seed)-.5)*10*u*a;dy=(rnd(s+seed+.31)-.5)*6*u*a;rot=(rnd(s+seed+.67)-.5)*8*deg*a}
+      const on=state.speaker===m.id&&m.talk,target=on?Math.max(talkEnv,mouth?.6:0):0,e0=mscEnv[m.id]||0,e1=e0+(target-e0)*Math.min(1,dtp*(target>e0?14:5));
+      mscEnv[m.id]=e1;
+      if(e1>.01){dy-=e1*(5+Math.abs(Math.sin(t*TAU*4.2))*10)*u;rot+=Math.sin(t*TAU*4.2)*e1*3*deg}
+      const spc=avSprite(im,{x:0,y:0,w:im.width,h:im.height},f);
+      g.save();g.translate(x+dx,y+dy);g.rotate(rot);g.imageSmoothingEnabled=true;g.imageSmoothingQuality=state.light?'medium':'high';
+      if(spc)g.drawImage(spc.c,-spc.dw/2,-spc.dh/2);else g.drawImage(im,-w/2,-h/2,w,h);
+      g.restore();
+      m._box={x:x-w/2,y:y-h/2,w,h}
+    }
+  }
+  function drawSceneImage(now){
+    if(scene==='live')return;
+    const c=state.scenes[scene],im=images['scene-'+scene];
+    if(!c||!im)return;
+    const u=H/720,t=now/1000,TAU=Math.PI*2,a=c.imgAmp/100,h=H*c.imgSize/100,f=h/im.height,w=im.width*f,x=W/2+c.imgX*W/200,y=H/2+c.imgY*H/200;
+    let dx=0,dy=0,rot=0;
+    if(c.imgMotion==='float'){dy=Math.sin(t*TAU/3.2)*12*u*a;dx=Math.sin(t*TAU/5.1+1)*5*u*a;rot=Math.sin(t*TAU/4.3+.4)*1.6*Math.PI/180*a}
+    else if(c.imgMotion==='sway')rot=Math.sin(t*TAU/2.6)*4*Math.PI/180*a;
+    const spc=avSprite(im,{x:0,y:0,w:im.width,h:im.height},f);
+    g.save();g.translate(x+dx,y+dy);g.rotate(rot);g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
+    if(spc)g.drawImage(spc.c,-spc.dw/2,-spc.dh/2);else g.drawImage(im,-w/2,-h/2,w,h);
+    g.restore()
+  }
+  function renderSpeakerBar(){
+    const bar=E('speakerBar'),list=(state.mascots||[]).filter(m=>m.talk&&m.show);
+    if(state.speaker!=='self'&&!list.some(m=>m.id===state.speaker))state.speaker='self';
+    bar.hidden=!list.length;bar.replaceChildren();
+    if(!list.length)return;
+    const lab=document.createElement('span');lab.className='studio-mini';lab.textContent='話者';bar.append(lab);
+    for(const [id,name] of [['self','本人（立ち絵）'],...list.map(m=>[m.id,m.name])]){
+      const b=document.createElement('button');b.type='button';b.textContent=name;b.setAttribute('aria-pressed',String(state.speaker===id));
+      b.onclick=()=>{state.speaker=id;save();renderSpeakerBar()};bar.append(b)
+    }
+  }
+  function renderMascotUI(){
+    const list=state.mascots||[];
+    if(!list.some(m=>m.id===mscSel))mscSel=list[0]?.id||'';
+    const chips=E('mascotChips');chips.replaceChildren();
+    for(const m of list){const b=document.createElement('button');b.type='button';b.textContent=m.name+(images['msc-'+m.id]?'':'（画像なし）');b.classList.toggle('selected',m.id===mscSel);b.onclick=()=>{mscSel=m.id;renderMascotUI()};chips.append(b)}
+    const m=mscCur();
+    E('mascotEdit').hidden=!m;E('mascotDel').disabled=!m;
+    if(m){
+      if(document.activeElement!==E('mscName'))E('mscName').value=m.name;
+      E('mscShow').checked=m.show;E('mscTalk').checked=m.talk;E('mscMotion').value=m.motion;
+      for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])if(document.activeElement!==E(id))E(id).value=m[k];
+      E('mscAmpVal').textContent=m.amp+'%';E('mscSpeedVal').textContent=m.speed+'%';E('mscSizeVal').textContent=m.size+'%';
+      E('mscFileName').textContent=assetBlobs['msc-'+m.id]?(state.assetNames['msc-'+m.id]||'画像'):'未登録'
+    }
+    renderSpeakerBar()
+  }
+  E('mascotAdd').onclick=()=>{
+    state.mascots=state.mascots||[];
+    if(state.mascots.length>=8){toast('マスコットは8体までです');return}
+    let id;do id=Math.random().toString(36).slice(2,8);while(state.mascots.some(m=>m.id===id));
+    const n=state.mascots.length;
+    state.mascots.push({id,name:'マスコット'+(n+1),show:true,talk:false,motion:'float',amp:100,speed:100,size:22,x:60-n*25,y:40});
+    mscSel=id;save();renderMascotUI();toast('マスコットを追加しました。画像を登録してください')
+  };
+  E('mascotDel').onclick=e=>{
+    const m=mscCur();if(!m)return;
+    armed(e.currentTarget,'もう一度押すと「'+m.name+'」を削除',async()=>{
+      const id='msc-'+m.id;try{await deleteAsset(ASSET+id)}catch(_){}delete images[id];delete assetBlobs[id];delete state.assetNames[id];
+      state.mascots=state.mascots.filter(x=>x!==m);save();renderMascotUI()
+    })
+  };
+  E('mscFile').onchange=async e=>{
+    const f=e.target.files[0],m=mscCur();if(!f||!m)return;
+    try{if(!ready)throw Error('保存領域の準備中です');await installAsset('msc-'+m.id,f,f.name);renderMascotUI();toast('「'+m.name+'」の画像を登録しました')}catch(err){toast(err.message,5000)}finally{e.target.value=''}
+  };
+  E('mscName').oninput=e=>{const m=mscCur();if(m){m.name=e.target.value.slice(0,20)||'マスコット';save();renderMascotUI()}};
+  E('mscShow').onchange=e=>{const m=mscCur();if(m){m.show=e.target.checked;save();renderMascotUI()}};
+  E('mscTalk').onchange=e=>{const m=mscCur();if(m){m.talk=e.target.checked;save();renderMascotUI()}};
+  E('mscMotion').onchange=e=>{const m=mscCur();if(m){m.motion=e.target.value;save()}};
+  for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])E(id).addEventListener('input',e=>{const m=mscCur();if(m){m[k]=Number(e.target.value);save();renderMascotUI()}});
+
+  // ----- scene images / BGM boost -----
+  for(const k of ['standby','away','end']){
+    E('scene_'+k+'_imgFile').onchange=async e=>{
+      const f=e.target.files[0];if(!f)return;
+      try{if(!ready)throw Error('保存領域の準備中です');await installAsset('scene-'+k,f,f.name);toast(SCENE_LABEL[k]+'の画像を登録しました')}catch(err){toast(err.message,5000)}finally{e.target.value=''}
+    };
+    E('scene_'+k+'_imgDel').onclick=()=>removeAsset('scene-'+k)
+  }
+  E('sceneBoost').addEventListener('input',e=>{
+    state.sceneBoost=Number(e.target.value);E('sceneBoostVal').textContent='+'+state.sceneBoost+' dB';
+    if(scene!=='live'){window.__sceneBgmBoost=state.sceneBoost;updateGains()}
+    save()
+  });
+
+  // ----- quick tuning on the stage (mirrors the controls in 設定) -----
+  const QT=[['studioScale','大きさ','%'],['studioX','左右',''],['studioY','上下',''],['studioMotionSing','歌うゆらぎの大きさ','%'],['studioMotionSingSpeed','歌うゆらぎの速さ','%'],['studioMotionHop','ぴょんぴょんの大きさ','%'],['studioMotionShake','ガタガタの大きさ','%'],['studioMotionAmt','呼吸・話すときの動き','%'],['studioEffect','季節の演出・画像のプリセット',''],['studioCount','演出の量',''],['studioSpeed','演出の速さ',''],['studioFxSize','演出の大きさ',''],['studioFxOpacity','演出の濃さ','']];
+  (function buildQuickTune(){
+    const box=E('quickTuneBody');
+    for(const [id,label] of QT){
+      const src=E(id);if(!src)continue;
+      const lab=document.createElement('label'),cl=src.cloneNode(true),out=document.createElement('output');
+      cl.id='qt_'+id;cl.removeAttribute('aria-label');out.id='qto_'+id;
+      lab.append(document.createTextNode(label+' '),out,cl);box.append(lab);
+      cl.addEventListener('input',()=>{src.value=cl.value;src.dispatchEvent(new Event('input',{bubbles:true}))});
+      cl.addEventListener('change',()=>{if(src.tagName==='SELECT')src.dispatchEvent(new Event('change',{bubbles:true}))})
+    }
+  })();
+  function syncQuickTune(){
+    if(!E('quickTune').open)return;
+    for(const [id,,unit] of QT){
+      const s=E(id),c=E('qt_'+id),o=E('qto_'+id);if(!s||!c)continue;
+      if(s.tagName==='SELECT'&&c.innerHTML!==s.innerHTML)c.innerHTML=s.innerHTML;
+      if(document.activeElement!==c)c.value=s.value;
+      if(o)o.textContent=s.tagName==='SELECT'?'':s.value+unit
+    }
+  }
+  setInterval(syncQuickTune,250);
+  E('quickTune').addEventListener('toggle',syncQuickTune);
+
+  // ----- drag the avatar / a mascot on the stage -----
+  let drag=null;
+  function stagePoint(e){
+    const r=canvas.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H),ox=(r.width-W*s)/2,oy=(r.height-H*s)/2;
+    return {x:(e.clientX-r.left-ox)/s,y:(e.clientY-r.top-oy)/s}
+  }
+  canvas.addEventListener('pointerdown',e=>{
+    if(e.button!==0)return;
+    const p=stagePoint(e);
+    let target=null;
+    for(const m of [...(state.mascots||[])].reverse())if(m._box&&p.x>=m._box.x&&p.x<=m._box.x+m._box.w&&p.y>=m._box.y&&p.y<=m._box.y+m._box.h){target=m;break}
+    if(!target&&sceneAvatar()){const gg=avatarGeom();if(p.x>=gg.cx-gg.w/2&&p.x<=gg.cx+gg.w/2&&p.y>=gg.bottom-gg.h&&p.y<=gg.bottom)target='avatar'}
+    if(!target)return;
+    drag={target,p0:p,ox:target==='avatar'?state.x:target.x,oy:target==='avatar'?state.y:target.y};
+    if(target!=='avatar'){mscSel=target.id;renderMascotUI()}
+    canvas.setPointerCapture(e.pointerId);canvas.classList.add('dragging');e.preventDefault()
+  });
+  canvas.addEventListener('pointermove',e=>{
+    if(!drag)return;
+    const p=stagePoint(e),dx=p.x-drag.p0.x,dy=p.y-drag.p0.y;
+    if(drag.target==='avatar'){
+      state.x=Math.max(-300,Math.min(300,Math.round(drag.ox+dx/W*100)));
+      state.y=Math.max(-200,Math.min(500,Math.round(drag.oy+dy/H*100)));
+      E('studioX').value=state.x;E('studioY').value=state.y;E('yVal').textContent=Math.round(state.y)+'%'
+    }else{
+      drag.target.x=Math.max(-100,Math.min(100,Math.round(drag.ox+dx/W*200)));
+      drag.target.y=Math.max(-100,Math.min(100,Math.round(drag.oy+dy/H*200)));
+      E('mscX').value=drag.target.x;E('mscY').value=drag.target.y
+    }
+  });
+  const endDrag=()=>{if(!drag)return;drag=null;canvas.classList.remove('dragging');save()};
+  canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
+
+  // ----- app mode -----
+  window.__otonohaAppChanged=app=>{
+    if(app==='radio'){studioLiveMode=false;applyMonitor()}
+    else setMode(document.body.dataset.studioMode||'live')
+  };
+
   applyPerf();
   renderMotionOut();
+  renderMascotUI();
+  renderExprUI();
+  if(document.body.dataset.app==='radio')window.__otonohaAppChanged('radio');
 
   renderValues();
   applyAspect();
@@ -3127,7 +3393,7 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
       return
     }
     ready=true;
-    for(const id of new Set([...PARTICLE_IDS,'background',...presetImageIds()]))try{
+    for(const id of new Set([...PARTICLE_IDS,'background',...presetImageIds(),'scene-standby','scene-away','scene-end',...(state.mascots||[]).map(m=>'msc-'+m.id)]))try{
       const b=await getAsset(ASSET+id);
       if(b)await installAsset(id,b,state.assetNames[id],false)
     }catch(err){
@@ -3136,6 +3402,9 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
     ensureProfiles();
     await loadAllChars();
     activateChar(state.charId,true);
+    renderMascotUI();
+    renderExprUI();
+    renderAssetSlots()
   })();
 
 })();

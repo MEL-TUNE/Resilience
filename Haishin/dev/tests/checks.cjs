@@ -25,7 +25,7 @@ function variable(code, name) {
 function visualContext() {
   const c = vm.createContext({ console });
   vm.runInContext(['defaults', 'CHAR_KEYS', 'CHAR_RANGES'].map(n => variable(visual, n)).join('\n') +
-    ['sanitize', 'cleanChar', 'ensureProfiles', 'newCharId', 'curChar', 'curProfile', 'pickValues', 'profileSnap'].map(n => find(visual, 'FunctionDeclaration', n)).join('\n') +
+    ['sanitize', 'sceneClean', 'cleanChar', 'ensureProfiles', 'newCharId', 'curChar', 'curProfile', 'pickValues', 'profileSnap'].map(n => find(visual, 'FunctionDeclaration', n)).join('\n') +
     ';var state={...defaults};', c);
   return c;
 }

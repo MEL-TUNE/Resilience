@@ -664,7 +664,7 @@ function updateGains(){
   monProg.gain.value=previewBoost();
   seBus.gain.value=dbGain(cfg.seDb);
   envBus.gain.value=dbGain(cfg.envDb);
-  bgmBus.gain.value=dbGain(cfg.bgmDb);
+  bgmBus.gain.value=dbGain(cfg.bgmDb+(window.__sceneBgmBoost||0));
   voBus.gain.value=dbGain(cfg.voDb);
  
   if(micGain)micGain.gain.value=micMuted?0:r.micVolume/100;
@@ -5554,12 +5554,22 @@ function applyPage(){
   pageOverride=null;
   if(pg==='settings')stopFilmPreview();
   document.body.dataset.page=pg;
-  $('#navMain').classList.toggle('on',pg==='main');
+  document.querySelectorAll('[data-app]').forEach(b=>b.classList.toggle('on',pg==='main'&&b.dataset.app===document.body.dataset.app));
   $('#navSettings').classList.toggle('on',pg==='settings');
   window.scrollTo(0,0)
 }
 
+const APP_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_app';
+function setApp(app){
+  app=app==='radio'?'radio':'live';
+  document.body.dataset.app=app;
+  try{localStorage.setItem(APP_KEY,app)}catch(_){}
+  window.__otonohaAppChanged?.(app)
+}
+try{setApp(localStorage.getItem(APP_KEY)||'live')}catch(_){setApp('live')}
 document.addEventListener('click',e=>{
+  const ab=e.target.closest('[data-app]');
+  if(ab)setApp(ab.dataset.app);
   const b=e.target.closest('[data-goto]');
   if(!b)return;
   const pg=b.dataset.goto;
@@ -5630,20 +5640,33 @@ function syncMini(){
 
 }
 
+let recbarSeen=false;
 function setMini(on){
-  miniOn=on;
-  $('#miniBar').hidden=!on;
-  if(on)syncMini()
+  const audio=rec.state!=='idle',
+    video=!!window.__otonohaVideoRec?.();
+  on=(audio&&!(recbarSeen&&document.body.dataset.page!=='settings'&&document.body.dataset.app==='radio'))||video;
+  if(miniOn!==on){
+    miniOn=on;
+    $('#miniBar').hidden=!on
+  }
+  if(on){
+    $('#miniAudioRow').hidden=!audio;
+    $('#miniVideoRow').hidden=!video;
+    syncMini()
+  }
 }
 
 if('IntersectionObserver' in window){
-  new IntersectionObserver(([e])=>setMini(!e.isIntersecting&&e.boundingClientRect.top<0),{threshold:0}).observe(document.querySelector('.recbar'))
+  new IntersectionObserver(([e])=>{recbarSeen=e.isIntersecting||e.boundingClientRect.top>=0},{threshold:0}).observe(document.querySelector('.recbar'))
 }
+setInterval(()=>setMini(),300);
 
 $('#miniRec').onclick=()=>$('#recBtn').click();
 $('#miniStop').onclick=()=>$('#stopRecBtn').click();
 $('#miniRetake').onclick=()=>$('#retakeBtn').click();
 $('#miniBgmBtn').onclick=()=>$('#bgmNowStop').click();
+$('#miniAllStop').onclick=()=>stopAll();
+$('#miniVideoStop').onclick=()=>document.getElementById('studioStop')?.click();
 
 function gotoBgm(){
  
@@ -5726,8 +5749,9 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
   }
  else{
     try{
-      const st=await navigator.permissions?.query?.({name:'microphone'});
-      if(st?.state==='granted')enableMic(true)
+      let st=null;
+      try{st=await navigator.permissions?.query?.({name:'microphone'})}catch(_){}
+      if(st?.state!=='denied')enableMic(true);else $('#micInfo').textContent='マイクがブロックされています（アドレスバーのサイト設定で許可できます）'
     }catch(_){}
   }
  
