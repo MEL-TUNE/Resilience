@@ -202,3 +202,6 @@ body[data-app="radio"] #boardShell.in-workspace{position:static;max-height:none;
 .mascot-card,.scene-card{box-shadow:none}
 #miniBar[hidden]{display:none!important}
 body{padding-top:var(--mini-h,0px)}
+.mascot-bar{flex-wrap:wrap;gap:6px}
+.mascot-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+#studioCanvas.locked{cursor:default}
