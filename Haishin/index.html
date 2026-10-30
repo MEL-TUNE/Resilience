@@ -289,7 +289,7 @@ const LOOK_PRESETS={
 
 const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];
 
-const LOOK_DEFAULT={title:'配信処オトノハ',subtitle:'',eyebrow:'RADIO & SOUND',preset:'kissaten',...LOOK_PRESETS.kissaten};
+const LOOK_DEFAULT={title:'配信処オトノハ',subtitle:'',eyebrow:'LIVE＆RADIO',preset:'kissaten',...LOOK_PRESETS.kissaten};
 
 function lookSanitize(v){
  
@@ -299,7 +299,7 @@ function lookSanitize(v){
   if(typeof v.title==='string'&&v.title.trim()&&v.title.trim()!=='純喫茶オトノハ')out.title=v.title.trim().slice(0,30);
  
   if(typeof v.subtitle==='string')out.subtitle=v.subtitle.slice(0,80);
-  if(typeof v.eyebrow==='string')out.eyebrow=v.eyebrow.slice(0,30);
+  if(typeof v.eyebrow==='string'&&v.eyebrow!=='RADIO & SOUND')out.eyebrow=v.eyebrow.slice(0,30);
  
   if(v.preset==='custom'||Object.prototype.hasOwnProperty.call(LOOK_PRESETS,v.preset))out.preset=v.preset;
  
@@ -366,7 +366,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">RADIO &amp; SOUND</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.4.9 / .live形式・画像のプリセット</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" id="navMain">収録画面</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.5.0 / 配信とラジオの分割・マスコット・表情差分</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" id="navLive">配信・録画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">ラジオ（音声のみ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <style>
 
@@ -421,33 +421,42 @@ body[data-light] *{backdrop-filter:none!important;-webkit-backdrop-filter:none!i
 body:not([data-fxp]) .fxp-only{display:none!important}
 .fx-preset{margin:6px 0 4px}
 
+/* v0.5.0 */
+body[data-app="live"] .recbar,body[data-app="live"] #takesShell{display:none!important}
+body[data-app="radio"] .studio-workspace>div:first-child,body[data-app="radio"] .studio-tabs,body[data-app="radio"] .studio-help{display:none!important}
+body[data-app="radio"] .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
+body[data-app="radio"] #boardShell.in-workspace{position:static;max-height:none;overflow:visible}
+.stage-head{justify-content:flex-end;margin:0 0 4px}
+#studioCanvas{cursor:grab;touch-action:none}
+#studioCanvas.dragging{cursor:grabbing}
+.expr-bar,.speaker-bar{flex-wrap:wrap;gap:6px}
+.expr-bar button[aria-pressed="true"],.speaker-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.qt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px 14px;margin-top:8px}
+.qt-grid label{font-size:12px;display:grid;gap:2px}
+.qt-grid select{font-size:12px;padding:4px 6px;border-radius:6px;border:1px solid var(--a-p-45);background:var(--hi);color:var(--ink)}
+.expr-edit{border-top:1px solid var(--a-p-20);margin-top:10px;padding-top:8px}
+.expr-row{border:1px dashed var(--a-p-45);border-radius:10px;padding:8px;margin:6px 0;display:grid;gap:6px}
+.expr-row .expr-imgs{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12px}
+.expr-row img{height:44px;max-width:80px;object-fit:contain;vertical-align:middle}
+.set-group{font:700 16px var(--title-font);margin:18px 0 4px;padding:6px 10px;border-left:5px solid var(--accent);background:var(--a-p-12,transparent)}
+.set-group small{font-weight:400;font-size:11px;margin-left:8px;color:var(--muted)}
+.mascot-card,.scene-card{box-shadow:none}
+#miniBar[hidden]{display:none!important}
+body{padding-top:var(--mini-h,0px)}
+
 </style>
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">配信スタジオ</button><button data-mode="record">収録スタジオ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
 <div class="studio-workspace">
 <div>
 <section class="studio-card">
-<div class="studio-header-line"><div><p class="studio-kicker">OTONOHA / VISUAL STUDIO</p><h2>声に、表情と季節を。</h2></div><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
+<div class="studio-header-line stage-head"><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
 <div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas></div>
 <div class="studio-row stage-actions"><button id="studioMic" class="accent">マイクを接続</button><button id="studioTest">口パクを試す</button><button id="studioOutput">映像だけ別窓</button><button id="studioFullscreen">全画面</button><span id="studioState" class="studio-state">マイク未接続</span></div>
 <div class="studio-meter" aria-label="マイク音量"><i id="studioMeter"></i></div>
-<div class="studio-row scene-bar" role="group" aria-label="配信の状態"><button id="studioMute" aria-pressed="false">マイク：オン</button><span class="scene-sep" aria-hidden="true"></span><button data-scene="live" class="selected" aria-pressed="true">配信中</button><button data-scene="standby" aria-pressed="false">待機画面</button><button data-scene="away" aria-pressed="false">離席画面</button><span id="studioSceneState" class="studio-state" role="status">配信中</span></div>
-<div class="studio-row char-bar" role="group" aria-label="名義とキャラクター"><span class="studio-mini">名義</span><select id="profileQuick" aria-label="名義を切り替える"></select><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">表情と演出の設定</button></div> <div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button></div>
-<details class="scene-details"><summary>待機画面・離席画面の設定</summary>
-<p class="studio-note">切り替えるとマイクはミュートになり、「配信中」に戻すと切り替え前のマイク状態に戻ります。ミュートはこのアプリを通る声（動画収録・録音・配信用出力・口パク）に効きます。配信ソフトでマイクを直接取り込んでいる場合、そちらの音は止まりません。</p>
-<div class="scene-grid"><fieldset class="scene-set"><legend>待機画面</legend>
-<label class="studio-field">BGM<select id="scene_standby_bgm" data-scene-bgm="standby"></select></label>
-<label class="studio-field">演出<select id="scene_standby_effect"><option value="keep">配信中と同じ</option><option value="none">なし</option><option value="spring">春 / 薄絹の桜</option><option value="summer">夏 / 虹彩の泡</option><option value="autumn">秋 / 琥珀の紅葉</option><option value="winter">冬 / 銀雪の結晶</option><option value="image">登録した画像を降らせる</option></select></label>
-<label class="studio-field"><input type="checkbox" id="scene_standby_avatar"> 立ち絵を表示する</label>
-<label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_standby_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：まもなく始まります"></textarea></label>
-</fieldset><fieldset class="scene-set"><legend>離席画面</legend>
-<label class="studio-field">BGM<select id="scene_away_bgm" data-scene-bgm="away"></select></label>
-<label class="studio-field">演出<select id="scene_away_effect"><option value="keep">配信中と同じ</option><option value="none">なし</option><option value="spring">春 / 薄絹の桜</option><option value="summer">夏 / 虹彩の泡</option><option value="autumn">秋 / 琥珀の紅葉</option><option value="winter">冬 / 銀雪の結晶</option><option value="image">登録した画像を降らせる</option></select></label>
-<label class="studio-field"><input type="checkbox" id="scene_away_avatar"> 立ち絵を表示する</label>
-<label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_away_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：現在お茶を淹れています……！"></textarea></label>
-</fieldset></div>
-<label class="studio-field"><input type="checkbox" id="sceneRestoreBgm"> 「配信中」に戻すとき、切り替え前のBGMに戻す（曲は頭から再生）</label>
-</details>
+<div class="studio-row scene-bar" role="group" aria-label="配信の状態"><button id="studioMute" aria-pressed="false">マイク：オン</button><span class="scene-sep" aria-hidden="true"></span><button data-scene="live" class="selected" aria-pressed="true">配信中</button><button data-scene="standby" aria-pressed="false">準備中</button><button data-scene="away" aria-pressed="false">離席中</button><button data-scene="end" aria-pressed="false">配信終了</button><span id="studioSceneState" class="studio-state" role="status">配信中</span></div>
+<div class="studio-row char-bar" role="group" aria-label="名義とキャラクター"><span class="studio-mini">名義</span><select id="profileQuick" aria-label="名義を切り替える"></select><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">表情と演出の設定</button></div> <div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button></div><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div><details class="scene-details" id="quickTune"><summary>見た目をその場で調整（プレビューを見ながら）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">プレビューの立ち絵・マスコットはドラッグで動かせます。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
+<details class="scene-details" id="sceneSettings" open><summary>準備中・離席中・配信終了の画面</summary><p class="studio-note">「準備中」「離席中」「配信終了」に切り替えるとマイクはミュートになり、BGMは下の分だけ大きめに流れます。「配信中」に戻すと、切り替え前のマイク状態に戻ります。ミュートはこのアプリを通る声（動画収録・録音・配信用出力・口パク）に効きます。配信ソフトでマイクを直接取り込んでいる場合、そちらの音は止まりません。</p><div class="scene-grid"><fieldset class="scene-set"><legend>準備中</legend><label class="studio-field">BGM<select id="scene_standby_bgm" data-scene-bgm="standby"></select></label><label class="studio-field">演出<select id="scene_standby_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_standby_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_standby_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：まもなく始まります"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_standby_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="準備中の画像"></label><span class="png-name" id="scene_standby_imgName">未登録</span><button type="button" class="fx-remove" id="scene_standby_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_standby_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_standby_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_standby_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_standby_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_standby_imgY" min="-100" max="100" step="1"></label></div></fieldset><fieldset class="scene-set"><legend>離席中</legend><label class="studio-field">BGM<select id="scene_away_bgm" data-scene-bgm="away"></select></label><label class="studio-field">演出<select id="scene_away_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_away_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_away_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：現在お茶を淹れています……！"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_away_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="離席中の画像"></label><span class="png-name" id="scene_away_imgName">未登録</span><button type="button" class="fx-remove" id="scene_away_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_away_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_away_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_away_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_away_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_away_imgY" min="-100" max="100" step="1"></label></div></fieldset><fieldset class="scene-set"><legend>配信終了</legend><label class="studio-field">BGM<select id="scene_end_bgm" data-scene-bgm="end"></select></label><label class="studio-field">演出<select id="scene_end_effect"><option value="keep">配信中と同じ</option></select></label><label class="studio-field"><input type="checkbox" id="scene_end_avatar"> 立ち絵（とマスコット）を表示する</label><label class="studio-field">画面に出す文字（空欄なら表示しません）<textarea id="scene_end_text" class="studio-textarea scene-text" maxlength="200" placeholder="例：ご視聴ありがとうございました"></textarea></label><div class="studio-field">この画面の画像（ミニキャラなど）<label class="bg-pick"><input type="file" id="scene_end_imgFile" accept="image/png,image/webp,image/jpeg" aria-label="配信終了の画像"></label><span class="png-name" id="scene_end_imgName">未登録</span><button type="button" class="fx-remove" id="scene_end_imgDel" hidden>画像を外す</button></div><label class="studio-field">画像の動き<select id="scene_end_imgMotion"><option value="float">ふわふわ浮かぶ</option><option value="sway">ゆらゆら揺れる</option><option value="still">静止</option></select></label><label class="studio-field">ふわふわの度合い<input type="range" id="scene_end_imgAmp" min="0" max="200" step="5"></label><label class="studio-field">画像の大きさ<input type="range" id="scene_end_imgSize" min="10" max="150" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input type="range" id="scene_end_imgX" min="-100" max="100" step="1"></label><label class="studio-field">上下<input type="range" id="scene_end_imgY" min="-100" max="100" step="1"></label></div></fieldset></div><label class="studio-field">切り替えたときのBGMの大きさ <output id="sceneBoostVal"></output><input type="range" id="sceneBoost" min="0" max="12" step="1"></label><label class="studio-field"><input type="checkbox" id="sceneRestoreBgm"> 「配信中」に戻すとき、切り替え前のBGMに戻す（曲は頭から再生）</label></details>
 <details class="scene-details live-only" id="studioSinkBox"><summary>配信に届く音（配信用の出力先）</summary>
 <p class="studio-note">「配信スタジオ」表示中は、試聴用の音量の持ち上げを止め、効果音・BGMを配信・収録と同じ音量で鳴らします。</p>
 <p class="studio-note">配信用の出力先を選ぶと、マイク＋効果音・BGM・環境音のミックス（ダッキング・リミッター・ミュート反映済み。動画収録に入る音と同じ経路）を、その音声機器へ別に送ります。仮想オーディオ機器を選び、配信ソフトではその機器だけを音声として取り込む構成を想定しています。普段のイヤホン・ヘッドホンを選ぶと、自分の声が遅れて聞こえます。</p>
@@ -456,8 +465,8 @@ body:not([data-fxp]) .fxp-only{display:none!important}
 </details>
 <div class="studio-row stage-actions"><button id="studioRec" class="accent">● 映像＋音声を収録</button><button id="studioStop" disabled>■ 停止・ダウンロード</button><span id="studioRecTime" role="status" class="studio-state">未収録</span></div>
 <p class="studio-note" id="studioModeHelp">配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。</p>
-<p class="studio-note">立ち絵・季節の演出・背景は「設定」の「表情と演出」で登録します。未登録時は動作確認用の図形を表示します。音声収録は従来の録音欄、PNGTuber入り動画は上のボタンを使います。</p>
-<div class="quick-sound"><div class="studio-header-line"><strong>音の操作卓</strong><small>登録したSEをここから再生</small></div><div id="studioQuickPads" class="quick-pads"></div><div class="studio-row"><select id="studioQuickBgm" aria-label="BGMを選ぶ"><option value="">BGMを選択</option></select><button id="studioQuickBgmPlay">再生／停止</button><button id="studioQuickStop">全音停止</button></div></div><div id="studioVideos" class="studio-tray" aria-label="この画面で収録した動画"></div>
+<p class="studio-note">立ち絵・表情差分・マスコット・画面の切り替えは「設定」で登録します。未登録時は動作確認用の図形を表示します。音声だけの収録は上の「ラジオ（音声のみ）」で行います。</p>
+<div id="studioVideos"class="studio-tray" aria-label="この画面で収録した動画"></div>
 </section>
 <section class="studio-card mode-section" id="studioPlan" style="margin-top:16px">
 <p class="studio-kicker">PLANNING / AI HANDOFF</p><h2>企画卓</h2>
@@ -495,12 +504,12 @@ body:not([data-fxp]) .fxp-only{display:none!important}
 <div class="studio-header-line"><strong>名義とキャラクター</strong></div>
 <div class="studio-inline"><label class="studio-field">名義<select id="profileSel"></select></label><label class="studio-field">名義の名前<input id="profileName" type="text" maxlength="40"></label></div>
 <div class="studio-row char-tools"><button id="profileAdd" type="button">名義を追加</button><button id="profileDel" type="button">この名義を削除</button></div>
-<p class="studio-note">名義を切り替えると、その名義のキャラクター・背景の設定・季節の演出・待機／離席画面の設定がまとめて切り替わります。</p>
+<p class="studio-note">名義を切り替えると、その名義のキャラクター・背景の設定と、準備中・離席中・配信終了の画面の設定がまとめて切り替わります（季節の演出とマスコットは切り替わりません）。</p>
 <div class="studio-field">キャラクター（押すと切り替え）<div id="charList" class="char-chips"></div></div>
 <div class="studio-row char-tools"><button id="charAdd" type="button">キャラクターを追加</button><button id="charDup" type="button">複製</button><button id="charLeft" type="button" aria-label="前へ移動">←</button><button id="charRight" type="button" aria-label="後ろへ移動">→</button><button id="charDel" type="button">削除</button></div>
 <div class="studio-inline"><label class="studio-field">キャラクターの名前<input id="charName" type="text" maxlength="40"></label><label class="studio-field">立ち絵の種類<select id="charMode"><option value="four">表情差分あり（目×口の4枚）</option><option value="single">1枚だけ（差分なし・動きで表現）</option></select></label></div>
 <div class="png-grid" id="studioSlots"></div>
-<p class="studio-note" id="singleNote" hidden>1枚だけのキャラクターは、1の枠に登録した画像を使い、声に合わせて画像ごと動かします。</p>
+<div class="expr-edit"><div class="studio-header-line"><strong>表情差分（このキャラクター）</strong></div><div id="exprList"></div><div class="studio-row"><button type="button" id="exprAdd">＋ 表情を追加</button></div><p class="studio-note">青ざめ・驚き・赤面・怒りなどを1枚ずつ登録できます（口を開いた画像は任意）。配信画面の「表情」ボタンで切り替え、「連動する動き」を選ぶと、その表情のあいだだけ立ち絵の動きが切り替わります。基本の立ち絵と同じキャンバスサイズで書き出すと位置がずれません。</p></div><p class="studio-note" id="singleNote" hidden>1枚だけのキャラクターは、1の枠に登録した画像を使い、声に合わせて画像ごと動かします。</p>
 <div class="studio-inline"><label class="studio-field" id="charTalkWrap">話すときの動き<select id="charTalk"><option value="hop">弾む</option><option value="sway">左右に揺れる</option><option value="none">動かない</option></select></label><label class="studio-field">切り替え方<select id="switchFx"><option value="fade">ふわっと（0.25秒）</option><option value="cut">パッと</option></select></label></div>
 <label class="studio-field"><input id="charBreath" type="checkbox"> 待機中も呼吸のようにゆっくり揺れる</label><label class="studio-field"><input id="charTrim" type="checkbox" checked> 透明な余白を自動で詰めて、人物の部分を基準に大きさを決める（おすすめ）</label>
 <div class="studio-inline"><label class="studio-field">このキャラクターの背景<select id="charBg"><option value="inherit">全体の背景設定に従う</option><option value="own">このキャラクター専用の背景画像</option><option value="cafe">喫茶のグラデーション</option><option value="transparent">透過</option><option value="green">クロマキー / 緑</option><option value="blue">クロマキー / 青</option><option value="black">黒</option></select></label><label class="studio-field">別の名義へ移す<select id="charMove"></select></label></div>
@@ -529,6 +538,7 @@ body:not([data-fxp]) .fxp-only{display:none!important}
 <p class="studio-note">動画の透過保持は保証しません。背景を抜く収録・配信には緑／青を選んでください。</p>
 <details><summary>設定の持ち出し</summary><div class="studio-row"><button id="studioExport">すべてを書き出す（.live）</button></div><label class="studio-field">設定を読み込む（.live／.kissa／以前のスタジオ設定 .json）<input type="file" id="studioImport" accept=".live,.kissa,application/json,.json"></label><p class="studio-note">.live には、効果音・BGM・名前と着せ替えに加えて、立ち絵・名義・降らせる画像・背景・台本・映像設定が入ります。録音したテイクと収録済みの動画は入りません。.kissa は効果音・BGMだけの形式で、純喫茶オトノハと共通です。以前の版で書き出したスタジオ設定（.json）も読み込めます。</p></details>
 </aside>
+<section class="studio-card mascot-card" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット</h2><p class="studio-note">立ち絵とは別に、小さな画像を最大8体まで置けます。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ マスコットを追加</button><button type="button" id="mascotDel">このマスコットを削除</button></div><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> 表示する</label><label class="studio-field"><input type="checkbox" id="mscTalk"> 話者ボタンに出す（声でぴこぴこ）</label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
 </div>
 <details class="studio-card studio-help"><summary>使い方・収録時の注意</summary><p>① 目開き／目閉じ × 口閉じ／口開きの4枚を登録 → ② マイクを接続 → ③ 声を出して口の反応を調整 → ④ 効果音・BGMを登録 → ⑤ 別窓を配信ソフトで取り込むか、映像＋音声を収録します。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>動画にはマイク＋このアプリの効果音・BGM・環境音が入ります。マイクはスピーカーへ返さず、ヘッドホンで確認してください。動画収録中のモニター音は、従来の録音と同じく設定「録音中のモニター音」に従います（既定ではイヤホンと判定できない出力先では自動で消えます。動画に入る音は変わりません）。別窓は映像専用です。配信側でブラウザ音声とマイクをそれぞれ取り込み、同じ音を二重に入れないよう調整してください。</p><p>収録はMediaRecorder対応ブラウザで利用できます。動画は停止時にダウンロードし、この画面を開いている間だけ再ダウンロードできます。長時間の動画はメモリを使うため、短いテストから確認してください。スマートフォンでは別窓やバックグラウンド時の挙動に制限があります。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別ブラウザや別URLへは自動で引き継ぎません。音源・画像を含め、移行前に書き出してください。</p></details>
 </section>
@@ -553,8 +563,8 @@ body:not([data-fxp]) .fxp-only{display:none!important}
 </div></section>
 
 <div class="minibar" id="miniBar" hidden><div class="minibar-in">
- <div class="mini-row"><span class="mini-timer" id="miniTimer">00:00.0</span><button class="mbtn recbtn" type="button" id="miniRec">● 録音開始</button><button class="mbtn" type="button" id="miniStop">■ 停止</button><button class="mbtn" type="button" id="miniRetake">↺ 録り直し</button></div>
- <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button></div>
+ <div class="mini-row" id="miniAudioRow"><span class="mini-timer" id="miniTimer">00:00.0</span><button class="mbtn recbtn" type="button" id="miniRec">● 録音開始</button><button class="mbtn" type="button" id="miniStop">■ 停止</button><button class="mbtn" type="button" id="miniRetake">↺ 録り直し</button></div><div class="mini-row" id="miniVideoRow" hidden><span class="mini-timer" id="miniVideoTime">映像を収録中</span><button class="mbtn" type="button" id="miniVideoStop">■ 映像の収録を停止</button></div>
+ <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button><button class="mbtn" type="button" id="miniAllStop">全音停止</button></div>
 </div></div>
 <!-- 2. 効果音・BGM -->
 <main class="shell" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span><label class="pad-size">ボタンの大きさ<select id="padSize"><option value="s">小</option><option value="m">中</option><option value="l">大</option></select></label></div>
@@ -607,7 +617,7 @@ body:not([data-fxp]) .fxp-only{display:none!important}
 
 <!-- 4. 設定（音量・マイクなど） -->
 <section class="shell" id="settingsShell"><div class="content desk">
- <div class="section-title" style="margin:0"><h2>設定</h2><button class="btn primary" type="button" data-goto="main">← 収録画面に戻る</button></div>
+ <div class="section-title" style="margin:0"><h2>設定</h2><button class="btn primary" type="button" data-goto="main">← 戻る</button></div>
 
  <section class="panel" aria-labelledby="lookTitle">
   <h3 id="lookTitle">名前と着せ替え <span id="lookState">保存済み</span></h3>
@@ -1362,7 +1372,7 @@ function updateGains(){
   monProg.gain.value=previewBoost();
   seBus.gain.value=dbGain(cfg.seDb);
   envBus.gain.value=dbGain(cfg.envDb);
-  bgmBus.gain.value=dbGain(cfg.bgmDb);
+  bgmBus.gain.value=dbGain(cfg.bgmDb+(window.__sceneBgmBoost||0));
   voBus.gain.value=dbGain(cfg.voDb);
  
   if(micGain)micGain.gain.value=micMuted?0:r.micVolume/100;
@@ -6252,12 +6262,22 @@ function applyPage(){
   pageOverride=null;
   if(pg==='settings')stopFilmPreview();
   document.body.dataset.page=pg;
-  $('#navMain').classList.toggle('on',pg==='main');
+  document.querySelectorAll('[data-app]').forEach(b=>b.classList.toggle('on',pg==='main'&&b.dataset.app===document.body.dataset.app));
   $('#navSettings').classList.toggle('on',pg==='settings');
   window.scrollTo(0,0)
 }
 
+const APP_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_app';
+function setApp(app){
+  app=app==='radio'?'radio':'live';
+  document.body.dataset.app=app;
+  try{localStorage.setItem(APP_KEY,app)}catch(_){}
+  window.__otonohaAppChanged?.(app)
+}
+try{setApp(localStorage.getItem(APP_KEY)||'live')}catch(_){setApp('live')}
 document.addEventListener('click',e=>{
+  const ab=e.target.closest('[data-app]');
+  if(ab)setApp(ab.dataset.app);
   const b=e.target.closest('[data-goto]');
   if(!b)return;
   const pg=b.dataset.goto;
@@ -6328,20 +6348,33 @@ function syncMini(){
 
 }
 
+let recbarSeen=false;
 function setMini(on){
-  miniOn=on;
-  $('#miniBar').hidden=!on;
-  if(on)syncMini()
+  const audio=rec.state!=='idle',
+    video=!!window.__otonohaVideoRec?.();
+  on=(audio&&!(recbarSeen&&document.body.dataset.page!=='settings'&&document.body.dataset.app==='radio'))||video;
+  if(miniOn!==on){
+    miniOn=on;
+    $('#miniBar').hidden=!on
+  }
+  if(on){
+    $('#miniAudioRow').hidden=!audio;
+    $('#miniVideoRow').hidden=!video;
+    syncMini()
+  }
 }
 
 if('IntersectionObserver' in window){
-  new IntersectionObserver(([e])=>setMini(!e.isIntersecting&&e.boundingClientRect.top<0),{threshold:0}).observe(document.querySelector('.recbar'))
+  new IntersectionObserver(([e])=>{recbarSeen=e.isIntersecting||e.boundingClientRect.top>=0},{threshold:0}).observe(document.querySelector('.recbar'))
 }
+setInterval(()=>setMini(),300);
 
 $('#miniRec').onclick=()=>$('#recBtn').click();
 $('#miniStop').onclick=()=>$('#stopRecBtn').click();
 $('#miniRetake').onclick=()=>$('#retakeBtn').click();
 $('#miniBgmBtn').onclick=()=>$('#bgmNowStop').click();
+$('#miniAllStop').onclick=()=>stopAll();
+$('#miniVideoStop').onclick=()=>document.getElementById('studioStop')?.click();
 
 function gotoBgm(){
  
@@ -6424,8 +6457,9 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
   }
  else{
     try{
-      const st=await navigator.permissions?.query?.({name:'microphone'});
-      if(st?.state==='granted')enableMic(true)
+      let st=null;
+      try{st=await navigator.permissions?.query?.({name:'microphone'})}catch(_){}
+      if(st?.state!=='denied')enableMic(true);else $('#micInfo').textContent='マイクがブロックされています（アドレスバーのサイト設定で許可できます）'
     }catch(_){}
   }
  
@@ -6470,7 +6504,23 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
   const title=setC.querySelector(':scope>.section-title');
   if(title)title.after(sec);else setC.prepend(sec);
  
-  if(film){
+    {
+      const grp=(id,title,sub)=>{const h=document.createElement('h2');h.className='set-group';h.id=id;h.innerHTML=title+(sub?'<small>'+sub+'</small>':'');return h};
+      const panel=lbl=>setC.querySelector(':scope>section.panel[aria-labelledby="'+lbl+'"]');
+      const gLive=grp('setLive','配信・録画（PNGTuber）の設定',''),gRadio=grp('setRadio','ラジオ（音声のみ）の設定',''),gCommon=grp('setCommon','共通の設定','配信・ラジオの両方で使います');
+      sec.before(gLive);
+      let last=sec;
+      const mp=document.getElementById('mascotPanel');
+      if(mp){last.after(mp);last=mp}
+      const sd=document.getElementById('sceneSettings');
+      if(sd){const w=document.createElement('section');w.className='studio-card scene-card';w.append(sd);last.after(w);last=w}
+      last.after(gRadio);last=gRadio;
+      const endP=panel('endTitle');if(endP){last.after(endP);last=endP}
+      if(film){film.classList.add('film-in-settings');const n=document.createElement('p');n.className='note';n.textContent='収録したテイク（音声）を動画として書き出すときの演出です。';film.querySelector('h3')?.after(n);last.after(film);last=film}
+      last.after(gCommon);last=gCommon;
+      for(const l of ['lookTitle','mixTitle','duckTitle','micTitle','fileTitle']){const p=panel(l);if(p){last.after(p);last=p}}
+    }
+    if(false&&film){
     film.classList.add('film-in-settings');
     const n=document.createElement('p');
     n.className='note';
@@ -6481,6 +6531,8 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
  
   ws.append(board);
   board.classList.add('in-workspace');
+  const rb=document.querySelector('.recbar');
+  if(rb)ws.before(rb);
  
   const mb=document.getElementById('miniBar'),
     upd=()=>document.documentElement.style.setProperty('--mini-h',(mb&&!mb.hidden?mb.offsetHeight:0)+'px');
@@ -6525,7 +6577,10 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
     show:false,
     songs:[],
     assetNames:{},
-    scenes:{standby:{bgm:'keep',effect:'keep',avatar:true,text:''},away:{bgm:'keep',effect:'keep',avatar:false,text:''}},
+    scenes:{standby:{bgm:'keep',effect:'keep',avatar:true,text:''},away:{bgm:'keep',effect:'keep',avatar:false,text:''},end:{bgm:'keep',effect:'keep',avatar:false,text:'ご視聴ありがとうございました'}},
+    mascots:[],
+    speaker:'self',
+    sceneBoost:6,
     restoreBgm:true,
     sinkId:'',
     aspect:'landscape',
@@ -6627,16 +6682,7 @@ fps:30,
     if(Array.isArray(v.songs))out.songs=v.songs.slice(0,300).filter(x=>x&&typeof x.title==='string').map(x=>({title:x.title.slice(0,200),artist:String(x.artist||'').slice(0,200)}));
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
     out.scenes={};
-    for(const k of ['standby','away']){
-      const d=defaults.scenes[k],
-        x=v.scenes&&typeof v.scenes==='object'&&v.scenes[k]&&typeof v.scenes[k]==='object'?v.scenes[k]:{};
-      out.scenes[k]={
-        bgm:typeof x.bgm==='string'&&x.bgm?x.bgm.slice(0,100):d.bgm,
-        effect:(x.effect==='image'?'p:img':(x.effect==='keep'||(['none','spring','summer','autumn','winter'].includes(x.effect)||/^p:[a-z0-9]{1,24}$/.test(x.effect)))?x.effect:d.effect),
-        avatar:typeof x.avatar==='boolean'?x.avatar:d.avatar,
-        text:typeof x.text==='string'?x.text.slice(0,200):d.text
-      }
-    }
+    for(const k of ['standby','away','end'])out.scenes[k]=sceneClean(k,v.scenes&&typeof v.scenes==='object'?v.scenes[k]:null);
     if(typeof v.restoreBgm==='boolean')out.restoreBgm=v.restoreBgm;
     if(typeof v.sinkId==='string')out.sinkId=v.sinkId.slice(0,300);
     if(['landscape','portrait'].includes(v.aspect))out.aspect=v.aspect;
@@ -6676,10 +6722,14 @@ fps:30,
       else{const x=src.image&&typeof src.image==='object'?src.image:{imageMotion:out.imageMotion};out.fxPresets.push(mk(x,'img','好きな画像'))}
       const okP=e=>!/^p:/.test(e)||out.fxPresets.some(p=>'p:'+p.id===e);
       if(!okP(out.effect))out.effect='none';
-      for(const k of ['standby','away'])if(!okP(out.scenes[k].effect))out.scenes[k].effect='keep'
+      for(const k of ['standby','away','end'])if(!okP(out.scenes[k].effect))out.scenes[k].effect='keep'
     }
 out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     out.light=v.light===true;
+    {const MV=['float','sway','hop','shake','still'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];
+     if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,8)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40)})}
+     out.speaker=typeof v.speaker==='string'&&(v.speaker==='self'||out.mascots.some(m=>m.id===v.speaker))?v.speaker:'self';
+     out.sceneBoost=num(v.sceneBoost,0,12,6)}
     if(Array.isArray(v.profiles))out.profiles=v.profiles.slice(0,20).filter(p=>p&&typeof p==='object'&&typeof p.id==='string'&&/^[a-z0-9]{1,24}$/.test(p.id)).map(p=>({
       id:p.id,
       name:String(p.name||'名義').slice(0,40),
@@ -6701,7 +6751,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
   state=sanitize(state);
 
   function assetName(id){
-    return ['png0','png1','png2','png3'].includes(id)?slotNames[+id.slice(-1)]:id.startsWith('particle')?'降らせる画像'+(id==='particle'?1:+id.slice(8)+1):id.startsWith('fxp-')?'降らせる画像'+(+id.slice(-1)+1):'背景画像'
+    return ['png0','png1','png2','png3'].includes(id)?slotNames[+id.slice(-1)]:id.startsWith('particle')?'降らせる画像'+(id==='particle'?1:+id.slice(8)+1):id.startsWith('fxp-')?'降らせる画像'+(+id.slice(-1)+1):id.startsWith('scene-')?'画面の画像':id.startsWith('msc-')?'マスコットの画像':'背景画像'
   }
 
   E('studioSlots').innerHTML=slotNames.map((n,i)=>`<label class="png-slot">${i+1}. ${n}<img id="pngPreview${i}" alt="${n}" hidden><span id="pngName${i}" class="png-name">未登録</span><input type="file" id="pngFile${i}" accept="image/png" aria-label="${n}のPNG"></label>`).join('');
@@ -6804,6 +6854,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
       E('fxName'+i).textContent=b?(state.assetNames[id]||assetName(id)):'未登録';
       E('fxRemove'+i).hidden=!b
     });
+    for(const k of ['standby','away','end']){const n=E('scene_'+k+'_imgName');if(!n)continue;const id='scene-'+k;n.textContent=assetBlobs[id]?(state.assetNames[id]||'画像'):'未登録';E('scene_'+k+'_imgDel').hidden=!assetBlobs[id]}
     E('backgroundName').textContent=assetBlobs.background?(state.assetNames.background||'背景画像'):'未登録';
     E('backgroundRemove').hidden=!assetBlobs.background
   }
@@ -7414,7 +7465,8 @@ for(const [id,k]of Object.entries(bindings)){
       talk:['hop','sway','none'].includes(c.talk)?c.talk:'hop',
       breath:c.breath===true,
       bgMode:['inherit','own','cafe','transparent','green','blue','black'].includes(c.bgMode)?c.bgMode:'inherit',
-      trim:c.trim!==false
+      trim:c.trim!==false,
+      exprs:Array.isArray(c.exprs)?c.exprs.filter(e=>e&&typeof e==='object'&&typeof e.id==='string'&&/^[a-z0-9]{1,8}$/.test(e.id)).slice(0,12).map(e=>({id:e.id,name:String(e.name||'表情').slice(0,20),motion:['none','shake','hop','sing'].includes(e.motion)?e.motion:'none'})):[]
     };
     for(const k of CHAR_KEYS){
       if(k==='blink'||k==='bounce'){
@@ -7437,7 +7489,7 @@ for(const [id,k]of Object.entries(bindings)){
   }
  
   function charKey(cid,slot){
-    return cid==='c1'&&slot!=='bg'?'png'+slot:'ch-'+cid+'-'+slot
+    return cid==='c1'&&/^[0-3]$/.test(String(slot))?'png'+slot:'ch-'+cid+'-'+slot
   }
  
   function curChar(){
@@ -7464,17 +7516,25 @@ for(const [id,k]of Object.entries(bindings)){
  
   function normScenes(x){
     const out={};
-    for(const k of ['standby','away']){
-      const d=defaults.scenes[k],
-        v=x&&typeof x==='object'&&x[k]&&typeof x[k]==='object'?x[k]:{};
-      out[k]={
-        bgm:typeof v.bgm==='string'&&v.bgm?v.bgm.slice(0,100):d.bgm,
-        effect:(v.effect==='image'?'p:img':(v.effect==='keep'||(['none','spring','summer','autumn','winter'].includes(v.effect)||/^p:[a-z0-9]{1,24}$/.test(v.effect)))?v.effect:d.effect),
-        avatar:typeof v.avatar==='boolean'?v.avatar:d.avatar,
-        text:typeof v.text==='string'?v.text.slice(0,200):d.text
-      }
-    }
+    for(const k of ['standby','away','end'])out[k]=sceneClean(k,x&&typeof x==='object'?x[k]:null);
     return out
+  }
+  function sceneClean(k,x){
+    const d=defaults.scenes[k];
+    x=x&&typeof x==='object'?x:{};
+    const num=(v,a,b,df)=>{const n=Number(v);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},
+      ef=x.effect==='image'?'p:img':x.effect;
+    return {
+      bgm:typeof x.bgm==='string'&&x.bgm?x.bgm.slice(0,100):d.bgm,
+      effect:(ef==='keep'||['none','spring','summer','autumn','winter'].includes(ef)||/^p:[a-z0-9]{1,24}$/.test(ef||''))?ef:d.effect,
+      avatar:typeof x.avatar==='boolean'?x.avatar:d.avatar,
+      text:typeof x.text==='string'?x.text.slice(0,200):d.text,
+      imgMotion:['float','sway','still'].includes(x.imgMotion)?x.imgMotion:'float',
+      imgAmp:num(x.imgAmp,0,200,100),
+      imgSize:num(x.imgSize,10,150,60),
+      imgX:num(x.imgX,-100,100,0),
+      imgY:num(x.imgY,-100,100,0)
+    }
   }
  
   function ensureProfiles(){
@@ -7532,7 +7592,7 @@ for(const [id,k]of Object.entries(bindings)){
   }
  
   async function loadChar(cid){
-    for(const slot of [0,1,2,3,'bg']){
+    for(const slot of charSlots(cid)){
       const key=charKey(cid,slot);
       if(charImgs[key])continue;
       try{
@@ -7622,6 +7682,7 @@ for(const q of particles)q.beh='';
  
   function renderCharUI(){
     if(!E('charList'))return;
+    queueMicrotask(()=>{try{renderExprUI()}catch(_){}});
     ensureProfiles();
     charUrls.forEach(u=>URL.revokeObjectURL(u));
     charUrls=[];
@@ -7771,7 +7832,7 @@ for(const q of particles)q.beh='';
   }
  
   async function dropCharAssets(cid){
-    for(const slot of [0,1,2,3,'bg']){
+    for(const slot of charSlots(cid)){
       const key=charKey(cid,slot);
       try{
         await deleteAsset(ASSET+key)
@@ -7853,7 +7914,7 @@ for(const q of particles)q.beh='';
     const cid=newCharId();
     state.chars[cid]=cleanChar({...state.chars[src],name:(state.chars[src].name||'キャラクター')+'（複製）'});
     try{
-      for(const slot of [0,1,2,3,'bg']){
+      for(const slot of charSlots(src)){
         const b=charBlobs[charKey(src,slot)];
         if(b){
           const key=charKey(cid,slot);
@@ -8004,42 +8065,7 @@ for(const q of particles)q.beh='';
 
   let quickSignature='';
 
-  function renderQuick(){
-    if(!ready||!cfg)return;
-    const sounds=cfg.sounds.filter(s=>s.assetId),
-      bgms=cfg.bgms.filter(b=>b.assetId);
-    const sig=JSON.stringify([sounds.map(s=>[s.id,s.label,s.type]),bgms.map(b=>[b.id,b.name]),[...active].map(a=>a.soundId)]);
-    if(sig===quickSignature)return;
-    quickSignature=sig;
-    const pads=E('studioQuickPads');
-    pads.replaceChildren();
-    for(let i=0;i<12;i++){
-      const s=sounds[i],
-        b=document.createElement('button');
-      b.textContent=s?(s.label||'ボイス'):'+ 登録';
-      b.title=s?(s.fileName||s.label):'効果音の登録画面へ';
-      b.classList.toggle('playing',!!s&&[...active].some(a=>a.soundId===s.id));
-      b.onclick=()=>{
-        if(s)playSound(s);else {
-          E('boardShell').scrollIntoView({behavior:'smooth'});
-          toast('空き枠を押して音源を登録してください')
-        }
-      };
-      pads.append(b)
-    }
-    const select=E('studioQuickBgm'),
-      selected=select.value;
-    select.replaceChildren(new Option('BGMを選択',''));
-    for(const b of bgms)select.add(new Option(b.name||'BGM',b.id));
-    if(bgms.some(b=>b.id===selected))select.value=selected;
-  }
 
-  E('studioQuickBgmPlay').onclick=()=>{
-    const b=cfg?.bgms.find(b=>b.id===E('studioQuickBgm').value);
-    if(b)playBgm(b);else toast('BGMは下の操作盤で登録してから選択してください')
-  };
-  E('studioQuickStop').onclick=()=>stopAll();
-  setInterval(renderQuick,400);
 
   function setMode(mode){
     document.body.dataset.studioMode=mode;
@@ -8204,10 +8230,10 @@ for(const q of particles)q.beh='';
  
     const ease=(v,to,tc)=>v+(to-v)*(1-Math.exp(-dtp/tc));
  
-    envS=ease(envS,talkEnv,talkEnv>envS?.16:.6);
+    {const te=selfSpeak()?talkEnv:0;envS=ease(envS,te,te>envS?.16:.6)}
     popS=ease(popS,talking&&state.bounce?1:0,talking?.05:.12);
  
-    for(const m in mw)mw[m]=ease(mw[m],motion===m?1:0,.28);
+    {const em=effMotion();for(const m in mw)mw[m]=ease(mw[m],em===m?1:0,.28)}
  
     const k=state.motionAmt/100;
     let dx=0,
@@ -8233,19 +8259,17 @@ for(const q of particles)q.beh='';
  
     if(mw.hop>.001){
       const kH=state.motionHop/100*mw.hop;
-      hopPh+=dtp/.64;
-      const n=Math.floor(hopPh),
-        ph=hopPh-n,
-        air=.76,
-        x=ph<air?ph/air:1;
-  
-      dy-=4*x*(1-x)*26*u*kH;
-      const side=n%2?1:-1,
-        tl=Math.sin(x*Math.PI);
-      rot+=side*tl*5*u/arm*kH;
-      dx+=side*tl*3*u*kH
+      hopPh+=dtp/.74;
+      const ph=hopPh%1,
+        J=Math.max(16*u,Math.min(64*u,geo.h*.055)),
+        D=J*.2;
+      let y=0;
+      if(ph<.16)y=D*Math.sin(ph/.16*Math.PI);
+      else if(ph<.66){const x=(ph-.16)/.5;y=-4*x*(1-x)*J}
+      else if(ph<.82)y=D*1.15*Math.sin((ph-.66)/.16*Math.PI);
+      dy+=y*kH
     }
- 
+
     if(mw.shake>.001){
       const kX=state.motionShake/100*mw.shake,
         f=t*13;
@@ -8304,7 +8328,7 @@ for(const q of particles)q.beh='';
     const __c=curChar(),
       __single=!!(__c&&__c.mode==='single'),
       idx=__single?0:(blink?2:0)+(talking?1:0),
-      im=__single?images.png0:images['png'+idx]||images['png'+(talking?1:0)]||images.png0,
+      im=exprImage(talking)||(__single?images.png0:images['png'+idx]||images['png'+(talking?1:0)]||images.png0),
       pose=avatarPose(now,talking),
       geo=avatarGeom();
  
@@ -8741,7 +8765,7 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
     bgmBefore=null,
     sceneBgmId=null;
 
-  const SCENE_LABEL={live:'配信中',standby:'待機画面',away:'離席画面'};
+  const SCENE_LABEL={live:'配信中',standby:'準備中',away:'離席中',end:'配信終了'};
 
   function curEffect(){
     if(scene!=='live'){
@@ -8830,6 +8854,8 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
  
     }
  
+    window.__sceneBgmBoost=name==='live'?0:(state.sceneBoost||0);
+    updateGains();
     renderScene();
     toast(SCENE_LABEL[name]+'に切り替えました');
 
@@ -8838,11 +8864,11 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
   document.querySelectorAll('[data-scene]').forEach(b=>b.onclick=()=>enterScene(b.dataset.scene));
 // Scene settings form
 
-  const SCENE_FIELDS=['bgm','effect','avatar','text'];
+  const SCENE_FIELDS=['bgm','effect','avatar','text','imgMotion','imgAmp','imgSize','imgX','imgY'];
 
   function renderSceneBgmOptions(){
     if(!cfg)return;
-    for(const k of ['standby','away']){
+    for(const k of ['standby','away','end']){
       const sel=E(`scene_${k}_bgm`),
         bgms=cfg.bgms.filter(b=>b.assetId),
         sig=JSON.stringify(bgms.map(b=>[b.id,b.name]));
@@ -8858,19 +8884,21 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
 
   function renderSceneForm(){
     renderEffectOptions();
-for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
+for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
       const el=E(`scene_${k}_${f}`);
       if(f==='bgm')continue;
       if(el.type==='checkbox')el.checked=state.scenes[k][f];else if(document.activeElement!==el)el.value=state.scenes[k][f]
     }
     E('sceneRestoreBgm').checked=state.restoreBgm;
+    E('sceneBoost').value=state.sceneBoost;
+    E('sceneBoostVal').textContent='+'+state.sceneBoost+' dB';
     renderSceneBgmOptions()
   }
 
-  for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
+  for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     const el=E(`scene_${k}_${f}`);
     el.addEventListener(el.tagName==='SELECT'||el.type==='checkbox'?'change':'input',()=>{
-      state.scenes[k][f]=el.type==='checkbox'?el.checked:el.value.slice(0,200);
+      state.scenes[k][f]=el.type==='checkbox'?el.checked:el.type==='range'?Number(el.value):el.value.slice(0,200);
       save();
       if(f==='bgm'&&scene===k&&ready){
         if(el.value==='stop'){
@@ -8915,7 +8943,7 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
       h=vis.length*lh+44,
       w=Math.min(W-80,Math.max(...vis.map(l=>g.measureText(l).width))+120),
       x=(W-w)/2,
-      y=sceneAvatar()?H-80-h:(H-h)/2;
+      y=sceneAvatar()||images['scene-'+scene]?H-80-h:(H-h)/2;
     g.fillStyle='rgba(22,34,29,.62)';
     g.beginPath();
     g.roundRect(x,y,w,h,18);
@@ -9111,7 +9139,11 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
     updateSeasonParticles(dt,now);
     background();
     effects(dt,now,'back');
-    if(sceneAvatar())drawAvatar(now,mouth,blink);
+    if(sceneAvatar()){
+      drawAvatar(now,mouth&&selfSpeak(),blink);
+      drawMascots(now,dt)
+    }
+    drawSceneImage(now);
     effects(dt,now,'front');
     if(scene==='live')caption();else sceneCaption();
     if(outputWindow&&!outputWindow.closed&&outContext){
@@ -9249,7 +9281,7 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
 
   E('studioExport').onclick=()=>exportLive();
 
-  function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg)$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)}
+  function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg|[xy][a-z0-9]{1,8})$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)||/^scene-(?:standby|away|end)$/.test(id)||/^msc-[a-z0-9]{1,12}$/.test(id)}
   async function studioValidate(decoded){
     for(const[id,b]of Object.entries(decoded)){
       if(!studioAssetId(id))throw Error('未対応の画像データです');
@@ -9294,11 +9326,14 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
       ensureProfiles();
       await loadAllChars();
       activateChar(state.charId,true);
+      renderMascotUI();
+      renderExprUI();
       paragraph=0;
       renderValues();
       save();
   }
   function studioCollect(){syncChar();const assets={};for(const[id,b]of Object.entries(assetBlobs))if(!/^png[0-3]$/.test(id))assets[id]=b;for(const[id,b]of Object.entries(charBlobs))assets[id]=b;return {state:JSON.parse(JSON.stringify(state)),assets}}
+  window.__otonohaVideoRec=()=>studioCapturing||captureStarting;
   window.__otonohaStudio={collect:studioCollect,validate:studioValidate,apply:async(s,d)=>{await studioApply(s,d);toast('立ち絵・映像設定も読み込みました')},busy:()=>studioCapturing||captureStarting};
 
   E('studioImport').onchange=async e=>{
@@ -9393,7 +9428,7 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
       if(sel.value!==val)sel.value=extra.length?extra[0][0]:'none'
     };
     fill(E('studioEffect'),[],state.effect);
-    if(state.scenes)for(const k of ['standby','away'])fill(E('scene_'+k+'_effect'),[['keep','配信中と同じ']],state.scenes[k]?.effect||'keep');
+    if(state.scenes)for(const k of ['standby','away','end'])fill(E('scene_'+k+'_effect'),[['keep','配信中と同じ']],state.scenes[k]?.effect||'keep');
     document.body.toggleAttribute('data-fxp',isP(state.effect))
   }
 
@@ -9448,7 +9483,7 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
     armed(e.currentTarget,'もう一度押すと「'+p.name+'」と画像を削除',async()=>{
       for(let n=0;n<6;n++){const id=pimg(p.id,n);try{await deleteAsset(ASSET+id)}catch(_){}delete images[id];delete assetBlobs[id];delete state.assetNames[id]}
       state.fxPresets=state.fxPresets.filter(x=>x!==p);
-      for(const k of ['standby','away'])if(state.scenes[k].effect==='p:'+p.id)state.scenes[k].effect='keep';
+      for(const k of ['standby','away','end'])if(state.scenes[k].effect==='p:'+p.id)state.scenes[k].effect='keep';
       selectEffect('none');
       renderSceneForm();
       toast('プリセットを削除しました')
@@ -9558,8 +9593,273 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
   renderEffectOptions();
   seasonLoad();
 
+
+ // ---------- v0.5.0: expressions, mascots, scene images, quick tuning, drag ----------
+  let curExpr='';
+  function charSlots(cid){
+    const c=state.chars&&state.chars[cid];
+    return [0,1,2,3,'bg',...((c&&c.exprs)||[]).flatMap(e=>['x'+e.id,'y'+e.id])]
+  }
+  function curExprObj(){
+    const c=curChar();
+    return curExpr&&c&&c.exprs?c.exprs.find(e=>e.id===curExpr)||null:null
+  }
+  function exprImage(talking){
+    const e=curExprObj();
+    if(!e)return null;
+    const im=charImgs[charKey(state.charId,'x'+e.id)];
+    if(!im)return null;
+    const mo=charImgs[charKey(state.charId,'y'+e.id)];
+    return talking&&mo?mo:im
+  }
+  function effMotion(){
+    const e=curExprObj();
+    return e&&e.motion!=='none'?e.motion:motion
+  }
+  function selfSpeak(){
+    const s=state.speaker;
+    return !s||s==='self'||!(state.mascots||[]).some(m=>m.id===s&&m.talk&&m.show)
+  }
+  function setExpr(id){
+    curExpr=id||'';
+    switchAt=performance.now();
+    renderExprBar()
+  }
+  function renderExprBar(){
+    const bar=E('exprBar'),c=curChar(),list=(c&&c.exprs)||[];
+    if(curExpr&&!list.some(e=>e.id===curExpr))curExpr='';
+    bar.hidden=!list.length;
+    bar.replaceChildren();
+    if(!list.length)return;
+    const lab=document.createElement('span');lab.className='studio-mini';lab.textContent='表情';bar.append(lab);
+    for(const [id,name] of [['','通常'],...list.map(e=>[e.id,e.name])]){
+      const b=document.createElement('button');b.type='button';b.textContent=name;b.setAttribute('aria-pressed',String(curExpr===id));
+      b.onclick=()=>setExpr(id);bar.append(b)
+    }
+  }
+  const EXPR_MOTION=[['none','動かさない（そのままの動き）'],['shake','ガタガタ'],['hop','ぴょんぴょん'],['sing','歌うゆらぎ']];
+  function exprThumb(cid,slot){
+    const b=charBlobs[charKey(cid,slot)];
+    if(!b)return '';
+    const u=URL.createObjectURL(b);charUrls.push(u);return u
+  }
+  function renderExprUI(){
+    renderExprBar();
+    const box=E('exprList'),c=curChar();
+    if(!box)return;
+    box.replaceChildren();
+    if(!c)return;
+    c.exprs=c.exprs||[];
+    c.exprs.forEach((e,i)=>{
+      const row=document.createElement('div');row.className='expr-row';
+      const u1=exprThumb(state.charId,'x'+e.id),u2=exprThumb(state.charId,'y'+e.id);
+      row.innerHTML=`<div class="studio-inline"><label class="studio-field">表情の名前<input type="text" maxlength="20" data-k="name"></label><label class="studio-field">連動する動き<select data-k="motion">${EXPR_MOTION.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></label></div>`
+        +`<div class="expr-imgs"><label>表情の画像 ${u1?`<img src="${u1}" alt="">`:'（未登録）'}<input type="file" accept="image/png,image/webp,image/jpeg" data-f="x"></label><label>口を開いた画像（任意） ${u2?`<img src="${u2}" alt="">`:'（なし）'}<input type="file" accept="image/png,image/webp,image/jpeg" data-f="y"></label></div>`
+        +`<div class="studio-row"><button type="button" data-a="del">この表情を削除</button>${u2?'<button type="button" data-a="dely">口を開いた画像を外す</button>':''}</div>`;
+      row.querySelector('[data-k=name]').value=e.name;
+      row.querySelector('[data-k=motion]').value=e.motion;
+      row.querySelector('[data-k=name]').oninput=ev=>{e.name=ev.target.value.slice(0,20)||'表情';save();renderExprBar()};
+      row.querySelector('[data-k=motion]').onchange=ev=>{e.motion=ev.target.value;save()};
+      row.querySelectorAll('input[type=file]').forEach(inp=>inp.onchange=async ev=>{
+        const f=ev.target.files[0];if(!f)return;
+        try{if(!ready)throw Error('保存領域の準備中です');await storeCharImage(state.charId,inp.dataset.f+e.id,f);save();renderExprUI();toast('「'+e.name+'」の画像を登録しました')}catch(err){toast(err.message,5000)}finally{ev.target.value=''}
+      });
+      row.querySelector('[data-a=del]').onclick=ev=>armed(ev.currentTarget,'もう一度押すと「'+e.name+'」を削除',async()=>{
+        for(const s of ['x'+e.id,'y'+e.id]){const key=charKey(state.charId,s);try{await deleteAsset(ASSET+key)}catch(_){}delete charBlobs[key];delete charImgs[key];delete state.assetNames[key]}
+        c.exprs=c.exprs.filter(x=>x!==e);if(curExpr===e.id)curExpr='';save();renderExprUI()
+      });
+      const dy=row.querySelector('[data-a=dely]');
+      if(dy)dy.onclick=async()=>{const key=charKey(state.charId,'y'+e.id);try{await deleteAsset(ASSET+key)}catch(_){}delete charBlobs[key];delete charImgs[key];save();renderExprUI()};
+      box.append(row)
+    })
+  }
+  E('exprAdd').onclick=()=>{
+    const c=curChar();if(!c)return;
+    c.exprs=c.exprs||[];
+    if(c.exprs.length>=12){toast('表情差分は1体につき12個までです');return}
+    let id;do id=Math.random().toString(36).slice(2,7);while(c.exprs.some(e=>e.id===id));
+    c.exprs.push({id,name:['青ざめ','驚き','赤面','怒り'][c.exprs.length]||('表情'+(c.exprs.length+1)),motion:c.exprs.length===0?'shake':'none'});
+    save();renderExprUI()
+  };
+
+  // ----- mascots -----
+  let mscSel='',mscLast=0;const mscEnv={};
+  function mscCur(){return (state.mascots||[]).find(m=>m.id===mscSel)||null}
+  function drawMascots(now){
+    const list=state.mascots||[];
+    const dtp=mscLast?Math.min(.1,(now-mscLast)/1000):0;mscLast=now;
+    if(!list.length)return;
+    const u=H/720,t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
+    for(const m of list){
+      m._box=null;
+      if(!m.show)continue;
+      const im=images['msc-'+m.id];
+      if(!im)continue;
+      const seed=(m.id.charCodeAt(0)+m.id.charCodeAt(m.id.length-1))*.173,a=m.amp/100,sp=m.speed/100,
+        h=H*m.size/100,f=h/im.height,w=im.width*f,x=W/2+m.x*W/200,y=H/2+m.y*H/200;
+      let dx=0,dy=0,rot=0;
+      if(m.motion==='float'){dy=Math.sin(t*TAU*.3*sp+seed)*12*u*a;dx=Math.sin(t*TAU*.17*sp+seed*2)*6*u*a;rot=Math.sin(t*TAU*.23*sp+seed)*3*deg*a}
+      else if(m.motion==='sway'){const s=Math.sin(t*TAU*.45*sp+seed);rot=s*6*deg*a;dy=-Math.abs(s)*3*u*a}
+      else if(m.motion==='hop'){const ph=(t*1.5*sp+seed)%1;dy=-4*ph*(1-ph)*18*u*a}
+      else if(m.motion==='shake'){const s=Math.floor(t*11*sp);dx=(rnd(s+seed)-.5)*10*u*a;dy=(rnd(s+seed+.31)-.5)*6*u*a;rot=(rnd(s+seed+.67)-.5)*8*deg*a}
+      const on=state.speaker===m.id&&m.talk,target=on?Math.max(talkEnv,mouth?.6:0):0,e0=mscEnv[m.id]||0,e1=e0+(target-e0)*Math.min(1,dtp*(target>e0?14:5));
+      mscEnv[m.id]=e1;
+      if(e1>.01){dy-=e1*(5+Math.abs(Math.sin(t*TAU*4.2))*10)*u;rot+=Math.sin(t*TAU*4.2)*e1*3*deg}
+      const spc=avSprite(im,{x:0,y:0,w:im.width,h:im.height},f);
+      g.save();g.translate(x+dx,y+dy);g.rotate(rot);g.imageSmoothingEnabled=true;g.imageSmoothingQuality=state.light?'medium':'high';
+      if(spc)g.drawImage(spc.c,-spc.dw/2,-spc.dh/2);else g.drawImage(im,-w/2,-h/2,w,h);
+      g.restore();
+      m._box={x:x-w/2,y:y-h/2,w,h}
+    }
+  }
+  function drawSceneImage(now){
+    if(scene==='live')return;
+    const c=state.scenes[scene],im=images['scene-'+scene];
+    if(!c||!im)return;
+    const u=H/720,t=now/1000,TAU=Math.PI*2,a=c.imgAmp/100,h=H*c.imgSize/100,f=h/im.height,w=im.width*f,x=W/2+c.imgX*W/200,y=H/2+c.imgY*H/200;
+    let dx=0,dy=0,rot=0;
+    if(c.imgMotion==='float'){dy=Math.sin(t*TAU/3.2)*12*u*a;dx=Math.sin(t*TAU/5.1+1)*5*u*a;rot=Math.sin(t*TAU/4.3+.4)*1.6*Math.PI/180*a}
+    else if(c.imgMotion==='sway')rot=Math.sin(t*TAU/2.6)*4*Math.PI/180*a;
+    const spc=avSprite(im,{x:0,y:0,w:im.width,h:im.height},f);
+    g.save();g.translate(x+dx,y+dy);g.rotate(rot);g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
+    if(spc)g.drawImage(spc.c,-spc.dw/2,-spc.dh/2);else g.drawImage(im,-w/2,-h/2,w,h);
+    g.restore()
+  }
+  function renderSpeakerBar(){
+    const bar=E('speakerBar'),list=(state.mascots||[]).filter(m=>m.talk&&m.show);
+    if(state.speaker!=='self'&&!list.some(m=>m.id===state.speaker))state.speaker='self';
+    bar.hidden=!list.length;bar.replaceChildren();
+    if(!list.length)return;
+    const lab=document.createElement('span');lab.className='studio-mini';lab.textContent='話者';bar.append(lab);
+    for(const [id,name] of [['self','本人（立ち絵）'],...list.map(m=>[m.id,m.name])]){
+      const b=document.createElement('button');b.type='button';b.textContent=name;b.setAttribute('aria-pressed',String(state.speaker===id));
+      b.onclick=()=>{state.speaker=id;save();renderSpeakerBar()};bar.append(b)
+    }
+  }
+  function renderMascotUI(){
+    const list=state.mascots||[];
+    if(!list.some(m=>m.id===mscSel))mscSel=list[0]?.id||'';
+    const chips=E('mascotChips');chips.replaceChildren();
+    for(const m of list){const b=document.createElement('button');b.type='button';b.textContent=m.name+(images['msc-'+m.id]?'':'（画像なし）');b.classList.toggle('selected',m.id===mscSel);b.onclick=()=>{mscSel=m.id;renderMascotUI()};chips.append(b)}
+    const m=mscCur();
+    E('mascotEdit').hidden=!m;E('mascotDel').disabled=!m;
+    if(m){
+      if(document.activeElement!==E('mscName'))E('mscName').value=m.name;
+      E('mscShow').checked=m.show;E('mscTalk').checked=m.talk;E('mscMotion').value=m.motion;
+      for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])if(document.activeElement!==E(id))E(id).value=m[k];
+      E('mscAmpVal').textContent=m.amp+'%';E('mscSpeedVal').textContent=m.speed+'%';E('mscSizeVal').textContent=m.size+'%';
+      E('mscFileName').textContent=assetBlobs['msc-'+m.id]?(state.assetNames['msc-'+m.id]||'画像'):'未登録'
+    }
+    renderSpeakerBar()
+  }
+  E('mascotAdd').onclick=()=>{
+    state.mascots=state.mascots||[];
+    if(state.mascots.length>=8){toast('マスコットは8体までです');return}
+    let id;do id=Math.random().toString(36).slice(2,8);while(state.mascots.some(m=>m.id===id));
+    const n=state.mascots.length;
+    state.mascots.push({id,name:'マスコット'+(n+1),show:true,talk:false,motion:'float',amp:100,speed:100,size:22,x:60-n*25,y:40});
+    mscSel=id;save();renderMascotUI();toast('マスコットを追加しました。画像を登録してください')
+  };
+  E('mascotDel').onclick=e=>{
+    const m=mscCur();if(!m)return;
+    armed(e.currentTarget,'もう一度押すと「'+m.name+'」を削除',async()=>{
+      const id='msc-'+m.id;try{await deleteAsset(ASSET+id)}catch(_){}delete images[id];delete assetBlobs[id];delete state.assetNames[id];
+      state.mascots=state.mascots.filter(x=>x!==m);save();renderMascotUI()
+    })
+  };
+  E('mscFile').onchange=async e=>{
+    const f=e.target.files[0],m=mscCur();if(!f||!m)return;
+    try{if(!ready)throw Error('保存領域の準備中です');await installAsset('msc-'+m.id,f,f.name);renderMascotUI();toast('「'+m.name+'」の画像を登録しました')}catch(err){toast(err.message,5000)}finally{e.target.value=''}
+  };
+  E('mscName').oninput=e=>{const m=mscCur();if(m){m.name=e.target.value.slice(0,20)||'マスコット';save();renderMascotUI()}};
+  E('mscShow').onchange=e=>{const m=mscCur();if(m){m.show=e.target.checked;save();renderMascotUI()}};
+  E('mscTalk').onchange=e=>{const m=mscCur();if(m){m.talk=e.target.checked;save();renderMascotUI()}};
+  E('mscMotion').onchange=e=>{const m=mscCur();if(m){m.motion=e.target.value;save()}};
+  for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])E(id).addEventListener('input',e=>{const m=mscCur();if(m){m[k]=Number(e.target.value);save();renderMascotUI()}});
+
+  // ----- scene images / BGM boost -----
+  for(const k of ['standby','away','end']){
+    E('scene_'+k+'_imgFile').onchange=async e=>{
+      const f=e.target.files[0];if(!f)return;
+      try{if(!ready)throw Error('保存領域の準備中です');await installAsset('scene-'+k,f,f.name);toast(SCENE_LABEL[k]+'の画像を登録しました')}catch(err){toast(err.message,5000)}finally{e.target.value=''}
+    };
+    E('scene_'+k+'_imgDel').onclick=()=>removeAsset('scene-'+k)
+  }
+  E('sceneBoost').addEventListener('input',e=>{
+    state.sceneBoost=Number(e.target.value);E('sceneBoostVal').textContent='+'+state.sceneBoost+' dB';
+    if(scene!=='live'){window.__sceneBgmBoost=state.sceneBoost;updateGains()}
+    save()
+  });
+
+  // ----- quick tuning on the stage (mirrors the controls in 設定) -----
+  const QT=[['studioScale','大きさ','%'],['studioX','左右',''],['studioY','上下',''],['studioMotionSing','歌うゆらぎの大きさ','%'],['studioMotionSingSpeed','歌うゆらぎの速さ','%'],['studioMotionHop','ぴょんぴょんの大きさ','%'],['studioMotionShake','ガタガタの大きさ','%'],['studioMotionAmt','呼吸・話すときの動き','%'],['studioEffect','季節の演出・画像のプリセット',''],['studioCount','演出の量',''],['studioSpeed','演出の速さ',''],['studioFxSize','演出の大きさ',''],['studioFxOpacity','演出の濃さ','']];
+  (function buildQuickTune(){
+    const box=E('quickTuneBody');
+    for(const [id,label] of QT){
+      const src=E(id);if(!src)continue;
+      const lab=document.createElement('label'),cl=src.cloneNode(true),out=document.createElement('output');
+      cl.id='qt_'+id;cl.removeAttribute('aria-label');out.id='qto_'+id;
+      lab.append(document.createTextNode(label+' '),out,cl);box.append(lab);
+      cl.addEventListener('input',()=>{src.value=cl.value;src.dispatchEvent(new Event('input',{bubbles:true}))});
+      cl.addEventListener('change',()=>{if(src.tagName==='SELECT')src.dispatchEvent(new Event('change',{bubbles:true}))})
+    }
+  })();
+  function syncQuickTune(){
+    if(!E('quickTune').open)return;
+    for(const [id,,unit] of QT){
+      const s=E(id),c=E('qt_'+id),o=E('qto_'+id);if(!s||!c)continue;
+      if(s.tagName==='SELECT'&&c.innerHTML!==s.innerHTML)c.innerHTML=s.innerHTML;
+      if(document.activeElement!==c)c.value=s.value;
+      if(o)o.textContent=s.tagName==='SELECT'?'':s.value+unit
+    }
+  }
+  setInterval(syncQuickTune,250);
+  E('quickTune').addEventListener('toggle',syncQuickTune);
+
+  // ----- drag the avatar / a mascot on the stage -----
+  let drag=null;
+  function stagePoint(e){
+    const r=canvas.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H),ox=(r.width-W*s)/2,oy=(r.height-H*s)/2;
+    return {x:(e.clientX-r.left-ox)/s,y:(e.clientY-r.top-oy)/s}
+  }
+  canvas.addEventListener('pointerdown',e=>{
+    if(e.button!==0)return;
+    const p=stagePoint(e);
+    let target=null;
+    for(const m of [...(state.mascots||[])].reverse())if(m._box&&p.x>=m._box.x&&p.x<=m._box.x+m._box.w&&p.y>=m._box.y&&p.y<=m._box.y+m._box.h){target=m;break}
+    if(!target&&sceneAvatar()){const gg=avatarGeom();if(p.x>=gg.cx-gg.w/2&&p.x<=gg.cx+gg.w/2&&p.y>=gg.bottom-gg.h&&p.y<=gg.bottom)target='avatar'}
+    if(!target)return;
+    drag={target,p0:p,ox:target==='avatar'?state.x:target.x,oy:target==='avatar'?state.y:target.y};
+    if(target!=='avatar'){mscSel=target.id;renderMascotUI()}
+    canvas.setPointerCapture(e.pointerId);canvas.classList.add('dragging');e.preventDefault()
+  });
+  canvas.addEventListener('pointermove',e=>{
+    if(!drag)return;
+    const p=stagePoint(e),dx=p.x-drag.p0.x,dy=p.y-drag.p0.y;
+    if(drag.target==='avatar'){
+      state.x=Math.max(-300,Math.min(300,Math.round(drag.ox+dx/W*100)));
+      state.y=Math.max(-200,Math.min(500,Math.round(drag.oy+dy/H*100)));
+      E('studioX').value=state.x;E('studioY').value=state.y;E('yVal').textContent=Math.round(state.y)+'%'
+    }else{
+      drag.target.x=Math.max(-100,Math.min(100,Math.round(drag.ox+dx/W*200)));
+      drag.target.y=Math.max(-100,Math.min(100,Math.round(drag.oy+dy/H*200)));
+      E('mscX').value=drag.target.x;E('mscY').value=drag.target.y
+    }
+  });
+  const endDrag=()=>{if(!drag)return;drag=null;canvas.classList.remove('dragging');save()};
+  canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);
+
+  // ----- app mode -----
+  window.__otonohaAppChanged=app=>{
+    if(app==='radio'){studioLiveMode=false;applyMonitor()}
+    else setMode(document.body.dataset.studioMode||'live')
+  };
+
   applyPerf();
   renderMotionOut();
+  renderMascotUI();
+  renderExprUI();
+  if(document.body.dataset.app==='radio')window.__otonohaAppChanged('radio');
 
   renderValues();
   applyAspect();
@@ -9578,7 +9878,7 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
       return
     }
     ready=true;
-    for(const id of new Set([...PARTICLE_IDS,'background',...presetImageIds()]))try{
+    for(const id of new Set([...PARTICLE_IDS,'background',...presetImageIds(),'scene-standby','scene-away','scene-end',...(state.mascots||[]).map(m=>'msc-'+m.id)]))try{
       const b=await getAsset(ASSET+id);
       if(b)await installAsset(id,b,state.assetNames[id],false)
     }catch(err){
@@ -9587,6 +9887,9 @@ for(const k of ['standby','away'])for(const f of SCENE_FIELDS){
     ensureProfiles();
     await loadAllChars();
     activateChar(state.charId,true);
+    renderMascotUI();
+    renderExprUI();
+    renderAssetSlots()
   })();
 
 })();

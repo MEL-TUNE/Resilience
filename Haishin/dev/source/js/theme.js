@@ -26,7 +26,7 @@ const LOOK_PRESETS={
 
 const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];
 
-const LOOK_DEFAULT={title:'配信処オトノハ',subtitle:'',eyebrow:'RADIO & SOUND',preset:'kissaten',...LOOK_PRESETS.kissaten};
+const LOOK_DEFAULT={title:'配信処オトノハ',subtitle:'',eyebrow:'LIVE＆RADIO',preset:'kissaten',...LOOK_PRESETS.kissaten};
 
 function lookSanitize(v){
  
@@ -36,7 +36,7 @@ function lookSanitize(v){
   if(typeof v.title==='string'&&v.title.trim()&&v.title.trim()!=='純喫茶オトノハ')out.title=v.title.trim().slice(0,30);
  
   if(typeof v.subtitle==='string')out.subtitle=v.subtitle.slice(0,80);
-  if(typeof v.eyebrow==='string')out.eyebrow=v.eyebrow.slice(0,30);
+  if(typeof v.eyebrow==='string'&&v.eyebrow!=='RADIO & SOUND')out.eyebrow=v.eyebrow.slice(0,30);
  
   if(v.preset==='custom'||Object.prototype.hasOwnProperty.call(LOOK_PRESETS,v.preset))out.preset=v.preset;
  

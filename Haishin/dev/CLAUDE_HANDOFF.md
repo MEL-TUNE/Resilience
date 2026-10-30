@@ -37,3 +37,10 @@
   - 以前のスタジオ設定 .json は読み込みのみ対応（書き出しは .live に統一）。
 - 季節の演出は名義・キャラクターから切り離しました（profileSnap に effect を持たない）。
 - 降らせる画像は「画像のプリセット」（state.fxPresets、effect 値 `p:<id>`）。画像は `fxp-<id>-<0..5>`。旧 'image' はプリセット `img`（画像キーは従来の particle〜particle5）として引き継ぎます。
+
+## 2026-10-30 追記（STUDIO 0.5.0）
+
+- 画面上部で「配信・録画（PNGTuber）」と「ラジオ（音声のみ）」を切り替えます（body[data-app]、localStorage `<名前空間>otonoha_app`）。設定画面は「配信・録画」「ラジオ」「共通」の3区分。
+- 上部の小さな録音欄（#miniBar）は、音声録音中または映像収録中だけ表示します。
+- 追加：マスコット（state.mascots、画像 `msc-<id>`、話者 state.speaker）、表情差分（キャラクターの exprs、画像スロット `x<id>`／口開き `y<id>`）、画面の切り替え「配信終了」（scenes.end）と各画面の画像（`scene-<standby|away|end>`）、切り替え時のBGMの持ち上げ（state.sceneBoost dB、`window.__sceneBgmBoost`）。
+- 削除：「音の操作卓」、ステージ上の見出し。
