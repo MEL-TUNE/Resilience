@@ -241,3 +241,4 @@ body{padding-top:var(--mini-h,0px)}
   .studio-take span{flex-basis:100%;word-break:break-all}
   .scene-bar button,.motion-bar button,.char-bar button,.expr-bar button,.speaker-bar button{padding:7px 9px;font-size:12px}
 }
+.rec-note{font-size:11px;color:var(--muted);margin:6px 0 0}
