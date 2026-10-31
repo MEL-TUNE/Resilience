@@ -24,12 +24,12 @@
     updateGains();
     const b=E('studioMute');
     b.setAttribute('aria-pressed',String(micMuted));
-    b.textContent=micMuted?'マイク：ミュート中':'マイク：オン'
+    b.textContent=streamMode()?(micMuted?'口パク：止めています':'口パク：オン'):(micMuted?'マイク：ミュート中':'マイク：オン')
   }
 
   E('studioMute').onclick=()=>{
     setMute(!micMuted);
-    toast(micMuted?'マイクをミュートしました':'マイクのミュートを解除しました')
+    toast(streamMode()?(micMuted?'口パクを止めました':'口パクを再開しました'):(micMuted?'マイクをミュートしました':'マイクのミュートを解除しました'))
   };
 
   function bgmById(id){
@@ -47,7 +47,8 @@
       x.classList.toggle('selected',on);
       x.setAttribute('aria-pressed',String(on))
     });
-    E('studioSceneState').textContent=SCENE_LABEL[scene]+(scene!=='live'?'（マイクはミュート）':'')
+    document.body.dataset.scene=scene;
+    E('studioSceneState').textContent=SCENE_LABEL[scene]+(scene!=='live'?(streamMode()?'（口パクは止めています）':'（マイクはミュート）'):'')
   }
 
   function enterScene(name){

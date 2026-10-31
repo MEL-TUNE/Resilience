@@ -23,22 +23,33 @@ function applyPage(){
   pageOverride=null;
   if(pg==='settings')stopFilmPreview();
   document.body.dataset.page=pg;
-  document.querySelectorAll('[data-app]').forEach(b=>b.classList.toggle('on',pg==='main'&&b.dataset.app===document.body.dataset.app));
+  document.querySelectorAll('[data-app]').forEach(b=>b.classList.toggle('on',pg==='main'&&b.dataset.app===document.body.dataset.app&&(!b.dataset.kind||b.dataset.kind===document.body.dataset.kind)));
   $('#navSettings').classList.toggle('on',pg==='settings');
   window.scrollTo(0,0)
 }
 
 const APP_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_app';
-function setApp(app){
+function setApp(app,kind){
+  if(app==='live'&&kind!=='stream'&&kind!=='video')kind=document.body.dataset.kind||'stream';
   app=app==='radio'?'radio':'live';
   document.body.dataset.app=app;
-  try{localStorage.setItem(APP_KEY,app)}catch(_){}
+  if(app==='live')document.body.dataset.kind=kind;
+  try{localStorage.setItem(APP_KEY,app==='radio'?'radio':kind)}catch(_){}
+  if(ctx)updateGains();
   window.__otonohaAppChanged?.(app)
 }
-try{setApp(localStorage.getItem(APP_KEY)||'live')}catch(_){setApp('live')}
+function savedApp(){
+  let v='';
+  try{v=localStorage.getItem(APP_KEY)||''}catch(_){}
+  if(v==='radio')return ['radio'];
+  if(v==='stream'||v==='video')return ['live',v];
+  return ['live',matchMedia('(pointer:coarse)').matches?'video':'stream']
+}
+document.body.dataset.kind=savedApp()[1]||'stream';
+setApp(...savedApp());
 document.addEventListener('click',e=>{
   const ab=e.target.closest('[data-app]');
-  if(ab)setApp(ab.dataset.app);
+  if(ab)setApp(ab.dataset.app,ab.dataset.kind);
   const b=e.target.closest('[data-goto]');
   if(!b)return;
   const pg=b.dataset.goto;

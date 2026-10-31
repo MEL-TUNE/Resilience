@@ -45,7 +45,9 @@ function audioEngine(){
   masterBus.connect(ctx.destination);
 
   programBus.connect(recMix);
-  voiceBus.connect(recMix);
+  voiceOut=ctx.createGain();
+  voiceBus.connect(voiceOut);
+  voiceOut.connect(recMix);
   recMix.connect(limiter);
   limiter.connect(limOut);
 
@@ -88,7 +90,8 @@ function updateGains(){
   voBus.gain.value=dbGain(cfg.voDb);
 
   if(micGain)micGain.gain.value=micMuted?0:r.micVolume/100;
-  selfMon.gain.value=r.monitor?1:0;
+  selfMon.gain.value=r.monitor&&!streamMode()?1:0;
+  voiceOut.gain.value=streamMode()?0:1;
 
   if(r.limiter){
     limiter.threshold.value=-2;

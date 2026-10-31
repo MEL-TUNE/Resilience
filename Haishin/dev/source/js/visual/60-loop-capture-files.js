@@ -80,9 +80,12 @@
     }
     const testing=now<testUntil;
     talkEnv+=((micMuted||dbLevel<state.threshold?0:Math.min(1,(dbLevel-state.threshold)/22))-talkEnv)*Math.min(1,dt*5);
-    const signal=testing?Math.sin(now/110)>-.1:!micMuted&&dbLevel>state.threshold+(mouth?-3:0);
+    const signal=testing?Math.sin(now/110)>-.1:!micMuted&&dbLevel>state.threshold+(talking?-3:0);
     if(signal)lastTalk=now;
-    mouth=(!micMuted||testing)&&(signal||now-lastTalk<state.hold);
+    const was=talking;
+    talking=(!micMuted||testing)&&(signal||now-lastTalk<state.hold);
+    if(talking&&!was)talkStart=now;
+    mouth=talking&&(state.mouthMode!=='flap'||Math.floor((now-talkStart)/state.flapMs)%2===0);
     if(now>nextBlink){
       blinkUntil=now+130;
       nextBlink=now+3000+Math.random()*3000
@@ -114,7 +117,7 @@
     if(now-uiTick>120){
       uiTick=now;
       E('studioMeter').style.width=Math.max(0,Math.min(100,(dbLevel+70)/70*100))+'%';
-      E('studioState').textContent=testing?'口パクをテスト中':!ready?'準備中':micLive()?(micMuted?'ミュート中':`${mouth?'発話中':'待機中'} / ${dbLevel<-90?'−∞':dbLevel.toFixed(0)} dB`):'マイク未接続';
+      E('studioState').textContent=testing?'口パクをテスト中':!ready?'準備中':micLive()?(micMuted?(streamMode()?'口パク停止中':'ミュート中'):`${talking?'発話中':'待機中'} / ${dbLevel<-90?'−∞':dbLevel.toFixed(0)} dB`):'マイク未接続';
       E('studioMic').textContent=ready&&micLive()?'マイクを再接続':'マイクを接続';
       if(mediaRecorder&&mediaRecorder.state==='recording'&&!mediaRecorder.__ending)E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
     }
