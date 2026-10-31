@@ -1,7 +1,5 @@
 /* 描画：立ち絵の位置と動き、降らせる演出、背景 */
 
-// Canvas size follows state.aspect. Everything below draws in W×H pixels.
-
   let W=1280,
     H=720;
 
@@ -74,7 +72,6 @@
     const s=state.scale/85;
     return {cx:W/2+ox,bottom:H*.548+oy+243*s,w:216*s,h:450*s,faceY:H*.548+oy-43*s}
   }
-// Avatar motion. 'still' = upright (default). Pivot is the avatar's feet so rotation reads as body sway.
 
   let motion='still',
     talkEnv=0;
@@ -98,51 +95,47 @@
       s=f*f*(3-2*f);
     return (rnd(i+seed)*(1-s)+rnd(i+1+seed)*s)*2-1
   }
-// v0.4.8: the illustration is only moved and tilted (never scaled per axis).
-// Tilt is computed from a target head travel in screen pixels, around a pivot no lower than the bottom edge of the
-// screen, so a large / lowered character does not swing wildly. Each motion fades in and out over ~0.3 s.
 
   function avatarPose(now,talking){
- 
     const t=now/1000,
       u=H/720,
       TAU=Math.PI*2,
       geo=avatarGeom(),
       pv=Math.min(geo.bottom,H*1.04),
       arm=Math.max(H*.3,pv-geo.faceY);
- 
+
     const dtp=poseLast?Math.min(.1,Math.max(0,(now-poseLast)/1000)):0;
     poseLast=now;
- 
+
     const ease=(v,to,tc)=>v+(to-v)*(1-Math.exp(-dtp/tc));
- 
+
     {const te=selfSpeak()?talkEnv:0;envS=ease(envS,te,te>envS?.16:.6)}
     popS=ease(popS,talking&&state.bounce?1:0,talking?.05:.12);
- 
+
     {const em=effMotion();for(const m in mw)mw[m]=ease(mw[m],em===m?1:0,.28)}
- 
+
     const k=state.motionAmt/100;
     let dx=0,
       dy=0,
       rot=0;
- 
+
     dy-=popS*7*u;
- 
+
     if(mw.sing>.001){
       const kS=state.motionSing/100*mw.sing,
         sp=state.motionSingSpeed/100;
       singPh+=dtp*TAU/5.6*sp*(.9+.25*envS);
-  
+
       const lean=Math.sin(singPh)*.8+Math.sin(singPh*.47+1.9)*.2;
-  
+
       const head=lean*11*u*(.75+.45*envS)+Math.sin(singPh*1.63+.6)*1.6*u;
-  
+
       rot+=head/arm*kS;
       dx+=Math.sin(singPh-.5)*5*u*kS*(.8+.3*envS);
-  
+
       dy-=((Math.cos(singPh*2)*.5+.5)*2.2*u+envS*4*u)*kS
     }
- 
+
     if(mw.hop>.001){
       const kH=state.motionHop/100*mw.hop;
       hopPh+=dtp/.74;
@@ -163,14 +156,14 @@
       dy+=vnoise(f,.37)*2.6*u*kX;
       rot+=vnoise(f*.8,.71)*3*u/arm*kX
     }
- 
+
     const c=curChar();
     if(c){
       if(c.breath)dy-=(Math.sin(t*TAU/3.8)*.5+.5)*3*u*k;
-  
+
       if(c.mode==='single'){
         const a=Math.max(envS,popS*.5);
-   
+
         if(c.talk==='hop')dy-=a*10*u*k+(Math.sin(t*TAU*2.3)*.5+.5)*a*6*u*k;
    else if(c.talk==='sway'){
           rot+=Math.sin(t*TAU*1.25)*a*9*u/arm*k;
@@ -178,12 +171,9 @@
         }
       }
     }
- 
-    return {dx,dy,rot,sx:1,sy:1,pv};
 
+    return {dx,dy,rot,sx:1,sy:1,pv};
   }
-// Pre-scaled copy of each expression image at its on-screen size (same factor on both axes), so every frame is a
-// plain copy instead of a high-quality resize of the original PNG. Very large results fall back to direct drawing.
 
   const avCache=new Map();
 
@@ -207,17 +197,15 @@
     avCache.set(im,n);
     return n
   }
-// Same normalized image rectangle for every expression avoids PNG dimension jitter.
 
   function drawAvatar(now,talking,blink){
- 
     const __c=curChar(),
       __single=!!(__c&&__c.mode==='single'),
       idx=__single?0:(blink?2:0)+(talking?1:0),
       im=exprImage(talking)||(__single?images.png0:images['png'+idx]||images['png'+(talking?1:0)]||images.png0),
       pose=avatarPose(now,talking),
       geo=avatarGeom();
- 
+
     g.save();
     {
       const __a=switchAlpha(now);
@@ -228,7 +216,7 @@
     g.translate(0,geo.bottom-pose.pv);
     g.imageSmoothingEnabled=true;
     g.imageSmoothingQuality=state.light?'medium':'high';
- 
+
     if(im){
       const ref=images.png0||im;
       if(im.width===ref.width&&im.height===ref.height){
@@ -245,7 +233,7 @@
       g.restore();
       return
     }
- 
+
     const s=state.scale/85;
     g.scale(s,s);
     g.translate(0,-243);
@@ -278,16 +266,12 @@
       g.stroke()
     }
     g.restore();
- 
+
     g.fillStyle=state.bg==='green'||state.bg==='blue'?'#111':'#6b7a6d';
     g.textAlign='center';
     g.font='18px sans-serif';
     g.fillText('動作確認用 / 4枚のPNGを登録してください',W/2,H-40)
-
   }
-// Particles. Behaviour per season follows the original 純喫茶オトノハ motions:
-// flutter = diagonal drift with flipping (spring), rise = soda bubbles wobbling more as they climb (summer),
-// leaf = pendulum fall (autumn leaves), roll = nuts rolling and hopping along the floor (autumn), snow = slow fall with wide sway (winter).
 
   const particles=Array.from({length:100},(_,i)=>({
     i,
@@ -319,14 +303,14 @@
     const m=70*H/720;
     p.dist=0;
     p.r=rnd(p.i+performance.now())*Math.PI*2;
- 
+
     if(p.beh==='roll'){
       p.dir=rnd(p.i*3.1+performance.now())<.5?1:-1;
       p.x=anywhere?Math.random()*W:(p.dir>0?-m:W+m);
       p.y=0;
       return
     }
- 
+
     p.bx=p.x=Math.random()*W;
     if(p.beh==='rise')p.y=anywhere?Math.random()*(H+2*m)-m:H+m;else p.y=anywhere?Math.random()*(H+2*m)-m:-m
   }
@@ -340,7 +324,7 @@
       u=H/720,
       m=70*u,
       TAU=Math.PI*2;
- 
+
     for(let i=0;i<N;i++){
       const p=particles[i],
         beh=behaviourOf(p,fx);
@@ -348,9 +332,9 @@
         p.beh=beh;
         respawn(p,true)
       }
-  
+
       const v=S.speed*(.38+p.depth*.62)*p.vel*u;
-  
+
       if(beh==='flutter'){
         p.y+=dt*v*.6;
         p.x+=dt*(v*.3+Math.sin(t*1.3*(.7+p.vel*.3)+p.phase)*16*u);
@@ -379,7 +363,7 @@
         p.x+=p.dir*dt*v*1.7;
         if(p.x<-m*1.5||p.x>W+m*1.5)respawn(p,false)
       }
-  
+
       if(beh!=='roll'){
         const out=beh==='rise'?p.y<-m:p.y>H+m;
         if(out||p.x<-m*2||p.x>W+m*2)respawn(p,false)
@@ -396,7 +380,6 @@
 }
 
   function effects(dt,now,layer='front'){
- 
     const fx=curEffect();
     if(fx==='none')return;
     const S=fxSet(),
@@ -405,35 +388,34 @@
       geo=avatarGeom(),
       faceR=Math.max(.6,Math.min(1.6,geo.h/612)),
       pics=isP(fx)?particleImages():null;
- 
+
     for(let i=0;i<N;i++){
-  
       const p=particles[i];
       if(!p.beh||(p.depth<.58?'back':'front')!==layer)continue;
       const beh=p.beh;
-  
+
       let size=p.size*(.5+p.depth*.9)*S.fxSize/100*(H>W?1.1:1),
         x=p.x,
         y=p.y,
         rot=p.r,
         flip=1;
-  
+
       if(beh==='roll'){
         const step=size*(4.4+rnd(p.i+.6)*2.2),
           hop=(p.dist/step+rnd(p.i+.7))%1;
         y=H*(.885+p.depth*.08)-size*.9-size*(.5+rnd(p.i+.8)*.7)*4*hop*(1-hop);
         rot=p.dir*p.dist/(size*.95)
       }
-  
+
       if(beh==='flutter')flip=Math.max(.14,Math.abs(Math.cos(t*2.2*(.6+p.depth*.4)+p.phase)));else if(beh==='leaf')flip=.45+.55*Math.abs(Math.cos(t*1.1+p.phase));
-  
+
       const faceMask=Math.exp(-(((x-geo.cx)/(185*faceR))**2+((y-geo.faceY)/(170*faceR))**2));
-  
+
       const op=S.fxOpacity/100,
-        alpha=isP(fx)?(op>=1?1:op*(.55+p.depth*.45)):op*(.35+p.depth*.65)*(layer==='front'?1-faceMask*.65:1); // 画像のプリセットは「濃さ」最大で不透明
-  
+        alpha=isP(fx)?(op>=1?1:op*(.55+p.depth*.45)):op*(.35+p.depth*.65)*(layer==='front'?1-faceMask*.65:1);
+
       let kind=fx==='spring'?(p.variant===2&&i%9===2?'blossom':'petal'):fx==='summer'?'bubble':fx==='autumn'?(beh==='roll'?'acorn':'leaf'):fx==='winter'?'snow':'image';
-  
+
       if(fx==='winter'&&i%3!==0){
         kind='mote';
         size*=.53
@@ -443,13 +425,13 @@
         size*=.55
       }
       if(kind==='acorn')size*=.95;
-  
+
       g.save();
       g.translate(x,y);
       g.rotate(rot+(beh==='flutter'?Math.sin(t/4.2+p.phase)*.22:0));
       g.globalAlpha=alpha;
       if(flip!==1)g.scale(flip,1);
-  
+
       if(kind==='image'){
         if(pics.length){
           const im=pics[p.i%pics.length],
@@ -458,13 +440,10 @@
         }
       }
   else drawElegantMotif(g,kind,size,p.variant===1?1:0);
-  
+
       g.restore();
- 
     }
-
   }
-
 
   let bgC=null,
     bgKey='',

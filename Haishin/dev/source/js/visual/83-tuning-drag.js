@@ -24,7 +24,6 @@
   setInterval(syncQuickTune,250);
   E('quickTune').addEventListener('toggle',syncQuickTune);
 
-  // ----- drag the avatar / a mascot on the stage -----
   let drag=null;
   function stagePoint(e){
     const r=canvas.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H),ox=(r.width-W*s)/2,oy=(r.height-H*s)/2;

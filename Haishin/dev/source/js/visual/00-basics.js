@@ -1,6 +1,5 @@
 /* 基本：状態の読み込み・保存・検証、画像の登録 */
 
-  // 上部の小さな録音欄の高さを --mini-h に入れる（固定表示の欄と重ならないように使う）
   {
     const mb=document.getElementById('miniBar'),
       upd=()=>document.documentElement.style.setProperty('--mini-h',(mb&&!mb.hidden?mb.offsetHeight:0)+'px');
@@ -10,7 +9,6 @@
     }
     upd()
   }
-
 
   const E=id=>document.getElementById(id),
     KEY_S=(typeof OTONOHA_NS==='string'&&OTONOHA_NS)?'haishin-visual-studio-v1':'otonoha-visual-studio-v1',
@@ -44,6 +42,7 @@
     speaker:'self',
     sceneBoost:6,
     restoreBgm:true,
+    sceneFont:'hachimaru',
     sinkId:'',
     aspect:'landscape',
     motionAmt:100,
@@ -110,7 +109,7 @@ fps:30,
     charImgs={},
     switchAt=-1e9,
     charUrls=[],
-    trimCache=new WeakMap(); 
+    trimCache=new WeakMap();
   try{
     const saved=JSON.parse(localStorage.getItem(KEY_S)||'null');
     if(saved&&typeof saved==='object')state={...defaults,...saved}
@@ -148,6 +147,7 @@ fps:30,
     out.scenes={};
     for(const k of ['standby','away','end'])out.scenes[k]=sceneClean(k,v.scenes&&typeof v.scenes==='object'?v.scenes[k]:null);
     if(typeof v.restoreBgm==='boolean')out.restoreBgm=v.restoreBgm;
+    if(typeof v.sceneFont==='string'&&/^[a-z]{1,16}$/.test(v.sceneFont))out.sceneFont=v.sceneFont;
     if(typeof v.sinkId==='string')out.sinkId=v.sinkId.slice(0,300);
     if(['landscape','portrait'].includes(v.aspect))out.aspect=v.aspect;
     for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake']){
@@ -179,7 +179,7 @@ fps:30,
         fs[e]=o
       }
       out.fxSeason=fs;
-      // v0.4.9: image presets (each has its own images and settings). The old single image set becomes preset 'img'.
+
       const MV=['flutter','leaf','rise','snow','roll'],mk=(x,id,name)=>{const o={id,name:String(name||'画像のプリセット').slice(0,30)};for(const k in R){const n=Number(x[k]);o[k]=Number.isFinite(n)?Math.max(R[k][0],Math.min(R[k][1],n)):out[k]}o.imageMotion=MV.includes(x.imageMotion)?x.imageMotion:'flutter';return o};
       out.fxPresets=[];
       if(Array.isArray(v.fxPresets)){const seenP=new Set();for(const x of v.fxPresets.slice(0,30)){if(!x||typeof x!=='object'||typeof x.id!=='string'||!/^[a-z0-9]{1,24}$/.test(x.id)||seenP.has(x.id))continue;seenP.add(x.id);out.fxPresets.push(mk(x,x.id,x.name))}}

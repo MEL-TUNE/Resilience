@@ -1,6 +1,5 @@
 /* 名義とキャラクター */
-/* ===================== 名義・キャラクター ===================== */
- 
+
   function cleanChar(c){
     const o={
       name:String(c.name||'キャラクター').slice(0,40),
@@ -22,41 +21,41 @@
     }
     return o
   }
- 
+
   function newCharId(){
     return 'c'+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36)
   }
- 
+
   function newProfileId(){
     return 'p'+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36)
   }
- 
+
   function charKey(cid,slot){
     return cid==='c1'&&/^[0-3]$/.test(String(slot))?'png'+slot:'ch-'+cid+'-'+slot
   }
- 
+
   function curChar(){
     return state.chars&&state.chars[state.charId]||null
   }
- 
+
   function curProfile(){
     return Array.isArray(state.profiles)?state.profiles.find(p=>p.id===state.profileId)||null:null
   }
- 
+
   function switchAlpha(now){
     return state.switchFx==='cut'?1:Math.max(0,Math.min(1,(now-switchAt)/250))
   }
- 
+
   function pickValues(){
     const o={};
     for(const k of CHAR_KEYS)o[k]=state[k];
     return o
   }
- 
+
   function profileSnap(){
     return {scenes:JSON.parse(JSON.stringify(state.scenes)),bg:state.bg}
   }
- 
+
   function normScenes(x){
     const out={};
     for(const k of ['standby','away','end'])out[k]=sceneClean(k,x&&typeof x==='object'?x[k]:null);
@@ -79,25 +78,22 @@
       imgY:num(x.imgY,-100,100,0)
     }
   }
- 
+
   function ensureProfiles(){
-  
     if(!state.chars||typeof state.chars!=='object'||Array.isArray(state.chars))state.chars={};
-  
+
     for(const[id,c]of Object.entries(state.chars))state.chars[id]=cleanChar(c);
-  
+
     if(!Array.isArray(state.profiles)||!state.profiles.length){
-   // 初回：今の4枚と設定を「コウサカチヅル」の最初のキャラクターに引き継ぐ
-   
       state.chars.c1=cleanChar({name:'キャラクター1',...pickValues()});
       const c2=newCharId();
       state.chars[c2]=cleanChar({name:'キャラクター1',...pickValues()});
-   
+
       state.profiles=[{id:'p1',name:'コウサカチヅル',chars:['c1'],cur:'c1',snap:profileSnap()},{id:'p2',name:'雪見おと',chars:[c2],cur:c2,snap:profileSnap()}];
       state.profileId='p1';
       state.charId='c1'
     }
-  
+
     const seen=new Set();
     for(const p of state.profiles){
       p.chars=p.chars.filter(c=>state.chars[c]&&!seen.has(c));
@@ -111,18 +107,18 @@
       if(!p.chars.includes(p.cur))p.cur=p.chars[0];
       if(!p.snap||typeof p.snap!=='object')p.snap=profileSnap()
     }
-  
+
     for(const id of Object.keys(state.chars))if(!seen.has(id))delete state.chars[id];
-  
+
     let p=curProfile();
     if(!p){
       p=state.profiles[0];
       state.profileId=p.id
     }
-  
+
     if(!p.chars.includes(state.charId))state.charId=p.cur
   }
- 
+
   function syncChar(){
     if(!Array.isArray(CHAR_KEYS))return;
     const c=curChar();
@@ -133,7 +129,7 @@
       if(c)p.cur=state.charId
     }
   }
- 
+
   async function loadChar(cid){
     for(const slot of charSlots(cid)){
       const key=charKey(cid,slot);
@@ -149,18 +145,18 @@
       }
     }
   }
- 
+
   async function loadAllChars(){
     for(const cid of Object.keys(state.chars||{}))await loadChar(cid)
   }
- 
+
   function applyCharImages(){
     for(let i=0;i<4;i++){
       const im=charImgs[charKey(state.charId,i)];
       if(im)images['png'+i]=im;else delete images['png'+i]
     }
   }
- 
+
   function activateChar(cid,quiet){
     if(!state.chars||!state.chars[cid])return;
     if(!quiet&&cid!==state.charId)syncChar();
@@ -174,7 +170,7 @@
     renderValues();
     save()
   }
- 
+
   function activateProfile(pid){
     const p=state.profiles.find(x=>x.id===pid);
     if(!p||pid===state.profileId)return;
@@ -191,7 +187,7 @@ for(const q of particles)q.beh='';
     renderMascotUI();
     toast('名義「'+p.name+'」に切り替えました')
   }
- 
+
   function charThumbUrl(cid){
     const b=charBlobs[charKey(cid,0)];
     if(!b)return '';
@@ -199,7 +195,7 @@ for(const q of particles)q.beh='';
     charUrls.push(u);
     return u
   }
- 
+
   function charButton(cid,small){
     const c=state.chars[cid],
       b=document.createElement('button');
@@ -223,7 +219,7 @@ for(const q of particles)q.beh='';
     };
     return b
   }
- 
+
   function renderCharUI(){
     if(!E('charList'))return;
     queueMicrotask(()=>{try{renderExprUI()}catch(_){}});
@@ -232,18 +228,18 @@ for(const q of particles)q.beh='';
     charUrls=[];
     const p=curProfile(),
       c=curChar();
-  
+
     for(const sel of [E('profileSel')].filter(Boolean)){
       sel.replaceChildren();
       for(const q of state.profiles)sel.add(new Option(q.name||'名義',q.id));
       sel.value=state.profileId
     }
-  
+
     if(document.activeElement!==E('profileName'))E('profileName').value=p?.name||'';
-  
+
     E('charList').replaceChildren(...p.chars.map(id=>charButton(id,false)));
     E('charQuick').replaceChildren(...p.chars.map(id=>charButton(id,true)));
-  
+
     if(!c)return;
     if(document.activeElement!==E('charName'))E('charName').value=c.name;
     E('charMode').value=c.mode;
@@ -252,7 +248,7 @@ for(const q of particles)q.beh='';
     E('charTrim').checked=c.trim!==false;
     E('charBg').value=c.bgMode;
     E('switchFx').value=state.switchFx==='cut'?'cut':'fade';
-  
+
     const single=c.mode==='single';
     for(let i=0;i<4;i++){
       const slot=E('pngFile'+i).closest('.png-slot');
@@ -273,7 +269,7 @@ for(const q of particles)q.beh='';
       }
       E('pngName'+i).textContent=b?(state.assetNames[key]||'登録済み'):'未登録'
     }
-  
+
     {
       const lab=E('pngFile0').closest('.png-slot');
       if(lab&&lab.firstChild&&lab.firstChild.nodeType===3)lab.firstChild.nodeValue=single?'立ち絵（1枚） ':'1. 目開き・口閉じ'
@@ -281,20 +277,20 @@ for(const q of particles)q.beh='';
     E('singleNote').hidden=!single;
     E('charTalkWrap').hidden=!single;
     E('studioBlink').disabled=single;
-  
+
     const bgKey=charKey(state.charId,'bg');
     E('charBgName').textContent=charBlobs[bgKey]?(state.assetNames[bgKey]||'登録済み'):'未登録';
     E('charBgRemove').hidden=!charBlobs[bgKey];
-  
+
     const mv=E('charMove');
     mv.replaceChildren(new Option('移さない',''));
     for(const q of state.profiles)if(q.id!==state.profileId)mv.add(new Option(q.name||'名義',q.id));
     mv.value='';
-  
+
     E('charDel').disabled=p.chars.length<2;
     E('profileDel').disabled=state.profiles.length<2
   }
- 
+
   async function storeCharImage(cid,slot,f){
     if(!/^image\/(png|webp|jpeg)$/.test(f.type))throw Error('PNG・WebP・JPEGの画像を選んでください');
     if(f.size>25*1024*1024)throw Error('画像は1枚25MB以下にしてください');
@@ -306,7 +302,7 @@ for(const q of particles)q.beh='';
     charImgs[key]=im;
     state.assetNames[key]=f.name||'画像'
   }
- 
+
   async function charUpload(e,slot){
     const f=e.target.files[0];
     if(!f)return;
@@ -323,7 +319,7 @@ for(const q of particles)q.beh='';
       e.target.value=''
     }
   }
- 
+
   E('charBgFile').onchange=async e=>{
     const f=e.target.files[0];
     if(!f)return;
@@ -340,7 +336,7 @@ for(const q of particles)q.beh='';
       e.target.value=''
     }
   };
- 
+
   E('charBgRemove').onclick=async()=>{
     const key=charKey(state.charId,'bg');
     try{
@@ -355,7 +351,7 @@ for(const q of particles)q.beh='';
     save();
     toast('専用の背景画像を外しました')
   };
- 
+
   function armed(btn,label,run){
     if(btn.dataset.armed!=='1'){
       btn.dataset.armed='1';
@@ -374,7 +370,7 @@ for(const q of particles)q.beh='';
     btn.textContent=btn.dataset.old;
     run()
   }
- 
+
   async function dropCharAssets(cid){
     for(const slot of charSlots(cid)){
       const key=charKey(cid,slot);
@@ -386,9 +382,9 @@ for(const q of particles)q.beh='';
       delete state.assetNames[key]
     }
   }
- 
+
   E('profileSel').onchange=e=>activateProfile(e.target.value);
- 
+
   E('profileName').oninput=e=>{
     const p=curProfile();
     if(p){
@@ -397,7 +393,7 @@ for(const q of particles)q.beh='';
       renderCharUI()
     }
   };
- 
+
   E('profileAdd').onclick=()=>{
     if(state.profiles.length>=20){
       toast('登録できる名義は20件までです');
@@ -412,7 +408,7 @@ for(const q of particles)q.beh='';
     E('profileName').focus();
     E('profileName').select()
   };
- 
+
   E('profileDel').onclick=e=>{
     if(state.profiles.length<2)return;
     const p=curProfile();
@@ -430,7 +426,7 @@ for(const q of particles)q.beh='';
       toast('名義を削除しました')
     })
   };
- 
+
   E('charAdd').onclick=()=>{
     const p=curProfile();
     if(p.chars.length>=60){
@@ -445,7 +441,7 @@ for(const q of particles)q.beh='';
     E('charName').focus();
     E('charName').select()
   };
- 
+
   E('charDup').onclick=async()=>{
     const p=curProfile(),
       src=state.charId;
@@ -474,7 +470,7 @@ for(const q of particles)q.beh='';
     activateChar(cid);
     toast('複製しました')
   };
- 
+
   E('charLeft').onclick=()=>{
     const p=curProfile(),
       i=p.chars.indexOf(state.charId);
@@ -484,7 +480,7 @@ for(const q of particles)q.beh='';
       renderCharUI()
     }
   };
- 
+
   E('charRight').onclick=()=>{
     const p=curProfile(),
       i=p.chars.indexOf(state.charId);
@@ -494,7 +490,7 @@ for(const q of particles)q.beh='';
       renderCharUI()
     }
   };
- 
+
   E('charDel').onclick=e=>{
     const p=curProfile();
     if(p.chars.length<2)return;
@@ -512,7 +508,7 @@ for(const q of particles)q.beh='';
       toast('キャラクターを削除しました')
     })
   };
- 
+
   E('charName').oninput=e=>{
     const c=curChar();
     if(c){
@@ -521,13 +517,13 @@ for(const q of particles)q.beh='';
       renderCharUI()
     }
   };
- 
+
   E('charMode').onchange=e=>{
     curChar().mode=e.target.value==='single'?'single':'four';
     save();
     renderCharUI()
   };
- 
+
   E('charTalk').onchange=e=>{
     curChar().talk=e.target.value;
     save()
@@ -540,19 +536,19 @@ for(const q of particles)q.beh='';
     curChar().breath=e.target.checked;
     save()
   };
- 
+
   E('charBg').onchange=e=>{
     const c=curChar();
     c.bgMode=e.target.value;
     if(c.bgMode==='own'&&!charBlobs[charKey(state.charId,'bg')])toast('専用の背景画像を下で登録すると表示されます',4000);
     save()
   };
- 
+
   E('switchFx').onchange=e=>{
     state.switchFx=e.target.value==='cut'?'cut':'fade';
     save()
   };
- 
+
   E('charMove').onchange=e=>{
     const to=state.profiles.find(q=>q.id===e.target.value),
       p=curProfile();
@@ -577,37 +573,33 @@ for(const q of particles)q.beh='';
     activateChar(p.chars[0],true);
     toast('「'+name+'」を「'+to.name+'」へ移しました')
   };
- 
+
   E('studioScale').addEventListener('input',()=>{
     E('scaleVal').textContent=Math.round(state.scale)+'%'
   });
   E('studioY').addEventListener('input',()=>{
     E('yVal').textContent=Math.round(state.y)+'%'
   });
- 
+
   function applyPadSize(){
     document.body.dataset.pad=['s','m','l'].includes(state.padSize)?state.padSize:'m';
     const s=E('padSize');
     if(s)s.value=document.body.dataset.pad
   }
- 
+
   E('padSize').onchange=e=>{
     state.padSize=e.target.value;
     applyPadSize();
     save()
   };
   applyPadSize();
- 
+
   ensureProfiles();
   renderCharUI();
- 
+
   window.__otonohaChars={get state(){
       return state
     },charKey,activateChar,activateProfile};
-
-
-  let quickSignature='';
-
 
 
   function setMode(mode){

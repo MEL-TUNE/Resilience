@@ -1,21 +1,19 @@
-/* ===================== 画面の切り替え（収録画面／音量・マイクの設定） ===================== */
+/* 画面の切り替え（収録画面／音量・マイクの設定） */
 
 function clearPageHash(){
- 
   if(location.hash!=='#settings')return;
- 
+
   try{
     history.replaceState(null,'',location.href.split('#')[0]);
     return
   }catch(_){}
- 
+
   try{
     history.replaceState(null,'','#');
     return
   }catch(_){}
- 
-  pageOverride='main';
 
+  pageOverride='main';
 }
 
 let pageOverride=null;

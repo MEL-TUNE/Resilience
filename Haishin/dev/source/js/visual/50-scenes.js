@@ -1,6 +1,5 @@
 /* マイクのミュート、準備中・離席中・配信終了の画面、配信用の出力先 */
 
-
   let scene='live',
     muteBefore=null,
     bgmBefore=null,
@@ -52,34 +51,30 @@
   }
 
   function enterScene(name){
- 
     if(!SCENE_LABEL[name]||name===scene)return;
- 
+
     if(scene==='live'){
       muteBefore=micMuted;
       bgmBefore=bgmPlaying?.trackId||null
     }
- 
+
     scene=name;
- 
+
     if(name==='live'){
-  
       setMute(!!muteBefore);
-  
+
       if(state.restoreBgm&&ready&&cfg){
         const cur=bgmPlaying?.trackId||null;
         if(bgmBefore&&cur!==bgmBefore)switchBgm(bgmById(bgmBefore));else if(!bgmBefore&&cur&&cur===sceneBgmId)fadeStop(bgmPlaying)
       }
-  
+
       sceneBgmId=null;
       muteBefore=null;
       bgmBefore=null;
- 
     }else{
-  
       setMute(true);
       const c=state.scenes[name];
-  
+
       if(ready&&cfg){
         if(c.bgm==='stop'){
           if(bgmPlaying)fadeStop(bgmPlaying);
@@ -92,18 +87,15 @@
           }else toast('指定のBGMが見つかりません。設定を選び直してください',4000)
         }
       }
- 
     }
- 
+
     window.__sceneBgmBoost=name==='live'?0:(state.sceneBoost||0);
     updateGains();
     renderScene();
     toast(SCENE_LABEL[name]+'に切り替えました');
-
   }
 
   document.querySelectorAll('[data-scene]').forEach(b=>b.onclick=()=>enterScene(b.dataset.scene));
-// Scene settings form
 
   const SCENE_FIELDS=['bgm','effect','avatar','text','imgMotion','imgAmp','imgSize','imgX','imgY'];
 
@@ -161,18 +153,64 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
   };
 
   setInterval(renderSceneBgmOptions,1500);
-// Scene caption: a soft frosted panel low on the stage; only drawn when text is set.
 
+  const SCENE_FONTS={
+    hachimaru:{name:'丸文字（Hachi Maru Pop）',fam:'Hachi Maru Pop',weight:400,q:'Hachi+Maru+Pop',fb:'round'},
+    decol:{name:'昭和レトロ（Kaisei Decol）',fam:'Kaisei Decol',weight:500,q:'Kaisei+Decol:wght@500',fb:'serif'},
+    dot:{name:'ドット文字（DotGothic16）',fam:'DotGothic16',weight:400,q:'DotGothic16',fb:'round'},
+    kiwi:{name:'やわらか丸（Kiwi Maru）',fam:'Kiwi Maru',weight:500,q:'Kiwi+Maru:wght@500',fb:'round'},
+    system:{name:'端末の明朝体（読み込みなし）',fam:'',weight:500,q:'',fb:'serif'}
+  };
+  const FONT_FALLBACK={round:'"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif',serif:'"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif'};
+  const fontSheets={},fontLoads=new Set();
+  function sceneFont(){return SCENE_FONTS[state.sceneFont]||SCENE_FONTS.hachimaru}
+  function sceneFontCss(size,text){
+    const f=sceneFont(),css=`${f.weight} ${size}px ${f.fam?`"${f.fam}",`:''}${FONT_FALLBACK[f.fb]}`;
+    if(!f.q)return css;
+    let sheet=fontSheets[f.q];
+    if(!sheet){
+      sheet=fontSheets[f.q]={ok:false};
+      const l=document.createElement('link');
+      l.rel='stylesheet';
+      l.href='https://fonts.googleapis.com/css2?family='+f.q+'&display=swap';
+      l.onload=()=>{sheet.ok=true;renderSceneFontNote()};
+      l.onerror=()=>{sheet.failed=true;renderSceneFontNote()};
+      document.head.append(l)
+    }
+    const key=f.fam+'\n'+text;
+    if(sheet.ok&&document.fonts&&!fontLoads.has(key)){
+      fontLoads.add(key);
+      document.fonts.load(css,text).catch(()=>{})
+    }
+    return css
+  }
+  function renderSceneFontNote(){
+    const f=sceneFont(),s=fontSheets[f.q];
+    E('sceneFontNote').textContent=!f.q?'':s?.failed?'フォントを読み込めませんでした（インターネットに接続していないときは端末の文字で表示します）':'Google Fontsから読み込みます。インターネットに接続していないときは端末の文字で表示します。'
+  }
+  {
+    const sel=E('sceneFont');
+    sel.replaceChildren(...Object.entries(SCENE_FONTS).map(([k,f])=>new Option(f.name,k)));
+    sel.value=state.sceneFont in SCENE_FONTS?state.sceneFont:'hachimaru';
+    sel.onchange=e=>{state.sceneFont=e.target.value;save();renderSceneFontNote()};
+    renderSceneFontNote()
+  }
+  function textWidth(s){
+    const m=g.measureText(s);
+    return Math.max(m.width,(m.actualBoundingBoxLeft||0)+(m.actualBoundingBoxRight||0))
+  }
   function sceneCaption(){
     const text=(state.scenes[scene]?.text||'').trim();
     if(!text)return;
     g.save();
-    g.font='500 34px "Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif';
-    const lines=[];
+    g.font=sceneFontCss(36,text);
+    g.textAlign='left';
+    g.textBaseline='middle';
+    const maxW=Math.min(960,W-180),lines=[];
     for(const para of text.split('\n')){
       let line='';
       for(const c of [...para]){
-        if(g.measureText(line+c).width>Math.min(960,W-180)){
+        if(line&&textWidth(line+c)>maxW){
           lines.push(line);
           line=c
         }else line+=c
@@ -180,9 +218,10 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
       lines.push(line)
     }
     const vis=lines.slice(0,4),
-      lh=50,
+      widths=vis.map(textWidth),
+      lh=54,
       h=vis.length*lh+44,
-      w=Math.min(W-80,Math.max(...vis.map(l=>g.measureText(l).width))+120),
+      w=Math.min(W-80,Math.max(...widths)+120),
       x=(W-w)/2,
       y=sceneAvatar()||images['scene-'+scene]?H-80-h:(H-h)/2;
     g.fillStyle='rgba(22,34,29,.62)';
@@ -195,12 +234,9 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     g.roundRect(x+6,y+6,w-12,h-12,13);
     g.stroke();
     g.fillStyle='#fbf5e9';
-    g.textAlign='center';
-    g.textBaseline='middle';
-    vis.forEach((l,i)=>g.fillText(l,W/2,y+22+lh/2+i*lh));
+    vis.forEach((l,i)=>{const lw=Math.min(widths[i],w-60);g.fillText(l,W/2-lw/2,y+22+lh/2+i*lh,w-60)});
     g.restore()
   }
-// Broadcast output: a second copy of limOut sent to a chosen audio device (e.g. a virtual cable read by the streaming software).
 
   let sinkAudio=null,
     sinkDest=null;

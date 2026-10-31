@@ -1,4 +1,4 @@
-/* ===================== テイク一覧・書き出し ===================== */
+/* テイク一覧・書き出し */
 
 const TRACK_INFO={mix:{label:'ミックス',ch:2},voice:{label:'声だけ',ch:1},prog:{label:'BGM＋効果音',ch:2}};
 
@@ -9,34 +9,32 @@ async function loadTakes(){
 }
 
 async function renderTakes(){
- 
   const list=await loadTakes(),
     box=$('#takes');
- 
+
   await coverUrl('default');
   for(const pr of cfg.programs){
     const k=activeProgCoverKey(pr.id);
     if(k)await coverUrl(k)
   }
   for(const t of list)if(t.cover)await coverUrl(t.id);
- 
+
   const openState=new Map([...box.querySelectorAll('details[data-take]')].map(d=>[d.dataset.take,d.open]));
- 
+
   const players=new Map([...box.querySelectorAll('audio[data-take]')].map(a=>[a.dataset.take,a]));
- 
+
   if(!list.length){
     box.innerHTML='<div class="empty">まだ録音はありません。<br>「● 録音開始」を押すと、ここにテイクが並びます。</div>';
     return
   }
- 
+
   box.innerHTML=list.map(t=>{
-  
     const live=rec.take?.id===t.id,
       dur=fmtTime((live?rec.frames:t.frames)/t.sampleRate),
       broken=t.status==='recovered'||(t.status==='recording'&&!live);
-  
+
     const mk=t.markers||[];
-  
+
     return `<article class="take ${live?'live':''}" data-id="${esc(t.id)}">
    <div class="take-top"><button class="take-cover ${t.cover?'own':(t.programId&&coverUrls.get(activeProgCoverKey(t.programId)))||coverUrls.get('default')?'inherit':''}" data-take-cover="${esc(t.id)}" title="このテイクの動画用画像（押して変更）" style="${coverStyle(t)}">${t.cover||(t.programId&&coverUrls.get(activeProgCoverKey(t.programId)))||coverUrls.get('default')?'':'画像'}</button><input class="take-name" data-rename="${esc(t.id)}" value="${esc(t.name)}" aria-label="テイク名" maxlength="60"><button class="btn danger" data-del="${esc(t.id)}" ${live||busyTakes.has(t.id)?'disabled':''}>削除</button></div>
    <div class="take-meta">${esc(stamp(new Date(t.created)))} · ${live?'録音中':dur} · ${t.sampleRate/1000}kHz · ${t.tracks.map(k=>TRACK_INFO[k].label).join('／')}${broken?' · <span class="warn">途中で閉じられたため、保存済みの部分まで復旧</span>':''}${t.status==='partial'?` · <span class="warn">約${t.missingSec||'?'}秒分を保存できませんでした</span>`:''}</div>
@@ -46,14 +44,13 @@ async function renderTakes(){
    <details class="markers" data-take="${esc(t.id)}" ${live||openState.get(t.id)?'open':''}><summary>BGM操作の記録（${mk.length}）</summary><ol ${live?'id="liveMarkers"':''}>${markerList(mk)}</ol>${!live&&mk.length?`<button class="btn" style="margin-top:5px" data-copy="${esc(t.id)}">記録をコピー</button>`:''}</details>
   </article>`
   }).join('');
- 
+
   for(const [tid,audio] of players){
     const slot=box.querySelector(`[data-player="${CSS.escape(tid)}"]`);
     if(slot){
       slot.replaceChildren(audio)
     }
   }
-
 }
 
 async function trackKeys(t,track){
@@ -66,7 +63,7 @@ function wavHeader(ch,rate,dataBytes){
     w=(o,s)=>{
     for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))
   };
- 
+
   w(0,'RIFF');
   v.setUint32(4,36+dataBytes,true);
   w(8,'WAVE');
@@ -122,10 +119,9 @@ const scaleI16=(a,g)=>{
 };
 
 async function buildWav(t,track,progress){
- 
   const ch=TRACK_INFO[track].ch,
     keys=await trackKeys(t,track);
- 
+
   if(!cfg.rec.normalize||!progress){
     const blobs=[];
     let bytes=0;
@@ -138,21 +134,20 @@ async function buildWav(t,track,progress){
     }
     return new Blob([wavHeader(ch,t.sampleRate,bytes),...blobs],{type:'audio/wav'})
   }
- 
+
   const g=await normGain(t,track,p=>progress('音量を解析中 '+Math.round(p*100)+'%'));
   const parts=[];
   let bytes=0,
     done=0;
- 
+
   for await(const a of readChunks(t,track)){
     const s=scaleI16(a,g);
     parts.push(new Blob([s]));
     bytes+=s.byteLength;
     progress('WAVを作成中 '+Math.round(++done/keys.length*100)+'%')
   }
- 
-  return new Blob([wavHeader(ch,t.sampleRate,bytes),...parts],{type:'audio/wav'});
 
+  return new Blob([wavHeader(ch,t.sampleRate,bytes),...parts],{type:'audio/wav'});
 }
 
 function loadScript(src){
@@ -179,29 +174,27 @@ async function loadLame(){
 }
 
 async function buildMp3(t,track,progress){
- 
   progress('MP3変換の準備中…');
- 
+
   try{
     await loadLame()
   }catch(e){
     throw Object.assign(Error('MP3変換用の部品を読み込めませんでした。インターネット接続をご確認ください'),{user:true})
   }
- 
+
   const ch=TRACK_INFO[track].ch,
     keys=await trackKeys(t,track),
     g=await normGain(t,track,p=>progress('音量を解析中 '+Math.round(p*100)+'%'));
- 
+
   const enc=new lamejs.Mp3Encoder(ch,t.sampleRate,+cfg.rec.mp3Rate),
     out=[];
   let done=0;
   const BLOCK=1152*20;
- 
+
   for await(const raw of readChunks(t,track)){
-  
     const a=scaleI16(raw,g),
       n=a.length/ch;
-  
+
     if(ch===2){
       const L=new Int16Array(n),
         R=new Int16Array(n);
@@ -220,15 +213,13 @@ async function buildMp3(t,track,progress){
         if(m.length)out.push(new Uint8Array(m))
       }
     }
-  
+
     progress('MP3に変換中 '+Math.round(++done/keys.length*100)+'%');
     await new Promise(r=>setTimeout(r,0));
- 
   }
- 
+
   const end=enc.flush();
   if(end.length)out.push(new Uint8Array(end));
- 
-  return new Blob(out,{type:'audio/mpeg'});
 
+  return new Blob(out,{type:'audio/mpeg'});
 }

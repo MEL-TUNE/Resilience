@@ -1,4 +1,4 @@
-/* ===================== 番組プリセット ===================== */
+/* 番組プリセット */
 
 const curProgram=()=>cfg.currentProgram>=0?cfg.programs?.[cfg.currentProgram]:null;
 
@@ -15,13 +15,12 @@ function progBgm(){
 }
 
 function renderPrograms(){
- 
   const busy=rec.state!=='idle';
- 
+
   $('#progEdit').disabled=isFree();
- 
+
   $('#progChips').innerHTML=`<button class="prog-chip free ${isFree()?'active':''}" role="tab" aria-selected="${isFree()}" data-prog="-1" title="番組を使わずに録る（初期BGM・番組の画像なし）" ${busy&&!isFree()?'disabled':''}>フリー</button>`+cfg.programs.map((pr,i)=>`<button${progColorStyle(pr.color)} class="prog-chip ${progColorKey(pr.color)?'pc':''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('');
- 
+
   {
     const act=$('#progChips .prog-chip.active');
     if(act){
@@ -31,15 +30,14 @@ function renderPrograms(){
       if(l<c.scrollLeft||rgt>c.scrollLeft+c.clientWidth)c.scrollLeft=Math.max(0,l-8)
     }
   }
- 
+
   const pb=progBgm(),
     box=$('#progBgm');
- 
+
   box.innerHTML=pb?`<p class="prog-bgm-label">「${esc(curProgram().name)}」の初期BGM</p><div class="bgm-card ${bgmPlaying?.trackId===pb.id||bgmLoadingId===pb.id?'active':''}"><div class="bgm-row" style="grid-template-columns:minmax(0,1fr)"><button class="bgm-play" data-play-bgm="${esc(pb.id)}"><span class="bgm-icon">${bgmPlaying?.trackId===pb.id?'■':bgmLoadingId===pb.id?'…':'▶'}</span><span class="bgm-name">${esc(pb.name)}</span></button></div></div>`
   :isFree()?`<div class="empty">フリー収録中です。初期BGMと番組の画像は使いません。BGMを流すときは下の一覧から選べます。</div>`:`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。番組ボタンを長押し（パソコンでは右クリック）すると選べます。</div>`;
- 
-  renderBgmNow();
 
+  renderBgmNow();
 }
 
 $('#progChips').onclick=e=>{
@@ -51,13 +49,12 @@ $('#progChips').onclick=e=>{
   preloadProgBgm();
   toast(isFree()?'フリー収録に切り替えました（初期BGM・番組の画像なし）':'番組を「'+curProgram().name+'」に切り替えました')
 };
-// 番組ボタンの長押し・右クリックで、その番組の設定を開く（効果音ボタンと同じ操作）
 
 {
   const box=$('#progChips');
   let lp=null,
     skip=false;
- 
+
   const editProg=c=>{
     const i=+c.dataset.prog;
     if(i<0)return;
@@ -70,14 +67,14 @@ $('#progChips').onclick=e=>{
     }
     $('#progEdit').onclick()
   };
- 
+
   box.addEventListener('contextmenu',e=>{
     const c=e.target.closest('[data-prog]');
     if(!c)return;
     e.preventDefault();
     editProg(c)
   });
- 
+
   box.addEventListener('pointerdown',e=>{
     const c=e.target.closest('[data-prog]');
     if(!c||e.pointerType==='mouse'||c.dataset.prog==='-1')return;
@@ -87,9 +84,9 @@ $('#progChips').onclick=e=>{
       editProg(c)
     },550)
   });
- 
+
   for(const ev of ['pointerup','pointercancel','pointerleave'])box.addEventListener(ev,()=>clearTimeout(lp));
- 
+
   box.addEventListener('click',e=>{
     if(skip){
       skip=false;
@@ -107,26 +104,24 @@ $('#progBgm').onclick=e=>{
 
 $('#progEdit').onclick=async()=>{
   if(isFree())return;
- 
+
   const pr=curProgram();
   $('#progName').value=pr.name;
   $('#progAuto').checked=!!pr.autoBgm;
- 
+
   for(const rd of document.querySelectorAll('input[name=progColor]'))rd.checked=rd.value===progColorKey(pr.color);
- 
+
   const list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
- 
+
   $('#progBgmSel').innerHTML='<option value="">なし</option>'+list.map(b=>`<option value="${esc(b.id)}">${esc(cfg.bgmTabs[b.tabIndex]+'｜'+b.name)}</option>`).join('');
- 
+
   $('#progBgmSel').value=list.some(b=>b.id===pr.bgmId)?pr.bgmId:'';
- 
+
   pcSel=-1;
   await renderProgCover();
   updateProgMoveBtns();
   openModal('progModal');
-
 };
-// 番組ごとの動画用サムネイル：7枠（保存名 cover:prog-<番組ID>-<0〜6>）。coverIdx が使う枠（-1は共通画像）
 
 const PC_SLOTS=8;
 let pcSel=-1,
@@ -141,45 +136,40 @@ function activeProgCoverKey(pid){
 }
 
 async function migrateProgCovers(){
- // 第10〜13版の「1番組1枚」を1枠目へ移す
- 
   for(const pr of cfg.programs){
     const old=await idbGet('assets','cover:prog-'+pr.id);
     if(!old)continue;
-  
+
     if(!await idbGet('assets','cover:'+progCoverKey(pr.id,0)))await idbPut('assets','cover:'+progCoverKey(pr.id,0),old);
-  
+
     await idbDel('assets','cover:prog-'+pr.id);
     if(!(pr.coverIdx>=0))pr.coverIdx=0
   }
- 
-  persist();
 
+  persist();
 }
 
 async function renderProgCover(){
- 
   const pr=curProgram(),
     box=$('#progCovers');
   const cells=[];
- 
+
   for(let n=0;n<PC_SLOTS;n++){
     const url=await coverUrl(progCoverKey(pr.id,n));
     cells.push(`<button type="button" class="pc-slot ${url?'set':''} ${pr.coverIdx===n&&url?'use':''}" data-pc="${n}" ${url?`style="background-image:url('${url}')"`:''} aria-label="${n+1}枚目${url?(pr.coverIdx===n?'（使用中）':''):'（空き・押して登録）'}"><span class="pc-n">${n+1}</span>${url?'':'＋'}</button>`)
   }
- 
+
   box.innerHTML=cells.join('');
- 
+
   const hasSel=pcSel>=0&&!!coverUrls.get(progCoverKey(pr.id,pcSel));
- 
+
   $('#pcReplace').disabled=!hasSel;
   $('#pcRemove').disabled=!hasSel;
   $('#pcUseDefault').disabled=!(pr.coverIdx>=0);
- 
+
   box.querySelectorAll('.pc-slot').forEach(b=>{
     if(+b.dataset.pc===pcSel)b.style.outline='2px dashed '+look.decor
   });
-
 }
 
 $('#progCovers').onclick=async e=>{
@@ -187,13 +177,13 @@ $('#progCovers').onclick=async e=>{
   if(!b)return;
   const n=+b.dataset.pc,
     pr=curProgram();
- 
+
   if(!coverUrls.get(progCoverKey(pr.id,n))){
     pcTarget=n;
     $('#progCoverFile').click();
     return
   }
- 
+
   pcSel=n;
   pr.coverIdx=n;
   persist();
@@ -238,7 +228,7 @@ $('#progCoverFile').onchange=async e=>{
   const pr=curProgram(),
     n=pcTarget;
   pcTarget=-1;
- 
+
   await setCover(progCoverKey(pr.id,n),f);
   pr.coverIdx=n;
   pcSel=n;
