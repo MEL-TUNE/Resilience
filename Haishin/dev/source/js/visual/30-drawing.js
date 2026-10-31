@@ -439,6 +439,11 @@
           g.drawImage(im,-im.width*fit/2,-im.height*fit/2,im.width*fit,im.height*fit)
         }
       }
+  else if(fx==='autumn'&&(kind==='leaf'||kind==='acorn')&&autumnPics[kind==='leaf'?'leaf':'nut'][autumnIdx(p,kind)]){
+        const im=autumnPics[kind==='leaf'?'leaf':'nut'][autumnIdx(p,kind)],
+          fit=size*(kind==='leaf'?2.7:2.3)/Math.max(im.width,im.height);
+        g.drawImage(im,-im.width*fit/2,-im.height*fit/2,im.width*fit,im.height*fit)
+      }
   else drawElegantMotif(g,kind,size,p.variant===1?1:0);
 
       g.restore();

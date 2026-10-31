@@ -44,7 +44,8 @@
     restoreBgm:true,
     sceneFont:'hachimaru',
     mouthMode:'hold',
-    flapMs:120,
+    flapMin:80,
+    flapMax:220,
     sinkId:'',
     aspect:'landscape',
     motionAmt:100,
@@ -81,7 +82,8 @@ fps:30,
     outContext=null,
     mouth=false,
     talking=false,
-    talkStart=0,
+    flapOpen=false,
+    flapNext=0,
     lastTalk=0,
     testUntil=0,
     nextBlink=performance.now()+3200,
@@ -153,7 +155,8 @@ fps:30,
     if(typeof v.restoreBgm==='boolean')out.restoreBgm=v.restoreBgm;
     if(typeof v.sceneFont==='string'&&/^[a-z]{1,16}$/.test(v.sceneFont))out.sceneFont=v.sceneFont;
     if(['hold','flap'].includes(v.mouthMode))out.mouthMode=v.mouthMode;
-    if(Number.isFinite(Number(v.flapMs)))out.flapMs=Math.max(60,Math.min(400,Math.round(Number(v.flapMs))));
+    for(const [k,lo,hi] of [['flapMin',40,400],['flapMax',40,600]])if(Number.isFinite(Number(v[k])))out[k]=Math.max(lo,Math.min(hi,Math.round(Number(v[k]))));
+    if(out.flapMax<out.flapMin)out.flapMax=out.flapMin;
     if(typeof v.sinkId==='string')out.sinkId=v.sinkId.slice(0,300);
     if(['landscape','portrait'].includes(v.aspect))out.aspect=v.aspect;
     for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake']){
@@ -360,7 +363,8 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     studioThreshold:'threshold',
     studioHold:'hold',
     studioMouthMode:'mouthMode',
-    studioFlap:'flapMs',
+    studioFlapMin:'flapMin',
+    studioFlapMax:'flapMax',
     studioBlink:'blink',
     studioScale:'scale',
     studioX:'x',
@@ -393,7 +397,7 @@ for(const [id,k]of Object.entries(bindings)){
     }
     E('thresholdValue').textContent=state.threshold+' dB';
     E('holdValue').textContent=state.hold+' ms';
-    E('flapValue').textContent=state.flapMs+' ms';
+    renderFlapValues();
     {
       const sv=E('scaleVal');
       if(sv)sv.textContent=Math.round(state.scale)+'%';
@@ -415,10 +419,17 @@ for(const [id,k]of Object.entries(bindings)){
       if(k==='script')paragraph=0;
       E('thresholdValue').textContent=state.threshold+' dB';
       E('holdValue').textContent=state.hold+' ms';
-      E('flapValue').textContent=state.flapMs+' ms';
+      if(k==='flapMin'&&state.flapMax<state.flapMin){state.flapMax=state.flapMin;E('studioFlapMax').value=state.flapMax}
+      if(k==='flapMax'&&state.flapMin>state.flapMax){state.flapMin=state.flapMax;E('studioFlapMin').value=state.flapMin}
+      renderFlapValues();
       if(k==='script')renderParagraph();
       save()
     })
+  }
+
+  function renderFlapValues(){
+    E('flapMinValue').textContent=state.flapMin+' ms';
+    E('flapMaxValue').textContent=state.flapMax+' ms'
   }
 
   function paragraphs(){
