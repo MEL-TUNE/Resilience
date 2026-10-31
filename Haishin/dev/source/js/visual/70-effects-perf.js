@@ -1,9 +1,8 @@
 /* 季節の演出・画像のプリセット、なめらかさ（fps）・軽量モード、設定画面のプレビュー */
 
- 
   const FXK=['count','speed','fxSize','fxOpacity','imageMotion'],
     FXI={count:'studioCount',speed:'studioSpeed',fxSize:'studioFxSize',fxOpacity:'studioFxOpacity',imageMotion:'studioImageMotion'};
- 
+
   function isP(e){return typeof e==='string'&&e.startsWith('p:')}
   function presetOf(e){if(!isP(e))return null;const id=e.slice(2);return (state.fxPresets||[]).find(p=>p.id===id)||null}
   function pimg(pid,n){return pid==='img'?PARTICLE_IDS[n]:'fxp-'+pid+'-'+n}
@@ -114,30 +113,30 @@
       save()
     })
   }
- 
+
   E('studioEffect').addEventListener('input',e=>{
     state.effect=e.target.value;
     renderEffectOptions();
     seasonLoad();
     save()
   });
- 
+
   function renderMotionOut(){
     document.querySelectorAll('output[data-out]').forEach(o=>{
       const el=E(o.dataset.out);
       if(el)o.textContent=el.value+'%'
     })
   }
- 
+
   document.querySelectorAll('output[data-out]').forEach(o=>{
     const el=E(o.dataset.out);
     if(el)el.addEventListener('input',renderMotionOut)
   });
- 
+
   function applyPerfLabel(){
     E('studioSizeLabel').textContent=`${W} × ${H} / ${state.fps||30}fps`+(state.light?' / 軽量モード':'')
   }
- 
+
   function applyPerf(){
     document.body.toggleAttribute('data-light',!!state.light);
     window.__otoLight=!!state.light;
@@ -147,7 +146,7 @@
     const w=tickWorker;
     if(w&&document.hidden)w.postMessage(Math.max(33,Math.round(1000/(state.fps||30))))
   }
- 
+
   E('studioFps').onchange=e=>{
     const v=Number(e.target.value);
     state.fps=[10,15,30].includes(v)?v:30;
@@ -155,13 +154,13 @@
     save();
     if(mediaRecorder&&mediaRecorder.state==='recording')toast('収録中の動画には、次の収録から反映されます',4000)
   };
- 
+
   E('studioLight').onchange=e=>{
     state.light=e.target.checked;
     applyPerf();
     save()
   };
- 
+
   let pvCtx=null,
     pvAt=0;
   function previewMirror(now){
@@ -180,12 +179,12 @@
     pvCtx.clearRect(0,0,pw,ph);
     pvCtx.drawImage(canvas,0,0,pw,ph)
   }
- 
+
   E('gotoLook').onclick=()=>{
     E('navSettings').click();
     setTimeout(()=>E('studioSettings')?.scrollIntoView({block:'start'}),60)
   };
- 
+
   if(!state.fxSeason||typeof state.fxSeason!=='object'){
     state.fxSeason={};
     for(const e of ['spring','summer','autumn','winter']){

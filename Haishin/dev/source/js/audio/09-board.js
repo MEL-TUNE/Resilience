@@ -1,28 +1,27 @@
-/* ===================== 画面描画（ポン出し） ===================== */
+/* 画面描画（ポン出し） */
 
 function renderVolumes(){
- 
   $('#masterVolume').value=cfg.master;
   $('#masterVal').textContent=cfg.master+'%';
- 
+
   for(const [name,key] of [['se','seDb'],['bgm','bgmDb'],['vo','voDb'],['env','envDb']]){
     $('#'+name+'Volume').value=cfg[key];
     $('#'+name+'Val').textContent=fmtDb(cfg[key])
   }
- 
+
   $('#bgmLevel').checked=cfg.rec.bgmLevel!==false;
- 
+
   const r=cfg.rec;
   $('#micVolume').value=r.micVolume;
   $('#micVal').textContent=r.micVolume+'%';
- 
+
   $('#duckDepth').value=r.duckDepth;
   $('#duckDepthVal').textContent='-'+r.duckDepth+'dB';
   $('#duckThresh').value=r.duckThresh;
   $('#duckThreshVal').textContent=r.duckThresh+'dB';
- 
+
   for(const [sel,key] of [['#optEc','ec'],['#optNs','ns'],['#optAgc','agc'],['#optMon','monitor'],['#optLimiter','limiter'],['#duckOn','duck'],['#keepVoice','keepVoice'],['#keepProg','keepProg'],['#optNormalize','normalize']])$(sel).checked=!!r[key];
- 
+
   $('#mp3Rate').value=String(r.mp3Rate);
   $('#previewFull').checked=r.previewFull!==false;
   $('#monitorMode').value=r.monitorMode||'auto';
@@ -35,10 +34,8 @@ function renderVolumes(){
   if(typeof renderBgmLow==='function'&&$('#bgmLowBtn'))renderBgmLow();
   $('#playMode').value=cfg.playMode;
   renderDuck();
-
 }
 
-// 空き枠は「使っている最後の行」＋1行だけ表示する（最後の行が埋まると1行増える）。列の数は画面幅で決まる。
 function gridCols(el){
   if(!el||!el.isConnected)return 0;
   const tpl=getComputedStyle(el).gridTemplateColumns;
@@ -59,37 +56,34 @@ if(window.ResizeObserver)new ResizeObserver(()=>{
 
 function render(){
   if(cfg?.programs&&document.getElementById('progChips'))queueMicrotask(renderPrograms);
- 
+
   $('#emojiTabs').innerHTML=cfg.emojiTabs.map((name,i)=>`<button class="chip ${i===emojiTab?'active':''}" data-emoji-tab="${i}">${esc(name)}</button>`).join('');
- 
+
   $('#textTabs').innerHTML=cfg.textTabs.map((name,i)=>`<button class="chip ${i===textTab?'active':''}" data-text-tab="${i}">${esc(name)}</button>`).join('');
- 
+
   for(const type of ['emoji','text','env']){
-  
     const list=trimSlots(type,cfg.sounds.filter(s=>s.type===type&&s.tabIndex===(type==='text'?textTab:emojiTab)).sort((a,b)=>a.order-b.order));
-  
+
     $('#'+type+'Grid').innerHTML=list.map(s=>`<button class="${type==='env'?'text-pad env-pad':type+'-pad'} ${s.assetId?'loaded':''} ${[...active].some(a=>a.soundId===s.id)?'playing':''}" data-sound="${esc(s.id)}" title="${esc(s.assetId?s.fileName+' · 長押しで編集':'空き枠 · 押して設定')}" aria-label="${esc(s.assetId?s.label||'効果音':'空き枠、押して設定')}">${s.assetId?esc(s.label||'♪'):''}${s.assetId&&s.shortcut?`<span class="shortcut">${esc(s.shortcut)}</span>`:''}</button>`).join('');
- 
   }
- 
+
   {
     const list=trimSlots('voice',cfg.sounds.filter(s=>s.type==='voice').sort((a,b)=>a.order-b.order));
-  
+
     $('#voiceGrid').innerHTML=list.map(s=>{
       const loaded=!!s.assetId,
         img=s.imageId?imgUrl(s.imageId):null;
       return `<button class="voice-pad ${loaded||s.imageId?'loaded':''} ${[...active].some(a=>a.soundId===s.id)?'playing':''}" data-sound="${esc(s.id)}" ${img?`style="background-image:url('${img}')"`:''} title="${esc(loaded?(s.label||s.fileName)+' · 長押しで編集':'空き枠 · 押して設定')}" aria-label="${esc(loaded?(s.label||'ボイス'):'空き枠、押して設定')}">${!img&&(loaded||s.label)?`<span class="vp-noimg">${esc(s.label||'♪')}</span>`:''}${img&&s.label?`<span class="vp-name">${esc(s.label)}</span>`:''}${loaded&&s.shortcut?`<span class="shortcut">${esc(s.shortcut)}</span>`:''}</button>`
     }).join('');
   }
- 
+
   $('#bgmTabs').innerHTML=cfg.bgmTabs.map((name,i)=>`<button class="chip ${i===bgmTab?'active':''}" data-bgm-tab="${i}">${esc(name)}</button>`).join('');
- 
+
   $('#bgmList').innerHTML=cfg.bgms.filter(b=>b.tabIndex===bgmTab).sort((a,b)=>a.slotIndex-b.slotIndex).map(b=>{
     const on=bgmPlaying?.trackId===b.id,
       load=bgmLoadingId===b.id;
     return `<button class="bgm-tile ${b.assetId?'':'unset'} ${on||load?'active':''}" data-play-bgm="${esc(b.id)}" title="${esc(b.assetId?(b.fileName||b.name)+' · 長押し・右クリックで編集':'空き枠 · 押して登録')}" aria-label="${esc(b.assetId?b.name:'空きBGM枠、押して登録')}"><span class="bt-ic">${b.assetId?(on?'■':load?'…':'▶'):'＋'}</span><span class="bt-name">${b.assetId?esc(b.name):''}</span></button>`
   }).join('');
-
 }
 
 function save(){
@@ -167,21 +161,19 @@ function openBgm(b){
   $('#bgmMoveNext').disabled=b.slotIndex===BGM_SLOTS-1;
   openModal('bgmModal')
 }
-// コピー：使える方法から順に試し、どれもだめなら画面に出して手で選べるようにする
 
 async function copyText(text){
- 
   if(!text){
     toast('コピーする記録がありません');
     return
   }
- 
+
   try{
     await navigator.clipboard.writeText(text);
     toast('記録をコピーしました');
     return
   }catch(_){}
- 
+
   try{
     const ta=document.createElement('textarea');
     ta.value=text;
@@ -196,50 +188,45 @@ async function copyText(text){
       return
     }
   }catch(_){}
- 
-  askConfirm(text,'閉じる','この画面ではコピーできないため、下の記録を選んでコピーしてください');
 
+  askConfirm(text,'閉じる','この画面ではコピーできないため、下の記録を選んでコピーしてください');
 }
 
 function armButton(btn,label='もう一度押すと削除'){
- 
   if(btn.dataset.armed==='1'){
     clearTimeout(btn._armTimer);
     btn.dataset.armed='';
     btn.classList.remove('armed');
     return true
   }
- 
+
   btn.dataset.armed='1';
   btn.dataset.orig=btn.textContent;
   btn.textContent=label;
   btn.classList.add('armed');
- 
+
   btn._armTimer=setTimeout(()=>{
     btn.dataset.armed='';
     btn.textContent=btn.dataset.orig;
     btn.classList.remove('armed')
   },4000);
   return false;
-
 }
 
 let confirmResolve=null;
 
 function askConfirm(text,yesLabel='削除する',title='確認'){
- 
   if(confirmResolve)confirmResolve(false);
- 
+
   $('#confirmTitle').textContent=title;
   $('#confirmText').textContent=text;
   $('#confirmYes').textContent=yesLabel;
   openModal('confirmModal');
   setTimeout(()=>$('#confirmNo').focus(),0);
- 
+
   return new Promise(resolve=>{
     confirmResolve=resolve
   });
-
 }
 
 function closeConfirm(ok){
@@ -318,7 +305,7 @@ function setupGrid(type){
       if(s.assetId)playSound(s);else openSound(s,type)
     }
   });
- 
+
   g.addEventListener('contextmenu',e=>{
     const b=e.target.closest('[data-sound]');
     if(!b)return;
@@ -326,7 +313,7 @@ function setupGrid(type){
     const s=cfg.sounds.find(x=>x.id===b.dataset.sound);
     if(s)openSound(s,type)
   });
- 
+
   g.addEventListener('pointerdown',e=>{
     const b=e.target.closest('[data-sound]');
     if(!b||e.pointerType==='mouse')return;
@@ -336,9 +323,8 @@ function setupGrid(type){
       openSound(cfg.sounds.find(x=>x.id===b.dataset.sound),type)
     },550)
   });
- 
-  for(const ev of ['pointerup','pointercancel','pointerleave'])g.addEventListener(ev,()=>clearTimeout(longPress));
 
+  for(const ev of ['pointerup','pointercancel','pointerleave'])g.addEventListener(ev,()=>clearTimeout(longPress));
 }
 
 setupGrid('emoji');
@@ -369,14 +355,12 @@ $('#bgmTabs').onclick=e=>{
     render()
   }
 };
-// タブ名の編集と並べ替え（↑↓で行を動かし、保存するとタブの中身ごと順番が入れ替わる）
 
 function tabEditor(kind,label){
- 
   const k=kind.toLowerCase(),
     key=k+'Tabs',
     box=$('#'+k+'TabNames');
- 
+
   const syncBtns=()=>{
     const rows=[...box.children];
     rows.forEach((row,i)=>{
@@ -385,83 +369,80 @@ function tabEditor(kind,label){
       row.querySelector('input').setAttribute('aria-label',(i+1)+'番目の'+label+'分類名')
     })
   };
- 
+
   $('#edit'+kind+'Tabs').onclick=()=>{
-  
     box.replaceChildren(...cfg[key].map((name,i)=>{
       const row=document.createElement('div');
       row.className='category-line';
       row.dataset.orig=i;
-   
+
       const input=document.createElement('input');
       input.value=name;
       input.maxLength=20;
-   
+
       const up=document.createElement('button');
       up.type='button';
       up.className='btn tab-move';
       up.dataset.up='1';
       up.textContent='↑';
       up.setAttribute('aria-label','上へ');
-   
+
       const down=document.createElement('button');
       down.type='button';
       down.className='btn tab-move';
       down.dataset.down='1';
       down.textContent='↓';
       down.setAttribute('aria-label','下へ');
-   
+
       row.append(input,up,down);
       return row
     }));
-  
+
     syncBtns();
     openModal(k+'TabsModal');
- 
   };
- 
+
   box.onclick=e=>{
     const btn=e.target.closest('.tab-move');
     if(!btn)return;
     const row=btn.closest('.category-line');
-  
+
     if(btn.dataset.up&&row.previousElementSibling)box.insertBefore(row,row.previousElementSibling);
   else if(btn.dataset.down&&row.nextElementSibling)box.insertBefore(row.nextElementSibling,row);
-  
+
     syncBtns();
     row.classList.remove('moved');
     void row.offsetWidth;
     row.classList.add('moved');
     row.scrollIntoView({block:'nearest'})
   };
- 
+
   $('#'+k+'TabsForm').onsubmit=e=>{
     e.preventDefault();
-  
+
     const rows=[...box.children],
       names=rows.map(r=>r.querySelector('input').value.trim()),
       order=rows.map(r=>+r.dataset.orig);
-  
+
     if(names.length!==TABS||names.some(x=>!x)||new Set(names).size!==TABS){
       toast('分類名は空欄や重複を避けてください');
       return
     }
-  
+
     const newIndex=new Map(order.map((orig,pos)=>[orig,pos]));
-  
+
     const items=kind==='Bgm'?cfg.bgms:cfg.sounds.filter(x=>x.type===(kind==='Emoji'?'emoji':'text'));
-  
+
     for(const x of items)if(newIndex.has(x.tabIndex))x.tabIndex=newIndex.get(x.tabIndex);
-  
+
     if(kind==='Emoji')emojiTab=newIndex.get(emojiTab)??0;else if(kind==='Text')textTab=newIndex.get(textTab)??0;else bgmTab=newIndex.get(bgmTab)??0;
-  
+
     const moved=order.some((o,i)=>o!==i);
     cfg[key]=names;
     save();
     closeModal(k+'TabsModal');
     toast(label+(moved?'のタブの名前と順番を保存しました':'の分類名を保存しました'))
   };
-
 }
 
 tabEditor('Emoji','絵文字SE');
@@ -505,14 +486,14 @@ function moveBgm(direction){
   const g=$('#bgmList');
   let lp=null,
     skip=null;
- 
+
   g.addEventListener('contextmenu',e=>{
     const t=e.target.closest('[data-play-bgm]');
     if(!t)return;
     e.preventDefault();
     openBgm(cfg.bgms.find(b=>b.id===t.dataset.playBgm))
   });
- 
+
   g.addEventListener('pointerdown',e=>{
     const t=e.target.closest('[data-play-bgm]');
     if(!t||e.pointerType==='mouse')return;
@@ -522,9 +503,9 @@ function moveBgm(direction){
       openBgm(cfg.bgms.find(b=>b.id===skip))
     },550)
   });
- 
+
   for(const ev of ['pointerup','pointercancel','pointerleave'])g.addEventListener(ev,()=>clearTimeout(lp));
- 
+
   g.addEventListener('click',e=>{
     const t=e.target.closest('[data-play-bgm]');
     if(t&&skip===t.dataset.playBgm){
@@ -768,28 +749,28 @@ $('#soundForm').onsubmit=async e=>{
     toast(type==='emoji'?'絵文字1文字を入力してください':type==='voice'?'ボタン名は12文字以内にしてください':type==='env'?'ボタン名は6文字以内にしてください':'ボタン名は3文字以内にしてください');
     return
   }
- 
+
   const old=cfg.sounds.find(x=>x.id===$('#soundId').value),
     file=$('#soundFile').files[0],
     previousAsset=old?.assetId;
   let assetId=previousAsset||null,
     fileName=old?.fileName||'';
- 
+
   if(!old){
     toast('空欄を押して登録してください');
     return
   }
- 
+
   const imgFile=type==='voice'?$('#imageFile').files[0]:null,
     prevImg=old?.imageId;
   let imageId=prevImg||null,
     imageName=old?.imageName||'';
- 
+
   if(type==='voice'&&!file&&!previousAsset){
     toast('音声ファイルを選んでください');
     return
   }
- 
+
   try{
     if(file){
       const nextId=id();
@@ -797,14 +778,14 @@ $('#soundForm').onsubmit=async e=>{
       assetId=nextId;
       fileName=file.name
     }
-  
+
     if(imgFile){
       const nid=id();
       await putAsset(nid,imgFile);
       imageId=nid;
       imageName=imgFile.name
     }
-  
+
     Object.assign(old,{label,volume:+$('#soundVol').value,assetId,fileName,shortcut:$('#shortcutInput').value.trim(),configured:true},type==='voice'?{imageId,imageName}:{});
     save();
     closeModal('soundModal');
@@ -814,7 +795,6 @@ $('#soundForm').onsubmit=async e=>{
       imgUrls.delete(prevImg)
     }
     toast(type==='voice'?'ボイスを保存しました':type==='env'?'環境音を保存しました':'効果音を保存しました')
- 
   }catch(err){
     console.error(err);
     toast('音源を保存できませんでした。空き容量をご確認ください')
@@ -826,7 +806,7 @@ $('#deleteSound').onclick=async e=>{
   if(!s||!armButton(e.currentTarget,'もう一度押すと削除'))return;
   [...active].filter(a=>a.soundId===s.id).forEach(release);
   const previousAsset=s.assetId;
- 
+
   const prevImg=s.imageId;
   Object.assign(s,{label:'',category:'全て',volume:100,assetId:null,fileName:'',shortcut:'',configured:false,imageId:null,imageName:''});
   save();
@@ -849,7 +829,7 @@ $('#bgmForm').onsubmit=async e=>{
     previousAsset=old.assetId;
   let assetId=previousAsset||null,
     fileName=old.fileName||'';
- 
+
   try{
     if(file){
       const nextId=id();
@@ -857,22 +837,21 @@ $('#bgmForm').onsubmit=async e=>{
       assetId=nextId;
       fileName=file.name
     }
-  
+
     const next={name:$('#bgmNameInput').value.trim(),volume:+$('#bgmVolModal').value,assetId,fileName};
     Object.assign(old,next);
-  
+
     if(bgmPlaying?.trackId===old.id){
       if(file){
         bgmSerial++;
         fadeStop(bgmPlaying)
       }else bgmPlaying.gain.gain.value=bgmItemGain(bgmPlaying.assetId,next.volume)
     }
-  
+
     save();
     closeModal('bgmModal');
     if(file&&previousAsset)await deleteAsset(previousAsset);
     toast('BGMを保存しました')
- 
   }catch(err){
     console.error(err);
     toast('音源を保存できませんでした。空き容量をご確認ください')
@@ -883,12 +862,12 @@ async function resetBgm(trackId){
   const b=cfg.bgms.find(x=>x.id===trackId);
   if(!b||(!b.assetId&&!b.name))return;
   const oldAsset=b.assetId;
- 
+
   Object.assign(b,{name:'',volume:100,assetId:null,fileName:''});
   bgmSerial++;
   if(bgmPendingId===trackId)bgmPendingId=null;
   if(bgmPlaying?.trackId===trackId)fadeStop(bgmPlaying);
- 
+
   save();
   closeModal('bgmModal');
   await deleteAsset(oldAsset);

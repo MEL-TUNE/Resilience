@@ -1,5 +1,3 @@
-/* PNGTuberスタジオ（配信・録画）と、配置・設定画面の追加分 */
-.app{width:min(100%,1580px)}
 .top{padding-top:8px}
 .top h1{font-size:25px}
 .top .ver{font-size:11px}
@@ -85,7 +83,6 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
   .studio{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   .recbar{position:relative!important;top:auto!important}
   .shell{border-width:4px}
-  .studio-workspace{grid-template-columns:minmax(0,1fr) 340px}
 }
 @media(max-width:780px){
   .studio-workspace{grid-template-columns:1fr}
@@ -105,15 +102,12 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
   .top .pagenav{margin:5px 0 0!important}
   .top .pagenav button{padding:5px 12px!important}
   .studio-tabs{margin:8px 0}
-  .studio-workspace{grid-template-columns:minmax(0,1fr) 320px;align-items:start}
   .studio-workspace>div>.studio-card:first-child{padding:12px}
-  .stage-wrap{max-height:45vh}
   .studio-card h2{margin-bottom:8px}
   .studio-row{margin:7px 0}
   .studio-note{line-height:1.5}
   .studio-kicker{font-size:9px}
 }
-
 .scene-bar{flex-wrap:wrap;gap:6px}
 .scene-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 #studioMute[aria-pressed="true"]{background:var(--decor);color:var(--on-decor);border-color:var(--decor)}
@@ -128,10 +122,8 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
 body:not([data-studio-mode="live"]) .live-only{display:none}
 @media(max-width:780px){
   .scene-grid{grid-template-columns:1fr}
-  .scene-bar button{flex:1}
   .scene-sep{display:none}
 }
-
 body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;height:min(72vh,820px)!important;max-height:none!important;width:auto;max-width:100%;margin:0 auto}
 .motion-bar{flex-wrap:wrap;gap:6px}
 .motion-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
@@ -149,7 +141,6 @@ body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;heig
   .studio-tabs button{font-size:12px;white-space:nowrap;padding-left:4px;padding-right:4px}
   .fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-
 .app{width:min(100%,1840px)}
 @media(min-width:1100px){
   .studio-workspace{--stage-col:clamp(520px,calc(50vh*16/9 + 26px),1306px);grid-template-columns:var(--stage-col) minmax(0,1fr)!important;align-items:start}
@@ -177,10 +168,8 @@ body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;heig
   #settingsPreview{max-height:28vh}
 }
 body[data-light] *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;animation:none!important;transition:none!important}
-
 body:not([data-fxp]) .fxp-only{display:none!important}
 .fx-preset{margin:6px 0 4px}
-
 body[data-app="live"] .recbar,body[data-app="live"] #takesShell{display:none!important}
 body[data-app="radio"] .studio-workspace>div:first-child,body[data-app="radio"] .studio-tabs,body[data-app="radio"] .studio-help{display:none!important}
 body[data-app="radio"] .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
@@ -205,8 +194,6 @@ body{padding-top:var(--mini-h,0px)}
 .mascot-bar{flex-wrap:wrap;gap:6px}
 .mascot-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 #studioCanvas.locked{cursor:default}
-
-/* 配信画面：操作の並び（上：マイクなど、プレビュー、収録、画面の状態、立ち絵） */
 .stage-card .stage-tools{margin:0 0 6px}
 .stage-card .stage-head{display:flex;justify-content:flex-end;margin:6px 0 4px}
 .rec-panel{border:2px solid var(--accent);border-radius:12px;padding:10px;margin:10px 0;background:var(--hi)}
@@ -242,3 +229,5 @@ body{padding-top:var(--mini-h,0px)}
   .scene-bar button,.motion-bar button,.char-bar button,.expr-bar button,.speaker-bar button{padding:7px 9px;font-size:12px}
 }
 .rec-note{font-size:11px;color:var(--muted);margin:6px 0 0}
+.scene-font-row{display:flex;flex-wrap:wrap;align-items:end;gap:10px 16px;margin-top:12px}
+.scene-font-row .studio-field{margin:0}

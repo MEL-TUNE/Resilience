@@ -17,10 +17,9 @@
         h=H*m.size/100,f=h/im.height,w=im.width*f;
       let x=W/2+m.x*W/200,y=H/2+m.y*H/200,dx=0,dy=0,rot=0,flip=false;
       if(m.motion==='run'){
-        // 画面中を走り回る：ランダムな目的地へ向かい、着いたら次の目的地へ（ときどき立ち止まる）
         const r=mscRun[m.id]||(mscRun[m.id]={x,y,tx:x,ty:y,wait:.4,dir:1,ph:0});
         const minX=w*.38,maxX=Math.max(minX,W-w*.38),minY=h*.38,maxY=Math.max(minY,H-h*.38),cl=(v,a,b)=>Number.isFinite(v)?Math.max(a,Math.min(b,v)):(a+b)/2;
-        // 目的地も画面内に収める（大きさや画面の向きが変わったときに、画面外の目的地へ向かって端で止まり続けないように）
+
         r.x=cl(r.x,minX,maxX);r.y=cl(r.y,minY,maxY);r.tx=cl(r.tx,minX,maxX);r.ty=cl(r.ty,minY,maxY);
         if(drag&&drag.target===m){r.tx=r.x;r.ty=r.y;r.wait=.6}
         else if(r.wait>0)r.wait-=dtp;
@@ -45,7 +44,7 @@
       m._box={x:x-w/2,y:y-h/2,w,h}
     }
   }
-  // 走り回る先：画面の四辺に沿った帯から選ぶ（立ち絵の範囲には止まらず、横切るのもときどきだけ）
+
   function runTarget(r,w,h,minX,maxX,minY,maxY){
     let box=null;
     if(sceneAvatar()&&(images.png0||images.png1)){const gg=avatarGeom(),px=w*.45,py=h*.45;box={x0:gg.cx-gg.w/2-px,x1:gg.cx+gg.w/2+px,y0:gg.bottom-gg.h-py,y1:gg.bottom+py}}
@@ -64,7 +63,7 @@
       else{x=minX+Math.random()*(maxX-minX);y=maxY-Math.random()*by}
       if(Math.hypot(x-r.x,y-r.y)<Math.min(W,H)*.12)continue;
       if(inBox(x,y))continue;
-      if(!crosses(x,y)||Math.random()<.3)return {x,y};  // 立ち絵の後ろを横切るのはときどきだけ
+      if(!crosses(x,y)||Math.random()<.3)return {x,y};
       best=best||{x,y}
     }
     return best||{x:minX+Math.random()*(maxX-minX),y:minY+Math.random()*(maxY-minY)}
@@ -111,7 +110,7 @@
     renderSpeakerBar();
     renderMascotBar()
   }
-  // 画面に出すマスコットは名義ごと（名義の mscShow に最大2体）
+
   function syncMascotsFromProfile(){
     const p=curProfile(),list=state.mascots||[];
     if(!p)return;

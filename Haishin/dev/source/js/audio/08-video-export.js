@@ -1,24 +1,21 @@
-/* ===================== サムネイルと動画書き出し ===================== */
+/* サムネイルと動画書き出し */
 
 const coverUrls=new Map();
 let coverTarget=null;
-// 表示用の画像は、小さく縮めてページ内に埋め込める形（data:）にする。
-// プレビュー画面などでは、ブラウザ内の一時的な住所（blob:）の画像表示が禁止されていることがあるため
 
 async function thumbUrl(blob,max=512){
- 
   try{
     const bmp=await createImageBitmap(blob);
     const k=Math.min(1,max/Math.max(bmp.width,bmp.height)),
       w=Math.max(1,Math.round(bmp.width*k)),
       h=Math.max(1,Math.round(bmp.height*k));
-  
+
     const c=document.createElement('canvas');
     c.width=w;
     c.height=h;
     c.getContext('2d').drawImage(bmp,0,0,w,h);
     bmp.close();
-  
+
     return /png|webp|gif/.test(blob.type)?c.toDataURL('image/png'):c.toDataURL('image/jpeg',.88)
   }
  catch(_){
@@ -29,7 +26,6 @@ async function thumbUrl(blob,max=512){
       r.readAsDataURL(blob)
     })
   }
-
 }
 
 async function coverUrl(key){
@@ -56,12 +52,11 @@ async function renderCover(){
 }
 
 async function setCover(key,file){
- 
   if(coverUrls.get(key))URL.revokeObjectURL(coverUrls.get(key));
   coverUrls.delete(key);
- 
+
   if(file)await idbPut('assets','cover:'+key,file);else await idbDel('assets','cover:'+key);
- 
+
   if(key!=='default'){
     const t=await idbGet('takes',key);
     if(t){
@@ -70,11 +65,10 @@ async function setCover(key,file){
       if(rec.take?.id===t.id)rec.take.cover=t.cover
     }
   }
- 
+
   await renderCover();
   await renderTakes();
   toast(file?'動画用の画像を設定しました':'画像を外しました');
-
 }
 
 $('#coverPick').onclick=()=>$('#coverFile').click();
@@ -95,66 +89,63 @@ $('#takeCoverFile').onchange=e=>{
 };
 
 async function drawCover(blob,size,fit){
- 
   const bmp=await createImageBitmap(blob),
     c=document.createElement('canvas');
   c.width=c.height=size;
   const g=c.getContext('2d');
- 
+
   const cover=Math.max(size/bmp.width,size/bmp.height),
     contain=Math.min(size/bmp.width,size/bmp.height);
- 
+
   const draw=s=>{
     const w=bmp.width*s,
       h=bmp.height*s;
     g.drawImage(bmp,(size-w)/2,(size-h)/2,w,h)
   };
- 
+
   g.fillStyle='#000';
   g.fillRect(0,0,size,size);
   g.imageSmoothingQuality='high';
- 
+
   if(fit==='contain'){
     g.filter='blur(30px) brightness(.85)';
     draw(cover*1.15);
     g.filter='none';
     draw(contain)
   }else draw(cover);
- 
+
   bmp.close();
   return c;
-
 }
 
 function drawPlainCover(size,title){
- 
   const c=document.createElement('canvas');
   c.width=c.height=size;
   const g=c.getContext('2d');
- 
+
   const gr=g.createLinearGradient(0,0,0,size);
   gr.addColorStop(0,look.paper);
   gr.addColorStop(1,look.bg);
   g.fillStyle=gr;
   g.fillRect(0,0,size,size);
- 
+
   g.strokeStyle=look.decor;
   g.lineWidth=size*.03;
   g.strokeRect(size*.05,size*.05,size*.9,size*.9);
- 
+
   g.fillStyle=lookInk(look.paper);
   g.textAlign='center';
   g.textBaseline='middle';
   let fs=size*.075;
   g.font=`700 ${fs}px "Hiragino Sans","Yu Gothic",sans-serif`;
- 
+
   while(g.measureText(title).width>size*.8&&fs>size*.03){
     fs*=.92;
     g.font=`700 ${fs}px "Hiragino Sans","Yu Gothic",sans-serif`
   }
- 
+
   g.fillText(title,size/2,size/2);
- 
+
   if(look.subtitle){
     g.fillStyle=look.accent;
     let sf=size*.03;
@@ -166,9 +157,7 @@ function drawPlainCover(size,title){
     g.fillText(look.subtitle,size/2,size*.76)
   }
   return c;
-
 }
-
 
 const EFFECT_ASSET='video-falling-image';
 
@@ -193,7 +182,6 @@ function effectSettings(){
     fps:+r.videoFps
   }
 }
-// 季節の演出。time（秒）だけで位置が決まるので、プレビューと書き出しで同じ動きになる
 
 const SEASON_FX={
  spring:{size:.06,img:.085,n:1},
@@ -201,23 +189,20 @@ const SEASON_FX={
  autumn:{size:.075,img:.1,n:.35},
  winter:{size:.042,img:.065,n:.8}
 };
-// Seasonal artwork: translucent botanical illustration and fine crystal filigree.
-// Cache at high resolution; gradients and vein paths are painted once, not every frame.
 
 const elegantFxCache=new Map();
 
 function elegantSprite(kind,variant=0){
- 
   const key=kind+':'+variant;
   if(elegantFxCache.has(key))return elegantFxCache.get(key);
- 
+
   const c=document.createElement('canvas');
   c.width=c.height=256;
   const p=c.getContext('2d');
   p.translate(128,128);
   const R=78,
     T=Math.PI*2;
- 
+
   const pathPetal=()=>{
     p.beginPath();
     p.moveTo(0,R*.96);
@@ -227,7 +212,7 @@ function elegantSprite(kind,variant=0){
     p.bezierCurveTo(R*.76,-R*.52,R*.63,R*.55,0,R*.96);
     p.closePath()
   };
- 
+
   function petal(){
     const f=p.createLinearGradient(-R*.5,-R*.8,R*.45,R);
     f.addColorStop(0,'#fff9fc');
@@ -258,7 +243,7 @@ function elegantSprite(kind,variant=0){
     }
     p.restore()
   }
- 
+
   if(kind==='petal')petal();
  else if(kind==='blossom'){
     for(let i=0;i<5;i++){
@@ -286,7 +271,6 @@ function elegantSprite(kind,variant=0){
     }
   }
  else if(kind==='bubble'){
-  
     const f=p.createRadialGradient(-R*.34,-R*.4,R*.02,0,0,R);
     f.addColorStop(0,'#ffffff03');
     f.addColorStop(.72,'#a9dce709');
@@ -296,13 +280,13 @@ function elegantSprite(kind,variant=0){
     p.beginPath();
     p.arc(0,0,R,0,T);
     p.fill();
-  
+
     const edge=p.createLinearGradient(-R,-R,R,R);
     for(const [n,col]of [[0,'#fff8e9ee'],[.22,'#d1f9ffb0'],[.48,'#d8c1ea80'],[.7,'#efdbd380'],[1,'#aee8e9d0']])edge.addColorStop(n,col);
     p.strokeStyle=edge;
     p.lineWidth=1.55;
     p.stroke();
-  
+
     p.lineCap='round';
     p.strokeStyle='#ffffffdd';
     p.lineWidth=2.4;
@@ -319,7 +303,7 @@ function elegantSprite(kind,variant=0){
     p.beginPath();
     p.arc(0,0,R*.98,.45,1.18);
     p.stroke();
-  
+
     const gl=p.createRadialGradient(-R*.53,-R*.61,0,-R*.53,-R*.61,R*.16);
     gl.addColorStop(0,'#ffffffb0');
     gl.addColorStop(1,'#ffffff00');
@@ -327,10 +311,8 @@ function elegantSprite(kind,variant=0){
     p.beginPath();
     p.arc(-R*.53,-R*.61,R*.16,0,T);
     p.fill();
- 
   }
  else if(kind==='leaf'){
-  
     p.save();
     p.scale(.86,1);
     const f=p.createLinearGradient(-R*.6,-R,R*.5,R);
@@ -338,7 +320,7 @@ function elegantSprite(kind,variant=0){
     f.addColorStop(.42,variant===1?'#c79c54':'#c77a54');
     f.addColorStop(1,variant===1?'#967043':'#874b4a');
     p.beginPath();
-  
+
     if(variant===1){
       p.moveTo(0,R*.8);
       p.bezierCurveTo(-R*.2,R*.15,-R*.85,-R*.05,-R*.84,-R*.6);
@@ -380,17 +362,15 @@ function elegantSprite(kind,variant=0){
     p.quadraticCurveTo(R*.1,R*.97,R*.04,R*1.16);
     p.stroke();
     p.restore();
- 
   }
  else if(kind==='snow'){
-  
     const glow=p.createRadialGradient(0,0,0,0,0,R*1.25);
     glow.addColorStop(0,'#d6eaff30');
     glow.addColorStop(.4,'#e4eeff12');
     glow.addColorStop(1,'#eaf5ff00');
     p.fillStyle=glow;
     p.fillRect(-110,-110,220,220);
-  
+
     p.strokeStyle=variant===1?'#f5f1ffe6':'#e6f4ffe6';
     p.lineWidth=1.1;
     p.lineCap='round';
@@ -407,7 +387,7 @@ function elegantSprite(kind,variant=0){
       p.stroke();
       p.restore()
     }
-  
+
     p.strokeStyle='#ffffffc0';
     p.lineWidth=.75;
     p.beginPath();
@@ -436,18 +416,15 @@ function elegantSprite(kind,variant=0){
       p.stroke();
       p.restore()
     }
- 
   }
  else if(kind==='acorn'){
-  // v0.4.3 acorn: soft lacquered nut, fine scale texture on the cap, no heavy outline. variant 1 = slender konara shape.
-  
     const sl=variant===1;
     p.save();
     p.translate(0,R*.1);
-  
+
     const nw=sl?R*.5:R*.6,
       nh=sl?R*.82:R*.66;
-  
+
     const body=()=>{
       p.beginPath();
       p.moveTo(-nw,-R*.12);
@@ -455,7 +432,7 @@ function elegantSprite(kind,variant=0){
       p.bezierCurveTo(nw*.42,nh*1.02,nw*1.02,nh*.62,nw,-R*.12);
       p.closePath()
     };
-  
+
     const f=p.createLinearGradient(-nw,-R*.1,nw*.8,nh);
     f.addColorStop(0,'#d9a46d');
     f.addColorStop(.45,'#b9783f');
@@ -463,7 +440,7 @@ function elegantSprite(kind,variant=0){
     body();
     p.fillStyle=f;
     p.fill();
-  
+
     p.save();
     body();
     p.clip();
@@ -472,7 +449,7 @@ function elegantSprite(kind,variant=0){
     hl.addColorStop(1,'#fff1d800');
     p.fillStyle=hl;
     p.fillRect(-R,-R,R*2,R*2);
-  
+
     p.strokeStyle='#f6dcb340';
     p.lineWidth=.7;
     for(const k of [-.45,0,.45]){
@@ -482,17 +459,17 @@ function elegantSprite(kind,variant=0){
       p.stroke()
     }
     p.restore();
-  
+
     p.strokeStyle='#f3d2a655';
     p.lineWidth=.8;
     body();
     p.stroke();
-  
+
     p.fillStyle='#6f4527';
     p.beginPath();
     p.ellipse(0,nh*1.06,1.6,2.2,0,0,T);
     p.fill();
-  
+
     const cw=nw*1.12,
       ch=sl?R*.36:R*.42;
     const cap=()=>{
@@ -502,14 +479,14 @@ function elegantSprite(kind,variant=0){
       p.quadraticCurveTo(0,R*.06,-cw,-R*.06);
       p.closePath()
     };
-  
+
     const cf=p.createLinearGradient(0,-R*.06-ch,0,R*.04);
     cf.addColorStop(0,'#a07a52');
     cf.addColorStop(1,'#5f4029');
     cap();
     p.fillStyle=cf;
     p.fill();
-  
+
     p.save();
     cap();
     p.clip();
@@ -525,12 +502,12 @@ function elegantSprite(kind,variant=0){
       }
     }
     p.restore();
-  
+
     p.strokeStyle='#f0d6ab4d';
     p.lineWidth=.7;
     cap();
     p.stroke();
-  
+
     p.strokeStyle='#6a472c';
     p.lineWidth=2.2;
     p.lineCap='round';
@@ -538,12 +515,10 @@ function elegantSprite(kind,variant=0){
     p.moveTo(0,-R*.06-ch*.78);
     p.quadraticCurveTo(R*.03,-R*.06-ch*.78-R*.12,R*.09,-R*.06-ch*.78-R*.2);
     p.stroke();
-  
+
     p.restore();
- 
   }
  else if(kind==='mote'){
-  
     const f=p.createRadialGradient(0,0,0,0,0,R);
     f.addColorStop(0,'#fffef2dd');
     f.addColorStop(.13,'#f7f5e4a0');
@@ -551,12 +526,10 @@ function elegantSprite(kind,variant=0){
     f.addColorStop(1,'#eff7f100');
     p.fillStyle=f;
     p.fillRect(-R,-R,2*R,2*R);
- 
   }
- 
+
   elegantFxCache.set(key,c);
   return c;
-
 }
 
 function drawElegantMotif(g,kind,r,variant=0){
@@ -579,34 +552,32 @@ function drawBubble(g,r){
 
 function drawAcorn(g,r){
   drawElegantMotif(g,'leaf',r)
-} // Retained caller name for older saved settings.
+}
 
 function drawSnow(g,r){
   drawElegantMotif(g,'snow',r)
 }
 
-
 function drawEffectFrame(canvas,base,time,settings,image){
- 
   const g=canvas.getContext('2d'),
     S=canvas.width;
   g.clearRect(0,0,S,S);
   g.drawImage(base,0,0,S,S);
- 
+
   const fx=SEASON_FX[settings.mode];
   if(!fx)return;
- 
+
   const rand=n=>{
     const v=Math.sin(n*127.1+311.7)*43758.5453;
     return v-Math.floor(v)
   };
- 
+
   const useImg=settings.source==='image'&&image,
     count=Math.max(1,Math.round(settings.count*fx.n)),
     sp=settings.speed/100,
     alpha=settings.opacity/100,
     TAU=Math.PI*2;
- 
+
   let blossom=false;
   const put=(x,y,r,rot,sx,sy,wx,wy)=>{
     g.save();
@@ -614,7 +585,7 @@ function drawEffectFrame(canvas,base,time,settings,image){
     if(wx)g.scale(wx,wy);
     g.rotate(rot);
     g.scale(sx,sy);
-  
+
     if(useImg){
       const ratio=image.width/image.height,
         w=ratio>=1?r*2:r*2*ratio,
@@ -622,81 +593,64 @@ function drawEffectFrame(canvas,base,time,settings,image){
       g.drawImage(image,-w/2,-h/2,w,h)
     }
   else if(settings.mode==='spring')(blossom?drawBlossom(g,r):drawPetal(g,r));else if(settings.mode==='summer')drawBubble(g,r);else if(settings.mode==='autumn')drawAcorn(g,r);else drawSnow(g,r);
-  
+
     g.restore()
   };
- 
+
   for(let i=0;i<count;i++){
-  
     const a=k=>rand(i*13+k),
       depth=.45+a(1)*.55,
       r=(useImg?fx.img:fx.size)*S*(settings.scale/70)*depth*.5;
-  
+
     g.globalAlpha=alpha*(.3+depth*.65);
-  
+
     if(settings.mode==='winter'){
-   // ゆったり降る雪：遅い落下と、大きくゆるやかな横揺れ
-   
       const span=S+r*4,
         y=((a(2)*span+time*S*.06*sp*(.55+depth))%span)-r*2;
-   
+
       const x=a(3)*S+Math.sin(time*.45*(.6+a(4))+a(5)*TAU)*S*.035;
-   
+
       put(x,y,r,useImg?Math.sin(time*.3+a(6)*TAU)*.3:0,1,1);
-  
     }else if(settings.mode==='spring'){
-   // はらはらと散る花：斜めに流れ、ひらひら裏返りながら回る
-   
       const span=S+r*6,
         prog=time*S*.11*sp*(.6+depth),
         y=((a(2)*span+prog)%span)-r*3;
-   
+
       const x=((a(3)*S*1.4+prog*.45+Math.sin(time*1.3*(.7+a(4))+a(5)*TAU)*S*.05)%(S*1.4))-S*.2;
-   
+
       const flip=Math.cos(time*.8*(.6+a(6))+a(7)*TAU);
       blossom=a(10)<.1;
-   
+
       put(x,y,r,a(8)*TAU+time*(a(9)-.5)*.7,Math.max(.15,Math.abs(flip)),1);
-  
     }else if(settings.mode==='summer'){
-   // ぷくぷくソーダ：下から湧き出て、ゆらゆら揺れながら上へ（形と大きさは変えない）
-   
       const span=S+r*6,
         rise=((a(2)*span+time*S*.15*sp*(.55+depth))%span),
         y=S+r*3-rise,
         pos=Math.min(1,Math.max(0,rise/S));
-   
+
       const x=a(3)*S+Math.sin(time*2.6*(.6+a(4))+a(5)*TAU)*S*(.006+pos*.014);
-   
+
       put(x,y,r*.8,0,1,1);
-  
     }else{
-   // Botanical leaves drift down with a slow turn; no bouncing or floor collision.
-   
       const span=S+r*6,
         fall=time*S*.065*sp*(.5+depth),
         y=(a(2)*span+fall)%span-r*3;
-   
-      const x=((a(3)*S*1.25+fall*.18+Math.sin(time*.65+a(5)*TAU)*S*.045)%(S*1.25))-S*.125;
-   
-      put(x,y,r,a(6)*TAU+Math.sin(time*.45+a(7)*TAU)*.8, .45+.55*Math.abs(Math.cos(time*.7+a(8)*TAU)),1);
-  
-    }
- 
-  }
- 
-  g.globalAlpha=1;
 
+      const x=((a(3)*S*1.25+fall*.18+Math.sin(time*.65+a(5)*TAU)*S*.045)%(S*1.25))-S*.125;
+
+      put(x,y,r,a(6)*TAU+Math.sin(time*.45+a(7)*TAU)*.8, .45+.55*Math.abs(Math.cos(time*.7+a(8)*TAU)),1);
+    }
+  }
+
+  g.globalAlpha=1;
 }
 
 function renderEffectControls(){
- 
   if(!cfg)return;
- 
-  for(const key of ['videoEffect','effectSource','videoFps','effectCount','effectSpeed','effectScale','effectOpacity'])$('#'+key).value=cfg.rec[key];
- 
-  for(const key of ['effectCount','effectSpeed','effectScale','effectOpacity'])$('#'+key+'Val').textContent=cfg.rec[key]+(key==='effectCount'?'個':'%');
 
+  for(const key of ['videoEffect','effectSource','videoFps','effectCount','effectSpeed','effectScale','effectOpacity'])$('#'+key).value=cfg.rec[key];
+
+  for(const key of ['effectCount','effectSpeed','effectScale','effectOpacity'])$('#'+key+'Val').textContent=cfg.rec[key]+(key==='effectCount'?'個':'%');
 }
 
 async function renderEffectAsset(){
@@ -716,37 +670,35 @@ function stopFilmPreview(){
 }
 
 async function startFilmPreview(){
- 
   stopFilmPreview();
   const token=previewToken;
   let image;
- 
+
   try{
-  
     const settings=effectSettings(),
       blob=await idbGet('assets','cover:default'),
       size=480;
-  
+
     const base=blob?await drawCover(blob,size,cfg.rec.coverFit):drawPlainCover(size,look.title);
-  
+
     if(settings.mode!=='none'&&settings.source==='image'){
       const b=await getAsset(EFFECT_ASSET);
       if(!b)throw Error('動かす画像を選んでください');
       image=await createImageBitmap(b)
     }
-  
+
     if(token!==previewToken){
       image?.close();
       return
     }
-  
+
     previewImage=image;
     const c=$('#filmPreview');
     c.hidden=false;
     $('#filmPreviewBtn').textContent='■ プレビューを止める';
     $('#filmPreviewBtn').setAttribute('aria-pressed','true');
     $('#filmStatus').textContent='共通サムネイルのプレビュー';
-  
+
     let started;
     const tick=now=>{
       if(token!==previewToken)return;
@@ -754,9 +706,8 @@ async function startFilmPreview(){
       drawEffectFrame(c,base,matchMedia('(prefers-reduced-motion: reduce)').matches?0:(now-started)/1000,settings,image);
       previewRaf=requestAnimationFrame(tick)
     };
-  
+
     previewRaf=requestAnimationFrame(tick);
- 
   }catch(e){
     image?.close();
     if(token===previewToken){
@@ -764,7 +715,6 @@ async function startFilmPreview(){
       $('#filmStatus').textContent=e.message
     }
   }
-
 }
 
 document.addEventListener('visibilitychange',()=>{
@@ -827,11 +777,9 @@ $('#cancelVideoBtn').onclick=()=>{
   }
 };
 
-
 const toU8=d=>!d?null:d instanceof ArrayBuffer?new Uint8Array(d.slice(0)):new Uint8Array(d.buffer.slice(d.byteOffset,d.byteOffset+d.byteLength));
 
 async function pickVideoFormat(size,sr,forceWebm=false,fps=1){
- 
   const ok=async(E,c)=>{
     try{
       return (await E.isConfigSupported(c)).supported
@@ -839,49 +787,44 @@ async function pickVideoFormat(size,sr,forceWebm=false,fps=1){
       return false
     }
   };
- 
+
   const vbase={width:size,height:size,bitrate:size>=1080?2000000:1200000,framerate:fps};
- 
+
   const aac={codec:'mp4a.40.2',sampleRate:sr,numberOfChannels:2,bitrate:192000};
- 
+
   if(window.VideoEncoder&&window.AudioEncoder){
-  
     if(!forceWebm&&await ok(AudioEncoder,aac))for(const codec of ['avc1.640028','avc1.4d0028','avc1.420028']){
       const v={...vbase,codec,latencyMode:'realtime',avc:{format:'avc'}};
       if(await ok(VideoEncoder,v))return {kind:'mp4',v,a:aac}
     }
-  
+
     const opus={codec:'opus',sampleRate:sr,numberOfChannels:2,bitrate:160000};
-  
+
     if(await ok(AudioEncoder,opus))for(const [codec,name] of [['vp09.00.40.08','V_VP9'],['vp8','V_VP8']]){
       const v={...vbase,codec};
       if(await ok(VideoEncoder,v))return {kind:'webm',v,a:opus,vcodec:name}
     }
- 
   }
- 
-  return null;
 
+  return null;
 }
 
 async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
- 
   checkVideoJob(job);
   options??={...effectSettings(),size:cfg.rec.videoSize,fit:cfg.rec.coverFit};
- 
+
   const fps=options.mode==='none'?1:options.fps;
- 
+
   const pk=t.programId&&activeProgCoverKey(t.programId);
- 
+
   const blob=(t.cover&&await idbGet('assets','cover:'+t.id))||(pk&&await idbGet('assets','cover:'+pk))||await idbGet('assets','cover:default');
 
- 
   const size=+options.size||1080,
     sr=t.sampleRate,
     fmt=await pickVideoFormat(size,sr,forceWebm,fps);
- 
+
   if(!fmt)throw Object.assign(Error('このブラウザは動画の書き出しに対応していません。最新のChromeかEdgeでお試しください'),{user:true});
- 
+
   progress('画像を準備中…');
   let canvas;
   try{
@@ -889,12 +832,12 @@ async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
   }catch(e){
     throw Object.assign(Error('画像を読み込めませんでした。別の画像でお試しください'),{user:true})
   }
- 
+
   const g=await normGain(t,'mix',p=>progress('音量を解析中 '+Math.round(p*100)+'%'));
- 
+
   const base=canvas;
   let effectImage=null;
- 
+
   if(options.mode!=='none'&&options.source==='image'){
     const b=await getAsset(EFFECT_ASSET);
     if(!b)throw Object.assign(Error('動かす画像を選んでください'),{user:true});
@@ -904,28 +847,27 @@ async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
       throw Object.assign(Error('動かす画像を読み込めませんでした'),{user:true})
     }
   }
- 
+
   canvas=document.createElement('canvas');
   canvas.width=canvas.height=size;
- 
+
   const vChunks=[],
     aChunks=[];
   let vDesc=null,
     aDesc=null,
     err=null;
- 
+
   const grab=(list,c,extra)=>{
     const d=new Uint8Array(c.byteLength);
     c.copyTo(d);
     list.push({ts:c.timestamp,data:d,...extra})
   };
- 
+
   let srcPeak=0,
     ae,
     ve;
- 
+
   try{
- 
     ae=new AudioEncoder({output:(c,m)=>{
         if(m?.decoderConfig?.description)aDesc=toU8(m.decoderConfig.description);
         grab(aChunks,c);
@@ -935,58 +877,55 @@ async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
         }
       },error:e=>err=e});
     ae.configure(fmt.a);
- 
+
     ve=new VideoEncoder({output:(c,m)=>{
         if(m?.decoderConfig?.description)vDesc=toU8(m.decoderConfig.description);
         grab(vChunks,c,{key:c.type==='key'})
       },error:e=>err=e});
     ve.configure(fmt.v);
-  
+
     const keys=await trackKeys(t,'mix');
     let pos=0,
       done=0;
-  
+
     for await(const raw of readChunks(t,'mix')){
-   
       checkVideoJob(job);
       if(err)throw err;
       const a=scaleI16(raw,g),
         n=a.length/2,
         pl=new Float32Array(n*2);
-   
+
       for(let i=0;i<n;i++){
         pl[i]=a[2*i]/32768;
         pl[n+i]=a[2*i+1]/32768
       }
-   
+
       if(pos<sr*4)for(let i=0;i<Math.min(n,sr*4-pos);i++){
         const v=Math.abs(pl[i])+Math.abs(pl[n+i]);
         if(v>srcPeak)srcPeak=v
       }
-   
+
       const ad=new AudioData({format:'f32-planar',sampleRate:sr,numberOfFrames:n,numberOfChannels:2,timestamp:Math.round(pos*1e6/sr),data:pl});
       ae.encode(ad);
       ad.close();
       pos+=n;
-   
+
       while(ae.encodeQueueSize>6){
         checkVideoJob(job);
         if(err)throw err;
         await sleep(4)
       }
       progress('音声を変換中 '+Math.round(++done/keys.length*100)+'%');
-  
     }
-  
+
     await ae.flush();
     if(err)throw err;
-  
+
     if(!pos)throw Object.assign(Error('このテイクに書き出せる音声がありません'),{user:true});
-  
+
     const frames=Math.max(1,Math.ceil(pos/sr*fps));
-  
+
     for(let i=0;i<frames;i++){
-   
       checkVideoJob(job);
       if(err)throw err;
       drawEffectFrame(canvas,base,i/fps,options,effectImage);
@@ -995,7 +934,7 @@ async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
       const f=new VideoFrame(canvas,{timestamp:ts,duration:Math.max(1,end-ts)});
       ve.encode(f,{keyFrame:i%(fps*2)===0});
       f.close();
-   
+
       while(ve.encodeQueueSize>3){
         checkVideoJob(job);
         if(err)throw err;
@@ -1005,16 +944,15 @@ async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
         progress('映像を作成中 '+Math.round(i/frames*100)+'%');
         await sleep(0)
       }
-  
     }
-  
+
     await ve.flush();
     if(err)throw err;
-  
+
     progress('ファイルにまとめています…');
-  
+
     const durationMs=Math.round(pos/sr*1000);
-  
+
     const parts=fmt.kind==='mp4'
    ?Mux.mp4({
       durationMs,
@@ -1026,13 +964,12 @@ async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
       video:{codec:fmt.vcodec,width:size,height:size,chunks:vChunks},
       audio:{sampleRate:sr,channels:2,description:aDesc,chunks:aChunks}
     });
-  
+
     if(fmt.kind==='mp4'){
-   
       progress('音声が入っているか確認中…');
-   
+
       const ok=await verifyMp4Audio(vChunks,aChunks,{size,sr,vDesc,srcPeak});
-   
+
       if(!ok){
         try{
           ae.close()
@@ -1045,11 +982,9 @@ async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
         v.fallback=true;
         return v
       }
-  
     }
-  
+
     return {blob:new Blob(parts,{type:fmt.kind==='mp4'?'video/mp4':'video/webm'}),ext:fmt.kind};
- 
   }finally{
     effectImage?.close();
     try{
@@ -1059,34 +994,30 @@ async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
       ve.close()
     }catch(_){}
   }
-
 }
 
 async function verifyMp4Audio(vChunks,aChunks,{size,sr,vDesc,srcPeak}){
- // 冒頭約4秒だけの小さなMP4を作り、ブラウザ自身に音声を読ませて確かめる
- 
   try{
-  
     const lim=4e6,
       v=vChunks.filter(c=>c.ts<lim),
       a=aChunks.filter(c=>c.ts<lim);
     if(!a.length)return false;
-  
+
     const parts=Mux.mp4({
       durationMs:4000,
       video:{width:size,height:size,description:vDesc,chunks:v.length?v:vChunks.slice(0,1)},
       audio:{sampleRate:sr,channels:2,chunks:a}
     });
-  
+
     const buf=await new Blob(parts).arrayBuffer();
-  
+
     const oc=new OfflineAudioContext(2,sr,sr);
     const decoded=await oc.decodeAudioData(buf);
-  
+
     if(decoded.duration<=0)return false;
-  
+
     if(srcPeak<0.01)return true;
-  
+
     let peak=0;
     for(let c=0;c<decoded.numberOfChannels;c++){
       const d=decoded.getChannelData(c);
@@ -1095,14 +1026,12 @@ async function verifyMp4Audio(vChunks,aChunks,{size,sr,vDesc,srcPeak}){
         if(x>peak)peak=x
       }
     }
-  
+
     return peak>srcPeak*0.05;
- 
   }catch(e){
     console.warn('MP4音声の確認に失敗',e);
     return false
   }
-
 }
 
 function safeName(s){
@@ -1121,25 +1050,24 @@ function download(blob,name){
 }
 
 async function exportTake(takeId,track,kind){
- 
   if(busyTakes.has(takeId)){
     toast('このテイクは書き出し中です');
     return
   }
- 
+
   if(kind==='video'&&videoJob){
     toast('別の動画を書き出し中です');
     return
   }
- 
+
   const t=await idbGet('takes',takeId);
   if(!t)return;
- 
+
   if(busyTakes.has(takeId)||(kind==='video'&&videoJob)){
     toast('書き出し中です');
     return
   }
- 
+
   let job=null;
   if(kind==='video'){
     job={cancelled:false};
@@ -1147,19 +1075,19 @@ async function exportTake(takeId,track,kind){
     $('#cancelVideoBtn').hidden=false;
     stopFilmPreview()
   }
- 
+
   const el=()=>document.querySelector(`[data-progress="${CSS.escape(takeId)}"]`);
- 
+
   const progress=msg=>{
     busyTakes.set(takeId,msg);
     const e=el();
     if(e)e.textContent=msg;
     if(job)$('#filmStatus').textContent=msg
   };
- 
+
   try{
     progress(kind==='mp3'?'MP3変換の準備中…':'WAVを作成中…');
-  
+
     if(kind==='video'){
       const v=await buildVideo(t,progress,false,null,job);
       checkVideoJob(job);
@@ -1167,12 +1095,11 @@ async function exportTake(takeId,track,kind){
       toast(`動画を書き出しました（${v.ext.toUpperCase()}・${(v.blob.size/1048576).toFixed(1)}MB）${v.fallback?'。MP4で音声を確認できなかったためWebMにしました':''}`,6000);
       return
     }
-  
+
     const blob=kind==='mp3'?await buildMp3(t,track,progress):await buildWav(t,track,progress);
-  
+
     download(blob,`${safeName(t.name)}_${({mix:'mix',voice:'voice',prog:'bgm-sfx'})[track]||track}.${kind}`);
     toast('書き出しました（'+(blob.size/1048576).toFixed(1)+'MB）');
- 
   }catch(e){
     console.error(e);
     toast(e.user?e.message:'書き出しに失敗しました',4500)
@@ -1187,16 +1114,14 @@ async function exportTake(takeId,track,kind){
       $('#filmStatus').textContent=job.cancelled?'動画の書き出しを中止しました':''
     }
   }
-
 }
 
 async function listenTake(takeId,btn){
- 
   const t=await idbGet('takes',takeId);
   if(!t)return;
   btn.disabled=true;
   btn.textContent='準備中…';
- 
+
   try{
     const blob=await buildWav(t,'mix');
     const audio=document.createElement('audio');
@@ -1212,54 +1137,48 @@ async function listenTake(takeId,btn){
     btn.textContent='▶ 試聴する';
     toast('試聴を準備できませんでした')
   }
-
 }
 
 async function deleteTakeData(takeId){
- 
   if(busyTakes.has(takeId))throw Object.assign(Error('書き出し中のテイクは削除できません'),{user:true});
- 
+
   for(const k of ['mix','voice','prog'])await idbDelStrict('chunks',chunkRange(takeId,k));
- 
+
   await idbDelStrict('takes',takeId);
   await idbDel('assets','cover:'+takeId);
   if(lastTakeId===takeId)lastTakeId=null;
-
 }
 
 async function deleteTake(takeId,btn){
- 
   if(rec.take?.id===takeId){
     toast('録音中のテイクは削除できません');
     return
   }
- 
+
   if(btn){
     btn.disabled=true;
     btn.textContent='削除中…'
   }
- 
+
   try{
-  
     await deleteTakeData(takeId);
-  
+
     if(await idbGet('takes',takeId))throw Error('削除後もデータが残っています');
-  
+
     const a=document.querySelector(`audio[data-take="${CSS.escape(takeId)}"]`);
     if(a){
       a.pause();
       URL.revokeObjectURL(a.src)
     }
-  
+
     document.querySelector(`.take[data-id="${CSS.escape(takeId)}"]`)?.remove();
-  
+
     if(coverUrls.get(takeId))URL.revokeObjectURL(coverUrls.get(takeId));
     coverUrls.delete(takeId);
-  
+
     await renderTakes();
     updateStorage();
     toast('テイクを削除しました');
- 
   }catch(e){
     console.error(e);
     toast('削除できませんでした（'+(e?.name&&e.name!=='Error'?e.name+'：':'')+(e?.message||e)+'）',6000);
@@ -1268,34 +1187,33 @@ async function deleteTake(takeId,btn){
       btn.textContent='削除'
     }
   }
-
 }
 
 $('#takes').addEventListener('click',e=>{
   const b=e.target.closest('button');
   if(!b)return;
- 
+
   if(b.dataset.takeCover){
     coverTarget=b.dataset.takeCover;
     $('#takeCoverFile').click();
     return
   }
- 
+
   if(b.dataset.uncover){
     setCover(b.dataset.uncover,null);
     return
   }
- 
+
   if(b.dataset.del&&busyTakes.has(b.dataset.del)){
     toast('書き出し中のテイクは削除できません');
     return
   }
- 
+
   if(b.dataset.video){
     exportTake(b.dataset.video,'mix','video');
     return
   }
- 
+
   if(b.dataset.listen)listenTake(b.dataset.listen,b);else if(b.dataset.wav)exportTake(b.dataset.wav,b.dataset.track,'wav');else if(b.dataset.mp3)exportTake(b.dataset.mp3,b.dataset.track,'mp3');else if(b.dataset.del){
     if(armButton(b))deleteTake(b.dataset.del,b)
   }
@@ -1311,7 +1229,7 @@ $('#takes').addEventListener('change',async e=>{
   const inp=e.target.closest('[data-rename]');
   if(!inp)return;
   const name=inp.value.trim()||'収録';
- 
+
   if(rec.take?.id===inp.dataset.rename){
     rec.take.name=name;
     return

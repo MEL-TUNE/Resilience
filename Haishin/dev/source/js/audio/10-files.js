@@ -1,7 +1,4 @@
-/* ===================== 設定の書き出し・読み込み ===================== */
-// 形式：先頭8バイト（.kissa は "MTKSPACK"、.live は "OTNHLIVE"）+ 見出しJSONの長さ(4バイト) + 見出しJSON + 音源・画像をそのまま連結
-// .kissa は効果音・BGMのみ（純喫茶オトノハと共通）。.live はそれに立ち絵・降らせる画像・背景・台本・映像設定（kind:'studio'）を加えたもの。
-// 読み込み時はファイルを丸ごとメモリに載せず、音源ごとに切り出して保存する
+/* 設定の書き出し・読み込み */
 
 const PACK_MAGIC='MTKSPACK',
   PACK_FORMAT='meltune-kissa-pack',
@@ -92,15 +89,14 @@ function errText(e){
 }
 
 function dataUrlToBlob(u){
- 
   const comma=u.indexOf(','),
     meta=u.slice(5,comma),
     type=meta.split(';')[0]||'',
     b64=meta.includes(';base64');
   const body=u.slice(comma+1);
- 
+
   if(!b64)return new Blob([decodeURIComponent(body)],{type});
- 
+
   const parts=[],
     STEP=1<<20;
   for(let i=0;i<body.length;i+=STEP){
@@ -109,54 +105,48 @@ function dataUrlToBlob(u){
     for(let j=0;j<bin.length;j++)a[j]=bin.charCodeAt(j);
     parts.push(a)
   }
- 
-  return new Blob(parts,{type});
 
+  return new Blob(parts,{type});
 }
 
 async function readPackHeader(file){
- 
   const first=new Uint8Array(await file.slice(0,12).arrayBuffer());
- 
+
   const magic=String.fromCharCode(...first.slice(0,8));
   if(magic!==PACK_MAGIC&&magic!==LIVE_MAGIC)return null;
   const live=magic===LIVE_MAGIC;
- 
+
   if(first.length<12)throw Error('設定ファイルのヘッダーが途中で切れています');
- 
+
   const len=new DataView(first.buffer).getUint32(8,true);
- 
+
   if(!len||len>32*1048576||12+len>file.size)throw Error('設定ファイルのヘッダーが壊れています');
- 
+
   const head=JSON.parse(new TextDecoder().decode(await file.slice(12,12+len).arrayBuffer()));
- 
+
   if(head.format!==(live?LIVE_FORMAT:PACK_FORMAT)||!head.config||(live&&(!head.studio||typeof head.studio!=='object')))throwObject.assign(Error(''),{userMessage:'設定ファイルの中身を読み取れませんでした'});
- 
+
   if(!head.config||typeof head.config!=='object'||Array.isArray(head.config)||!Array.isArray(head.assets))throw Error('設定ファイルの形式が正しくありません');
- 
+
   const seen=new Set();
   let end=0;
- 
+
   for(const a of head.assets){
-  
     if(!a||typeof a.key!=='string'||!(live?['audio','image','cover','studio']:['audio','image','cover']).includes(a.kind)||!Number.isSafeInteger(a.offset)||!Number.isSafeInteger(a.size)||a.offset<end||a.size<0||a.offset+a.size>file.size-12-len)throw Error('設定ファイルの音源・画像の範囲が壊れています');
-  
+
     const key=(a.kind==='cover'?'cover:':a.kind==='studio'?'studio:':'asset:')+a.key;
     if(seen.has(key))throw Error('設定ファイルの音源・画像キーが重複しています');
     seen.add(key);
     end=a.offset+a.size;
- 
   }
- 
-  return {head,base:12+len,live};
 
+  return {head,base:12+len,live};
 }
 
 async function applyImported(incoming,stored,coverBlob,progCovers={}){
- 
-  const nextConfig=normalize(incoming); // 既存素材に触れる前に設定を検証する。
+  const nextConfig=normalize(incoming);
  delete nextConfig.rec.effectImageAsset;
- 
+
   stopFilmPreview();
   const importedEffect=incoming.rec?.effectImageAsset;
   if(importedEffect){
@@ -165,11 +155,11 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
     delete incoming.rec.effectImageAsset;
     await deleteAsset(importedEffect)
   }else await deleteAsset(EFFECT_ASSET);
- 
+
   const oldAssets=[...cfg.sounds,...cfg.bgms].flatMap(x=>[x.assetId,x.imageId]).filter(Boolean);
   for(const u of imgUrls.values())if(u)URL.revokeObjectURL(u);
   imgUrls.clear();
- 
+
   const keepRec=cfg.rec;
   stopAll();
   cfg=nextConfig;
@@ -180,11 +170,11 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
   save();
   renderVolumes();
   updateGains();
- 
+
   if(coverBlob){
     await setCover('default',coverBlob)
   }
- 
+
   for(const [k,b] of Object.entries(progCovers)){
     const m=/^prog-(.+)$/.exec(k);
     const isOld=m&&!/-\d$/.test(k);
@@ -196,16 +186,15 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
     }
   }
   persist();
- 
+
   renderPrograms();
   renderEffectControls();
   await renderEffectAsset();
- 
+
   for(const assetId of oldAssets)await deleteAsset(assetId);
   updateStorage();
- 
-  toast(`設定を読み込みました（音源${stored}件${coverBlob?'・サムネイル画像':''}）`,4000);
 
+  toast(`設定を読み込みました（音源${stored}件${coverBlob?'・サムネイル画像':''}）`,4000);
 }
 
 $('#exportBtn').onclick=exportLive;
@@ -221,15 +210,13 @@ $('#importFile').onchange=async e=>{
     return
   }
   const added=[];
- 
-  try{
-  
-    toast('設定ファイルを確認しています…',120000);
-  
-    const pack=await readPackHeader(file);
-  
-    if(pack){
 
+  try{
+    toast('設定ファイルを確認しています…',120000);
+
+    const pack=await readPackHeader(file);
+
+    if(pack){
       const st=window.__otonohaStudio,
         studioBlobs={};
       if(pack.live){
@@ -254,43 +241,39 @@ $('#importFile').onchange=async e=>{
       let n=0,
         cover=null;
       const total=assets.filter(a=>a.kind==='audio').length;
-   
+
       for(const a of assets){
-    
         const blob=file.slice(pack.base+a.offset,pack.base+a.offset+a.size,a.type);
-    
+
         if(blob.size!==a.size)throw Object.assign(Error(''),{userMessage:'ファイルが途中で切れています。書き出し直したファイルでお試しください'});
-    
+
         if(a.kind==='studio')continue;
         if(a.kind==='cover'){
           const cb=new Blob([await blob.arrayBuffer()],{type:a.type});
           if(a.key==='default')cover=cb;else progCovers[a.key]=cb;
           continue
         }
-    
+
         const nid=id();
         added.push(nid);
         await putAsset(nid,new Blob([await blob.arrayBuffer()],{type:a.type}));
         map.set(a.key,nid);
         if(a.kind==='audio')toast(`音源を取り込み中 ${++n}/${total}`,120000);
-   
       }
-   
+
       for(const item of [...(incoming.sounds||[]),...(incoming.bgms||[])]){
         item.assetId=item.assetId&&map.get(item.assetId)||null;
         if(item.imageId)item.imageId=map.get(item.imageId)||null
       }
-   
+
       incoming.rec??={...REC_DEFAULTS};
       incoming.rec.effectImageAsset=map.get(EFFECT_ASSET)||null;
       await applyImported(incoming,n,cover,progCovers);
       if(pack.head.look)lookCommit(lookSanitize(pack.head.look));
       if(pack.live)await st.apply(pack.head.studio,studioBlobs);
       return;
-
     }
     throw Object.assign(Error(''),{userMessage:'このアプリの設定ファイル（.live／.kissa）ではありません'});
-
    }catch(err){
     console.error(err);
     for(const k of added)await deleteAsset(k);

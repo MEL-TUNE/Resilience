@@ -1,6 +1,5 @@
 /* 映像の向き・立ち絵の動きボタン・画像生成AI用のプロンプト */
 
-
   function applyAspect(){
     const v=state.aspect==='portrait';
     W=v?720:1280;

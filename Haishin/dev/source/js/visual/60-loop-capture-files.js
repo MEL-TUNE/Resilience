@@ -1,8 +1,4 @@
 /* 描画ループ、映像の収録、スタジオ設定の読み込み */
-// Frame scheduling. A hidden tab stops requestAnimationFrame and throttles timers to ~1/s, which froze
-// the separate output window and the video capture. While hidden, drive frames from the visible output window's
-// rAF, otherwise from a Worker timer (Worker timers are not subject to the same background-tab throttling).
-// Only one pending callback is valid at a time (frameToken); a watchdog restarts the chain if it stalls.
 
   let frameToken=0,
     lastFrameAt=0,
@@ -183,7 +179,7 @@
         toast('収録エラー。取得できた部分を保存します：'+(e.error?.message||'不明'),6000);
         try{if(rec.state!=='inactive')rec.stop()}catch(_){finish()}
       };
-      // 停止の完了は onstop で受け取る。端末によって onstop が来ないことがあるので、停止後は時間切れでも取得済みの分で仕上げる
+
       const finish=()=>{
         if(finished)return;
         finished=true;
@@ -224,7 +220,7 @@
     if(!rec||rec.state==='inactive'||rec.__ending)return;
     rec.__ending=true;
     E('studioStop').disabled=true;
-    // ラジオの「停止・保存」と同じ設定（設定の「BGMの締め」）で、鳴っている音をすべてフェードアウトしてから止める
+
     const insts=[...active];
     if(bgmPlaying)insts.push(bgmPlaying);
     if(cfg.rec.fadeOnStop&&(insts.length||micLive())){
@@ -269,7 +265,7 @@
     if(isIOS)toast('収録できました。「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります',7000);
     else{link.click();toast('動画を保存しました。もう一度保存するときは「ファイルに保存」を押します',6000)}
   }
-  // 番組（ラジオと共通）：選ぶと、その番組の初期BGMを収録開始と同時に流せる
+
   let vidProgSig='';
   function renderVidProg(){
     if(!cfg)return;
