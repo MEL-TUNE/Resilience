@@ -269,3 +269,10 @@ body[data-app="live"][data-kind="stream"] #studioOutput{background:var(--accent)
   .sound-now{grid-column:1/-1}
   .stop-btn{white-space:normal;font-size:13px;padding:10px 8px}
 }
+@media(min-width:1100px){
+  body[data-app="live"][data-kind="stream"] .studio-workspace{grid-template-columns:minmax(0,1fr) minmax(0,2fr)!important}
+  body[data-app="live"][data-kind="stream"] .scene-switch{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body[data-app="live"][data-kind="stream"] .sound-stop{grid-template-columns:minmax(0,1fr)}
+  body[data-app="live"][data-kind="stream"] .stop-btn{white-space:normal}
+  body[data-app="live"][data-kind="stream"] .stage-preview{width:100%;align-self:stretch}
+}

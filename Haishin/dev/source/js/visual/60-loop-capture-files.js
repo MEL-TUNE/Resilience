@@ -62,6 +62,10 @@
 
   let previous=0,
     uiTick=0;
+  function flapLen(){
+    const lo=state.flapMin,hi=Math.max(lo,state.flapMax);
+    return lo+Math.random()*(hi-lo)
+  }
   function frame(){
     const now=performance.now();
     lastFrameAt=now;
@@ -84,8 +88,9 @@
     if(signal)lastTalk=now;
     const was=talking;
     talking=(!micMuted||testing)&&(signal||now-lastTalk<state.hold);
-    if(talking&&!was)talkStart=now;
-    mouth=talking&&(state.mouthMode!=='flap'||Math.floor((now-talkStart)/state.flapMs)%2===0);
+    if(talking&&!was){flapOpen=true;flapNext=now+flapLen()}
+    else if(talking&&now>=flapNext){flapOpen=!flapOpen;flapNext=now+flapLen()}
+    mouth=talking&&(state.mouthMode!=='flap'||flapOpen);
     if(now>nextBlink){
       blinkUntil=now+130;
       nextBlink=now+3000+Math.random()*3000
