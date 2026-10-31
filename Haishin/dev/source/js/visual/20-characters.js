@@ -599,6 +599,8 @@ for(const q of particles)q.beh='';
 
   window.__otonohaChars={get state(){
       return state
+    },get mouth(){
+      return mouth
     },charKey,activateChar,activateProfile};
 
 
@@ -638,13 +640,22 @@ for(const q of particles)q.beh='';
       outputWindow.focus();
       return
     }
-    outputWindow=window.open('','otonoha-stage',W>H?'width=1280,height=720':'width=450,height=800');
+    const dpr=window.devicePixelRatio||1,cw=Math.round(W/dpr),ch=Math.round(H/dpr);
+    outputWindow=window.open('','otonoha-stage',`popup=yes,width=${cw},height=${ch}`);
     if(!outputWindow){
       toast('別窓を開くにはポップアップを許可してください',5000);
       return
     }
     outputWindow.document.open();
-    outputWindow.document.write('<!doctype html><html lang="ja"><head><title>オトノハ｜映像出力</title><style>html,body{margin:0;background:transparent;width:100%;height:100%;overflow:hidden}canvas{width:100%;height:100%;object-fit:contain;display:block}</style></head><body><canvas width="'+W+'" height="'+H+'" aria-label="映像出力"></canvas><\/body></html>');
+    outputWindow.document.write('<!doctype html><html lang="ja"><head><title>オトノハ｜映像出力</title><style>html,body{margin:0;background:#000;width:100%;height:100%;overflow:hidden}canvas{width:100%;height:100%;object-fit:contain;display:block}</style></head><body><canvas width="'+W+'" height="'+H+'" aria-label="映像出力"></canvas><\/body></html>');
     outputWindow.document.close();
-    outContext=outputWindow.document.querySelector('canvas').getContext('2d')
+    outContext=outputWindow.document.querySelector('canvas').getContext('2d');
+    fitOutputWindow()
   };
+  function fitOutputWindow(){
+    const w=outputWindow;
+    if(!w||w.closed)return;
+    const dpr=w.devicePixelRatio||1,cw=Math.round(W/dpr),ch=Math.round(H/dpr);
+    try{if(w.innerWidth!==cw||w.innerHeight!==ch)w.resizeBy(cw-w.innerWidth,ch-w.innerHeight)}catch{}
+  }
+  setInterval(()=>{if(outputWindow&&!outputWindow.closed&&!outputWindow.__fitDone){fitOutputWindow();outputWindow.__fitDone=outputWindow.innerWidth===Math.round(W/(outputWindow.devicePixelRatio||1))}},500);

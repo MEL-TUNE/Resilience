@@ -139,6 +139,7 @@ let ctx,
   limiter,
   limOut,
   micGain,
+  voiceOut,
   micAnalyser,
   mixAnalyser,
   merger;
@@ -535,4 +536,8 @@ function toast(msg,ms=2400){
   el.classList.add('show');
   clearTimeout(noticeTimer);
   noticeTimer=setTimeout(()=>el.classList.remove('show'),ms)
+}
+
+function streamMode(){
+  return document.body.dataset.app==='live'&&document.body.dataset.kind==='stream'
 }

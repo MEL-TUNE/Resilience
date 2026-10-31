@@ -158,3 +158,25 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
   detectOutput();
   navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
 })();
+
+function syncConsole(){
+  const nm=$('#bgmNowName').textContent,c=$('#consoleBgmName');
+  if(c.textContent!==nm)c.textContent=nm;
+  $('#consoleBgmStop').disabled=!(bgmPlaying||bgmLoadingId)
+}
+setInterval(syncConsole,300);
+$('#consoleBgmStop').onclick=()=>{
+  if(bgmLoadingId){
+    bgmSerial++;
+    bgmPendingId=null;
+    bgmLoadingId=null;
+    renderBgmNow();
+    return
+  }
+  if(bgmPlaying){
+    bgmSerial++;
+    addMarker('BGM停止：'+bgmPlaying.name,true);
+    fadeStop(bgmPlaying,.6)
+  }
+};
+$('#consoleAllStop').onclick=()=>stopAll();

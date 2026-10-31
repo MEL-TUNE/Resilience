@@ -14,6 +14,7 @@
   renderScene();
   listSinks();
   setMode('live');
+  if(document.body.dataset.app==='live')window.__otonohaAppChanged('live');
   scheduleFrame();
 
   (async()=>{

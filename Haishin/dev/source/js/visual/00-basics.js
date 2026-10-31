@@ -43,6 +43,8 @@
     sceneBoost:6,
     restoreBgm:true,
     sceneFont:'hachimaru',
+    mouthMode:'hold',
+    flapMs:120,
     sinkId:'',
     aspect:'landscape',
     motionAmt:100,
@@ -78,6 +80,8 @@ fps:30,
     outputWindow=null,
     outContext=null,
     mouth=false,
+    talking=false,
+    talkStart=0,
     lastTalk=0,
     testUntil=0,
     nextBlink=performance.now()+3200,
@@ -148,6 +152,8 @@ fps:30,
     for(const k of ['standby','away','end'])out.scenes[k]=sceneClean(k,v.scenes&&typeof v.scenes==='object'?v.scenes[k]:null);
     if(typeof v.restoreBgm==='boolean')out.restoreBgm=v.restoreBgm;
     if(typeof v.sceneFont==='string'&&/^[a-z]{1,16}$/.test(v.sceneFont))out.sceneFont=v.sceneFont;
+    if(['hold','flap'].includes(v.mouthMode))out.mouthMode=v.mouthMode;
+    if(Number.isFinite(Number(v.flapMs)))out.flapMs=Math.max(60,Math.min(400,Math.round(Number(v.flapMs))));
     if(typeof v.sinkId==='string')out.sinkId=v.sinkId.slice(0,300);
     if(['landscape','portrait'].includes(v.aspect))out.aspect=v.aspect;
     for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake']){
@@ -353,6 +359,8 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
   const bindings={
     studioThreshold:'threshold',
     studioHold:'hold',
+    studioMouthMode:'mouthMode',
+    studioFlap:'flapMs',
     studioBlink:'blink',
     studioScale:'scale',
     studioX:'x',
@@ -385,6 +393,7 @@ for(const [id,k]of Object.entries(bindings)){
     }
     E('thresholdValue').textContent=state.threshold+' dB';
     E('holdValue').textContent=state.hold+' ms';
+    E('flapValue').textContent=state.flapMs+' ms';
     {
       const sv=E('scaleVal');
       if(sv)sv.textContent=Math.round(state.scale)+'%';
@@ -406,6 +415,7 @@ for(const [id,k]of Object.entries(bindings)){
       if(k==='script')paragraph=0;
       E('thresholdValue').textContent=state.threshold+' dB';
       E('holdValue').textContent=state.hold+' ms';
+      E('flapValue').textContent=state.flapMs+' ms';
       if(k==='script')renderParagraph();
       save()
     })

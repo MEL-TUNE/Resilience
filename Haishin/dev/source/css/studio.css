@@ -231,3 +231,41 @@ body{padding-top:var(--mini-h,0px)}
 .rec-note{font-size:11px;color:var(--muted);margin:6px 0 0}
 .scene-font-row{display:flex;flex-wrap:wrap;align-items:end;gap:10px 16px;margin-top:12px}
 .scene-font-row .studio-field{margin:0}
+.live-console{border:2px solid var(--scene-c,#d64545);border-radius:14px;padding:12px;margin:10px 0;background:var(--hi)}
+body{--scene-c:#d64545}
+body[data-scene="standby"]{--scene-c:#d8901a}
+body[data-scene="away"]{--scene-c:#2f78c4}
+body[data-scene="end"]{--scene-c:#7b5ea7}
+.onair-head{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.onair-head strong{font-size:20px;letter-spacing:.06em;color:var(--scene-c)}
+.onair-lamp{width:16px;height:16px;border-radius:50%;background:var(--scene-c);box-shadow:0 0 0 4px color-mix(in srgb,var(--scene-c) 25%,transparent)}
+.scene-switch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.scene-switch button{--c:#d64545;border:2px solid var(--c);border-radius:12px;padding:14px 6px;font-size:16px;font-weight:700;background:var(--hi);color:var(--c);cursor:pointer}
+.scene-switch button[data-scene="standby"]{--c:#d8901a}
+.scene-switch button[data-scene="away"]{--c:#2f78c4}
+.scene-switch button[data-scene="end"]{--c:#7b5ea7}
+.scene-switch button[aria-pressed="true"]{background:var(--c);color:#fff;box-shadow:0 3px 0 color-mix(in srgb,var(--c) 55%,#000)}
+.sound-stop{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--a-p-20)}
+.sound-now{display:flex;gap:6px;align-items:center;min-width:0;font-size:13px}
+.sound-now span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stop-btn{border:2px solid var(--ink);border-radius:12px;padding:12px 14px;font-size:15px;font-weight:700;background:var(--hi);color:var(--ink);cursor:pointer;white-space:nowrap}
+.stop-btn.stop-all{background:var(--ink);color:var(--paper)}
+.stop-btn:disabled{opacity:.4;cursor:default}
+.stream-only{display:none}
+body[data-app="live"][data-kind="stream"] .stream-only{display:inline}
+body[data-app="live"][data-kind="stream"] .stage-card{display:flex;flex-direction:column}
+body[data-app="live"][data-kind="stream"] .live-console{order:1;margin-top:0}
+body[data-app="live"][data-kind="stream"] .stage-tools{order:2}
+body[data-app="live"][data-kind="stream"] .studio-meter{order:3}
+body[data-app="live"][data-kind="stream"] .stage-card>.stage-group{order:4}
+body[data-app="live"][data-kind="stream"] #quickTune{order:5}
+body[data-app="live"][data-kind="stream"] .stage-preview{order:6;width:min(100%,420px);align-self:flex-end;margin-top:12px}
+body[data-app="live"][data-kind="stream"] .stage-preview .stage-head{justify-content:space-between;gap:8px;font-size:11px}
+body[data-app="live"][data-kind="stream"] .rec-panel,body[data-app="live"][data-kind="stream"] .kara-sound,body[data-app="live"][data-kind="stream"] #studioFullscreen{display:none!important}
+body[data-app="live"][data-kind="stream"] #studioOutput{background:var(--accent);color:var(--on-accent);font-weight:700}
+@media(max-width:520px){
+  .scene-switch{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sound-stop{grid-template-columns:1fr 1fr}
+  .sound-now{grid-column:1/-1}
+  .stop-btn{white-space:normal;font-size:13px;padding:10px 8px}
+}
