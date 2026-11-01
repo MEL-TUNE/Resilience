@@ -412,7 +412,7 @@
       const faceMask=Math.exp(-(((x-geo.cx)/(185*faceR))**2+((y-geo.faceY)/(170*faceR))**2));
 
       const op=S.fxOpacity/100,
-        alpha=isP(fx)?(op>=1?1:op*(.55+p.depth*.45)):op*(.35+p.depth*.65)*(layer==='front'?1-faceMask*.65:1);
+        alpha=op>=1?1:isP(fx)?op*(.55+p.depth*.45):op*(.35+p.depth*.65)*(layer==='front'?1-faceMask*.65:1);
 
       let kind=fx==='spring'?(p.variant===2&&i%9===2?'blossom':'petal'):fx==='summer'?'bubble':fx==='autumn'?(beh==='roll'?'acorn':'leaf'):fx==='winter'?'snow':'image';
 
@@ -438,6 +438,11 @@
             fit=size*3.4/Math.max(im.width,im.height);
           g.drawImage(im,-im.width*fit/2,-im.height*fit/2,im.width*fit,im.height*fit)
         }
+      }
+  else if(fx==='winter'&&autumnPics.snow[snowIdx(p,kind)]){
+        const im=autumnPics.snow[snowIdx(p,kind)],
+          fit=size*(kind==='mote'?3.4:2.6)/Math.max(im.width,im.height);
+        g.drawImage(im,-im.width*fit/2,-im.height*fit/2,im.width*fit,im.height*fit)
       }
   else if(fx==='autumn'&&(kind==='leaf'||kind==='acorn')&&autumnPics[kind==='leaf'?'leaf':'nut'][autumnIdx(p,kind)]){
         const im=autumnPics[kind==='leaf'?'leaf':'nut'][autumnIdx(p,kind)],

@@ -88,6 +88,7 @@ function render(){
 
 function save(){
   growSe();
+  growBgm();
   persist();
   render()
 }
@@ -158,7 +159,7 @@ function openBgm(b){
   $('#bgmVolModalVal').textContent=(b.volume??100)+'%';
   $('#resetBgm').disabled=!b.assetId&&!b.name;
   $('#bgmMovePrev').disabled=b.slotIndex===0;
-  $('#bgmMoveNext').disabled=b.slotIndex===BGM_SLOTS-1;
+  $('#bgmMoveNext').disabled=b.slotIndex===cfg.bgms.length-1;
   openModal('bgmModal')
 }
 
@@ -479,7 +480,7 @@ function moveBgm(direction){
   persist();
   render();
   $('#bgmMovePrev').disabled=b.slotIndex===0;
-  $('#bgmMoveNext').disabled=b.slotIndex===BGM_SLOTS-1
+  $('#bgmMoveNext').disabled=b.slotIndex===cfg.bgms.length-1
 }
 
 {

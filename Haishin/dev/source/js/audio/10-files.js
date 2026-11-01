@@ -124,7 +124,7 @@ async function readPackHeader(file){
 
   const head=JSON.parse(new TextDecoder().decode(await file.slice(12,12+len).arrayBuffer()));
 
-  if(head.format!==(live?LIVE_FORMAT:PACK_FORMAT)||!head.config||(live&&(!head.studio||typeof head.studio!=='object')))throwObject.assign(Error(''),{userMessage:'設定ファイルの中身を読み取れませんでした'});
+  if(head.format!==(live?LIVE_FORMAT:PACK_FORMAT)||!head.config||(live&&(!head.studio||typeof head.studio!=='object')))throw Object.assign(Error(''),{userMessage:'設定ファイルの中身を読み取れませんでした'});
 
   if(!head.config||typeof head.config!=='object'||Array.isArray(head.config)||!Array.isArray(head.assets))throw Error('設定ファイルの形式が正しくありません');
 
@@ -160,10 +160,13 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
   for(const u of imgUrls.values())if(u)URL.revokeObjectURL(u);
   imgUrls.clear();
 
-  const keepRec=cfg.rec;
+  const keepRec=cfg.rec,
+    keepVol={master:cfg.master,seDb:cfg.seDb,bgmDb:cfg.bgmDb,voDb:cfg.voDb,envDb:cfg.envDb,micVolume:cfg.rec.micVolume};
   stopAll();
   cfg=nextConfig;
   if(!incoming.rec)cfg.rec=keepRec;
+  Object.assign(cfg,{master:keepVol.master,seDb:keepVol.seDb,bgmDb:keepVol.bgmDb,voDb:keepVol.voDb,envDb:keepVol.envDb});
+  cfg.rec.micVolume=keepVol.micVolume;
   emojiTab=0;
   textTab=0;
   bgmTab=0;
@@ -194,7 +197,7 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
   for(const assetId of oldAssets)await deleteAsset(assetId);
   updateStorage();
 
-  toast(`設定を読み込みました（音源${stored}件${coverBlob?'・サムネイル画像':''}）`,4000);
+  toast(`設定を読み込みました（音源${stored}件${coverBlob?'・サムネイル画像':''}。音量はこの端末の設定のままです）`,5000);
 }
 
 $('#exportBtn').onclick=exportLive;

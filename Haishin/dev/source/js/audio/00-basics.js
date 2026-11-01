@@ -373,29 +373,50 @@ function fixedSlots(config,type,min,cols){
 
 const ensureTextSlots=config=>ensureGrid(ensureGrid(ensureSe(config,'text'),'voice',fixedSlots(config,'voice',VOICE_SLOTS,5),1),'env',fixedSlots(config,'env',ENV_SLOTS,4),1);
 
-function ensureBgmSlots(config){
-  const N=TABS*BGM_SLOTS,
-    prior=(config.bgms||[]).filter(b=>b.assetId||b.name);
+const BGM_COLS=3,
+  BGM_MIN=12,
+  BGM_MAX=600;
 
-  const slots=Array.from({length:N},(_,i)=>newBgm(Math.floor(i/BGM_SLOTS),i%BGM_SLOTS)),
+function bgmSlotsNeeded(list){
+  let max=-1;
+  for(const b of list)if((b.assetId||b.name)&&Number.isInteger(b.slotIndex))max=Math.max(max,b.slotIndex);
+  return Math.min(BGM_MAX,Math.max(BGM_MIN,(Math.floor(max/BGM_COLS)+2)*BGM_COLS))
+}
+
+function growBgm(){
+  const need=bgmSlotsNeeded(cfg.bgms);
+  for(let i=cfg.bgms.length;i<need;i++)cfg.bgms.push(newBgm(0,i))
+}
+
+function ensureBgmSlots(config){
+  const prior=(config.bgms||[]).filter(b=>b.assetId||b.name);
+  if(prior.some(b=>Number.isInteger(b.tabIndex)&&b.tabIndex>0)){
+    const tabs=[...new Set(prior.map(b=>Number.isInteger(b.tabIndex)&&b.tabIndex>=0?b.tabIndex:0))].sort((a,b)=>a-b);
+    let offset=0;
+    for(const t of tabs){
+      const items=prior.filter(b=>(Number.isInteger(b.tabIndex)&&b.tabIndex>=0?b.tabIndex:0)===t).sort((a,b)=>(a.slotIndex??0)-(b.slotIndex??0));
+      let max=offset-1;
+      items.forEach((b,k)=>{
+        b.tabIndex=0;
+        b.slotIndex=offset+k;
+        max=b.slotIndex
+      });
+      offset=(Math.floor(max/BGM_COLS)+1)*BGM_COLS
+    }
+  }else for(const b of prior)b.tabIndex=0;
+  const N=bgmSlotsNeeded(prior);
+
+  const slots=Array.from({length:N},(_,i)=>newBgm(0,i)),
     taken=new Set();
 
-  const positioned=prior.some(b=>Number.isInteger(b.tabIndex)&&Number.isInteger(b.slotIndex));
-
-  const list=positioned?prior.sort((a,b)=>(a.tabIndex??0)-(b.tabIndex??0)||(a.slotIndex??0)-(b.slotIndex??0)):prior;
-
-  for(const b of list){
-    let pref=Number.isInteger(b.tabIndex)&&b.tabIndex>=0?Math.min(b.tabIndex,TABS-1):0;
-
-    let idx=Number.isInteger(b.slotIndex)&&b.slotIndex>=0&&b.slotIndex<BGM_SLOTS&&b.tabIndex===pref?pref*BGM_SLOTS+b.slotIndex:-1;
-
+  for(const b of prior.sort((a,b)=>(a.slotIndex??0)-(b.slotIndex??0))){
+    let idx=Number.isInteger(b.slotIndex)&&b.slotIndex>=0&&b.slotIndex<N?b.slotIndex:-1;
     if(idx<0||taken.has(idx)){
-      idx=Array.from({length:N},(_,i)=>(pref*BGM_SLOTS+i)%N).find(i=>!taken.has(i));
+      idx=Array.from({length:N},(_,i)=>i).find(i=>!taken.has(i));
       if(idx===undefined)continue
     }
-
     taken.add(idx);
-    slots[idx]={...slots[idx],...b,tabIndex:Math.floor(idx/BGM_SLOTS),slotIndex:idx%BGM_SLOTS};
+    slots[idx]={...slots[idx],...b,tabIndex:0,slotIndex:idx};
   }
 
   config.bgms=slots;
