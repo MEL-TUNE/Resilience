@@ -149,6 +149,7 @@
     videoDest=null;
     E('studioRec').disabled=false;
     E('studioStop').disabled=true;
+    for(const id of ['studioRetake','studioDiscard']){const b=E(id);b.disabled=true;b.dataset.armed='';b.classList.remove('armed');if(b.dataset.orig)b.textContent=b.dataset.orig}
     E('studioRec').classList.remove('recording');
     E('studioRecTime').textContent='未収録'
   }
@@ -192,6 +193,12 @@
         if(finished)return;
         finished=true;
         clearTimeout(stopWatch);
+        if(rec.__discard){
+          recordChunks=[];
+          cleanupCapture();
+          rec.__after?.();
+          return
+        }
         const mime=(rec.mimeType||type).split(';')[0],
           blob=new Blob(recordChunks,{type:mime});
         recordChunks=[];
@@ -215,6 +222,9 @@
       if(monitorMuted()&&!monitorManualOff)toast('収録中はモニター音を自動で消しています（設定「録音中のモニター音」で変更できます）。動画には効果音・BGMも入ります',6000);
       recordStart=performance.now();
       E('studioStop').disabled=false;
+      E('studioRetake').disabled=false;
+      E('studioDiscard').disabled=false;
+      rec.__bgm=bgmPlaying?.trackId||bgmPendingId||null;
       E('studioRec').classList.add('recording');
       E('studioRecTime').textContent='● 収録中 0:00'
     }catch(err){
@@ -245,6 +255,42 @@
     rec.__finishSoon?.()
   };
 
+  function dropCapture(after){
+    const rec=mediaRecorder;
+    if(!rec||rec.state==='inactive'||rec.__ending)return false;
+    rec.__ending=true;
+    rec.__discard=true;
+    rec.__after=after;
+    E('studioStop').disabled=true;
+    E('studioRecTime').textContent='止めています…';
+    try{rec.stop()}catch(_){}
+    rec.__finishSoon?.();
+    return true
+  }
+  E('studioDiscard').onclick=e=>{
+    if(!mediaRecorder||mediaRecorder.__ending)return;
+    if(!armButton(e.currentTarget,'もう一度押すと破棄'))return;
+    const insts=[...active];
+    if(bgmPlaying)insts.push(bgmPlaying);
+    bgmSerial++;
+    insts.forEach(x=>fadeStop(x,.5));
+    if(dropCapture(()=>toast('収録を止めて破棄しました（保存していません）',3500)))return
+  };
+  E('studioRetake').onclick=e=>{
+    const rec=mediaRecorder;
+    if(!rec||rec.__ending)return;
+    if(!armButton(e.currentTarget,'もう一度押すと録り直し'))return;
+    const again=cfg.bgms.find(b=>b.id===rec.__bgm&&b.assetId)||null;
+    const insts=[...active];
+    if(bgmPlaying)insts.push(bgmPlaying);
+    bgmSerial++;
+    insts.forEach(x=>fadeStop(x,.25));
+    dropCapture(()=>setTimeout(async()=>{
+      await E('studioRec').onclick();
+      if(again&&!bgmPlaying&&!bgmLoadingId&&studioCapturing)playBgm(again,{restart:true});
+      toast('録り直しを始めました',2500)
+    },350))
+  };
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   function addVideoRow(blob,name){
     const url=URL.createObjectURL(blob);
@@ -305,7 +351,6 @@
     })
   }
 
-  E('studioExport').onclick=()=>exportLive();
 
   function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg|[xy][a-z0-9]{1,8})$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)||/^scene-(?:standby|away|end)$/.test(id)||/^msc-[a-z0-9]{1,12}$/.test(id)}
   async function studioValidate(decoded){
@@ -362,7 +407,7 @@
   window.__otonohaVideoRec=()=>studioCapturing||captureStarting;
   window.__otonohaStudio={collect:studioCollect,validate:studioValidate,apply:async(s,d)=>{await studioApply(s,d);toast('立ち絵・映像設定も読み込みました')},busy:()=>studioCapturing||captureStarting};
 
-  E('studioImport').onchange=async e=>{
+  window.__otonohaImportJson=async e=>{
     const f=e.target.files[0];
     if(!f)return;
     if(rec.state!=='idle'||videoJob||studioCapturing||captureStarting){

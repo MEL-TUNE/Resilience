@@ -34,6 +34,7 @@ function setApp(app,kind){
   app=app==='radio'?'radio':'live';
   document.body.dataset.app=app;
   if(app==='live')document.body.dataset.kind=kind;
+  document.body.dataset.view=app==='radio'?'radio':kind;
   try{localStorage.setItem(APP_KEY,app==='radio'?'radio':kind)}catch(_){}
   if(ctx)updateGains();
   window.__otonohaAppChanged?.(app)
