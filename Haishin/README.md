@@ -4,9 +4,13 @@ PNGTuber（立ち絵の口パク・まばたき）と、声・BGM・効果音・
 
 公開場所：https://mel-tune.github.io/Resilience/Haishin/
 
-現在の版：STUDIO 0.6.2（BGMの再生・停止、動画の録り直し、画面と設定の整理）
+現在の版：STUDIO 0.6.3（音声モードの秋：転がるどんぐり）
 
 編集用のソースは `dev/source/` にあります（JavaScript は `js/audio/` と `js/visual/` に機能ごとに分かれています）。`dev` で `python build.py` を実行すると `dev/index.html` ができるので、それをこのフォルダの `index.html` に置きます。
+
+## 0.6.3 で変わったこと
+
+- 音声モードの動画書き出し（窓辺の映像演出）の秋を、純喫茶オトノハと同じ「画面の下を左右に転がり、ぴょんと弾むどんぐり」の動きに戻しました。
 
 ## 0.6.2 で変わったこと
 

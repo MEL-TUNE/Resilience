@@ -652,13 +652,18 @@ function drawEffectFrame(canvas,base,time,settings,image){
 
       put(x,y,r*.8,0,1,1);
     }else{
-      const span=S+r*6,
-        fall=time*S*.065*sp*(.5+depth),
-        y=(a(2)*span+fall)%span-r*3;
+      const dir=a(2)<.5?1:-1,
+        span=S+r*6,
+        dist=time*S*.09*sp*(.5+depth),
+        off=(a(3)*span+dist)%span;
 
-      const x=((a(3)*S*1.25+fall*.18+Math.sin(time*.65+a(5)*TAU)*S*.045)%(S*1.25))-S*.125;
+      const x=dir>0?off-r*3:S+r*3-off,
+        floor=S*(.86+depth*.1)-r;
 
-      put(x,y,r,a(6)*TAU+Math.sin(time*.45+a(7)*TAU)*.8, .45+.55*Math.abs(Math.cos(time*.7+a(8)*TAU)),1);
+      const hop=(dist/(r*(4.2+a(4)*2))+a(5))%1,
+        height=r*(2.6+a(6)*2.4)*4*hop*(1-hop);
+
+      put(x,floor-height,r,dir*dist/r,1,1);
     }
   }
 
