@@ -159,12 +159,40 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
   navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
 })();
 
+const CONSOLE_BGM_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_console_bgm';
+let consoleBgmSig='';
+function consoleBgm(){
+  let id='';
+  try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
+  return (id&&cfg.bgms.find(b=>b.id===id&&b.assetId))||progBgm()||null
+}
+function renderConsoleBgm(){
+  if(!cfg)return;
+  const sel=$('#consoleBgmSel'),pb=progBgm(),list=cfg.bgms.filter(b=>b.assetId);
+  let id='';
+  try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
+  const sig=JSON.stringify([id,pb?.id,list.map(b=>[b.id,b.name])]);
+  if(sig===consoleBgmSig)return;
+  consoleBgmSig=sig;
+  sel.replaceChildren(new Option(pb?'番組の初期BGM（'+pb.name+'）':'番組の初期BGM（未設定）',''),...list.map(b=>new Option(b.name,b.id)));
+  sel.value=list.some(b=>b.id===id)?id:''
+}
 function syncConsole(){
+  if(!cfg)return;
+  renderConsoleBgm();
   const nm=$('#bgmNowName').textContent,c=$('#consoleBgmName');
   if(c.textContent!==nm)c.textContent=nm;
-  $('#consoleBgmStop').disabled=!(bgmPlaying||bgmLoadingId)
+  const btn=$('#consoleBgmStop'),on=!!(bgmPlaying||bgmLoadingId),txt=on?'■ BGMを止める':'▶ BGMを流す';
+  if(btn.textContent!==txt)btn.textContent=txt;
+  btn.classList.toggle('playing',on);
+  btn.disabled=!on&&!consoleBgm()
 }
 setInterval(syncConsole,300);
+$('#consoleBgmSel').onchange=e=>{
+  try{localStorage.setItem(CONSOLE_BGM_KEY,e.target.value)}catch(_){}
+  consoleBgmSig='';
+  syncConsole()
+};
 $('#consoleBgmStop').onclick=()=>{
   if(bgmLoadingId){
     bgmSerial++;
@@ -176,7 +204,10 @@ $('#consoleBgmStop').onclick=()=>{
   if(bgmPlaying){
     bgmSerial++;
     addMarker('BGM停止：'+bgmPlaying.name,true);
-    fadeStop(bgmPlaying,.6)
+    fadeStop(bgmPlaying,.6);
+    return
   }
+  const b=consoleBgm();
+  if(b){ensureRunning();playBgm(b,{restart:true})}
 };
 $('#consoleAllStop').onclick=()=>stopAll();

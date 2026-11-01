@@ -106,7 +106,7 @@ async function test(name, fn) {
   });
   await test('Studio JSON import refuses changes during capture', async () => {
     let handler;
-    walk.simple(parse(visual), {AssignmentExpression(n){if(visual.slice(n.left.start,n.left.end)==="E('studioImport').onchange")handler=visual.slice(n.right.start,n.right.end);}});
+    walk.simple(parse(visual), {AssignmentExpression(n){if(visual.slice(n.left.start,n.left.end)==="window.__otonohaImportJson")handler=visual.slice(n.right.start,n.right.end);}});
     const c=vm.createContext({console,readAttempt:false,notice:'',rec:{state:'recording'},videoJob:null,studioCapturing:false,captureStarting:false,ready:true});
     vm.runInContext('function toast(s){notice=s};var handler='+handler,c);
     c.event={target:{files:[{slice(){c.readAttempt=true;throw Error('must not read while recording')}}],value:'selected'}};

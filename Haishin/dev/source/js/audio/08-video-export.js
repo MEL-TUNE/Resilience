@@ -538,24 +538,44 @@ function drawElegantMotif(g,kind,r,variant=0){
   g.drawImage(c,-span/2,-span/2,span,span)
 }
 
+const ART_LINE=r=>Math.max(1,r*.13);
 function drawPetal(g,r){
-  drawElegantMotif(g,'petal',r)
+ g.lineJoin='round';g.lineWidth=ART_LINE(r);g.strokeStyle='#c85d79';g.fillStyle='#f4a7b9';
+ g.beginPath();g.moveTo(0,r*.95);g.bezierCurveTo(r*1.05,r*.55,r*.95,-r*.75,r*.22,-r*.9);g.quadraticCurveTo(0,-r*.62,-r*.22,-r*.9);g.bezierCurveTo(-r*.95,-r*.75,-r*1.05,r*.55,0,r*.95);g.closePath();g.fill();g.stroke();
+ g.fillStyle='#fde3ea';g.beginPath();g.arc(-r*.3,-r*.25,r*.16,0,Math.PI*2);g.fill();
 }
-
 function drawBlossom(g,r){
-  drawElegantMotif(g,'blossom',r)
+ g.lineJoin='round';g.lineCap='round';const L=ART_LINE(r)*.8,TAU=Math.PI*2;
+ const petal=()=>{g.beginPath();g.moveTo(0,-r*.1);g.bezierCurveTo(-r*.5,-r*.18,-r*.56,-r*.92,-r*.17,-r*.98);g.quadraticCurveTo(-r*.05,-r*.99,0,-r*.84);g.quadraticCurveTo(r*.05,-r*.99,r*.17,-r*.98);g.bezierCurveTo(r*.56,-r*.92,r*.5,-r*.18,0,-r*.1);g.closePath()};
+ for(let k=0;k<5;k++){g.save();g.rotate(k*TAU/5);petal();g.fillStyle='#f7b3c4';g.fill();g.strokeStyle='#c85d79';g.lineWidth=L;g.stroke();
+  g.fillStyle='#fde6ec';g.beginPath();g.ellipse(-r*.17,-r*.66,r*.09,r*.06,-.6,0,TAU);g.fill();g.restore()}
+ g.fillStyle='#e9849f';g.beginPath();g.arc(0,0,r*.26,0,TAU);g.fill();
+ g.strokeStyle='#c85d79';g.lineWidth=L*.6;g.fillStyle='#f2c94c';
+ for(let k=0;k<5;k++){const an=k*TAU/5+Math.PI/5,x=Math.sin(an)*r*.3,y=-Math.cos(an)*r*.3;g.beginPath();g.moveTo(Math.sin(an)*r*.1,-Math.cos(an)*r*.1);g.lineTo(x,y);g.stroke();g.beginPath();g.arc(x,y,r*.07,0,TAU);g.fill()}
 }
-
 function drawBubble(g,r){
-  drawElegantMotif(g,'bubble',r)
+ g.lineWidth=ART_LINE(r)*1.1;g.strokeStyle='#5aa9c8';g.fillStyle='rgba(205,236,246,.55)';
+ g.beginPath();g.arc(0,0,r,0,Math.PI*2);g.fill();g.stroke();
+ g.fillStyle='#ffffff';g.beginPath();g.arc(-r*.38,-r*.38,r*.2,0,Math.PI*2);g.fill();g.beginPath();g.arc(-r*.1,-r*.58,r*.09,0,Math.PI*2);g.fill();
 }
-
 function drawAcorn(g,r){
-  drawElegantMotif(g,'leaf',r)
+ g.lineJoin='round';g.lineWidth=ART_LINE(r);g.strokeStyle='#5e3b22';
+ g.fillStyle='#c98a4b';g.beginPath();g.ellipse(0,r*.18,r*.7,r*.72,0,0,Math.PI*2);g.fill();g.stroke();
+ g.fillStyle='#8a5a33';g.beginPath();g.moveTo(-r*.82,-r*.12);g.quadraticCurveTo(-r*.8,-r*.82,0,-r*.82);g.quadraticCurveTo(r*.8,-r*.82,r*.82,-r*.12);g.quadraticCurveTo(0,r*.06,-r*.82,-r*.12);g.closePath();g.fill();g.stroke();
+ g.fillStyle='#a87444';for(const [x,y] of [[-r*.4,-r*.4],[0,-r*.5],[r*.4,-r*.4],[-r*.2,-r*.2],[r*.2,-r*.2]]){g.beginPath();g.arc(x,y,r*.08,0,Math.PI*2);g.fill()}
+ g.fillStyle='#5e3b22';g.beginPath();g.roundRect?g.roundRect(-r*.09,-r*1.08,r*.18,r*.3,r*.06):g.rect(-r*.09,-r*1.08,r*.18,r*.3);g.fill();
+ g.fillStyle='#e6b783';g.beginPath();g.arc(-r*.3,r*.22,r*.13,0,Math.PI*2);g.fill();
 }
-
 function drawSnow(g,r){
-  drawElegantMotif(g,'snow',r)
+ g.lineJoin='round';g.lineCap='round';
+ const arms=()=>{g.beginPath();for(let k=0;k<6;k++){const an=k*Math.PI/3,c=Math.cos(an),sn=Math.sin(an),px=(t,o)=>[sn*t*r+c*o*r,-c*t*r+sn*o*r];
+   let [x,y]=px(0,0);g.moveTo(x,y);[x,y]=px(.9,0);g.lineTo(x,y);
+   for(const [t,l] of [[.5,.26],[.72,.18]])for(const sd of [-1,1]){[x,y]=px(t,0);g.moveTo(x,y);[x,y]=px(t+l*.75,sd*l);g.lineTo(x,y)}}};
+ const dots=(rad)=>{for(let k=0;k<6;k++){const an=k*Math.PI/3;g.beginPath();g.arc(Math.sin(an)*r*.9,-Math.cos(an)*r*.9,rad,0,Math.PI*2);g.fill()}};
+ const W=Math.max(1.1,r*.15);
+ g.strokeStyle='#9fb3cc';g.fillStyle='#9fb3cc';g.lineWidth=W+Math.max(1.1,r*.11);arms();g.stroke();dots(W*.9+r*.055);g.beginPath();g.arc(0,0,r*.3,0,Math.PI*2);g.fill();
+ g.strokeStyle='#ffffff';g.fillStyle='#ffffff';g.lineWidth=W;arms();g.stroke();dots(W*.9);g.beginPath();g.arc(0,0,r*.22,0,Math.PI*2);g.fill();
+ g.fillStyle='#dfe8f3';g.beginPath();g.arc(0,0,r*.09,0,Math.PI*2);g.fill();
 }
 
 function drawEffectFrame(canvas,base,time,settings,image){
@@ -703,7 +723,13 @@ async function startFilmPreview(){
     const tick=now=>{
       if(token!==previewToken)return;
       started??=now;
-      drawEffectFrame(c,base,matchMedia('(prefers-reduced-motion: reduce)').matches?0:(now-started)/1000,settings,image);
+      try{
+        drawEffectFrame(c,base,(now-started)/1000*(matchMedia('(prefers-reduced-motion: reduce)').matches?.35:1),settings,image)
+      }catch(err){
+        stopFilmPreview();
+        $('#filmStatus').textContent='プレビューを表示できませんでした：'+(err.message||err);
+        return
+      }
       previewRaf=requestAnimationFrame(tick)
     };
 

@@ -204,6 +204,10 @@ $('#importBtn').onclick=()=>$('#importFile').click();
 $('#importFile').onchange=async e=>{
   const file=e.target.files[0];
   if(!file)return;
+  if(/\.json$/i.test(file.name)&&window.__otonohaImportJson){
+    e.target.value='';
+    return window.__otonohaImportJson({target:{files:[file],value:''}})
+  }
   if(rec.state!=='idle'||videoJob||studioCapturing){
     e.target.value='';
     toast('収録・動画書き出しが終わってから読み込んでください');

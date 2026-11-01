@@ -276,3 +276,16 @@ body[data-app="live"][data-kind="stream"] #studioOutput{background:var(--accent)
   body[data-app="live"][data-kind="stream"] .stop-btn{white-space:normal}
   body[data-app="live"][data-kind="stream"] .stage-preview{width:100%;align-self:stretch}
 }
+body[data-view="stream"] [data-modes]:not([data-modes~="stream"]),body[data-view="video"] [data-modes]:not([data-modes~="video"]),body[data-view="radio"] [data-modes]:not([data-modes~="radio"]){display:none!important}
+.set-mode-note{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:var(--a-p-12);font-size:13px}
+.console-bgm-pick{display:flex;flex-direction:column;gap:3px;font-size:11px;min-width:0}
+.console-bgm-pick select{max-width:100%;font-size:13px;padding:6px}
+.stop-btn.playing{border-color:var(--rec);color:var(--rec)}
+.sound-stop{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.sound-now{grid-column:1/-1}
+.console-bgm-pick{grid-column:1/-1}
+.rec-extra{display:flex;gap:8px;margin-top:8px}
+.rec-extra button{flex:1;border:1px solid var(--a-p-45);border-radius:10px;padding:9px 8px;background:var(--hi);font-size:13px;cursor:pointer}
+.rec-extra button:disabled{opacity:.45;cursor:default}
+.rec-extra .discard{color:var(--rec);border-color:var(--r-p-45)}
+.rec-extra button.armed{background:var(--rec);color:#fff;border-color:var(--rec)}
