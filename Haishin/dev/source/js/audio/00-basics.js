@@ -64,7 +64,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 
 const newSound=(type,label,order)=>({id:id(),type,label,category:'全て',volume:100,assetId:null,fileName:'',shortcut:'',configured:false,order});
 
-const newBgm=(tabIndex,slotIndex)=>({id:id(),name:'',volume:100,assetId:null,fileName:'',tabIndex,slotIndex});
+const newBgm=(tabIndex,slotIndex,owner)=>({id:id(),name:'',volume:100,assetId:null,fileName:'',tabIndex,slotIndex,...(owner?{owner}:{})});
 
 const defaults=()=>({
   version:6,
@@ -212,7 +212,7 @@ function normalize(raw){
 
   base.textTabs=fitTabs(raw.textTabs,TEXT_TAB_DEFAULTS,realSounds('text'));
 
-  base.bgmTabs=fitTabs(raw.bgmTabs,BGM_TAB_DEFAULTS,base.bgms.filter(b=>b.assetId||b.name));
+  base.bgmTabs=Array.isArray(raw.bgmTabs)&&raw.bgmTabs.length?raw.bgmTabs.slice(0,BGM_TAB_MAX).map(x=>String(x||'名義').slice(0,40)):[...BGM_TAB_DEFAULTS];
 
   for(const key of ['master','seVolume','bgmVolume'])base[key]=Number.isFinite(+raw[key])?+raw[key]:base[key];
 
@@ -383,45 +383,72 @@ function bgmSlotsNeeded(list){
   return Math.min(BGM_MAX,Math.max(BGM_MIN,(Math.floor(max/BGM_COLS)+2)*BGM_COLS))
 }
 
-function growBgm(){
-  const need=bgmSlotsNeeded(cfg.bgms);
-  for(let i=cfg.bgms.length;i<need;i++)cfg.bgms.push(newBgm(0,i))
-}
+const BGM_TAB_MAX=20;
+let bgmOwnerIds=null;
 
-function ensureBgmSlots(config){
-  const prior=(config.bgms||[]).filter(b=>b.assetId||b.name);
-  if(prior.some(b=>Number.isInteger(b.tabIndex)&&b.tabIndex>0)){
-    const tabs=[...new Set(prior.map(b=>Number.isInteger(b.tabIndex)&&b.tabIndex>=0?b.tabIndex:0))].sort((a,b)=>a-b);
-    let offset=0;
-    for(const t of tabs){
-      const items=prior.filter(b=>(Number.isInteger(b.tabIndex)&&b.tabIndex>=0?b.tabIndex:0)===t).sort((a,b)=>(a.slotIndex??0)-(b.slotIndex??0));
-      let max=offset-1;
-      items.forEach((b,k)=>{
-        b.tabIndex=0;
-        b.slotIndex=offset+k;
-        max=b.slotIndex
-      });
-      offset=(Math.floor(max/BGM_COLS)+1)*BGM_COLS
-    }
-  }else for(const b of prior)b.tabIndex=0;
-  const N=bgmSlotsNeeded(prior);
+const bgmReal=b=>!!(b.assetId||b.name);
+const bgmTabOf=b=>Number.isInteger(b.tabIndex)&&b.tabIndex>=0?Math.min(b.tabIndex,BGM_TAB_MAX-1):0;
 
-  const slots=Array.from({length:N},(_,i)=>newBgm(0,i)),
+function bgmTabSlots(items,tab,owner){
+  const N=bgmSlotsNeeded(items),
+    slots=Array.from({length:N},(_,i)=>newBgm(tab,i,owner)),
     taken=new Set();
-
-  for(const b of prior.sort((a,b)=>(a.slotIndex??0)-(b.slotIndex??0))){
+  for(const b of items.sort((x,y)=>(x.slotIndex??0)-(y.slotIndex??0))){
     let idx=Number.isInteger(b.slotIndex)&&b.slotIndex>=0&&b.slotIndex<N?b.slotIndex:-1;
     if(idx<0||taken.has(idx)){
       idx=Array.from({length:N},(_,i)=>i).find(i=>!taken.has(i));
       if(idx===undefined)continue
     }
     taken.add(idx);
-    slots[idx]={...slots[idx],...b,tabIndex:0,slotIndex:idx};
+    slots[idx]={...slots[idx],...b,tabIndex:tab,slotIndex:idx,...(owner?{owner}:{})}
   }
-
-  config.bgms=slots;
-  return config;
+  return slots
 }
+
+function growBgm(){
+  const tabs=bgmOwnerIds?bgmOwnerIds.length:Math.max(1,...cfg.bgms.map(b=>bgmTabOf(b)+1));
+  for(let t=0;t<tabs;t++){
+    const list=cfg.bgms.filter(b=>bgmTabOf(b)===t),
+      need=bgmSlotsNeeded(list);
+    for(let i=list.length;i<need;i++)cfg.bgms.push(newBgm(t,i,bgmOwnerIds?.[t]))
+  }
+}
+
+function ensureBgmSlots(config){
+  const prior=(config.bgms||[]).filter(bgmReal),
+    tabs=Math.max(1,...prior.map(b=>bgmTabOf(b)+1));
+  config.bgms=[];
+  for(let t=0;t<tabs;t++)config.bgms.push(...bgmTabSlots(prior.filter(b=>bgmTabOf(b)===t),t,null));
+  return config
+}
+
+// 名義（映像側のプロフィール）がそのままBGMのタブになる。名義のない曲・消した名義の曲は先頭の名義のタブへ
+function setBgmProfiles(list,curId,follow){
+  if(!cfg||!Array.isArray(list)||!list.length)return;
+  const ids=list.slice(0,BGM_TAB_MAX).map(p=>p.id),
+    real=cfg.bgms.filter(bgmReal),
+    orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(y)||(x.slotIndex??0)-(y.slotIndex??0));
+  for(const b of real)if(ids.includes(b.owner))b.tabIndex=ids.indexOf(b.owner);
+  const taken=new Set(real.filter(b=>b.owner===ids[0]).map(b=>b.slotIndex));
+  let next=Math.max(-1,...taken)+1;
+  for(const b of orphans){
+    let s=Number.isInteger(b.slotIndex)&&b.slotIndex>=0&&bgmTabOf(b)===0?b.slotIndex:-1;
+    if(s<0||taken.has(s)){while(taken.has(next))next++;s=next}
+    taken.add(s);
+    b.owner=ids[0];b.tabIndex=0;b.slotIndex=s
+  }
+  bgmOwnerIds=ids;
+  const before=JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join();
+  cfg.bgms=ids.flatMap((owner,t)=>bgmTabSlots(real.filter(b=>b.owner===owner),t,owner));
+  cfg.bgmTabs=list.slice(0,BGM_TAB_MAX).map(p=>String(p.name||'名義').slice(0,40));
+  const cur=ids.indexOf(curId);
+  if(follow&&cur>=0)bgmTab=cur;
+  if(bgmTab>=ids.length)bgmTab=0;
+  if(before!==JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join())persist();
+  render();
+  renderPrograms?.()
+}
+window.__otonohaBgmProfiles=setBgmProfiles;
 
 function memoryDB(){
   const S={assets:new Map(),takes:new Map(),chunks:new Map()};

@@ -33,6 +33,7 @@
     ensureProfiles();
     await loadAllChars();
     activateChar(state.charId,true);
+    syncBgmProfiles(true);
     renderMascotUI();
     renderExprUI();
     renderAssetSlots()

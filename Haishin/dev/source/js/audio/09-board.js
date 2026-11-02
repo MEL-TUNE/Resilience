@@ -159,7 +159,13 @@ function openBgm(b){
   $('#bgmVolModalVal').textContent=(b.volume??100)+'%';
   $('#resetBgm').disabled=!b.assetId&&!b.name;
   $('#bgmMovePrev').disabled=b.slotIndex===0;
-  $('#bgmMoveNext').disabled=b.slotIndex===cfg.bgms.length-1;
+  $('#bgmMoveNext').disabled=b.slotIndex===cfg.bgms.filter(x=>x.tabIndex===b.tabIndex).length-1;
+  {
+    const sel=$('#bgmOwnerSel');
+    sel.innerHTML=cfg.bgmTabs.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join('');
+    sel.value=String(b.tabIndex);
+    sel.closest('.field').hidden=cfg.bgmTabs.length<2
+  }
   openModal('bgmModal')
 }
 
@@ -480,7 +486,7 @@ function moveBgm(direction){
   persist();
   render();
   $('#bgmMovePrev').disabled=b.slotIndex===0;
-  $('#bgmMoveNext').disabled=b.slotIndex===cfg.bgms.length-1
+  $('#bgmMoveNext').disabled=b.slotIndex===cfg.bgms.filter(x=>x.tabIndex===b.tabIndex).length-1
 }
 
 {
@@ -841,6 +847,24 @@ $('#bgmForm').onsubmit=async e=>{
 
     const next={name:$('#bgmNameInput').value.trim(),volume:+$('#bgmVolModal').value,assetId,fileName};
     Object.assign(old,next);
+    let movedTo=null;
+    {
+      const to=+$('#bgmOwnerSel').value;
+      if(Number.isInteger(to)&&to!==old.tabIndex&&to>=0&&to<cfg.bgmTabs.length){
+        const tabList=cfg.bgms.filter(x=>x.tabIndex===to),
+          free=tabList.filter(x=>!x.assetId&&!x.name).sort((a,b)=>a.slotIndex-b.slotIndex)[0],
+          from={tabIndex:old.tabIndex,slotIndex:old.slotIndex,owner:old.owner};
+        if(free){
+          const fs=free.slotIndex;
+          Object.assign(free,from);
+          Object.assign(old,{tabIndex:to,slotIndex:fs,owner:bgmOwnerIds?.[to]})
+        }else{
+          cfg.bgms.push(newBgm(from.tabIndex,from.slotIndex,from.owner));
+          Object.assign(old,{tabIndex:to,slotIndex:tabList.length,owner:bgmOwnerIds?.[to]})
+        }
+        movedTo=to
+      }
+    }
 
     if(bgmPlaying?.trackId===old.id){
       if(file){
@@ -852,7 +876,7 @@ $('#bgmForm').onsubmit=async e=>{
     save();
     closeModal('bgmModal');
     if(file&&previousAsset)await deleteAsset(previousAsset);
-    toast('BGMを保存しました')
+    toast(movedTo===null?'BGMを保存しました':'BGMを「'+cfg.bgmTabs[movedTo]+'」のタブへ移しました')
   }catch(err){
     console.error(err);
     toast('音源を保存できませんでした。空き容量をご確認ください')
