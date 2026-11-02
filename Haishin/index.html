@@ -876,7 +876,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.6.4 / 設定ファイルの読み込み、演出の濃さ、BGM枠、冬の絵</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.6.5 / 名義ごとのBGMタブ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -943,7 +943,7 @@ lookPaint(look);
 <section class="section"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
 <section class="section"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
 <section class="section"><div class="section-title"><h2>環境音 <span>04 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
-<section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs" hidden></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは名義ごとにあり、名義を切り替えるとその名義のタブを開きます。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
 </div></main>
 </div>
 <details class="studio-card studio-help"><summary>使い方</summary><p data-modes="stream"><strong>配信モード（PC＋OBS）</strong>：このアプリは映像と、効果音・BGM・環境音だけを作ります。マイクの声は口パクの判定にだけ使い、アプリからは出しません。OBSでは「配信用の映像ウインドウ」をウィンドウキャプチャで取り込み、音はブラウザの音（効果音・BGM）とマイク（AG03など）を別々に取り込みます。録画はOBS側で行ってください。</p><p data-modes="video"><strong>動画モード（スマホ・タブレット向け）</strong>：立ち絵とBGM・効果音つきの動画を、この画面で収録して保存します。マイクの声も動画に入ります。</p><p data-modes="radio"><strong>音声モード</strong>：ラジオのように声とBGM・効果音を録音します。</p><p>準備：「設定」の「表情と演出」で立ち絵を登録（4枚の表情差分か1枚）→ マイクをつなぐ → 声を出して「口が開く音量」を調整 → 効果音・BGMを登録。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別のブラウザや別のURLへは自動で引き継がないので、「設定」の「すべてを書き出す（.live）」で書き出してから移してください。</p></details>
@@ -1140,7 +1140,7 @@ lookPaint(look);
  <div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="progModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <input type="file" id="progCoverFile" accept="image/*" hidden>
 <div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field" id="imageField" hidden><label for="imageFile">ボタンの画像</label><div class="filebox"><input id="imageFile" type="file" accept="image/*"><small id="currentImage"></small></div></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
-<div class="modal-back" id="bgmModal"><form class="modal" id="bgmForm"><h2 id="bgmHeading">BGMの設定</h2><input type="hidden" id="bgmId"><div class="field"><label for="bgmNameInput">表示名</label><input id="bgmNameInput" maxlength="80" required placeholder="例：午後の喫茶店"></div><div class="field"><label for="bgmFile">音源ファイル</label><div class="filebox"><input id="bgmFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentBgmFile"></small></div></div><div class="field"><label for="bgmVolModal">この曲の音量：<span id="bgmVolModalVal"></span></label><input id="bgmVolModal" type="range" min="0" max="100"></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="bgmMovePrev">← 前へ</button><button type="button" class="btn" id="bgmMoveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="resetBgm">選択リセット</button><div class="actions-right"><button type="button" class="btn" data-close="bgmModal">キャンセル</button><button type="submit" class="btn gold">保存</button></div></div></form></div>
+<div class="modal-back" id="bgmModal"><form class="modal" id="bgmForm"><h2 id="bgmHeading">BGMの設定</h2><input type="hidden" id="bgmId"><div class="field"><label for="bgmNameInput">表示名</label><input id="bgmNameInput" maxlength="80" required placeholder="例：午後の喫茶店"></div><div class="field"><label for="bgmFile">音源ファイル</label><div class="filebox"><input id="bgmFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentBgmFile"></small></div></div><div class="field"><label for="bgmVolModal">この曲の音量：<span id="bgmVolModalVal"></span></label><input id="bgmVolModal" type="range" min="0" max="100"></div><div class="field"><label for="bgmOwnerSel">入れる名義のタブ</label><select id="bgmOwnerSel"></select></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="bgmMovePrev">← 前へ</button><button type="button" class="btn" id="bgmMoveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="resetBgm">選択リセット</button><div class="actions-right"><button type="button" class="btn" data-close="bgmModal">キャンセル</button><button type="submit" class="btn gold">保存</button></div></div></form></div>
 <div class="modal-back" id="emojiTabsModal"><form class="modal" id="emojiTabsForm"><h2>絵文字SEのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="emojiTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="emojiTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back" id="bgmTabsModal"><form class="modal" id="bgmTabsForm"><h2>BGMのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの曲は各タブに残ります。</p><div class="category-list" id="bgmTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="bgmTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back" id="textTabsModal"><form class="modal" id="textTabsForm"><h2>文字SEのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="textTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="textTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
@@ -1212,7 +1212,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 
 const newSound=(type,label,order)=>({id:id(),type,label,category:'全て',volume:100,assetId:null,fileName:'',shortcut:'',configured:false,order});
 
-const newBgm=(tabIndex,slotIndex)=>({id:id(),name:'',volume:100,assetId:null,fileName:'',tabIndex,slotIndex});
+const newBgm=(tabIndex,slotIndex,owner)=>({id:id(),name:'',volume:100,assetId:null,fileName:'',tabIndex,slotIndex,...(owner?{owner}:{})});
 
 const defaults=()=>({
   version:6,
@@ -1360,7 +1360,7 @@ function normalize(raw){
 
   base.textTabs=fitTabs(raw.textTabs,TEXT_TAB_DEFAULTS,realSounds('text'));
 
-  base.bgmTabs=fitTabs(raw.bgmTabs,BGM_TAB_DEFAULTS,base.bgms.filter(b=>b.assetId||b.name));
+  base.bgmTabs=Array.isArray(raw.bgmTabs)&&raw.bgmTabs.length?raw.bgmTabs.slice(0,BGM_TAB_MAX).map(x=>String(x||'名義').slice(0,40)):[...BGM_TAB_DEFAULTS];
 
   for(const key of ['master','seVolume','bgmVolume'])base[key]=Number.isFinite(+raw[key])?+raw[key]:base[key];
 
@@ -1531,45 +1531,72 @@ function bgmSlotsNeeded(list){
   return Math.min(BGM_MAX,Math.max(BGM_MIN,(Math.floor(max/BGM_COLS)+2)*BGM_COLS))
 }
 
-function growBgm(){
-  const need=bgmSlotsNeeded(cfg.bgms);
-  for(let i=cfg.bgms.length;i<need;i++)cfg.bgms.push(newBgm(0,i))
-}
+const BGM_TAB_MAX=20;
+let bgmOwnerIds=null;
 
-function ensureBgmSlots(config){
-  const prior=(config.bgms||[]).filter(b=>b.assetId||b.name);
-  if(prior.some(b=>Number.isInteger(b.tabIndex)&&b.tabIndex>0)){
-    const tabs=[...new Set(prior.map(b=>Number.isInteger(b.tabIndex)&&b.tabIndex>=0?b.tabIndex:0))].sort((a,b)=>a-b);
-    let offset=0;
-    for(const t of tabs){
-      const items=prior.filter(b=>(Number.isInteger(b.tabIndex)&&b.tabIndex>=0?b.tabIndex:0)===t).sort((a,b)=>(a.slotIndex??0)-(b.slotIndex??0));
-      let max=offset-1;
-      items.forEach((b,k)=>{
-        b.tabIndex=0;
-        b.slotIndex=offset+k;
-        max=b.slotIndex
-      });
-      offset=(Math.floor(max/BGM_COLS)+1)*BGM_COLS
-    }
-  }else for(const b of prior)b.tabIndex=0;
-  const N=bgmSlotsNeeded(prior);
+const bgmReal=b=>!!(b.assetId||b.name);
+const bgmTabOf=b=>Number.isInteger(b.tabIndex)&&b.tabIndex>=0?Math.min(b.tabIndex,BGM_TAB_MAX-1):0;
 
-  const slots=Array.from({length:N},(_,i)=>newBgm(0,i)),
+function bgmTabSlots(items,tab,owner){
+  const N=bgmSlotsNeeded(items),
+    slots=Array.from({length:N},(_,i)=>newBgm(tab,i,owner)),
     taken=new Set();
-
-  for(const b of prior.sort((a,b)=>(a.slotIndex??0)-(b.slotIndex??0))){
+  for(const b of items.sort((x,y)=>(x.slotIndex??0)-(y.slotIndex??0))){
     let idx=Number.isInteger(b.slotIndex)&&b.slotIndex>=0&&b.slotIndex<N?b.slotIndex:-1;
     if(idx<0||taken.has(idx)){
       idx=Array.from({length:N},(_,i)=>i).find(i=>!taken.has(i));
       if(idx===undefined)continue
     }
     taken.add(idx);
-    slots[idx]={...slots[idx],...b,tabIndex:0,slotIndex:idx};
+    slots[idx]={...slots[idx],...b,tabIndex:tab,slotIndex:idx,...(owner?{owner}:{})}
   }
-
-  config.bgms=slots;
-  return config;
+  return slots
 }
+
+function growBgm(){
+  const tabs=bgmOwnerIds?bgmOwnerIds.length:Math.max(1,...cfg.bgms.map(b=>bgmTabOf(b)+1));
+  for(let t=0;t<tabs;t++){
+    const list=cfg.bgms.filter(b=>bgmTabOf(b)===t),
+      need=bgmSlotsNeeded(list);
+    for(let i=list.length;i<need;i++)cfg.bgms.push(newBgm(t,i,bgmOwnerIds?.[t]))
+  }
+}
+
+function ensureBgmSlots(config){
+  const prior=(config.bgms||[]).filter(bgmReal),
+    tabs=Math.max(1,...prior.map(b=>bgmTabOf(b)+1));
+  config.bgms=[];
+  for(let t=0;t<tabs;t++)config.bgms.push(...bgmTabSlots(prior.filter(b=>bgmTabOf(b)===t),t,null));
+  return config
+}
+
+// 名義（映像側のプロフィール）がそのままBGMのタブになる。名義のない曲・消した名義の曲は先頭の名義のタブへ
+function setBgmProfiles(list,curId,follow){
+  if(!cfg||!Array.isArray(list)||!list.length)return;
+  const ids=list.slice(0,BGM_TAB_MAX).map(p=>p.id),
+    real=cfg.bgms.filter(bgmReal),
+    orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(y)||(x.slotIndex??0)-(y.slotIndex??0));
+  for(const b of real)if(ids.includes(b.owner))b.tabIndex=ids.indexOf(b.owner);
+  const taken=new Set(real.filter(b=>b.owner===ids[0]).map(b=>b.slotIndex));
+  let next=Math.max(-1,...taken)+1;
+  for(const b of orphans){
+    let s=Number.isInteger(b.slotIndex)&&b.slotIndex>=0&&bgmTabOf(b)===0?b.slotIndex:-1;
+    if(s<0||taken.has(s)){while(taken.has(next))next++;s=next}
+    taken.add(s);
+    b.owner=ids[0];b.tabIndex=0;b.slotIndex=s
+  }
+  bgmOwnerIds=ids;
+  const before=JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join();
+  cfg.bgms=ids.flatMap((owner,t)=>bgmTabSlots(real.filter(b=>b.owner===owner),t,owner));
+  cfg.bgmTabs=list.slice(0,BGM_TAB_MAX).map(p=>String(p.name||'名義').slice(0,40));
+  const cur=ids.indexOf(curId);
+  if(follow&&cur>=0)bgmTab=cur;
+  if(bgmTab>=ids.length)bgmTab=0;
+  if(before!==JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join())persist();
+  render();
+  renderPrograms?.()
+}
+window.__otonohaBgmProfiles=setBgmProfiles;
 
 function memoryDB(){
   const S={assets:new Map(),takes:new Map(),chunks:new Map()};
@@ -5314,7 +5341,13 @@ function openBgm(b){
   $('#bgmVolModalVal').textContent=(b.volume??100)+'%';
   $('#resetBgm').disabled=!b.assetId&&!b.name;
   $('#bgmMovePrev').disabled=b.slotIndex===0;
-  $('#bgmMoveNext').disabled=b.slotIndex===cfg.bgms.length-1;
+  $('#bgmMoveNext').disabled=b.slotIndex===cfg.bgms.filter(x=>x.tabIndex===b.tabIndex).length-1;
+  {
+    const sel=$('#bgmOwnerSel');
+    sel.innerHTML=cfg.bgmTabs.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join('');
+    sel.value=String(b.tabIndex);
+    sel.closest('.field').hidden=cfg.bgmTabs.length<2
+  }
   openModal('bgmModal')
 }
 
@@ -5635,7 +5668,7 @@ function moveBgm(direction){
   persist();
   render();
   $('#bgmMovePrev').disabled=b.slotIndex===0;
-  $('#bgmMoveNext').disabled=b.slotIndex===cfg.bgms.length-1
+  $('#bgmMoveNext').disabled=b.slotIndex===cfg.bgms.filter(x=>x.tabIndex===b.tabIndex).length-1
 }
 
 {
@@ -5996,6 +6029,24 @@ $('#bgmForm').onsubmit=async e=>{
 
     const next={name:$('#bgmNameInput').value.trim(),volume:+$('#bgmVolModal').value,assetId,fileName};
     Object.assign(old,next);
+    let movedTo=null;
+    {
+      const to=+$('#bgmOwnerSel').value;
+      if(Number.isInteger(to)&&to!==old.tabIndex&&to>=0&&to<cfg.bgmTabs.length){
+        const tabList=cfg.bgms.filter(x=>x.tabIndex===to),
+          free=tabList.filter(x=>!x.assetId&&!x.name).sort((a,b)=>a.slotIndex-b.slotIndex)[0],
+          from={tabIndex:old.tabIndex,slotIndex:old.slotIndex,owner:old.owner};
+        if(free){
+          const fs=free.slotIndex;
+          Object.assign(free,from);
+          Object.assign(old,{tabIndex:to,slotIndex:fs,owner:bgmOwnerIds?.[to]})
+        }else{
+          cfg.bgms.push(newBgm(from.tabIndex,from.slotIndex,from.owner));
+          Object.assign(old,{tabIndex:to,slotIndex:tabList.length,owner:bgmOwnerIds?.[to]})
+        }
+        movedTo=to
+      }
+    }
 
     if(bgmPlaying?.trackId===old.id){
       if(file){
@@ -6007,7 +6058,7 @@ $('#bgmForm').onsubmit=async e=>{
     save();
     closeModal('bgmModal');
     if(file&&previousAsset)await deleteAsset(previousAsset);
-    toast('BGMを保存しました')
+    toast(movedTo===null?'BGMを保存しました':'BGMを「'+cfg.bgmTabs[movedTo]+'」のタブへ移しました')
   }catch(err){
     console.error(err);
     toast('音源を保存できませんでした。空き容量をご確認ください')
@@ -6703,13 +6754,13 @@ function consoleBgm(){
 }
 function renderConsoleBgm(){
   if(!cfg)return;
-  const sel=$('#consoleBgmSel'),pb=progBgm(),list=cfg.bgms.filter(b=>b.assetId);
+  const sel=$('#consoleBgmSel'),pb=progBgm(),list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>(a.tabIndex===bgmTab?0:1)-(b.tabIndex===bgmTab?0:1)||a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
   let id='';
   try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
-  const sig=JSON.stringify([id,pb?.id,list.map(b=>[b.id,b.name])]);
+  const sig=JSON.stringify([id,pb?.id,bgmTab,cfg.bgmTabs,list.map(b=>[b.id,b.name,b.tabIndex])]);
   if(sig===consoleBgmSig)return;
   consoleBgmSig=sig;
-  sel.replaceChildren(new Option(pb?'番組の初期BGM（'+pb.name+'）':'番組の初期BGM（未設定）',''),...list.map(b=>new Option(b.name,b.id)));
+  sel.replaceChildren(new Option(pb?'番組の初期BGM（'+pb.name+'）':'番組の初期BGM（未設定）',''),...list.map(b=>new Option((cfg.bgmTabs.length>1?cfg.bgmTabs[b.tabIndex]+'｜':'')+b.name,b.id)));
   sel.value=list.some(b=>b.id===id)?id:''
 }
 function syncConsole(){
@@ -7871,6 +7922,7 @@ for(const q of particles)q.beh='';
     switchAt=performance.now();
     renderSceneForm();
     renderMascotUI();
+    syncBgmProfiles(true);
     toast('名義「'+p.name+'」に切り替えました')
   }
 
@@ -7906,7 +7958,16 @@ for(const q of particles)q.beh='';
     return b
   }
 
+  let bgmProfSig='';
+  function syncBgmProfiles(follow){
+    const list=(state.profiles||[]).map(p=>({id:p.id,name:p.name})),
+      sig=JSON.stringify(list);
+    if(!follow&&sig===bgmProfSig)return;
+    bgmProfSig=sig;
+    window.__otonohaBgmProfiles?.(list,state.profileId,follow)
+  }
   function renderCharUI(){
+    syncBgmProfiles(false);
     if(!E('charList'))return;
     queueMicrotask(()=>{try{renderExprUI()}catch(_){}});
     ensureProfiles();
@@ -10357,6 +10418,7 @@ applyPerf();
     ensureProfiles();
     await loadAllChars();
     activateChar(state.charId,true);
+    syncBgmProfiles(true);
     renderMascotUI();
     renderExprUI();
     renderAssetSlots()

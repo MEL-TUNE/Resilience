@@ -168,13 +168,13 @@ function consoleBgm(){
 }
 function renderConsoleBgm(){
   if(!cfg)return;
-  const sel=$('#consoleBgmSel'),pb=progBgm(),list=cfg.bgms.filter(b=>b.assetId);
+  const sel=$('#consoleBgmSel'),pb=progBgm(),list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>(a.tabIndex===bgmTab?0:1)-(b.tabIndex===bgmTab?0:1)||a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
   let id='';
   try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
-  const sig=JSON.stringify([id,pb?.id,list.map(b=>[b.id,b.name])]);
+  const sig=JSON.stringify([id,pb?.id,bgmTab,cfg.bgmTabs,list.map(b=>[b.id,b.name,b.tabIndex])]);
   if(sig===consoleBgmSig)return;
   consoleBgmSig=sig;
-  sel.replaceChildren(new Option(pb?'番組の初期BGM（'+pb.name+'）':'番組の初期BGM（未設定）',''),...list.map(b=>new Option(b.name,b.id)));
+  sel.replaceChildren(new Option(pb?'番組の初期BGM（'+pb.name+'）':'番組の初期BGM（未設定）',''),...list.map(b=>new Option((cfg.bgmTabs.length>1?cfg.bgmTabs[b.tabIndex]+'｜':'')+b.name,b.id)));
   sel.value=list.some(b=>b.id===id)?id:''
 }
 function syncConsole(){

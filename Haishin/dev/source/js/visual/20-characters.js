@@ -185,6 +185,7 @@ for(const q of particles)q.beh='';
     switchAt=performance.now();
     renderSceneForm();
     renderMascotUI();
+    syncBgmProfiles(true);
     toast('名義「'+p.name+'」に切り替えました')
   }
 
@@ -220,7 +221,16 @@ for(const q of particles)q.beh='';
     return b
   }
 
+  let bgmProfSig='';
+  function syncBgmProfiles(follow){
+    const list=(state.profiles||[]).map(p=>({id:p.id,name:p.name})),
+      sig=JSON.stringify(list);
+    if(!follow&&sig===bgmProfSig)return;
+    bgmProfSig=sig;
+    window.__otonohaBgmProfiles?.(list,state.profileId,follow)
+  }
   function renderCharUI(){
+    syncBgmProfiles(false);
     if(!E('charList'))return;
     queueMicrotask(()=>{try{renderExprUI()}catch(_){}});
     ensureProfiles();
