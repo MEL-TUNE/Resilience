@@ -233,9 +233,9 @@ body{padding-top:var(--mini-h,0px)}
 .scene-font-row .studio-field{margin:0}
 .live-console{border:2px solid var(--scene-c,#d64545);border-radius:14px;padding:12px;margin:10px 0;background:var(--hi)}
 body{--scene-c:#d64545}
-body[data-scene="standby"]{--scene-c:#d8901a}
-body[data-scene="away"]{--scene-c:#2f78c4}
-body[data-scene="end"]{--scene-c:#7b5ea7}
+body[data-cur-scene="standby"]{--scene-c:#d8901a}
+body[data-cur-scene="away"]{--scene-c:#2f78c4}
+body[data-cur-scene="end"]{--scene-c:#7b5ea7}
 .onair-head{display:flex;align-items:center;gap:10px;margin:0 0 10px}
 .onair-head strong{font-size:20px;letter-spacing:.06em;color:var(--scene-c)}
 .onair-lamp{width:16px;height:16px;border-radius:50%;background:var(--scene-c);box-shadow:0 0 0 4px color-mix(in srgb,var(--scene-c) 25%,transparent)}
@@ -289,3 +289,25 @@ body[data-view="stream"] [data-modes]:not([data-modes~="stream"]),body[data-view
 .rec-extra button:disabled{opacity:.45;cursor:default}
 .rec-extra .discard{color:var(--rec);border-color:var(--r-p-45)}
 .rec-extra button.armed{background:var(--rec);color:#fff;border-color:var(--rec)}
+.outwin-note{display:none;margin:6px 0;padding:8px 10px;border-radius:10px;background:var(--a-p-12);font-size:12px}
+.outwin-note button{margin-left:8px;border:1px solid var(--a-p-45);border-radius:8px;padding:5px 10px;background:var(--hi);font-size:12px;cursor:pointer}
+body[data-outwin] .outwin-note{display:block}
+body[data-outwin]:not([data-pv-on]) #studioStageWrap{display:none}
+.scene-pv{position:sticky;top:calc(var(--mini-h,0px) + 6px);z-index:3;background:var(--paper);padding:8px 0 4px;margin-bottom:8px;border-bottom:1px solid var(--a-p-20)}
+.scene-pv canvas{display:block;width:100%;max-width:520px;height:auto;margin:0 auto 8px;border-radius:10px;background:repeating-conic-gradient(#e2e8df 0% 25%,#f5f7f1 0% 50%) 50% / 20px 20px}
+.scene-switch-sm button{padding:9px 4px;font-size:14px}
+#settingsShell{--grp-v:#4f7fb8;--grp-a:#c0663c;--grp-c:#8a8f86}
+#settingsShell .grp-visual,#settingsShell .grp-audio,#settingsShell .grp-common{position:relative;border-left-width:7px!important;border-left-style:solid!important}
+#settingsShell .grp-visual{border-left-color:var(--grp-v)!important;background:color-mix(in srgb,var(--grp-v) 6%,var(--paper))}
+#settingsShell .grp-audio{border-left-color:var(--grp-a)!important;background:color-mix(in srgb,var(--grp-a) 6%,var(--paper))}
+#settingsShell .grp-common{border-left-color:var(--grp-c)!important}
+#settingsShell .grp-visual::before,#settingsShell .grp-audio::before,#settingsShell .grp-common::before{position:absolute;top:8px;right:10px;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;color:#fff;z-index:1}
+#settingsShell .grp-visual::before{content:"画面";background:var(--grp-v)}
+#settingsShell .grp-audio::before{content:"音";background:var(--grp-a)}
+#settingsShell .grp-common::before{content:"共通";background:var(--grp-c)}
+#settingsShell .set-visual{border-left-color:var(--grp-v)!important;color:var(--grp-v)}
+#settingsShell .set-audio{border-left-color:var(--grp-a)!important;color:var(--grp-a)}
+.grp-key{display:inline-block;padding:1px 8px;margin:6px 4px 0 0;border-radius:999px;font-size:11px;font-weight:700;color:#fff}
+.grp-key-visual{background:#4f7fb8}.grp-key-audio{background:#c0663c}.grp-key-common{background:#8a8f86}
+.scene-pv .scene-switch{grid-template-columns:repeat(4,minmax(0,1fr))!important;max-width:520px;margin:0 auto}
+.scene-pv .studio-note{text-align:center}

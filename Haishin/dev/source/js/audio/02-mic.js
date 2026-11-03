@@ -115,7 +115,7 @@ function drawMeter(name,db){
 }
 
 function meterLoop(){
-  if(ctx){
+  if(ctx&&document.body.dataset.app==='radio'){
     drawMeter('mic',micStream?peakDb(micAnalyser,micBuf):-99);
     drawMeter('mix',peakDb(mixAnalyser,mixBuf))
   }

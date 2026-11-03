@@ -47,7 +47,7 @@
       x.classList.toggle('selected',on);
       x.setAttribute('aria-pressed',String(on))
     });
-    document.body.dataset.scene=scene;
+    document.body.dataset.curScene=scene;
     E('studioSceneState').textContent=SCENE_LABEL[scene]+(scene!=='live'?(streamMode()?'（口パクは止めています）':'（マイクはミュート）'):'')
   }
 

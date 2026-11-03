@@ -36,7 +36,7 @@
     if(e.button!==0||!dragOn())return;
     const p=stagePoint(e);
     let target=null;
-    for(const m of [...(state.mascots||[])].reverse())if(m._box&&p.x>=m._box.x&&p.x<=m._box.x+m._box.w&&p.y>=m._box.y&&p.y<=m._box.y+m._box.h){target=m;break}
+    for(const m of [...myMascots()].reverse())if(m._box&&p.x>=m._box.x&&p.x<=m._box.x+m._box.w&&p.y>=m._box.y&&p.y<=m._box.y+m._box.h){target=m;break}
     if(!target&&sceneAvatar()){const gg=avatarGeom();if(p.x>=gg.cx-gg.w/2&&p.x<=gg.cx+gg.w/2&&p.y>=gg.bottom-gg.h&&p.y<=gg.bottom)target='avatar'}
     if(!target)return;
     drag={target,p0:p,ox:target==='avatar'?state.x:target.x,oy:target==='avatar'?state.y:target.y};
