@@ -2,9 +2,19 @@
 
   let mscSel='',mscLast=0;const mscEnv={},mscRun={};
   const MSC_MAX=10,MSC_ON_SCREEN=2;
-  function mscCur(){return (state.mascots||[]).find(m=>m.id===mscSel)||null}
+  // マスコットは名義ごと（owner＝名義のid）。持ち主のないものは、画面に出していた名義（なければ先頭の名義）のものにする
+  function claimMascots(){
+    const ps=state.profiles||[];
+    if(!ps.length)return;
+    for(const m of state.mascots||[])if(!ps.some(p=>p.id===m.owner)){
+      const q=ps.find(p=>Array.isArray(p.mscShow)&&p.mscShow.includes(m.id))||ps[0];
+      m.owner=q.id
+    }
+  }
+  function myMascots(){claimMascots();return (state.mascots||[]).filter(m=>m.owner===state.profileId)}
+  function mscCur(){return myMascots().find(m=>m.id===mscSel)||null}
   function drawMascots(now){
-    const list=state.mascots||[];
+    const list=myMascots();
     const dtp=mscLast?Math.min(.1,(now-mscLast)/1000):0;mscLast=now;
     if(!list.length)return;
     const u=H/720,t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
@@ -82,7 +92,7 @@
     g.restore()
   }
   function renderSpeakerBar(){
-    const bar=E('speakerBar'),list=(state.mascots||[]).filter(m=>m.talk&&m.show);
+    const bar=E('speakerBar'),list=myMascots().filter(m=>m.talk&&m.show);
     if(state.speaker!=='self'&&!list.some(m=>m.id===state.speaker))state.speaker='self';
     bar.hidden=!list.length;bar.replaceChildren();
     if(!list.length)return;
@@ -94,7 +104,7 @@
   }
   function renderMascotUI(){
     syncMascotsFromProfile();
-    const list=state.mascots||[];
+    const list=myMascots();
     if(!list.some(m=>m.id===mscSel))mscSel=list[0]?.id||'';
     const chips=E('mascotChips');chips.replaceChildren();
     for(const m of list){const b=document.createElement('button');b.type='button';b.textContent=m.name+(images['msc-'+m.id]?'':'（画像なし）');b.classList.toggle('selected',m.id===mscSel);b.onclick=()=>{mscSel=m.id;renderMascotUI()};chips.append(b)}
@@ -112,32 +122,32 @@
   }
 
   function syncMascotsFromProfile(){
-    const p=curProfile(),list=state.mascots||[];
+    const p=curProfile(),list=myMascots();
     if(!p)return;
     if(state.profiles.some(q=>!Array.isArray(q.mscShow))){const old=list.filter(m=>m.show).map(m=>m.id).slice(0,MSC_ON_SCREEN);for(const q of state.profiles)if(!Array.isArray(q.mscShow))q.mscShow=q===p?old:[]}
     p.mscShow=p.mscShow.filter(id=>list.some(m=>m.id===id)).slice(0,MSC_ON_SCREEN);
     for(const m of list)m.show=p.mscShow.includes(m.id)
   }
-  function shownCount(except){return (state.mascots||[]).filter(m=>m.show&&m!==except).length}
+  function shownCount(except){return myMascots().filter(m=>m.show&&m!==except).length}
   function setMascotShow(m,on){
     if(on&&!m.show&&shownCount(m)>=MSC_ON_SCREEN){toast('画面に出せるマスコットは同時に2体までです。ほかのマスコットを先に外してください',4500);return false}
     m.show=on;if(!on&&state.speaker===m.id)state.speaker='self';
-    const p=curProfile();if(p)p.mscShow=(state.mascots||[]).filter(x=>x.show).map(x=>x.id).slice(0,MSC_ON_SCREEN);
+    const p=curProfile();if(p)p.mscShow=myMascots().filter(x=>x.show).map(x=>x.id).slice(0,MSC_ON_SCREEN);
     save();renderMascotUI();return true
   }
   function renderMascotBar(){
-    const bar=E('mascotBar'),list=(state.mascots||[]).filter(m=>images['msc-'+m.id]);
+    const bar=E('mascotBar'),list=myMascots().filter(m=>images['msc-'+m.id]);
     bar.replaceChildren();
     if(!list.length){bar.textContent='画像を登録したマスコットがここに並びます';return}
     for(const m of list){const b=document.createElement('button');b.type='button';b.textContent=m.name;b.setAttribute('aria-pressed',String(m.show));b.onclick=()=>setMascotShow(m,!m.show);bar.append(b)}
   }
   E('mascotAdd').onclick=()=>{
     state.mascots=state.mascots||[];
-    if(state.mascots.length>=MSC_MAX){toast('マスコットは10体までです');return}
+    if(myMascots().length>=MSC_MAX){toast('マスコットは1つの名義につき10体までです');return}
     let id;do id=Math.random().toString(36).slice(2,8);while(state.mascots.some(m=>m.id===id));
-    const n=state.mascots.length;
+    const n=myMascots().length;
     const pp=curProfile(),canShow=shownCount()<MSC_ON_SCREEN;
-    state.mascots.push({id,name:'マスコット'+(n+1),show:canShow,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40,face:'none'});
+    state.mascots.push({id,name:'マスコット'+(n+1),show:canShow,owner:state.profileId,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40,face:'none'});
     if(canShow&&pp){pp.mscShow=[...(pp.mscShow||[]),id].slice(0,MSC_ON_SCREEN)}
     mscSel=id;save();renderMascotUI();toast('マスコットを追加しました。画像を登録してください')
   };

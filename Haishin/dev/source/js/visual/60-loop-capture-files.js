@@ -43,8 +43,7 @@
     }
     if(popupVisible()){
       try{
-        outputWindow.requestAnimationFrame(run);
-        return
+        outputWindow.requestAnimationFrame(run)
       }catch(_){}
     }
     if(ticker())pendingTick=run;else setTimeout(run,33)
@@ -59,6 +58,15 @@
   setInterval(()=>{
     if(performance.now()-lastFrameAt>400)scheduleFrame()
   },1000);
+
+  // 映像を見る人がいないとき（音声モードで、配信用ウインドウも収録も設定画面のプレビューもない）は描かない
+  function renderNeeded(){
+    if(outputWindow&&!outputWindow.closed)return true;
+    if(studioCapturing||captureStarting)return true;
+    const b=document.body.dataset;
+    if(b.app!=='live')return false;
+    return !document.hidden
+  }
 
   let previous=0,
     uiTick=0;
@@ -75,6 +83,14 @@
     }
     const dt=Math.min(.08,(now-previous)/1000||.016);
     previous=now;
+    {
+      const out=!!(outputWindow&&!outputWindow.closed);
+      if(document.body.hasAttribute('data-outwin')!==out)document.body.toggleAttribute('data-outwin',out)
+    }
+    if(!renderNeeded()){
+      setTimeout(scheduleFrame,250);
+      return
+    }
     let dbLevel=-99;
     if(ready&&ctx&&micLive()&&micAnalyser){
       micAnalyser.getFloatTimeDomainData(levelData);

@@ -383,7 +383,9 @@ function bgmSlotsNeeded(list){
   return Math.min(BGM_MAX,Math.max(BGM_MIN,(Math.floor(max/BGM_COLS)+2)*BGM_COLS))
 }
 
-const BGM_TAB_MAX=20;
+const BGM_TAB_MAX=21,
+  BGM_STD_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_bgm_std_v1';
+let bgmCurTab=0;
 let bgmOwnerIds=null;
 
 const bgmReal=b=>!!(b.assetId||b.name);
@@ -423,11 +425,20 @@ function ensureBgmSlots(config){
 }
 
 // 名義（映像側のプロフィール）がそのままBGMのタブになる。名義のない曲・消した名義の曲は先頭の名義のタブへ
-function setBgmProfiles(list,curId,follow){
-  if(!cfg||!Array.isArray(list)||!list.length)return;
-  const ids=list.slice(0,BGM_TAB_MAX).map(p=>p.id),
-    real=cfg.bgms.filter(bgmReal),
-    orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(y)||(x.slotIndex??0)-(y.slotIndex??0));
+function setBgmProfiles(profiles,curId,follow){
+  if(!cfg||!Array.isArray(profiles)||!profiles.length)return;
+  const list=[{id:'std',name:'標準'},...profiles],
+    ids=list.slice(0,BGM_TAB_MAX).map(p=>p.id),
+    real=cfg.bgms.filter(bgmReal);
+  // 0.6.5で先頭の名義へ入れた曲は、一度だけ「標準」へ移す
+  let moved=false;
+  try{moved=!!localStorage.getItem(BGM_STD_KEY)}catch(_){moved=true}
+  if(!moved){
+    for(const b of real)if(b.owner===profiles[0].id){b.owner='std';b.tabIndex=0}
+    try{localStorage.setItem(BGM_STD_KEY,'1')}catch(_){}
+  }
+  const
+orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(y)||(x.slotIndex??0)-(y.slotIndex??0));
   for(const b of real)if(ids.includes(b.owner))b.tabIndex=ids.indexOf(b.owner);
   const taken=new Set(real.filter(b=>b.owner===ids[0]).map(b=>b.slotIndex));
   let next=Math.max(-1,...taken)+1;
@@ -442,7 +453,8 @@ function setBgmProfiles(list,curId,follow){
   cfg.bgms=ids.flatMap((owner,t)=>bgmTabSlots(real.filter(b=>b.owner===owner),t,owner));
   cfg.bgmTabs=list.slice(0,BGM_TAB_MAX).map(p=>String(p.name||'名義').slice(0,40));
   const cur=ids.indexOf(curId);
-  if(follow&&cur>=0)bgmTab=cur;
+  bgmCurTab=cur>0?cur:0;
+  if(follow&&cur>0&&bgmTab>0)bgmTab=cur;
   if(bgmTab>=ids.length)bgmTab=0;
   if(before!==JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join())persist();
   render();

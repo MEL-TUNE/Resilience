@@ -168,10 +168,11 @@ function consoleBgm(){
 }
 function renderConsoleBgm(){
   if(!cfg)return;
-  const sel=$('#consoleBgmSel'),pb=progBgm(),list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>(a.tabIndex===bgmTab?0:1)-(b.tabIndex===bgmTab?0:1)||a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
+  const sel=$('#consoleBgmSel'),pb=progBgm(),rank=b=>b.tabIndex===0?0:b.tabIndex===bgmCurTab?1:2,
+    list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>rank(a)-rank(b)||a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
   let id='';
   try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
-  const sig=JSON.stringify([id,pb?.id,bgmTab,cfg.bgmTabs,list.map(b=>[b.id,b.name,b.tabIndex])]);
+  const sig=JSON.stringify([id,pb?.id,bgmCurTab,cfg.bgmTabs,list.map(b=>[b.id,b.name,b.tabIndex])]);
   if(sig===consoleBgmSig)return;
   consoleBgmSig=sig;
   sel.replaceChildren(new Option(pb?'番組の初期BGM（'+pb.name+'）':'番組の初期BGM（未設定）',''),...list.map(b=>new Option((cfg.bgmTabs.length>1?cfg.bgmTabs[b.tabIndex]+'｜':'')+b.name,b.id)));

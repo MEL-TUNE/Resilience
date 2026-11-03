@@ -165,19 +165,23 @@
     pvAt=0;
   function previewMirror(now){
     if(document.body.dataset.page!=='settings')return;
-    if(now-pvAt<(state.light?95:30))return;
+    if(now-pvAt<(state.light?95:66))return;
     pvAt=now;
-    const c=E('settingsPreview');
-    if(!c)return;
-    const pw=W>H?640:360,
-      ph=W>H?360:640;
-    if(c.width!==pw||c.height!==ph){
-      c.width=pw;
-      c.height=ph
+    for(const id of ['settingsPreview','scenePreview']){
+      const c=E(id);
+      if(!c)continue;
+      const r=c.getBoundingClientRect();
+      if(!r.width||r.bottom<0||r.top>innerHeight)continue;
+      const pw=W>H?640:360,
+        ph=W>H?360:640;
+      if(c.width!==pw||c.height!==ph){
+        c.width=pw;
+        c.height=ph
+      }
+      const cx=c.getContext('2d');
+      cx.clearRect(0,0,pw,ph);
+      cx.drawImage(canvas,0,0,pw,ph)
     }
-    pvCtx=pvCtx||c.getContext('2d');
-    pvCtx.clearRect(0,0,pw,ph);
-    pvCtx.drawImage(canvas,0,0,pw,ph)
   }
 
   E('gotoLook').onclick=()=>{

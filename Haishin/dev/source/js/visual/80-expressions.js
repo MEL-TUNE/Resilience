@@ -23,7 +23,7 @@
   }
   function selfSpeak(){
     const s=state.speaker;
-    return !s||s==='self'||!(state.mascots||[]).some(m=>m.id===s&&m.talk&&m.show)
+    return !s||s==='self'||!myMascots().some(m=>m.id===s&&m.talk&&m.show)
   }
   function setExpr(id){
     curExpr=id||'';
