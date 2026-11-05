@@ -308,32 +308,81 @@
     },350))
   };
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-  function addVideoRow(blob,name){
-    const url=URL.createObjectURL(blob);
-    videoUrls.push(url);
+  const VID_MAX=30;
+  function videoMeta(){if(!Array.isArray(state.videos))state.videos=[];return state.videos}
+  async function videoBlob(m,mem){
+    if(mem)return mem;
+    const b=await getAsset('video:'+m.id);
+    if(!b)throw Error('この動画のデータが見つかりません');
+    return b
+  }
+  function videoRow(m,mem){
     const row=document.createElement('div');
     row.className='studio-take';
     const span=document.createElement('span');
-    span.textContent=name+' / '+(blob.size/1048576).toFixed(1)+' MB';
-    const link=document.createElement('a');
-    link.href=url;link.download=name;link.className='vbtn';link.textContent='ファイルに保存';
+    const d=new Date(m.at);
+    span.textContent=m.name+' / '+(m.size/1048576).toFixed(1)+' MB'+(m.stored?'':'（この画面を閉じると消えます）');
+    span.title=d.toLocaleString('ja-JP');
     row.append(span);
-    const file=new File([blob],name,{type:blob.type});
-    if(navigator.canShare?.({files:[file]})){
+    const saveBtn=document.createElement('button');
+    saveBtn.type='button';saveBtn.className='vbtn vsave';saveBtn.textContent='ファイルに保存';
+    saveBtn.onclick=async()=>{
+      try{
+        const b=await videoBlob(m,mem),u=URL.createObjectURL(b),a=document.createElement('a');
+        a.href=u;a.download=m.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000)
+      }catch(e){toast(e.message||'保存できませんでした',5000)}
+    };
+    if(navigator.canShare){
       const sh=document.createElement('button');
       sh.type='button';sh.className='vbtn primary';sh.textContent=isIOS?'写真に保存（共有）':'共有';
       sh.title='共有の画面で「ビデオを保存」を選ぶと、写真アプリに入ります';
-      sh.onclick=async()=>{try{await navigator.share({files:[file]})}catch(e){if(e?.name!=='AbortError')toast('共有できませんでした。「ファイルに保存」をお使いください',5000)}};
+      sh.onclick=async()=>{
+        try{
+          const b=await videoBlob(m,mem),file=new File([b],m.name,{type:b.type||m.type});
+          if(!navigator.canShare({files:[file]}))throw Error('この端末では共有できません。「ファイルに保存」をお使いください');
+          await navigator.share({files:[file]})
+        }catch(e){if(e?.name!=='AbortError')toast(e.message||'共有できませんでした。「ファイルに保存」をお使いください',5000)}
+      };
       row.append(sh)
     }
-    const remove=document.createElement('button');
-    remove.type='button';remove.className='vbtn';remove.textContent='一覧から外す';
-    remove.title='この画面で保持している動画を解放します。保存済みのファイルは消えません';
-    remove.onclick=()=>{URL.revokeObjectURL(url);videoUrls=videoUrls.filter(u=>u!==url);row.remove()};
-    row.append(link,remove);
+    const del=document.createElement('button');
+    del.type='button';del.className='vbtn';del.textContent='削除';
+    del.title='このブラウザ内に保存した動画を消します。書き出し済みのファイルは消えません';
+    del.onclick=e=>armed(e.currentTarget,'もう一度押すと削除',async()=>{
+      try{await deleteAsset('video:'+m.id)}catch(_){}
+      state.videos=videoMeta().filter(x=>x.id!==m.id);save();row.remove();renderVideoInfo()
+    });
+    row.append(saveBtn,del);
+    return row
+  }
+  async function renderVideoInfo(){
+    const n=videoMeta().length,el=E('studioVideoInfo');
+    if(!el)return;
+    let q='';
+    try{const s=await navigator.storage?.estimate?.();if(s&&s.quota)q='・このサイトの保存容量 '+(s.usage/1048576).toFixed(0)+' MB／上限の目安 '+(s.quota/1073741824).toFixed(1)+' GB'}catch(_){}
+    el.textContent=n?'ブラウザ内に保存した動画 '+n+'本'+q:''
+  }
+  async function addVideoRow(blob,name){
+    const m={id:Math.random().toString(36).slice(2,10),name,size:blob.size,type:blob.type,at:new Date().toISOString(),stored:false};
+    if(videoMeta().length<VID_MAX){
+      try{
+        if(!ready)throw Error('');
+        await putAsset('video:'+m.id,blob);
+        m.stored=true;
+        videoMeta().unshift({...m});
+        save()
+      }catch(_){toast('動画をブラウザ内に保存できませんでした（空き容量をご確認ください）。この画面を閉じる前に保存してください',7000)}
+    }else toast('ブラウザ内に保存できる動画は'+VID_MAX+'本までです。古い動画を削除すると、次から保存できます。今回の動画はこの画面を閉じると消えます',8000);
+    const row=videoRow(m,blob);
     E('studioVideos').prepend(row);
+    renderVideoInfo();
     if(isIOS)toast('収録できました。「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります',7000);
-    else{link.click();toast('動画を保存しました。もう一度保存するときは「ファイルに保存」を押します',6000)}
+    else{row.querySelector('.vsave').click();toast('動画を保存しました。一覧に残るので、あとから「ファイルに保存」でもう一度保存できます',6000)}
+  }
+  function renderStoredVideos(){
+    const box=E('studioVideos');
+    box.replaceChildren(...videoMeta().map(m=>videoRow(m,null)));
+    renderVideoInfo()
   }
 
   let vidProgSig='';

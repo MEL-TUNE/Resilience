@@ -919,7 +919,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.6.7 / 番組の増やし方、枠の詰め直し、名義別マスコット表示、歌唱の記録</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.6.8 / 収録した動画をブラウザ内に保存</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -947,7 +947,7 @@ lookPaint(look);
 <div class="studio-meter" aria-label="マイク音量"><i id="studioMeter"></i></div>
 <div class="stage-preview" id="stagePreview"><div class="stage-head"><small class="stream-only">プレビュー（OBSには「配信用の映像ウインドウ」を取り込みます）</small><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
 <p class="outwin-note">配信用の映像ウインドウを表示中のため、ここのプレビューは止めています。<button type="button" id="pvToggle">プレビューも表示する</button></p><div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas></div></div>
-<div class="rec-panel" aria-label="映像の収録"><div class="rec-main"><button id="studioRec" class="rec-big rec-start" type="button">● 収録開始</button><button id="studioStop" class="rec-big rec-stop" type="button" disabled>■ 停止して保存</button></div><div class="rec-extra"><button id="studioRetake" type="button" disabled title="今の収録を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button><button id="studioDiscard" class="discard" type="button" disabled title="収録を止めて、保存せずに捨てます">✕ 停止して破棄</button></div><div class="rec-sub"><span id="studioRecTime" role="status" class="rec-time">未収録</span><label class="rec-opt">番組<select id="vidProg" aria-label="番組（初期BGM）"></select></label><label class="rec-opt">形式<select id="vidFormat"><option value="mp4">MP4（写真アプリ向け）</option><option value="webm">WebM</option></select></label><label class="rec-opt">画質<select id="vidQuality"><option value="8">高画質</option><option value="16">最高画質（容量大）</option><option value="4.5">標準</option></select></label></div><p class="rec-note" id="vidProgNote"></p><div id="studioVideos" class="studio-tray" aria-label="この画面で収録した動画"></div></div>
+<div class="rec-panel" aria-label="映像の収録"><div class="rec-main"><button id="studioRec" class="rec-big rec-start" type="button">● 収録開始</button><button id="studioStop" class="rec-big rec-stop" type="button" disabled>■ 停止して保存</button></div><div class="rec-extra"><button id="studioRetake" type="button" disabled title="今の収録を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button><button id="studioDiscard" class="discard" type="button" disabled title="収録を止めて、保存せずに捨てます">✕ 停止して破棄</button></div><div class="rec-sub"><span id="studioRecTime" role="status" class="rec-time">未収録</span><label class="rec-opt">番組<select id="vidProg" aria-label="番組（初期BGM）"></select></label><label class="rec-opt">形式<select id="vidFormat"><option value="mp4">MP4（写真アプリ向け）</option><option value="webm">WebM</option></select></label><label class="rec-opt">画質<select id="vidQuality"><option value="8">高画質</option><option value="16">最高画質（容量大）</option><option value="4.5">標準</option></select></label></div><p class="rec-note" id="vidProgNote"></p><p class="rec-note" id="studioVideoInfo"></p><div id="studioVideos" class="studio-tray" aria-label="収録した動画"></div></div>
 <div class="live-console" id="liveConsole"><div class="onair-head"><span class="onair-lamp" aria-hidden="true"></span><strong id="studioSceneState" role="status">配信中</strong></div><div class="scene-switch" role="group" aria-label="配信の状態"><button type="button" data-scene="live" class="selected" aria-pressed="true">配信中</button><button type="button" data-scene="standby" aria-pressed="false">準備中</button><button type="button" data-scene="away" aria-pressed="false">離席中</button><button type="button" data-scene="end" aria-pressed="false">配信終了</button></div><div class="sound-stop"><div class="sound-now"><span aria-hidden="true">♪</span><span id="consoleBgmName">BGM：なし</span></div><label class="console-bgm-pick">流すBGM<select id="consoleBgmSel"></select></label><button type="button" class="stop-btn" id="consoleBgmStop" disabled>▶ BGMを流す</button><button type="button" class="stop-btn stop-all" id="consoleAllStop">■ 効果音とBGMをすべて止める</button></div></div>
 <div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">設定</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
 <details class="scene-details" id="quickTune"><summary>見た目をその場で調整（開いているあいだだけ、プレビューの立ち絵・マスコットをドラッグで動かせます）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">この欄を閉じると位置はロックされ、プレビューに触れても動きません。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
@@ -989,7 +989,7 @@ lookPaint(look);
 <section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは「標準」と名義ごとのタブです。名義専用のタブを開いているときに名義を切り替えると、その名義のタブに移ります。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
 </div></main>
 </div>
-<details class="studio-card studio-help"><summary>使い方</summary><p data-modes="stream"><strong>配信モード（PC＋OBS）</strong>：このアプリは映像と、効果音・BGM・環境音だけを作ります。マイクの声は口パクの判定にだけ使い、アプリからは出しません。OBSでは「配信用の映像ウインドウ」をウィンドウキャプチャで取り込み、音はブラウザの音（効果音・BGM）とマイク（AG03など）を別々に取り込みます。録画はOBS側で行ってください。</p><p data-modes="video"><strong>動画モード（スマホ・タブレット向け）</strong>：立ち絵とBGM・効果音つきの動画を、この画面で収録して保存します。マイクの声も動画に入ります。</p><p data-modes="radio"><strong>音声モード</strong>：ラジオのように声とBGM・効果音を録音します。</p><p>準備：「設定」の「表情と演出」で立ち絵を登録（4枚の表情差分か1枚）→ マイクをつなぐ → 声を出して「口が開く音量」を調整 → 効果音・BGMを登録。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別のブラウザや別のURLへは自動で引き継がないので、「設定」の「すべてを書き出す（.live）」で書き出してから移してください。</p></details>
+<details class="studio-card studio-help"><summary>使い方</summary><p data-modes="stream"><strong>配信モード（PC＋OBS）</strong>：このアプリは映像と、効果音・BGM・環境音だけを作ります。マイクの声は口パクの判定にだけ使い、アプリからは出しません。OBSでは「配信用の映像ウインドウ」をウィンドウキャプチャで取り込み、音はブラウザの音（効果音・BGM）とマイク（AG03など）を別々に取り込みます。録画はOBS側で行ってください。</p><p data-modes="video"><strong>動画モード（スマホ・タブレット向け）</strong>：立ち絵とBGM・効果音つきの動画を、この画面で収録して保存します。マイクの声も動画に入ります。収録した動画はこのブラウザ内に最大30本まで残り、あとから保存・共有・削除できます。</p><p data-modes="radio"><strong>音声モード</strong>：ラジオのように声とBGM・効果音を録音します。</p><p>準備：「設定」の「表情と演出」で立ち絵を登録（4枚の表情差分か1枚）→ マイクをつなぐ → 声を出して「口が開く音量」を調整 → 効果音・BGMを登録。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別のブラウザや別のURLへは自動で引き継がないので、「設定」の「すべてを書き出す（.live）」で書き出してから移してください。</p></details>
 </section>
 
 
@@ -1323,7 +1323,6 @@ let ctx,
   masterBus,
   duckGain,
   programBus,
-  progStereo,
   voiceBus,
   selfMon,
   recMix,
@@ -1367,14 +1366,11 @@ function normalize(raw){
 
   if(Array.isArray(raw.programs)&&raw.programs.some(x=>x&&typeof x==='object')){
     raw={...raw,programs:raw.programs.filter(x=>x&&typeof x==='object')};
-    const defs=defaultPrograms(),
-      used=new Set(raw.programs.map(x=>x&&x.id));
-    void used;
-    const blank={name:'',bgmId:null,autoBgm:true,coverIdx:-1,color:''};
+        const blank={name:'',bgmId:null,autoBgm:true,coverIdx:-1,color:''};
     const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...blank,id:'prog'+(i+1),name:'番組'+(i+1),...x}));
     // 使っていない既定の番組（名前も初期BGMも色も画像もない「番組N」）は、末尾から片付ける
-    const unused=(x,i)=>x.name==='番組'+(i+1)&&!x.bgmId&&!x.color&&!(x.coverIdx>=0)&&x.id==='prog'+(i+1);
-    while(kept.length>1&&unused(kept.at(-1),kept.length-1)&&!(Number.isInteger(raw.currentProgram)&&raw.currentProgram>=kept.length-1))kept.pop();
+    const untouched=(x,i)=>x.name==='番組'+(i+1)&&!x.bgmId&&!x.color&&!(x.coverIdx>=0)&&x.id==='prog'+(i+1);
+    while(kept.length>1&&untouched(kept.at(-1),kept.length-1)&&!(Number.isInteger(raw.currentProgram)&&raw.currentProgram>=kept.length-1))kept.pop();
     base.programs=kept
   }
 
@@ -6924,6 +6920,7 @@ $('#consoleAllStop').onclick=()=>stopAll();
     show:false,
     songs:[],
     repertoire:[],
+    videos:[],
     singLog:[],
     singSess:null,
     assetNames:{},
@@ -7042,6 +7039,7 @@ fps:30,
     {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last)}));
      if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).slice(-5000).map(x=>({id:S(x.id,16),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)}));
+     if(Array.isArray(v.videos))out.videos=v.videos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,30).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at)||new Date().toISOString(),stored:true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
     out.scenes={};
@@ -9922,32 +9920,81 @@ let frameToken=0,
     },350))
   };
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-  function addVideoRow(blob,name){
-    const url=URL.createObjectURL(blob);
-    videoUrls.push(url);
+  const VID_MAX=30;
+  function videoMeta(){if(!Array.isArray(state.videos))state.videos=[];return state.videos}
+  async function videoBlob(m,mem){
+    if(mem)return mem;
+    const b=await getAsset('video:'+m.id);
+    if(!b)throw Error('この動画のデータが見つかりません');
+    return b
+  }
+  function videoRow(m,mem){
     const row=document.createElement('div');
     row.className='studio-take';
     const span=document.createElement('span');
-    span.textContent=name+' / '+(blob.size/1048576).toFixed(1)+' MB';
-    const link=document.createElement('a');
-    link.href=url;link.download=name;link.className='vbtn';link.textContent='ファイルに保存';
+    const d=new Date(m.at);
+    span.textContent=m.name+' / '+(m.size/1048576).toFixed(1)+' MB'+(m.stored?'':'（この画面を閉じると消えます）');
+    span.title=d.toLocaleString('ja-JP');
     row.append(span);
-    const file=new File([blob],name,{type:blob.type});
-    if(navigator.canShare?.({files:[file]})){
+    const saveBtn=document.createElement('button');
+    saveBtn.type='button';saveBtn.className='vbtn vsave';saveBtn.textContent='ファイルに保存';
+    saveBtn.onclick=async()=>{
+      try{
+        const b=await videoBlob(m,mem),u=URL.createObjectURL(b),a=document.createElement('a');
+        a.href=u;a.download=m.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000)
+      }catch(e){toast(e.message||'保存できませんでした',5000)}
+    };
+    if(navigator.canShare){
       const sh=document.createElement('button');
       sh.type='button';sh.className='vbtn primary';sh.textContent=isIOS?'写真に保存（共有）':'共有';
       sh.title='共有の画面で「ビデオを保存」を選ぶと、写真アプリに入ります';
-      sh.onclick=async()=>{try{await navigator.share({files:[file]})}catch(e){if(e?.name!=='AbortError')toast('共有できませんでした。「ファイルに保存」をお使いください',5000)}};
+      sh.onclick=async()=>{
+        try{
+          const b=await videoBlob(m,mem),file=new File([b],m.name,{type:b.type||m.type});
+          if(!navigator.canShare({files:[file]}))throw Error('この端末では共有できません。「ファイルに保存」をお使いください');
+          await navigator.share({files:[file]})
+        }catch(e){if(e?.name!=='AbortError')toast(e.message||'共有できませんでした。「ファイルに保存」をお使いください',5000)}
+      };
       row.append(sh)
     }
-    const remove=document.createElement('button');
-    remove.type='button';remove.className='vbtn';remove.textContent='一覧から外す';
-    remove.title='この画面で保持している動画を解放します。保存済みのファイルは消えません';
-    remove.onclick=()=>{URL.revokeObjectURL(url);videoUrls=videoUrls.filter(u=>u!==url);row.remove()};
-    row.append(link,remove);
+    const del=document.createElement('button');
+    del.type='button';del.className='vbtn';del.textContent='削除';
+    del.title='このブラウザ内に保存した動画を消します。書き出し済みのファイルは消えません';
+    del.onclick=e=>armed(e.currentTarget,'もう一度押すと削除',async()=>{
+      try{await deleteAsset('video:'+m.id)}catch(_){}
+      state.videos=videoMeta().filter(x=>x.id!==m.id);save();row.remove();renderVideoInfo()
+    });
+    row.append(saveBtn,del);
+    return row
+  }
+  async function renderVideoInfo(){
+    const n=videoMeta().length,el=E('studioVideoInfo');
+    if(!el)return;
+    let q='';
+    try{const s=await navigator.storage?.estimate?.();if(s&&s.quota)q='・このサイトの保存容量 '+(s.usage/1048576).toFixed(0)+' MB／上限の目安 '+(s.quota/1073741824).toFixed(1)+' GB'}catch(_){}
+    el.textContent=n?'ブラウザ内に保存した動画 '+n+'本'+q:''
+  }
+  async function addVideoRow(blob,name){
+    const m={id:Math.random().toString(36).slice(2,10),name,size:blob.size,type:blob.type,at:new Date().toISOString(),stored:false};
+    if(videoMeta().length<VID_MAX){
+      try{
+        if(!ready)throw Error('');
+        await putAsset('video:'+m.id,blob);
+        m.stored=true;
+        videoMeta().unshift({...m});
+        save()
+      }catch(_){toast('動画をブラウザ内に保存できませんでした（空き容量をご確認ください）。この画面を閉じる前に保存してください',7000)}
+    }else toast('ブラウザ内に保存できる動画は'+VID_MAX+'本までです。古い動画を削除すると、次から保存できます。今回の動画はこの画面を閉じると消えます',8000);
+    const row=videoRow(m,blob);
     E('studioVideos').prepend(row);
+    renderVideoInfo();
     if(isIOS)toast('収録できました。「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります',7000);
-    else{link.click();toast('動画を保存しました。もう一度保存するときは「ファイルに保存」を押します',6000)}
+    else{row.querySelector('.vsave').click();toast('動画を保存しました。一覧に残るので、あとから「ファイルに保存」でもう一度保存できます',6000)}
+  }
+  function renderStoredVideos(){
+    const box=E('studioVideos');
+    box.replaceChildren(...videoMeta().map(m=>videoRow(m,null)));
+    renderVideoInfo()
   }
 
   let vidProgSig='';
@@ -10675,6 +10722,7 @@ applyPerf();
     await loadAllChars();
     activateChar(state.charId,true);
     syncBgmProfiles(true);
+    renderStoredVideos();
     renderMascotUI();
     renderExprUI();
     renderAssetSlots()
