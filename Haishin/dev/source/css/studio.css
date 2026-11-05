@@ -311,3 +311,24 @@ body[data-outwin]:not([data-pv-on]) #studioStageWrap{display:none}
 .grp-key-visual{background:#4f7fb8}.grp-key-audio{background:#c0663c}.grp-key-common{background:#8a8f86}
 .scene-pv .scene-switch{grid-template-columns:repeat(4,minmax(0,1fr))!important;max-width:520px;margin:0 auto}
 .scene-pv .studio-note{text-align:center}
+.msc-owner{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 10px;padding:8px;border-radius:10px;background:var(--a-p-12)}
+.msc-owner button{border:1px solid var(--a-p-45);border-radius:999px;padding:6px 12px;background:var(--hi);font-size:12px;cursor:pointer}
+.msc-owner button.selected{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.sb-list{list-style:none;padding:0;margin:6px 0 10px;font-size:13px}
+.sb-list li{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--a-p-20)}
+.sb-list .sb-name{flex:1 1 180px;min-width:0}
+.sb-list .sb-name small{display:block;color:var(--muted);font-size:11px}
+.sb-list button,.sb-sess li button{border:1px solid var(--a-p-45);border-radius:8px;padding:5px 9px;background:var(--hi);font-size:12px;cursor:pointer;color:var(--ink)}
+.sb-list .sb-sing{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
+.sb-list .sb-empty{color:var(--muted);font-size:12px;display:block}
+ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
+.sb-sess-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:6px 0}
+.sb-sess-btn{border:2px solid var(--rec);border-radius:12px;padding:10px 16px;font-size:14px;font-weight:700;background:var(--hi);color:var(--rec);cursor:pointer}
+.sb-sess-btn.recording{background:var(--rec);color:#fff}
+.sb-now{font-weight:700;margin:2px 0 6px}
+.sb-filter{width:100%;padding:8px;border:1px solid var(--a-p-45);border-radius:8px;margin:4px 0}
+.sb-sess{border:1px solid var(--a-p-20);border-radius:10px;padding:6px 10px;margin:6px 0;background:var(--hi)}
+.sb-sess summary{cursor:pointer;font-weight:700;font-size:13px}
+.sb-sess ol{font-size:13px;padding-left:18px}
+.sb-sess li{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:3px 0}
+.sb-away button{margin-left:8px}

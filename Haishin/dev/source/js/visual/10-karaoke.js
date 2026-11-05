@@ -34,10 +34,10 @@
   }
 
   function karaGo(url){
-    const popup=state.karaOpen!=='tab';
+    const mode=state.karaOpen;
     let w=null;
     try{
-      w=popup?window.open(url,'otonohaKaraokeWin','popup=yes,width=1040,height=780'):window.open(url,'otonohaKaraokeTab')
+      w=mode==='newtab'?window.open(url,'_blank'):mode==='tab'?window.open(url,'otonohaKaraokeTab'):window.open(url,'otonohaKaraokeWin','popup=yes,width=1040,height=780')
     }catch(_){}
     if(!w){
       toast('ブラウザに新しい窓を止められました。アドレスバーの表示からポップアップを許可すると開けます',7000);
@@ -127,7 +127,7 @@
       ed.append(row)
     });
 
-    E('karaOpen').value=state.karaOpen==='tab'?'tab':'popup';
+    E('karaOpen').value=['tab','newtab'].includes(state.karaOpen)?state.karaOpen:'popup';
     E('karaVol').value=state.karaVol;
     E('karaVolVal').textContent=Math.round(state.karaVol)+'%';
     E('karaSuppress').checked=state.karaSuppress!==false;
@@ -168,7 +168,7 @@
   };
 
   E('karaOpen').onchange=e=>{
-    state.karaOpen=e.target.value==='tab'?'tab':'popup';
+    state.karaOpen=['tab','newtab'].includes(e.target.value)?e.target.value:'popup';
     save()
   };
 

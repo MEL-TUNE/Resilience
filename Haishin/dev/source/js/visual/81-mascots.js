@@ -104,6 +104,10 @@
   }
   function renderMascotUI(){
     syncMascotsFromProfile();
+    {
+      const box=E('mscOwner');
+      box.replaceChildren(...(state.profiles||[]).map(p=>{const b=document.createElement('button');b.type='button';b.textContent=p.name+'（'+(state.mascots||[]).filter(m=>m.owner===p.id).length+'体）';b.classList.toggle('selected',p.id===state.profileId);b.setAttribute('aria-pressed',String(p.id===state.profileId));b.onclick=()=>{if(p.id!==state.profileId)activateProfile(p.id)};return b}))
+    }
     const list=myMascots();
     if(!list.some(m=>m.id===mscSel))mscSel=list[0]?.id||'';
     const chips=E('mascotChips');chips.replaceChildren();

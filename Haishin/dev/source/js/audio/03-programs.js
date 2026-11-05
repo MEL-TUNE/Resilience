@@ -19,7 +19,7 @@ function renderPrograms(){
 
   $('#progEdit').disabled=isFree();
 
-  $('#progChips').innerHTML=`<button class="prog-chip free ${isFree()?'active':''}" role="tab" aria-selected="${isFree()}" data-prog="-1" title="番組を使わずに録る（初期BGM・番組の画像なし）" ${busy&&!isFree()?'disabled':''}>フリー</button>`+cfg.programs.map((pr,i)=>`<button${progColorStyle(pr.color)} class="prog-chip ${progColorKey(pr.color)?'pc':''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('');
+  $('#progChips').innerHTML=`<button class="prog-chip free ${isFree()?'active':''}" role="tab" aria-selected="${isFree()}" data-prog="-1" title="番組を使わずに録る（初期BGM・番組の画像なし）" ${busy&&!isFree()?'disabled':''}>フリー</button>`+cfg.programs.map((pr,i)=>`<button${progColorStyle(pr.color)} class="prog-chip ${progColorKey(pr.color)?'pc':''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('')+(cfg.programs.length<PROGRAMS?`<button class="prog-chip prog-add" type="button" data-prog-add title="番組を1つ増やして、設定を開きます" ${busy?'disabled':''}>＋ 番組を追加</button>`:'');
 
   {
     const act=$('#progChips .prog-chip.active');
@@ -40,6 +40,17 @@ function renderPrograms(){
   renderBgmNow();
 }
 
+$('#progChips').addEventListener('click',e=>{
+  if(!e.target.closest('[data-prog-add]')||rec.state!=='idle')return;
+  e.stopImmediatePropagation();
+  let n=cfg.programs.length+1;
+  while(cfg.programs.some(p=>p.id==='prog'+n))n++;
+  cfg.programs.push({id:'prog'+n,name:'番組'+(cfg.programs.length+1),bgmId:null,autoBgm:true,coverIdx:-1,color:''});
+  cfg.currentProgram=cfg.programs.length-1;
+  persist();
+  renderPrograms();
+  $('#progEdit').click()
+},true);
 $('#progChips').onclick=e=>{
   const c=e.target.closest('[data-prog]');
   if(!c||rec.state!=='idle')return;
@@ -271,4 +282,19 @@ $('#progForm').onsubmit=e=>{
   closeModal('progModal');
   renderPrograms();
   toast('番組の設定を保存しました')
+};
+
+$('#progDel').onclick=e=>{
+  if(rec.state!=='idle'){toast('録音中は削除できません');return}
+  if(cfg.programs.length<2){toast('番組は1つ以上必要です');return}
+  const pr=curProgram();
+  if(!pr)return;
+  if(!armButton(e.currentTarget,'もう一度押すと「'+pr.name+'」を削除'))return;
+  const i=cfg.programs.indexOf(pr);
+  cfg.programs.splice(i,1);
+  cfg.currentProgram=Math.min(i,cfg.programs.length-1);
+  persist();
+  closeModal('progModal');
+  renderPrograms();
+  toast('番組を削除しました（録音済みのテイクは残ります）',4000)
 };
