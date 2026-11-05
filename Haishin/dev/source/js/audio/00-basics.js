@@ -93,10 +93,10 @@ const pctToDb=p=>p<=0?-60:Math.max(-60,Math.min(0,Math.round(20*Math.log10(p/100
 
 const fmtDb=db=>db<=-60?'消音':(db>0?'+':'')+(+db).toFixed(1)+'dB';
 
-const PROGRAMS=8;
+const PROGRAMS=30;
 
 function defaultPrograms(){
-  return Array.from({length:PROGRAMS},(_,i)=>({id:'prog'+(i+1),name:'番組'+(i+1),bgmId:null,autoBgm:true,coverIdx:-1,color:''}))
+  return Array.from({length:1},(_,i)=>({id:'prog'+(i+1),name:'番組'+(i+1),bgmId:null,autoBgm:true,coverIdx:-1,color:''}))
 }
 
 const PROG_COLOR_KEYS=['creamsoda','napolitan','lemon','bluehawaii','strawberry'];
@@ -178,15 +178,16 @@ function normalize(raw){
     raw={...raw,programs:raw.programs.filter(x=>x&&typeof x==='object')};
     const defs=defaultPrograms(),
       used=new Set(raw.programs.map(x=>x&&x.id));
-    const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...defs[i],...x}));
-    for(const d of defs){
-      if(kept.length>=PROGRAMS)break;
-      if(!used.has(d.id))kept.push(d)
-    }
+    void used;
+    const blank={name:'',bgmId:null,autoBgm:true,coverIdx:-1,color:''};
+    const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...blank,id:'prog'+(i+1),name:'番組'+(i+1),...x}));
+    // 使っていない既定の番組（名前も初期BGMも色も画像もない「番組N」）は、末尾から片付ける
+    const unused=(x,i)=>x.name==='番組'+(i+1)&&!x.bgmId&&!x.color&&!(x.coverIdx>=0)&&x.id==='prog'+(i+1);
+    while(kept.length>1&&unused(kept.at(-1),kept.length-1)&&!(Number.isInteger(raw.currentProgram)&&raw.currentProgram>=kept.length-1))kept.pop();
     base.programs=kept
   }
 
-  base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<PROGRAMS?raw.currentProgram:(raw.currentProgram===-1?-1:0);
+  base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<base.programs.length?raw.currentProgram:(raw.currentProgram===-1?-1:0);
 
   if(Array.isArray(raw.sounds)&&raw.sounds.some(x=>x&&x.emoji)&&!raw.sounds.some(x=>x&&x.type)){
     const old=raw.sounds.filter(x=>x&&typeof x==='object').map((s,i)=>({...newSound('emoji',s.emoji||'🔔',i),...s,label:s.emoji||'🔔',type:'emoji',category:s.assetId?s.category||'全て':'全て',order:i}));
@@ -356,9 +357,10 @@ const ensureSe=(config,type)=>{
 
 function growSe(){
   for(const type of ['emoji','text']){
-    const have=cfg.sounds.filter(s=>s.type===type).length,
-      need=seSlotsNeeded(cfg,type);
-    for(let i=have;i<need;i++)cfg.sounds.push({...newSound(type,'',i),tabIndex:0,slotIndex:i})
+    const need=seSlotsNeeded(cfg,type);
+    cfg.sounds=cfg.sounds.filter(s=>s.type!==type||isRealSound(s)||!(s.slotIndex>=need));
+    const have=new Set(cfg.sounds.filter(s=>s.type===type).map(s=>s.slotIndex));
+    for(let i=0;i<need;i++)if(!have.has(i))cfg.sounds.push({...newSound(type,'',i),tabIndex:0,slotIndex:i})
   }
 }
 
@@ -410,9 +412,10 @@ function bgmTabSlots(items,tab,owner){
 function growBgm(){
   const tabs=bgmOwnerIds?bgmOwnerIds.length:Math.max(1,...cfg.bgms.map(b=>bgmTabOf(b)+1));
   for(let t=0;t<tabs;t++){
-    const list=cfg.bgms.filter(b=>bgmTabOf(b)===t),
-      need=bgmSlotsNeeded(list);
-    for(let i=list.length;i<need;i++)cfg.bgms.push(newBgm(t,i,bgmOwnerIds?.[t]))
+    const need=bgmSlotsNeeded(cfg.bgms.filter(b=>bgmTabOf(b)===t));
+    cfg.bgms=cfg.bgms.filter(b=>bgmTabOf(b)!==t||bgmReal(b)||!(b.slotIndex>=need));
+    const have=new Set(cfg.bgms.filter(b=>bgmTabOf(b)===t).map(b=>b.slotIndex));
+    for(let i=0;i<need;i++)if(!have.has(i))cfg.bgms.push(newBgm(t,i,bgmOwnerIds?.[t]))
   }
 }
 

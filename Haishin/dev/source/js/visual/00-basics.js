@@ -36,6 +36,9 @@
     script:'',
     show:false,
     songs:[],
+    repertoire:[],
+    singLog:[],
+    singSess:null,
     assetNames:{},
     scenes:{standby:{bgm:'keep',effect:'keep',avatar:true,text:''},away:{bgm:'keep',effect:'keep',avatar:false,text:''},end:{bgm:'keep',effect:'keep',avatar:false,text:'ご視聴ありがとうございました'}},
     mascots:[],
@@ -149,6 +152,10 @@ fps:30,
     {const ev=v.effect==='image'?'p:img':v.effect;if((['none','spring','summer','autumn','winter'].includes(ev)||/^p:[a-z0-9]{1,24}$/.test(ev)))out.effect=ev}
     if(['cafe','transparent','green','blue','black','image'].includes(v.bg))out.bg=v.bg;
     if(Array.isArray(v.songs))out.songs=v.songs.slice(0,300).filter(x=>x&&typeof x.title==='string').map(x=>({title:x.title.slice(0,200),artist:String(x.artist||'').slice(0,200)}));
+    {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
+     if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last)}));
+     if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).slice(-5000).map(x=>({id:S(x.id,16),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)}));
+     out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
     out.scenes={};
     for(const k of ['standby','away','end'])out.scenes[k]=sceneClean(k,v.scenes&&typeof v.scenes==='object'?v.scenes[k]:null);
@@ -165,7 +172,7 @@ fps:30,
     }
     if(['flutter','leaf','rise','snow','roll'].includes(v.imageMotion))out.imageMotion=v.imageMotion;
     if(Array.isArray(v.karaChannels))out.karaChannels=v.karaChannels.slice(0,60).filter(x=>x&&typeof x==='object').map(x=>({name:String(x.name||'').slice(0,80),url:String(x.url||'').slice(0,300),memo:String(x.memo||'').slice(0,300)}));
-    if(['popup','tab'].includes(v.karaOpen))out.karaOpen=v.karaOpen;
+    if(['popup','tab','newtab'].includes(v.karaOpen))out.karaOpen=v.karaOpen;
     {
       const n=Number(v.karaVol);
       if(Number.isFinite(n))out.karaVol=Math.max(0,Math.min(150,n))
@@ -469,55 +476,4 @@ for(const [id,k]of Object.entries(bindings)){
 
   E('planCopy').onclick=()=>copy(`企画：${state.title||'未設定'}\n進行：${state.cue||'未設定'}\n\n${state.prompt}\n\n【台本・ここまでの内容】\n${state.script}\n\nこれは配信・収録用の企画です。上の指定に沿って、次の応答・進行案を作成してください。`);
 
-  E('songAdd').onclick=()=>{
-    const title=E('songTitle').value.trim(),
-      artist=E('songArtist').value.trim();
-    if(!title){
-      toast('曲名を入力してください');
-      return
-    }
-    state.songs.push({title,artist});
-    save();
-    renderSongs();
-    E('songTitle').value='';
-    E('songArtist').value=''
-  };
 
-  E('songSearch').onclick=()=>{
-    const q=[E('songTitle').value.trim(),E('songArtist').value.trim(),'歌詞'].filter(Boolean).join(' ');
-    if(!E('songTitle').value.trim()){
-      toast('検索する曲名を入力してください');
-      return
-    }
-    window.open('https://www.google.com/search?q='+encodeURIComponent(q),'_blank','noopener')
-  };
-
-  const songText=()=>state.songs.map((s,i)=>`${i+1}. ${s.title}${s.artist?' / '+s.artist:''}`).join('\n');
-  E('songCopy').onclick=()=>copy(songText());
-
-  function renderSongs(){
-    const list=E('songList');
-    list.replaceChildren();
-    state.songs.forEach((s,i)=>{
-      const li=document.createElement('li'),
-        text=document.createElement('span');
-      text.textContent=s.title+(s.artist?' / '+s.artist:'');
-      li.append(text);
-      for(const[label,action]of [['↑',()=>{
-            if(i>0)[state.songs[i-1],state.songs[i]]=[state.songs[i],state.songs[i-1]]
-          }],['↓',()=>{
-            if(i<state.songs.length-1)[state.songs[i+1],state.songs[i]]=[state.songs[i],state.songs[i+1]]
-          }],['削除',()=>state.songs.splice(i,1)]]){
-        const b=document.createElement('button');
-        b.textContent=label;
-        b.setAttribute('aria-label',s.title+' '+label);
-        b.onclick=()=>{
-          action();
-          save();
-          renderSongs()
-        };
-        li.append(b)
-      }
-      list.append(li)
-    })
-  }

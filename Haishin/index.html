@@ -798,6 +798,27 @@ body[data-outwin]:not([data-pv-on]) #studioStageWrap{display:none}
 .grp-key-visual{background:#4f7fb8}.grp-key-audio{background:#c0663c}.grp-key-common{background:#8a8f86}
 .scene-pv .scene-switch{grid-template-columns:repeat(4,minmax(0,1fr))!important;max-width:520px;margin:0 auto}
 .scene-pv .studio-note{text-align:center}
+.msc-owner{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 10px;padding:8px;border-radius:10px;background:var(--a-p-12)}
+.msc-owner button{border:1px solid var(--a-p-45);border-radius:999px;padding:6px 12px;background:var(--hi);font-size:12px;cursor:pointer}
+.msc-owner button.selected{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.sb-list{list-style:none;padding:0;margin:6px 0 10px;font-size:13px}
+.sb-list li{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--a-p-20)}
+.sb-list .sb-name{flex:1 1 180px;min-width:0}
+.sb-list .sb-name small{display:block;color:var(--muted);font-size:11px}
+.sb-list button,.sb-sess li button{border:1px solid var(--a-p-45);border-radius:8px;padding:5px 9px;background:var(--hi);font-size:12px;cursor:pointer;color:var(--ink)}
+.sb-list .sb-sing{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
+.sb-list .sb-empty{color:var(--muted);font-size:12px;display:block}
+ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
+.sb-sess-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:6px 0}
+.sb-sess-btn{border:2px solid var(--rec);border-radius:12px;padding:10px 16px;font-size:14px;font-weight:700;background:var(--hi);color:var(--rec);cursor:pointer}
+.sb-sess-btn.recording{background:var(--rec);color:#fff}
+.sb-now{font-weight:700;margin:2px 0 6px}
+.sb-filter{width:100%;padding:8px;border:1px solid var(--a-p-45);border-radius:8px;margin:4px 0}
+.sb-sess{border:1px solid var(--a-p-20);border-radius:10px;padding:6px 10px;margin:6px 0;background:var(--hi)}
+.sb-sess summary{cursor:pointer;font-weight:700;font-size:13px}
+.sb-sess ol{font-size:13px;padding-left:18px}
+.sb-sess li{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:3px 0}
+.sb-away button{margin-left:8px}
 
 </style>
 <script>
@@ -898,7 +919,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.6.6 / 描画の軽量化、設定の色分け、名義ごとのマスコット、標準BGMタブ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.6.7 / 番組の増やし方、枠の詰め直し、名義別マスコット表示、歌唱の記録</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -941,12 +962,12 @@ lookPaint(look);
 <div id="planCurrent" class="studio-live-box" aria-live="polite">台本を入力すると、段落ごとに確認できます。</div>
 <p class="studio-note">台本は空行で区切ります。文字のない映像が必要なときは表示チェックを外してください。AI音声の再生・自動口パク連動は今後の拡張です。</p>
 </section>
-<section class="studio-card mode-section" id="studioSongs" style="margin-top:16px"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><p class="studio-note">手入力のセトリと外部検索の入口です。歌詞の自動取得・表示は未実装です。動画モードでは、伴奏は下の「伴奏の音をアプリに取り込む」で別タブの音を混ぜられます。</p><div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text"></label><label class="studio-field">アーティスト<input id="songArtist" type="text"></label></div><div class="studio-row"><button id="songAdd" class="accent">セトリに追加</button><button id="songSearch">曲名＋歌詞でWeb検索</button><button id="songCopy">セトリをコピー</button></div><ol id="songList" class="studio-setlist"></ol>
+<section class="studio-card mode-section" id="studioSongs" style="margin-top:16px"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore"><h3 class="kara-h">曲を入れる</h3><div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div><label class="studio-field">メモ（キー・原曲・音源など、任意）<input id="songMemo" type="text" maxlength="200"></label><div class="studio-row"><button id="repAdd" class="accent" type="button">曲リストに登録</button><button id="songAdd" type="button">セトリに追加</button><button id="singNowBtn" type="button">♪ この曲を歌い始め</button><button id="songSearch" type="button">曲名＋歌詞でWeb検索</button></div><hr class="studio-divider"><h3 class="kara-h">歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびに「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。</p><h3 class="kara-h">セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div><h3 class="kara-h">曲リスト <small id="repCount"></small></h3><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・メモで絞り込み" aria-label="曲リストの絞り込み"><ul id="repList" class="sb-list"></ul><h3 class="kara-h">これまでの記録（回ごと）</h3><div id="singLog"></div></div></div>
 <div class="kara-block" id="karaBlock">
 <hr class="studio-divider">
 <p class="studio-kicker">KARAOKE / SEARCH</p><h3 class="kara-h">カラオケ音源を探す</h3>
 <p class="studio-note">登録したチャンネルの中を、YouTubeの検索画面で開きます（アプリの中には表示しません）。同じ窓を使い回すので、検索のたびに窓は増えません。</p>
-<div class="studio-inline"><label class="studio-field">探す言葉（曲名・アニメ名など）<input id="karaQuery" type="search" autocomplete="off"></label><label class="studio-field">開き方<select id="karaOpen"><option value="popup">別ウィンドウ</option><option value="tab">新しいタブ</option></select></label></div>
+<div class="studio-inline"><label class="studio-field">探す言葉（曲名・アニメ名など）<input id="karaQuery" type="search" autocomplete="off"></label><label class="studio-field">開き方<select id="karaOpen"><option value="popup">別ウィンドウ</option><option value="tab">新しいタブ（同じタブを使い回す）</option><option value="newtab">新しいタブ（毎回開く）</option></select></label></div>
 <div class="studio-row"><button id="karaFromSong" type="button">上の曲名欄から入れる</button><button id="karaAll" type="button">YouTube全体で「カラオケ」付き検索</button></div>
 <div id="karaChannels" class="kara-channels"></div>
 <p class="studio-note">チャンネルの利用条件メモは参考情報です。歌枠管理シート・提供者の最新案内とは自動連動しません。</p><details><summary>チャンネルを編集</summary><div id="karaEdit" class="kara-edit"></div><div class="studio-row"><button id="karaAdd" type="button">チャンネルを追加</button><button id="karaReset" type="button">初期の6件に戻す</button></div><p class="studio-note">URLは「https://www.youtube.com/@名前」か「https://www.youtube.com/channel/UC…」の形で入れます（@名前だけでも可）。メモは使用条件の控えです。初期値は歌枠管理シートの提供者タブ（2026年10月30日時点）から写したもので、規約が変わることがあるため、使う前に提供者の原文で確かめる想定です。</p></details>
@@ -1047,7 +1068,7 @@ lookPaint(look);
 <p class="studio-note">動画の透過保持は保証しません。背景を抜く収録・配信には緑／青を選んでください。</p>
 </aside>
 </div></section>
-<section class="studio-card mascot-card grp-visual" data-modes="stream video" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット</h2><p class="studio-note">立ち絵とは別に、小さな画像を名義ごとに最大10体まで登録できます（いま選んでいる名義のマスコットが並びます）。画面に出すのは名義ごとに2体までで、下の「この名義で画面に出すマスコット」で選びます。マスコットは立ち絵の後ろに表示します。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div class="msc-pick"><strong>この名義で画面に出すマスコット（2体まで）</strong><div class="studio-row mascot-bar" role="group" aria-label="画面に出すマスコット" id="mascotBar"></div></div><div class="studio-mini">登録したマスコット（押すと下で編集）</div><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ マスコットを追加</button><button type="button" id="mascotDel">このマスコットを削除</button></div><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> この名義で画面に出す（2体まで）</label><label class="studio-field"><input type="checkbox" id="mscTalk"> 話者ボタンに出す（声でぴこぴこ）</label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="run">画面中を走り回る</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><label class="studio-field">走り回るときの向き<select id="mscFace"><option value="none">左右を反転しない</option><option value="right">元の画像が右向き（左へ走るときは反転）</option><option value="left">元の画像が左向き（右へ走るときは反転）</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
+<section class="studio-card mascot-card grp-visual" data-modes="stream video" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット</h2><div class="msc-owner"><span class="studio-mini">表示する名義</span><span id="mscOwner" class="char-chips"></span></div><p class="studio-note">立ち絵とは別に、小さな画像を名義ごとに最大10体まで登録できます（いま選んでいる名義のマスコットが並びます）。画面に出すのは名義ごとに2体までで、下の「この名義で画面に出すマスコット」で選びます。マスコットは立ち絵の後ろに表示します。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div class="msc-pick"><strong>この名義で画面に出すマスコット（2体まで）</strong><div class="studio-row mascot-bar" role="group" aria-label="画面に出すマスコット" id="mascotBar"></div></div><div class="studio-mini">登録したマスコット（押すと下で編集）</div><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ マスコットを追加</button><button type="button" id="mascotDel">このマスコットを削除</button></div><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> この名義で画面に出す（2体まで）</label><label class="studio-field"><input type="checkbox" id="mscTalk"> 話者ボタンに出す（声でぴこぴこ）</label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="run">画面中を走り回る</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><label class="studio-field">走り回るときの向き<select id="mscFace"><option value="none">左右を反転しない</option><option value="right">元の画像が右向き（左へ走るときは反転）</option><option value="left">元の画像が左向き（右へ走るときは反転）</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
 <section class="studio-card scene-card grp-audio" data-modes="stream"><details class="scene-details" id="studioSinkBox"><summary>配信に届く音（配信用の出力先）</summary>
 <p class="studio-note">配信モードでは、マイクの声はこのアプリから出しません（口パクの判定にだけ使います）。OBSではマイク（AG03など）を直接取り込み、このアプリの音はブラウザの音として取り込みます。下の出力先は、効果音・BGMだけを仮想オーディオ機器へ分けて送りたいときに使います。動画モードでは、マイク＋効果音・BGM・環境音のミックスを送ります。</p><p class="studio-note">配信用の出力先を選ぶと、そのミックス（ダッキング・リミッター・ミュート反映済み）を、その音声機器へ別に送ります。仮想オーディオ機器を選び、配信ソフトではその機器だけを音声として取り込む構成を想定しています。普段のイヤホン・ヘッドホンを選ぶと、自分の声が遅れて聞こえます。</p>
 <div class="studio-row"><select id="studioSinkSel" aria-label="配信用の出力先"><option value="">使わない</option></select><button id="studioSinkList">一覧を更新</button><button id="studioSinkToggle">送出を開始</button></div>
@@ -1159,7 +1180,7 @@ lookPaint(look);
   <div class="pc-actions"><button type="button" class="btn" id="pcReplace" disabled>選んだ画像を差し替え</button><button type="button" class="btn danger" id="pcRemove" disabled>選んだ画像を外す</button><button type="button" class="btn" id="pcUseDefault">共通の画像を使う</button></div>
   <small>空き枠を押すと画像を登録できます。登録済みの画像を押すと、それが動画に使われます（緑の枠）。どれも選ばない場合は「動画用サムネイル」の共通画像を使います。</small></div>
  <div class="field"><label>番組の並び順</label><div class="move-row"><button type="button" class="btn" id="progMovePrev">← 前へ</button><button type="button" class="btn" id="progMoveNext">次へ →</button></div></div>
- <div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="progModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+ <div class="modal-actions"><button type="button" class="btn danger" id="progDel">この番組を削除</button><div class="actions-right"><button type="button" class="btn" data-close="progModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <input type="file" id="progCoverFile" accept="image/*" hidden>
 <div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field" id="imageField" hidden><label for="imageFile">ボタンの画像</label><div class="filebox"><input id="imageFile" type="file" accept="image/*"><small id="currentImage"></small></div></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back" id="bgmModal"><form class="modal" id="bgmForm"><h2 id="bgmHeading">BGMの設定</h2><input type="hidden" id="bgmId"><div class="field"><label for="bgmNameInput">表示名</label><input id="bgmNameInput" maxlength="80" required placeholder="例：午後の喫茶店"></div><div class="field"><label for="bgmFile">音源ファイル</label><div class="filebox"><input id="bgmFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentBgmFile"></small></div></div><div class="field"><label for="bgmVolModal">この曲の音量：<span id="bgmVolModalVal"></span></label><input id="bgmVolModal" type="range" min="0" max="100"></div><div class="field"><label for="bgmOwnerSel">入れる名義のタブ</label><select id="bgmOwnerSel"></select></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="bgmMovePrev">← 前へ</button><button type="button" class="btn" id="bgmMoveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="resetBgm">選択リセット</button><div class="actions-right"><button type="button" class="btn" data-close="bgmModal">キャンセル</button><button type="submit" class="btn gold">保存</button></div></div></form></div>
@@ -1263,10 +1284,10 @@ const pctToDb=p=>p<=0?-60:Math.max(-60,Math.min(0,Math.round(20*Math.log10(p/100
 
 const fmtDb=db=>db<=-60?'消音':(db>0?'+':'')+(+db).toFixed(1)+'dB';
 
-const PROGRAMS=8;
+const PROGRAMS=30;
 
 function defaultPrograms(){
-  return Array.from({length:PROGRAMS},(_,i)=>({id:'prog'+(i+1),name:'番組'+(i+1),bgmId:null,autoBgm:true,coverIdx:-1,color:''}))
+  return Array.from({length:1},(_,i)=>({id:'prog'+(i+1),name:'番組'+(i+1),bgmId:null,autoBgm:true,coverIdx:-1,color:''}))
 }
 
 const PROG_COLOR_KEYS=['creamsoda','napolitan','lemon','bluehawaii','strawberry'];
@@ -1348,15 +1369,16 @@ function normalize(raw){
     raw={...raw,programs:raw.programs.filter(x=>x&&typeof x==='object')};
     const defs=defaultPrograms(),
       used=new Set(raw.programs.map(x=>x&&x.id));
-    const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...defs[i],...x}));
-    for(const d of defs){
-      if(kept.length>=PROGRAMS)break;
-      if(!used.has(d.id))kept.push(d)
-    }
+    void used;
+    const blank={name:'',bgmId:null,autoBgm:true,coverIdx:-1,color:''};
+    const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...blank,id:'prog'+(i+1),name:'番組'+(i+1),...x}));
+    // 使っていない既定の番組（名前も初期BGMも色も画像もない「番組N」）は、末尾から片付ける
+    const unused=(x,i)=>x.name==='番組'+(i+1)&&!x.bgmId&&!x.color&&!(x.coverIdx>=0)&&x.id==='prog'+(i+1);
+    while(kept.length>1&&unused(kept.at(-1),kept.length-1)&&!(Number.isInteger(raw.currentProgram)&&raw.currentProgram>=kept.length-1))kept.pop();
     base.programs=kept
   }
 
-  base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<PROGRAMS?raw.currentProgram:(raw.currentProgram===-1?-1:0);
+  base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<base.programs.length?raw.currentProgram:(raw.currentProgram===-1?-1:0);
 
   if(Array.isArray(raw.sounds)&&raw.sounds.some(x=>x&&x.emoji)&&!raw.sounds.some(x=>x&&x.type)){
     const old=raw.sounds.filter(x=>x&&typeof x==='object').map((s,i)=>({...newSound('emoji',s.emoji||'🔔',i),...s,label:s.emoji||'🔔',type:'emoji',category:s.assetId?s.category||'全て':'全て',order:i}));
@@ -1526,9 +1548,10 @@ const ensureSe=(config,type)=>{
 
 function growSe(){
   for(const type of ['emoji','text']){
-    const have=cfg.sounds.filter(s=>s.type===type).length,
-      need=seSlotsNeeded(cfg,type);
-    for(let i=have;i<need;i++)cfg.sounds.push({...newSound(type,'',i),tabIndex:0,slotIndex:i})
+    const need=seSlotsNeeded(cfg,type);
+    cfg.sounds=cfg.sounds.filter(s=>s.type!==type||isRealSound(s)||!(s.slotIndex>=need));
+    const have=new Set(cfg.sounds.filter(s=>s.type===type).map(s=>s.slotIndex));
+    for(let i=0;i<need;i++)if(!have.has(i))cfg.sounds.push({...newSound(type,'',i),tabIndex:0,slotIndex:i})
   }
 }
 
@@ -1580,9 +1603,10 @@ function bgmTabSlots(items,tab,owner){
 function growBgm(){
   const tabs=bgmOwnerIds?bgmOwnerIds.length:Math.max(1,...cfg.bgms.map(b=>bgmTabOf(b)+1));
   for(let t=0;t<tabs;t++){
-    const list=cfg.bgms.filter(b=>bgmTabOf(b)===t),
-      need=bgmSlotsNeeded(list);
-    for(let i=list.length;i<need;i++)cfg.bgms.push(newBgm(t,i,bgmOwnerIds?.[t]))
+    const need=bgmSlotsNeeded(cfg.bgms.filter(b=>bgmTabOf(b)===t));
+    cfg.bgms=cfg.bgms.filter(b=>bgmTabOf(b)!==t||bgmReal(b)||!(b.slotIndex>=need));
+    const have=new Set(cfg.bgms.filter(b=>bgmTabOf(b)===t).map(b=>b.slotIndex));
+    for(let i=0;i<need;i++)if(!have.has(i))cfg.bgms.push(newBgm(t,i,bgmOwnerIds?.[t]))
   }
 }
 
@@ -2391,7 +2415,7 @@ function renderPrograms(){
 
   $('#progEdit').disabled=isFree();
 
-  $('#progChips').innerHTML=`<button class="prog-chip free ${isFree()?'active':''}" role="tab" aria-selected="${isFree()}" data-prog="-1" title="番組を使わずに録る（初期BGM・番組の画像なし）" ${busy&&!isFree()?'disabled':''}>フリー</button>`+cfg.programs.map((pr,i)=>`<button${progColorStyle(pr.color)} class="prog-chip ${progColorKey(pr.color)?'pc':''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('');
+  $('#progChips').innerHTML=`<button class="prog-chip free ${isFree()?'active':''}" role="tab" aria-selected="${isFree()}" data-prog="-1" title="番組を使わずに録る（初期BGM・番組の画像なし）" ${busy&&!isFree()?'disabled':''}>フリー</button>`+cfg.programs.map((pr,i)=>`<button${progColorStyle(pr.color)} class="prog-chip ${progColorKey(pr.color)?'pc':''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('')+(cfg.programs.length<PROGRAMS?`<button class="prog-chip prog-add" type="button" data-prog-add title="番組を1つ増やして、設定を開きます" ${busy?'disabled':''}>＋ 番組を追加</button>`:'');
 
   {
     const act=$('#progChips .prog-chip.active');
@@ -2412,6 +2436,17 @@ function renderPrograms(){
   renderBgmNow();
 }
 
+$('#progChips').addEventListener('click',e=>{
+  if(!e.target.closest('[data-prog-add]')||rec.state!=='idle')return;
+  e.stopImmediatePropagation();
+  let n=cfg.programs.length+1;
+  while(cfg.programs.some(p=>p.id==='prog'+n))n++;
+  cfg.programs.push({id:'prog'+n,name:'番組'+(cfg.programs.length+1),bgmId:null,autoBgm:true,coverIdx:-1,color:''});
+  cfg.currentProgram=cfg.programs.length-1;
+  persist();
+  renderPrograms();
+  $('#progEdit').click()
+},true);
 $('#progChips').onclick=e=>{
   const c=e.target.closest('[data-prog]');
   if(!c||rec.state!=='idle')return;
@@ -2643,6 +2678,21 @@ $('#progForm').onsubmit=e=>{
   closeModal('progModal');
   renderPrograms();
   toast('番組の設定を保存しました')
+};
+
+$('#progDel').onclick=e=>{
+  if(rec.state!=='idle'){toast('録音中は削除できません');return}
+  if(cfg.programs.length<2){toast('番組は1つ以上必要です');return}
+  const pr=curProgram();
+  if(!pr)return;
+  if(!armButton(e.currentTarget,'もう一度押すと「'+pr.name+'」を削除'))return;
+  const i=cfg.programs.indexOf(pr);
+  cfg.programs.splice(i,1);
+  cfg.currentProgram=Math.min(i,cfg.programs.length-1);
+  persist();
+  closeModal('progModal');
+  renderPrograms();
+  toast('番組を削除しました（録音済みのテイクは残ります）',4000)
 };
 
 let monitorManualOff=false,
@@ -6873,6 +6923,9 @@ $('#consoleAllStop').onclick=()=>stopAll();
     script:'',
     show:false,
     songs:[],
+    repertoire:[],
+    singLog:[],
+    singSess:null,
     assetNames:{},
     scenes:{standby:{bgm:'keep',effect:'keep',avatar:true,text:''},away:{bgm:'keep',effect:'keep',avatar:false,text:''},end:{bgm:'keep',effect:'keep',avatar:false,text:'ご視聴ありがとうございました'}},
     mascots:[],
@@ -6986,6 +7039,10 @@ fps:30,
     {const ev=v.effect==='image'?'p:img':v.effect;if((['none','spring','summer','autumn','winter'].includes(ev)||/^p:[a-z0-9]{1,24}$/.test(ev)))out.effect=ev}
     if(['cafe','transparent','green','blue','black','image'].includes(v.bg))out.bg=v.bg;
     if(Array.isArray(v.songs))out.songs=v.songs.slice(0,300).filter(x=>x&&typeof x.title==='string').map(x=>({title:x.title.slice(0,200),artist:String(x.artist||'').slice(0,200)}));
+    {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
+     if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last)}));
+     if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).slice(-5000).map(x=>({id:S(x.id,16),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)}));
+     out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
     out.scenes={};
     for(const k of ['standby','away','end'])out.scenes[k]=sceneClean(k,v.scenes&&typeof v.scenes==='object'?v.scenes[k]:null);
@@ -7002,7 +7059,7 @@ fps:30,
     }
     if(['flutter','leaf','rise','snow','roll'].includes(v.imageMotion))out.imageMotion=v.imageMotion;
     if(Array.isArray(v.karaChannels))out.karaChannels=v.karaChannels.slice(0,60).filter(x=>x&&typeof x==='object').map(x=>({name:String(x.name||'').slice(0,80),url:String(x.url||'').slice(0,300),memo:String(x.memo||'').slice(0,300)}));
-    if(['popup','tab'].includes(v.karaOpen))out.karaOpen=v.karaOpen;
+    if(['popup','tab','newtab'].includes(v.karaOpen))out.karaOpen=v.karaOpen;
     {
       const n=Number(v.karaVol);
       if(Number.isFinite(n))out.karaVol=Math.max(0,Math.min(150,n))
@@ -7306,58 +7363,7 @@ for(const [id,k]of Object.entries(bindings)){
 
   E('planCopy').onclick=()=>copy(`企画：${state.title||'未設定'}\n進行：${state.cue||'未設定'}\n\n${state.prompt}\n\n【台本・ここまでの内容】\n${state.script}\n\nこれは配信・収録用の企画です。上の指定に沿って、次の応答・進行案を作成してください。`);
 
-  E('songAdd').onclick=()=>{
-    const title=E('songTitle').value.trim(),
-      artist=E('songArtist').value.trim();
-    if(!title){
-      toast('曲名を入力してください');
-      return
-    }
-    state.songs.push({title,artist});
-    save();
-    renderSongs();
-    E('songTitle').value='';
-    E('songArtist').value=''
-  };
 
-  E('songSearch').onclick=()=>{
-    const q=[E('songTitle').value.trim(),E('songArtist').value.trim(),'歌詞'].filter(Boolean).join(' ');
-    if(!E('songTitle').value.trim()){
-      toast('検索する曲名を入力してください');
-      return
-    }
-    window.open('https://www.google.com/search?q='+encodeURIComponent(q),'_blank','noopener')
-  };
-
-  const songText=()=>state.songs.map((s,i)=>`${i+1}. ${s.title}${s.artist?' / '+s.artist:''}`).join('\n');
-  E('songCopy').onclick=()=>copy(songText());
-
-  function renderSongs(){
-    const list=E('songList');
-    list.replaceChildren();
-    state.songs.forEach((s,i)=>{
-      const li=document.createElement('li'),
-        text=document.createElement('span');
-      text.textContent=s.title+(s.artist?' / '+s.artist:'');
-      li.append(text);
-      for(const[label,action]of [['↑',()=>{
-            if(i>0)[state.songs[i-1],state.songs[i]]=[state.songs[i],state.songs[i-1]]
-          }],['↓',()=>{
-            if(i<state.songs.length-1)[state.songs[i+1],state.songs[i]]=[state.songs[i],state.songs[i+1]]
-          }],['削除',()=>state.songs.splice(i,1)]]){
-        const b=document.createElement('button');
-        b.textContent=label;
-        b.setAttribute('aria-label',s.title+' '+label);
-        b.onclick=()=>{
-          action();
-          save();
-          renderSongs()
-        };
-        li.append(b)
-      }
-      list.append(li)
-    })
-  }
 
 function karaDefaults(){
     return [
@@ -7393,10 +7399,10 @@ function karaDefaults(){
   }
 
   function karaGo(url){
-    const popup=state.karaOpen!=='tab';
+    const mode=state.karaOpen;
     let w=null;
     try{
-      w=popup?window.open(url,'otonohaKaraokeWin','popup=yes,width=1040,height=780'):window.open(url,'otonohaKaraokeTab')
+      w=mode==='newtab'?window.open(url,'_blank'):mode==='tab'?window.open(url,'otonohaKaraokeTab'):window.open(url,'otonohaKaraokeWin','popup=yes,width=1040,height=780')
     }catch(_){}
     if(!w){
       toast('ブラウザに新しい窓を止められました。アドレスバーの表示からポップアップを許可すると開けます',7000);
@@ -7486,7 +7492,7 @@ function karaDefaults(){
       ed.append(row)
     });
 
-    E('karaOpen').value=state.karaOpen==='tab'?'tab':'popup';
+    E('karaOpen').value=['tab','newtab'].includes(state.karaOpen)?state.karaOpen:'popup';
     E('karaVol').value=state.karaVol;
     E('karaVolVal').textContent=Math.round(state.karaVol)+'%';
     E('karaSuppress').checked=state.karaSuppress!==false;
@@ -7527,7 +7533,7 @@ function karaDefaults(){
   };
 
   E('karaOpen').onchange=e=>{
-    state.karaOpen=e.target.value==='tab'?'tab':'popup';
+    state.karaOpen=['tab','newtab'].includes(e.target.value)?e.target.value:'popup';
     save()
   };
 
@@ -7771,6 +7777,185 @@ function karaDefaults(){
       }
     }
   },100);
+
+const SB={
+    title:E('songTitle'),artist:E('songArtist'),memo:E('songMemo'),
+    set:E('songList'),rep:E('repList'),repFilter:E('repFilter'),repCount:E('repCount'),
+    log:E('singLog'),sessBtn:E('singSessBtn'),sessState:E('singSessState'),now:E('singNow'),
+    core:E('songbookCore'),home:E('songbookHome'),away:E('songbookAway')
+  };
+  const songKey=(t,a)=>(t||'').trim().toLowerCase()+'\n'+(a||'').trim().toLowerCase();
+  const sbId=()=>Math.random().toString(36).slice(2,10);
+  function repList(){if(!Array.isArray(state.repertoire))state.repertoire=[];return state.repertoire}
+  function logList(){if(!Array.isArray(state.singLog))state.singLog=[];return state.singLog}
+  function sbInput(){return {title:SB.title.value.trim(),artist:SB.artist.value.trim(),memo:SB.memo.value.trim()}}
+  function sbClear(){SB.title.value='';SB.artist.value='';SB.memo.value=''}
+  function repFind(t,a){const k=songKey(t,a);return repList().find(s=>songKey(s.title,s.artist)===k)}
+  function repAdd(t,a,memo){
+    let s=repFind(t,a);
+    if(!s){
+      if(repList().length>=3000){toast('曲リストは3000曲までです');return null}
+      s={id:sbId(),title:t.slice(0,200),artist:(a||'').slice(0,200),memo:(memo||'').slice(0,200),count:0,last:''};
+      repList().push(s)
+    }else if(memo)s.memo=memo.slice(0,200);
+    return s
+  }
+  const hms=sec=>{sec=Math.max(0,Math.floor(sec));const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;return (h?String(h).padStart(2,'0')+':':'00:')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')};
+  const curProfName=()=>(state.profiles||[]).find(p=>p.id===state.profileId)?.name||'';
+
+  function sessStart(){
+    state.singSess={id:sbId(),start:new Date().toISOString(),prof:curProfName()};
+    save();renderSongs();
+    toast('歌唱の記録を始めました。「♪ 歌い始め」を押すと、ここからの経過時間と一緒に残ります',6000)
+  }
+  function sessEnd(){
+    if(!state.singSess)return;
+    const n=logList().filter(x=>x.sess===state.singSess.id).length;
+    state.singSess=null;save();renderSongs();
+    toast('記録を終えました（'+n+'曲）。下の「歌唱の記録」に残っています',5000)
+  }
+  function sing(t,a){
+    if(!t)return;
+    if(!state.singSess)sessStart();
+    const ss=state.singSess,now=new Date(),off=(now-new Date(ss.start))/1000;
+    const log=logList();
+    log.push({id:sbId(),t:now.toISOString(),title:t,artist:a||'',sess:ss.id,start:ss.start,off:Math.round(off),prof:ss.prof||curProfName()});
+    if(log.length>5000)log.splice(0,log.length-5000);
+    const r=repAdd(t,a);
+    if(r){r.count=(r.count||0)+1;r.last=now.toISOString()}
+    save();renderSongs();
+    toast('「'+t+'」を記録しました（'+hms(off)+'）',3000)
+  }
+
+  E('songAdd').onclick=()=>{
+    const v=sbInput();
+    if(!v.title){toast('曲名を入力してください');return}
+    if(state.songs.length>=300){toast('セトリは300曲までです');return}
+    state.songs.push({title:v.title,artist:v.artist});
+    repAdd(v.title,v.artist,v.memo);
+    save();renderSongs();sbClear()
+  };
+  E('repAdd').onclick=()=>{
+    const v=sbInput();
+    if(!v.title){toast('曲名を入力してください');return}
+    const had=!!repFind(v.title,v.artist);
+    if(repAdd(v.title,v.artist,v.memo)){save();renderSongs();sbClear();toast(had?'登録済みの曲です（メモを更新しました）':'曲リストに登録しました')}
+  };
+  E('singNowBtn').onclick=()=>{
+    const v=sbInput();
+    if(!v.title){toast('曲名を入力するか、セトリ・曲リストの「♪ 歌い始め」を押してください',5000);return}
+    sing(v.title,v.artist);sbClear()
+  };
+  E('songSearch').onclick=()=>{
+    const v=sbInput();
+    if(!v.title){toast('検索する曲名を入力してください');return}
+    window.open('https://www.google.com/search?q='+encodeURIComponent([v.title,v.artist,'歌詞'].filter(Boolean).join(' ')),'_blank')
+  };
+  SB.sessBtn.onclick=()=>state.singSess?sessEnd():sessStart();
+  E('songCopy').onclick=()=>copy(state.songs.map((s,i)=>`${i+1}. ${s.title}${s.artist?' / '+s.artist:''}`).join('\n'));
+  E('songClear').onclick=e=>armed(e.currentTarget,'もう一度押すとセトリを空にする',()=>{state.songs=[];save();renderSongs()});
+  SB.repFilter.oninput=()=>renderRep();
+
+  function rowBtn(label,cls,fn,title){const b=document.createElement('button');b.type='button';b.textContent=label;if(cls)b.className=cls;if(title)b.title=title;b.onclick=fn;return b}
+  function songSpan(t,a,extra){const s=document.createElement('span');s.className='sb-name';s.textContent=t+(a?' / '+a:'');if(extra){const x=document.createElement('small');x.textContent=extra;s.append(x)}return s}
+
+  function renderSet(){
+    SB.set.replaceChildren();
+    state.songs.forEach((s,i)=>{
+      const li=document.createElement('li');
+      li.append(rowBtn('♪ 歌い始め','sb-sing',()=>sing(s.title,s.artist),'この曲を歌い始めた時刻を記録します'),songSpan(s.title,s.artist));
+      li.append(rowBtn('↑','',()=>{if(i>0){[state.songs[i-1],state.songs[i]]=[state.songs[i],state.songs[i-1]];save();renderSet()}}),
+        rowBtn('↓','',()=>{if(i<state.songs.length-1){[state.songs[i+1],state.songs[i]]=[state.songs[i],state.songs[i+1]];save();renderSet()}}),
+        rowBtn('外す','',()=>{state.songs.splice(i,1);save();renderSet()}));
+      SB.set.append(li)
+    });
+    if(!state.songs.length){const li=document.createElement('li');li.className='sb-empty';li.textContent='セトリは空です。上で曲名を入れて「セトリに追加」、または曲リストの「セトリへ」で追加できます';SB.set.append(li)}
+  }
+  function renderRep(){
+    const q=SB.repFilter.value.trim().toLowerCase(),all=repList();
+    const list=all.filter(s=>!q||(s.title+' '+s.artist+' '+(s.memo||'')).toLowerCase().includes(q)).sort((a,b)=>(b.last||'').localeCompare(a.last||'')||a.title.localeCompare(b.title,'ja'));
+    SB.repCount.textContent=all.length+'曲';
+    SB.rep.replaceChildren();
+    for(const s of list.slice(0,300)){
+      const li=document.createElement('li');
+      const info=(s.count?'歌った回数 '+s.count+'回':'まだ記録なし')+(s.last?'・最後 '+s.last.slice(0,10):'')+(s.memo?'・'+s.memo:'');
+      li.append(rowBtn('♪ 歌い始め','sb-sing',()=>sing(s.title,s.artist)),songSpan(s.title,s.artist,info),
+        rowBtn('セトリへ','',()=>{state.songs.push({title:s.title,artist:s.artist});save();renderSet();toast('セトリに追加しました')}),
+        rowBtn('削除','',e=>armed(e.currentTarget,'もう一度押すと削除',()=>{state.repertoire=repList().filter(x=>x!==s);save();renderRep()})));
+      SB.rep.append(li)
+    }
+    if(list.length>300){const li=document.createElement('li');li.className='sb-empty';li.textContent='ほか'+(list.length-300)+'曲（絞り込みで探せます）';SB.rep.append(li)}
+    if(!all.length){const li=document.createElement('li');li.className='sb-empty';li.textContent='まだ曲が登録されていません。上で曲名・アーティストを入れて「曲リストに登録」を押すか、「♪ 歌い始め」で記録すると自動で登録されます';SB.rep.append(li)}
+  }
+  function sessions(){
+    const m=new Map();
+    for(const x of logList()){if(!m.has(x.sess))m.set(x.sess,{id:x.sess,start:x.start,prof:x.prof,items:[]});m.get(x.sess).items.push(x)}
+    return [...m.values()].sort((a,b)=>(b.start||'').localeCompare(a.start||''))
+  }
+  const localTime=iso=>{const d=new Date(iso);return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+  function sessText(s){return s.items.map(x=>`${hms(x.off)} ${x.title}${x.artist?' / '+x.artist:''}`).join('\n')}
+  function sessCsv(list){
+    const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+    const rows=[['日付','記録の開始','経過','曲名','アーティスト','名義']];
+    for(const s of list)for(const x of s.items){const d=new Date(x.t);rows.push([`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,localTime(s.start),hms(x.off),x.title,x.artist,x.prof])}
+    return '﻿'+rows.map(r=>r.map(q).join(',')).join('\r\n')
+  }
+  function saveCsv(list,name){
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([sessCsv(list)],{type:'text/csv'}));a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)
+  }
+  function renderLog(){
+    SB.log.replaceChildren();
+    const ss=sessions();
+    for(const s of ss.slice(0,30)){
+      const box=document.createElement('details');box.className='sb-sess';box.open=s===ss[0];
+      const sum=document.createElement('summary');sum.textContent=localTime(s.start)+'　'+(s.prof||'')+'　'+s.items.length+'曲'+(state.singSess?.id===s.id?'（記録中）':'');
+      const ol=document.createElement('ol');
+      for(const x of s.items){const li=document.createElement('li');li.append(songSpan(hms(x.off)+'　'+x.title,x.artist),rowBtn('消す','',()=>{state.singLog=logList().filter(y=>y!==x);save();renderLog()}));ol.append(li)}
+      const row=document.createElement('div');row.className='studio-row';
+      row.append(rowBtn('タイムスタンプをコピー（概要欄用）','accent',()=>copy(sessText(s))),
+        rowBtn('CSVで保存','',()=>saveCsv([s],'utawaku_'+s.start.slice(0,10)+'.csv')),
+        rowBtn('この回の記録を削除','',e=>armed(e.currentTarget,'もう一度押すと削除',()=>{state.singLog=logList().filter(y=>y.sess!==s.id);if(state.singSess?.id===s.id)state.singSess=null;save();renderSongs()})));
+      box.append(sum,ol,row);SB.log.append(box)
+    }
+    if(!ss.length){const p=document.createElement('p');p.className='studio-note';p.textContent='まだ記録はありません。歌枠を始めるときに「● 歌唱の記録を始める」を押し、歌うたびに「♪ 歌い始め」を押すと、ここに経過時間つきで残ります。';SB.log.append(p)}
+    else{const row=document.createElement('div');row.className='studio-row';row.append(rowBtn('すべての記録をCSVで保存','',()=>saveCsv(ss,'utawaku_all.csv')));SB.log.append(row)}
+  }
+  function renderSess(){
+    const ss=state.singSess;
+    SB.sessBtn.textContent=ss?'■ 記録を終える':'● 歌唱の記録を始める';
+    SB.sessBtn.classList.toggle('recording',!!ss);
+    if(!ss){SB.sessState.textContent='記録していません';SB.now.textContent='';return}
+    SB.sessState.textContent='記録中 '+hms((Date.now()-new Date(ss.start))/1000)+'（'+localTime(ss.start)+'から）';
+    const last=logList().filter(x=>x.sess===ss.id).at(-1);
+    SB.now.textContent=last?'いま：'+last.title+(last.artist?' / '+last.artist:'')+'（'+hms(last.off)+'〜）':''
+  }
+  setInterval(()=>{if(state.singSess)renderSess()},1000);
+  function renderSongs(){renderSess();renderSet();renderRep();renderLog()}
+
+  // 別タブで開く：ノートの部品をそのタブへ移し、閉じたら戻す
+  let sbWin=null;
+  function sbBack(){
+    if(!SB.core.isConnected||SB.core.ownerDocument!==document){try{SB.home.append(document.adoptNode(SB.core))}catch(_){}}
+    SB.away.hidden=true;sbWin=null
+  }
+  E('songbookPop').onclick=()=>{
+    if(sbWin&&!sbWin.closed){sbWin.focus();return}
+    const w=window.open('','otonohaSongbook');
+    if(!w){toast('新しいタブを開けませんでした。ポップアップの許可をご確認ください',6000);return}
+    sbWin=w;
+    const css=[...document.querySelectorAll('style')].map(s=>s.textContent).join('\n');
+    w.document.open();
+    w.document.write('<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>歌枠ノート｜オトノハ</title><style>'+css.replace(/<\/style/gi,'<\\/style')+'</style><style>body{padding:14px;background:var(--bg)}.sb-pop{max-width:980px;margin:0 auto}</style></head><body><div class="studio-card sb-pop"></div></body></html>');
+    w.document.close();
+    const st=document.documentElement.getAttribute('style');if(st)w.document.documentElement.setAttribute('style',st);
+    for(const a of document.body.attributes)if(a.name.startsWith('data-'))w.document.body.setAttribute(a.name,a.value);
+    w.document.querySelector('.sb-pop').append(w.document.adoptNode(SB.core));
+    SB.away.hidden=false;
+    w.addEventListener('pagehide',()=>setTimeout(sbBack,0));
+    const chk=setInterval(()=>{if(!sbWin||sbWin.closed){clearInterval(chk);sbBack()}},800)
+  };
+  E('songbookReturn').onclick=()=>{try{sbWin?.close()}catch(_){}sbBack()};
+  window.addEventListener('pagehide',()=>{try{sbWin?.close()}catch(_){}});
 
 function cleanChar(c){
     const o={
@@ -10302,6 +10487,10 @@ let mscSel='',mscLast=0;const mscEnv={},mscRun={};
   }
   function renderMascotUI(){
     syncMascotsFromProfile();
+    {
+      const box=E('mscOwner');
+      box.replaceChildren(...(state.profiles||[]).map(p=>{const b=document.createElement('button');b.type='button';b.textContent=p.name+'（'+(state.mascots||[]).filter(m=>m.owner===p.id).length+'体）';b.classList.toggle('selected',p.id===state.profileId);b.setAttribute('aria-pressed',String(p.id===state.profileId));b.onclick=()=>{if(p.id!==state.profileId)activateProfile(p.id)};return b}))
+    }
     const list=myMascots();
     if(!list.some(m=>m.id===mscSel))mscSel=list[0]?.id||'';
     const chips=E('mascotChips');chips.replaceChildren();
