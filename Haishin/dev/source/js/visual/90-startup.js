@@ -34,6 +34,7 @@
     await loadAllChars();
     activateChar(state.charId,true);
     syncBgmProfiles(true);
+    renderStoredVideos();
     renderMascotUI();
     renderExprUI();
     renderAssetSlots()

@@ -132,7 +132,6 @@ let ctx,
   masterBus,
   duckGain,
   programBus,
-  progStereo,
   voiceBus,
   selfMon,
   recMix,
@@ -176,14 +175,11 @@ function normalize(raw){
 
   if(Array.isArray(raw.programs)&&raw.programs.some(x=>x&&typeof x==='object')){
     raw={...raw,programs:raw.programs.filter(x=>x&&typeof x==='object')};
-    const defs=defaultPrograms(),
-      used=new Set(raw.programs.map(x=>x&&x.id));
-    void used;
-    const blank={name:'',bgmId:null,autoBgm:true,coverIdx:-1,color:''};
+        const blank={name:'',bgmId:null,autoBgm:true,coverIdx:-1,color:''};
     const kept=raw.programs.slice(0,PROGRAMS).map((x,i)=>({...blank,id:'prog'+(i+1),name:'番組'+(i+1),...x}));
     // 使っていない既定の番組（名前も初期BGMも色も画像もない「番組N」）は、末尾から片付ける
-    const unused=(x,i)=>x.name==='番組'+(i+1)&&!x.bgmId&&!x.color&&!(x.coverIdx>=0)&&x.id==='prog'+(i+1);
-    while(kept.length>1&&unused(kept.at(-1),kept.length-1)&&!(Number.isInteger(raw.currentProgram)&&raw.currentProgram>=kept.length-1))kept.pop();
+    const untouched=(x,i)=>x.name==='番組'+(i+1)&&!x.bgmId&&!x.color&&!(x.coverIdx>=0)&&x.id==='prog'+(i+1);
+    while(kept.length>1&&untouched(kept.at(-1),kept.length-1)&&!(Number.isInteger(raw.currentProgram)&&raw.currentProgram>=kept.length-1))kept.pop();
     base.programs=kept
   }
 
