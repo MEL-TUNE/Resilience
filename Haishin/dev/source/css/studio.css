@@ -151,7 +151,6 @@ body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;heig
   .studio-workspace{--stage-col:clamp(520px,calc(50vh*16/9 + 26px),1306px);grid-template-columns:var(--stage-col) minmax(0,1fr)!important;align-items:start}
   body[data-studio-aspect="portrait"] .studio-workspace{--stage-col:clamp(400px,calc(min(72vh,820px)*9/16 + 26px),720px)}
   .stage-wrap{max-height:none!important}
-  #boardShell.in-workspace{position:sticky;top:calc(var(--mini-h,0px) + 10px);max-height:calc(100vh - var(--mini-h,0px) - 20px);overflow-y:auto;overscroll-behavior:contain}
 }
 @media(max-width:1099px){
   .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
@@ -178,7 +177,6 @@ body:not([data-fxp]) .fxp-only{display:none!important}
 body[data-app="live"] .recbar,body[data-app="live"] #takesShell{display:none!important}
 body[data-app="radio"] .studio-workspace>div:first-child,body[data-app="radio"] .studio-tabs,body[data-app="radio"] .studio-help{display:none!important}
 body[data-app="radio"] .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
-body[data-app="radio"] #boardShell.in-workspace{position:static;max-height:none;overflow:visible}
 .stage-head{justify-content:flex-end;margin:0 0 4px}
 #studioCanvas{cursor:grab;touch-action:none}
 #studioCanvas.dragging{cursor:grabbing}
@@ -337,3 +335,7 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 .sb-sess ol{font-size:13px;padding-left:18px}
 .sb-sess li{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:3px 0}
 .sb-away button{margin-left:8px}
+.sb-time{width:7.5em;padding:4px 6px;border:1px solid var(--accent);border-radius:6px;font:inherit;font-variant-numeric:tabular-nums}
+.sb-undo-row{margin:0 0 6px}
+.save-state{font-size:11px}
+.save-state[data-s="failed"]{color:var(--rec);font-weight:700}

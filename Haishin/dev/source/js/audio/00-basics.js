@@ -16,13 +16,11 @@ const TABS=5,
 const emojiLabels=Array(EMOJI_SLOTS).fill(''),
   textLabels=Array(TEXT_SLOTS).fill('');
 
-const LEGACY_PRESET_LABELS=new Set(['👏','💖','😂','😢','💪','✨','🔔','✅','🌿','🦌','🍪','📚','🌟','🌸','📯','⭕','✖️','🎹','🫢','🪨','🪞','🥊','💥','🎉','📛取得','📛進化','長攻撃','吹雪','扉開け','扉閉じ','拍手','正解','退場']);
 
 const BGM_TAB_DEFAULTS=['明るい','穏やか','切ない','緊張','その他'],
   TEXT_TAB_DEFAULTS=['標準','感謝','力業','1','2'],
   EMOJI_TAB_DEFAULTS=[...TEXT_TAB_DEFAULTS];
 
-const LEGACY_EMOJI_TABS=['標準','感謝','力業','1','2','その他'];
 
 const REC_DEFAULTS={
   micVolume:100,
@@ -75,8 +73,6 @@ const defaults=()=>({
   bgmTabs:[...BGM_TAB_DEFAULTS],
   bgms:BGM_TAB_DEFAULTS.flatMap((_,tab)=>Array.from({length:BGM_SLOTS},(_,slot)=>newBgm(tab,slot))),
   master:100,
-  seVolume:100,
-  bgmVolume:100,
   playMode:'restart',
   seDb:-18,
   bgmDb:-30,
@@ -89,7 +85,6 @@ const defaults=()=>({
 
 const dbGain=db=>db<=-60?0:Math.pow(10,db/20);
 
-const pctToDb=p=>p<=0?-60:Math.max(-60,Math.min(0,Math.round(20*Math.log10(p/100)*2)/2));
 
 const fmtDb=db=>db<=-60?'消音':(db>0?'+':'')+(+db).toFixed(1)+'dB';
 
@@ -157,16 +152,8 @@ function normalize(raw){
 
   base.rec={...REC_DEFAULTS,...(raw.rec&&typeof raw.rec==='object'?raw.rec:{})};
 
-  {
-    const v=base.rec.videoEffect;
-    if(v==='snow'){
-      base.rec.videoEffect='winter'
-    }else if(v==='image'){
-      base.rec.videoEffect='winter';
-      base.rec.effectSource='image'
-    }else if(!['none','spring','summer','autumn','winter'].includes(v))base.rec.videoEffect='none';
-    if(!['default','image'].includes(base.rec.effectSource))base.rec.effectSource='default'
-  }
+  if(!['none','spring','summer','autumn','winter'].includes(base.rec.videoEffect))base.rec.videoEffect='none';
+  if(!['default','image'].includes(base.rec.effectSource))base.rec.effectSource='default';
 
   for(const [k,min,max] of [['effectCount',10,120],['effectSpeed',20,180],['effectScale',30,160],['effectOpacity',10,100]])base.rec[k]=Number.isFinite(+base.rec[k])?Math.max(min,Math.min(max,+base.rec[k])):REC_DEFAULTS[k];
 
@@ -185,25 +172,12 @@ function normalize(raw){
 
   base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<base.programs.length?raw.currentProgram:(raw.currentProgram===-1?-1:0);
 
-  if(Array.isArray(raw.sounds)&&raw.sounds.some(x=>x&&x.emoji)&&!raw.sounds.some(x=>x&&x.type)){
-    const old=raw.sounds.filter(x=>x&&typeof x==='object').map((s,i)=>({...newSound('emoji',s.emoji||'🔔',i),...s,label:s.emoji||'🔔',type:'emoji',category:s.assetId?s.category||'全て':'全て',order:i}));
-
-    base.sounds=[...old,...emojiLabels.slice(old.length).map((x,i)=>newSound('emoji',x,old.length+i)),...textLabels.map((x,i)=>newSound('text',x,i))];
-
-    if(raw.bgm?.assetId||raw.bgm?.name)base.bgms=[{id:id(),name:raw.bgm.name||'BGM',volume:raw.bgm.volume??100,assetId:raw.bgm.assetId||null,fileName:raw.bgm.fileName||''}];
-
-    base.master=raw.master??100;
-    base.playMode=raw.playMode||'restart';
-    base.categories=Array.isArray(raw.categories)?raw.categories:base.categories;
-    return ensureBgmSlots(ensureTextSlots(ensureEmojiSlots(ensureSlots(base))));
-  }
-
   base.sounds=Array.isArray(raw.sounds)?raw.sounds.filter(x=>x&&typeof x==='object').map((s,i)=>({...newSound(s.type==='text'?'text':'emoji',s.label??'',i),...s})):base.sounds;
 
   base.bgms=Array.isArray(raw.bgms)?raw.bgms.filter(x=>x&&typeof x==='object'):[];
   base.categories=Array.isArray(raw.categories)?raw.categories:base.categories;
 
-  const realSounds=t=>base.sounds.filter(x=>x.type===t&&(x.assetId||x.configured||(x.label&&!LEGACY_PRESET_LABELS.has(x.label))));
+  const realSounds=t=>base.sounds.filter(x=>x.type===t&&(x.assetId||x.configured||x.label));
 
   base.emojiTabs=fitTabs(raw.emojiTabs,EMOJI_TAB_DEFAULTS,realSounds('emoji'));
 
@@ -211,12 +185,12 @@ function normalize(raw){
 
   base.bgmTabs=Array.isArray(raw.bgmTabs)&&raw.bgmTabs.length?raw.bgmTabs.slice(0,BGM_TAB_MAX).map(x=>String(x||'名義').slice(0,40)):[...BGM_TAB_DEFAULTS];
 
-  for(const key of ['master','seVolume','bgmVolume'])base[key]=Number.isFinite(+raw[key])?+raw[key]:base[key];
+  base.master=Number.isFinite(+raw.master)?+raw.master:base.master;
 
   base.voDb=Number.isFinite(+raw.voDb)&&raw.voDb!==null?+raw.voDb:base.voDb;
   base.envDb=Number.isFinite(+raw.envDb)&&raw.envDb!==null?+raw.envDb:base.envDb;
 
-  for(const [k,leg] of [['seDb','seVolume'],['bgmDb','bgmVolume']])base[k]=Number.isFinite(+raw[k])&&raw[k]!==null?+raw[k]:(Number.isFinite(+raw[leg])?pctToDb(+raw[leg]):base[k]);
+  for(const k of ['seDb','bgmDb'])base[k]=Number.isFinite(+raw[k])&&raw[k]!==null?+raw[k]:base[k];
   base.playMode=raw.playMode==='overlap'?'overlap':'restart';
   return ensureBgmSlots(ensureTextSlots(ensureEmojiSlots(ensureSlots(base))));
 }
@@ -226,15 +200,12 @@ function ensureSlots(config){
     delete s.favorite;
     if(s.type==='text')s.category='全て';
     if(!s.assetId){
-      if(s.configured===true||(s.label&&!LEGACY_PRESET_LABELS.has(s.label)))s.configured=true;
+      if(s.configured===true||s.label)s.configured=true;
    else{
         Object.assign(s,{label:'',category:'全て',volume:100,shortcut:'',configured:false})
       }
     }else s.configured=true
   }
-
-  const oldPreset=['感謝','感情','力業','システム','その他'];
-  if(config.categories.length===oldPreset.length&&config.categories.every((c,i)=>c===oldPreset[i])&&!config.sounds.some(s=>s.type==='emoji'&&s.configured&&s.category!=='全て'))config.categories=[];
 
   return config
 }
@@ -278,11 +249,6 @@ function ensureGrid(config,type,SL,tabs=TABS){
   for(const s of real){
     let pref=Number.isInteger(s.tabIndex)&&s.tabIndex>=0?Math.min(s.tabIndex,tabs-1):0;
 
-    if(type==='emoji'&&!Number.isInteger(s.tabIndex)&&s.category&&s.category!=='全て'){
-      const m=LEGACY_EMOJI_TABS.indexOf(s.category);
-      pref=m>=0?Math.min(m,tabs-1):tabs-1
-    }
-
     let slot=Number.isInteger(s.slotIndex)&&s.slotIndex>=0&&s.slotIndex<SL&&s.tabIndex===pref?s.slotIndex:-1;
 
     if(slot<0||taken.has(pref*SL+slot)){
@@ -303,8 +269,8 @@ function ensureGrid(config,type,SL,tabs=TABS){
   return config;
 }
 
-const SE_COLS={emoji:6,text:5},
-  SE_MIN={emoji:EMOJI_SLOTS,text:TEXT_SLOTS},
+const SE_COLS={emoji:6,text:5,env:4},
+  SE_MIN={emoji:EMOJI_SLOTS,text:TEXT_SLOTS,env:ENV_SLOTS},
   SE_MAX=600;
 
 const isRealSound=s=>s.assetId||s.configured||s.imageId;
@@ -352,7 +318,7 @@ const ensureSe=(config,type)=>{
 };
 
 function growSe(){
-  for(const type of ['emoji','text']){
+  for(const type of ['emoji','text','env']){
     const need=seSlotsNeeded(cfg,type);
     cfg.sounds=cfg.sounds.filter(s=>s.type!==type||isRealSound(s)||!(s.slotIndex>=need));
     const have=new Set(cfg.sounds.filter(s=>s.type===type).map(s=>s.slotIndex));
@@ -369,7 +335,7 @@ function fixedSlots(config,type,min,cols){
   return Math.max(min,Math.ceil(Math.max(max+1,used)/cols)*cols)
 }
 
-const ensureTextSlots=config=>ensureGrid(ensureGrid(ensureSe(config,'text'),'voice',fixedSlots(config,'voice',VOICE_SLOTS,5),1),'env',fixedSlots(config,'env',ENV_SLOTS,4),1);
+const ensureTextSlots=config=>ensureSe(ensureGrid(ensureSe(config,'text'),'voice',fixedSlots(config,'voice',VOICE_SLOTS,5),1),'env');
 
 const BGM_COLS=3,
   BGM_MIN=12,
@@ -381,8 +347,7 @@ function bgmSlotsNeeded(list){
   return Math.min(BGM_MAX,Math.max(BGM_MIN,(Math.floor(max/BGM_COLS)+2)*BGM_COLS))
 }
 
-const BGM_TAB_MAX=21,
-  BGM_STD_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_bgm_std_v1';
+const BGM_TAB_MAX=21;
 let bgmCurTab=0;
 let bgmOwnerIds=null;
 
@@ -429,13 +394,6 @@ function setBgmProfiles(profiles,curId,follow){
   const list=[{id:'std',name:'標準'},...profiles],
     ids=list.slice(0,BGM_TAB_MAX).map(p=>p.id),
     real=cfg.bgms.filter(bgmReal);
-  // 0.6.5で先頭の名義へ入れた曲は、一度だけ「標準」へ移す
-  let moved=false;
-  try{moved=!!localStorage.getItem(BGM_STD_KEY)}catch(_){moved=true}
-  if(!moved){
-    for(const b of real)if(b.owner===profiles[0].id){b.owner='std';b.tabIndex=0}
-    try{localStorage.setItem(BGM_STD_KEY,'1')}catch(_){}
-  }
   const
 orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(y)||(x.slotIndex??0)-(y.slotIndex??0));
   for(const b of real)if(ids.includes(b.owner))b.tabIndex=ids.indexOf(b.owner);
@@ -577,17 +535,47 @@ const putAsset=(k,b)=>idbPut('assets',k,b),
   getAsset=k=>idbGet('assets',k),
   deleteAsset=k=>idbDel('assets',k);
 
-function persist(){
+// 音側の設定も、操作が止まってから約0.4秒後（最長2秒）にまとめて書く。確定操作は persistNow()
+let persistTm=0,persistFirst=0;
+function persistNow(){
+  clearTimeout(persistTm);persistTm=0;persistFirst=0;
   try{
-    localStorage.setItem(KEY,JSON.stringify(cfg))
+    localStorage.setItem(KEY,JSON.stringify(cfg));
+    persist.failed=false
   }catch(e){
+    persist.failed=true;
     if(!persist.warned){
       persist.warned=true;
       console.warn('設定を保存できない環境です',e.name);
-      toast('設定を保存できません。移行前に設定ファイルを書き出してください',8000)
+      toast('設定を保存できません。端末の空き容量をご確認のうえ、設定ファイルを書き出してください',8000)
     }
   }
+  saveBadge();
+  return !persist.failed
 }
+function persist(){
+  const now=Date.now();
+  if(!persistFirst)persistFirst=now;
+  clearTimeout(persistTm);
+  persistTm=setTimeout(persistNow,Math.max(0,Math.min(400,persistFirst+2000-now)));
+  saveBadge()
+}
+function saveBadge(){
+  const el=document.getElementById('saveState');
+  if(!el)return;
+  const v=window.__otonohaSaveState?.()||'saved',a=persist.failed?'failed':persistTm?'pending':'saved',
+    s=a==='failed'||v==='failed'?'failed':a==='pending'||v==='pending'?'pending':'saved';
+  if(el.dataset.s===s)return;
+  el.dataset.s=s;
+  el.textContent=s==='failed'?'設定の保存：保存できていません（端末の空き容量をご確認ください）':s==='pending'?'設定の保存：まもなく保存します':'設定の保存：保存済み'
+}
+function flushSaves(){
+  if(persistTm)persistNow();
+  try{window.__otonohaSaveFlush?.()}catch(_){}
+}
+window.addEventListener('pagehide',flushSaves);
+window.addEventListener('beforeunload',flushSaves);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flushSaves()});
 
 function toast(msg,ms=2400){
   const el=$('#notice');

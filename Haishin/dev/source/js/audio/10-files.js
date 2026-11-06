@@ -1,9 +1,5 @@
 /* 設定の書き出し・読み込み */
 
-const PACK_MAGIC='MTKSPACK',
-  PACK_FORMAT='meltune-kissa-pack',
-  PACK_EXT='.kissa';
-
 const LIVE_MAGIC='OTNHLIVE',
   LIVE_FORMAT='otonoha-live-pack',
   LIVE_EXT='.live';
@@ -40,18 +36,6 @@ function packBlob(magic,head,blobs){
   return new Blob([magic,len,h,...blobs],{type:'application/octet-stream'})
 }
 
-async function exportPack(){
-  try{
-    toast('書き出しています…',60000);
-    const {conf,assets,blobs,off}=await buildSoundPack();
-    download(packBlob(PACK_MAGIC,{format:PACK_FORMAT,version:1,app:look.title,created:new Date().toISOString(),config:conf,look:lookForExport(),assets},blobs),packFileName());
-    toast(`効果音・BGMの設定を書き出しました（.kissa・音源${assets.filter(a=>a.kind==='audio').length}件・${(off/1048576).toFixed(1)}MB）`,4000);
-  }catch(e){
-    console.error(e);
-    toast('書き出しに失敗しました（'+errText(e)+'）',6000)
-  }
-}
-
 async function exportLive(){
   const st=window.__otonohaStudio;
   if(!st){toast('映像側の準備中です。少し待ってからお試しください');return}
@@ -66,20 +50,13 @@ async function exportLive(){
       off+=b.size;
       images++
     }
-    download(packBlob(LIVE_MAGIC,{format:LIVE_FORMAT,version:1,app:look.title,created:new Date().toISOString(),config:conf,look:lookForExport(),studio:studio.state,assets},blobs),packFileName().replace(/\.kissa$/,LIVE_EXT));
+    download(packBlob(LIVE_MAGIC,{format:LIVE_FORMAT,version:1,app:look.title,created:new Date().toISOString(),config:conf,look:lookForExport(),studio:studio.state,assets},blobs),packFileName());
     toast(`すべての設定を書き出しました（.live・音源${assets.filter(a=>a.kind==='audio').length}件・画像${images}枚・${(off/1048576).toFixed(1)}MB）`,5000);
   }catch(e){
     console.error(e);
     toast('書き出しに失敗しました（'+errText(e)+'）',6000)
   }
 }
-
-const blobData=blob=>new Promise((resolve,reject)=>{
-  const r=new FileReader();
-  r.onload=()=>resolve(r.result);
-  r.onerror=()=>reject(r.error);
-  r.readAsDataURL(blob)
-});
 
 function errText(e){
   if(!e)return '原因不明';
@@ -88,33 +65,10 @@ function errText(e){
   return e.userMessage||((e.name&&e.name!=='Error'?e.name+'：':'')+(e.message||String(e)))
 }
 
-function dataUrlToBlob(u){
-  const comma=u.indexOf(','),
-    meta=u.slice(5,comma),
-    type=meta.split(';')[0]||'',
-    b64=meta.includes(';base64');
-  const body=u.slice(comma+1);
-
-  if(!b64)return new Blob([decodeURIComponent(body)],{type});
-
-  const parts=[],
-    STEP=1<<20;
-  for(let i=0;i<body.length;i+=STEP){
-    const bin=atob(body.slice(i,i+STEP));
-    const a=new Uint8Array(bin.length);
-    for(let j=0;j<bin.length;j++)a[j]=bin.charCodeAt(j);
-    parts.push(a)
-  }
-
-  return new Blob(parts,{type});
-}
-
 async function readPackHeader(file){
   const first=new Uint8Array(await file.slice(0,12).arrayBuffer());
 
-  const magic=String.fromCharCode(...first.slice(0,8));
-  if(magic!==PACK_MAGIC&&magic!==LIVE_MAGIC)return null;
-  const live=magic===LIVE_MAGIC;
+  if(String.fromCharCode(...first.slice(0,8))!==LIVE_MAGIC)return null;
 
   if(first.length<12)throw Error('設定ファイルのヘッダーが途中で切れています');
 
@@ -124,7 +78,7 @@ async function readPackHeader(file){
 
   const head=JSON.parse(new TextDecoder().decode(await file.slice(12,12+len).arrayBuffer()));
 
-  if(head.format!==(live?LIVE_FORMAT:PACK_FORMAT)||!head.config||(live&&(!head.studio||typeof head.studio!=='object')))throw Object.assign(Error(''),{userMessage:'設定ファイルの中身を読み取れませんでした'});
+  if(head.format!==LIVE_FORMAT||!head.config||!head.studio||typeof head.studio!=='object')throw Object.assign(Error(''),{userMessage:'設定ファイルの中身を読み取れませんでした'});
 
   if(!head.config||typeof head.config!=='object'||Array.isArray(head.config)||!Array.isArray(head.assets))throw Error('設定ファイルの形式が正しくありません');
 
@@ -132,7 +86,7 @@ async function readPackHeader(file){
   let end=0;
 
   for(const a of head.assets){
-    if(!a||typeof a.key!=='string'||!(live?['audio','image','cover','studio']:['audio','image','cover']).includes(a.kind)||!Number.isSafeInteger(a.offset)||!Number.isSafeInteger(a.size)||a.offset<end||a.size<0||a.offset+a.size>file.size-12-len)throw Error('設定ファイルの音源・画像の範囲が壊れています');
+    if(!a||typeof a.key!=='string'||!['audio','image','cover','studio'].includes(a.kind)||!Number.isSafeInteger(a.offset)||!Number.isSafeInteger(a.size)||a.offset<end||a.size<0||a.offset+a.size>file.size-12-len)throw Error('設定ファイルの音源・画像の範囲が壊れています');
 
     const key=(a.kind==='cover'?'cover:':a.kind==='studio'?'studio:':'asset:')+a.key;
     if(seen.has(key))throw Error('設定ファイルの音源・画像キーが重複しています');
@@ -140,7 +94,7 @@ async function readPackHeader(file){
     end=a.offset+a.size;
   }
 
-  return {head,base:12+len,live};
+  return {head,base:12+len};
 }
 
 async function applyImported(incoming,stored,coverBlob,progCovers={}){
@@ -178,17 +132,8 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
     await setCover('default',coverBlob)
   }
 
-  for(const [k,b] of Object.entries(progCovers)){
-    const m=/^prog-(.+)$/.exec(k);
-    const isOld=m&&!/-\d$/.test(k);
-    const key=isOld?progCoverKey(m[1],0):k;
-    await setCover(key,b);
-    if(isOld){
-      const pr=cfg.programs.find(x=>x.id===m[1]);
-      if(pr&&!(pr.coverIdx>=0))pr.coverIdx=0
-    }
-  }
-  persist();
+  for(const [k,b] of Object.entries(progCovers))await setCover(k,b);
+  persistNow();
 
   renderPrograms();
   renderEffectControls();
@@ -201,16 +146,11 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
 }
 
 $('#exportBtn').onclick=exportLive;
-$('#exportKissaBtn').onclick=exportPack;
 $('#importBtn').onclick=()=>$('#importFile').click();
 
 $('#importFile').onchange=async e=>{
   const file=e.target.files[0];
   if(!file)return;
-  if(/\.json$/i.test(file.name)&&window.__otonohaImportJson){
-    e.target.value='';
-    return window.__otonohaImportJson({target:{files:[file],value:''}})
-  }
   if(rec.state!=='idle'||videoJob||studioCapturing){
     e.target.value='';
     toast('収録・動画書き出しが終わってから読み込んでください');
@@ -226,7 +166,7 @@ $('#importFile').onchange=async e=>{
     if(pack){
       const st=window.__otonohaStudio,
         studioBlobs={};
-      if(pack.live){
+      {
         if(!st)throw Object.assign(Error(''),{userMessage:'映像側の準備中です。少し待ってからお試しください'});
         if(st.busy())throw Object.assign(Error(''),{userMessage:'動画の収録が終わってから読み込んでください'});
         for(const a of pack.head.assets)if(a.kind==='studio'){
@@ -236,7 +176,7 @@ $('#importFile').onchange=async e=>{
         }
         await st.validate(studioBlobs)
       }
-      if(!await askConfirm(pack.live?'現在の効果音・BGM・立ち絵・名義・降らせる画像・背景・台本・映像設定を、読み込む内容ですべて置き換えますか？\n録音したテイクと収録済みの動画は残ります。':'現在の効果音・BGMの設定を、読み込む内容で置き換えますか？\n立ち絵・映像設定と、録音したテイクは残ります。','置き換える',pack.live?'すべての設定の読み込み（.live）':'効果音・BGMの読み込み（.kissa）')){
+      if(!await askConfirm('現在の効果音・BGM・立ち絵・名義・降らせる画像・背景・台本・映像設定・歌枠ノートを、読み込む内容ですべて置き換えますか？\n録音したテイクと収録済みの動画は残ります。','置き換える','すべての設定の読み込み（.live）')){
         toast('読み込みを取り消しました');
         return
       }
@@ -277,10 +217,10 @@ $('#importFile').onchange=async e=>{
       incoming.rec.effectImageAsset=map.get(EFFECT_ASSET)||null;
       await applyImported(incoming,n,cover,progCovers);
       if(pack.head.look)lookCommit(lookSanitize(pack.head.look));
-      if(pack.live)await st.apply(pack.head.studio,studioBlobs);
+      await st.apply(pack.head.studio,studioBlobs);
       return;
     }
-    throw Object.assign(Error(''),{userMessage:'このアプリの設定ファイル（.live／.kissa）ではありません'});
+    throw Object.assign(Error(''),{userMessage:'配信処オトノハの設定ファイル（.live）ではありません'});
    }catch(err){
     console.error(err);
     for(const k of added)await deleteAsset(k);

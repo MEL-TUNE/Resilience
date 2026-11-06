@@ -541,7 +541,6 @@ const DB_KEY={se:'seDb',bgm:'bgmDb',vo:'voDb',env:'envDb'};
 function setDb(kind,db){
   const key=DB_KEY[kind];
   cfg[key]=Math.max(-60,Math.min(0,Math.round(db*2)/2));
-  if(kind==='se'||kind==='bgm')cfg[kind==='se'?'seVolume':'bgmVolume']=Math.round(dbGain(cfg[key])*1000)/10;
   $('#'+kind+'Volume').value=cfg[key];
   $('#'+kind+'Val').textContent=fmtDb(cfg[key]);
   updateGains();

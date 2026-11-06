@@ -638,7 +638,6 @@ body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;heig
   .studio-workspace{--stage-col:clamp(520px,calc(50vh*16/9 + 26px),1306px);grid-template-columns:var(--stage-col) minmax(0,1fr)!important;align-items:start}
   body[data-studio-aspect="portrait"] .studio-workspace{--stage-col:clamp(400px,calc(min(72vh,820px)*9/16 + 26px),720px)}
   .stage-wrap{max-height:none!important}
-  #boardShell.in-workspace{position:sticky;top:calc(var(--mini-h,0px) + 10px);max-height:calc(100vh - var(--mini-h,0px) - 20px);overflow-y:auto;overscroll-behavior:contain}
 }
 @media(max-width:1099px){
   .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
@@ -665,7 +664,6 @@ body:not([data-fxp]) .fxp-only{display:none!important}
 body[data-app="live"] .recbar,body[data-app="live"] #takesShell{display:none!important}
 body[data-app="radio"] .studio-workspace>div:first-child,body[data-app="radio"] .studio-tabs,body[data-app="radio"] .studio-help{display:none!important}
 body[data-app="radio"] .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
-body[data-app="radio"] #boardShell.in-workspace{position:static;max-height:none;overflow:visible}
 .stage-head{justify-content:flex-end;margin:0 0 4px}
 #studioCanvas{cursor:grab;touch-action:none}
 #studioCanvas.dragging{cursor:grabbing}
@@ -824,6 +822,10 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 .sb-sess ol{font-size:13px;padding-left:18px}
 .sb-sess li{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:3px 0}
 .sb-away button{margin-left:8px}
+.sb-time{width:7.5em;padding:4px 6px;border:1px solid var(--accent);border-radius:6px;font:inherit;font-variant-numeric:tabular-nums}
+.sb-undo-row{margin:0 0 6px}
+.save-state{font-size:11px}
+.save-state[data-s="failed"]{color:var(--rec);font-weight:700}
 
 </style>
 <script>
@@ -924,7 +926,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.6.9 / 動画保存の状態表示と目録の分離</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.7.0 / 保存の集約・歌枠ノートの取り消しと時刻修正</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -967,7 +969,7 @@ lookPaint(look);
 <div id="planCurrent" class="studio-live-box" aria-live="polite">台本を入力すると、段落ごとに確認できます。</div>
 <p class="studio-note">台本は空行で区切ります。文字のない映像が必要なときは表示チェックを外してください。AI音声の再生・自動口パク連動は今後の拡張です。</p>
 </section>
-<section class="studio-card mode-section" id="studioSongs" style="margin-top:16px"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore"><h3 class="kara-h">曲を入れる</h3><div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div><label class="studio-field">メモ（キー・原曲・音源など、任意）<input id="songMemo" type="text" maxlength="200"></label><div class="studio-row"><button id="repAdd" class="accent" type="button">曲リストに登録</button><button id="songAdd" type="button">セトリに追加</button><button id="singNowBtn" type="button">♪ この曲を歌い始め</button><button id="songSearch" type="button">曲名＋歌詞でWeb検索</button></div><hr class="studio-divider"><h3 class="kara-h">歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびに「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。</p><h3 class="kara-h">セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div><h3 class="kara-h">曲リスト <small id="repCount"></small></h3><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・メモで絞り込み" aria-label="曲リストの絞り込み"><ul id="repList" class="sb-list"></ul><h3 class="kara-h">これまでの記録（回ごと）</h3><div id="singLog"></div></div></div>
+<section class="studio-card mode-section" id="studioSongs" style="margin-top:16px"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore"><h3 class="kara-h">曲を入れる</h3><div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div><label class="studio-field">メモ（キー・原曲・音源など、任意）<input id="songMemo" type="text" maxlength="200"></label><div class="studio-row"><button id="repAdd" class="accent" type="button">曲リストに登録</button><button id="songAdd" type="button">セトリに追加</button><button id="singNowBtn" type="button">♪ この曲を歌い始め</button><button id="songSearch" type="button">曲名＋歌詞でWeb検索</button></div><hr class="studio-divider"><h3 class="kara-h">歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびに「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。押し間違えたときは「直前の記録を取り消す」、時刻がずれたときは「これまでの記録」の各曲の「時刻」で直せます（1:02:03 や 12:34 の形で入力）。</p><h3 class="kara-h">セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div><h3 class="kara-h">曲リスト <small id="repCount"></small></h3><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・メモで絞り込み" aria-label="曲リストの絞り込み"><ul id="repList" class="sb-list"></ul><h3 class="kara-h">これまでの記録（回ごと）</h3><div id="singLog"></div></div></div>
 <div class="kara-block" id="karaBlock">
 <hr class="studio-divider">
 <p class="studio-kicker">KARAOKE / SEARCH</p><h3 class="kara-h">カラオケ音源を探す</h3>
@@ -1155,8 +1157,8 @@ lookPaint(look);
  </section>
  <section class="panel grp-common" aria-labelledby="fileTitle">
   <h3 id="fileTitle">設定ファイル <span>別の端末への引き継ぎ用</span></h3>
-  <div class="end-row"><button class="btn" id="exportBtn">すべてを書き出す（.live）</button><button class="btn" id="exportKissaBtn">効果音・BGMだけ書き出す（.kissa）</button><button class="btn" id="importBtn">設定を読み込む（.live／.kissa）</button></div>
-  <p class="note">.live：効果音・ボイス・BGM・動画用サムネイル・名前と着せ替えに、立ち絵・名義・降らせる画像・背景・台本・映像設定まで、すべてを1つのファイルにまとめます。<br>.kissa：効果音・ボイス・BGM・動画用サムネイル・名前と着せ替えだけ。純喫茶オトノハと同じ形式で、どちらのアプリでも読み込めます。<br>どちらにも、録音したテイクと収録済みの動画は入りません。</p>
+  <div class="end-row"><button class="btn" id="exportBtn">すべてを書き出す（.live）</button><button class="btn" id="importBtn">設定を読み込む（.live）</button></div>
+  <p class="note">.live：効果音・ボイス・BGM・環境音・動画用サムネイル・名前と着せ替えに、立ち絵・名義・降らせる画像・背景・台本・映像設定・歌枠ノートまで、すべてを1つのファイルにまとめます。録音したテイクと収録済みの動画は入りません。</p><p class="note save-state" id="saveState" data-s="saved">設定の保存：保存済み</p>
  </section>
 
 
@@ -1193,7 +1195,7 @@ lookPaint(look);
 <div class="modal-back" id="bgmTabsModal"><form class="modal" id="bgmTabsForm"><h2>BGMのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの曲は各タブに残ります。</p><div class="category-list" id="bgmTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="bgmTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back" id="textTabsModal"><form class="modal" id="textTabsForm"><h2>文字SEのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="textTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="textTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back confirm-back" id="confirmModal"><div class="modal" role="alertdialog" aria-labelledby="confirmTitle" aria-describedby="confirmText"><h2 id="confirmTitle">確認</h2><p id="confirmText" class="confirm-text"></p><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" id="confirmNo">キャンセル</button><button type="button" class="btn danger" id="confirmYes">削除する</button></div></div></div></div>
-<input id="importFile" type="file" hidden><div class="notice" id="notice" role="status"></div>
+<input id="importFile" type="file" accept=".live,application/octet-stream" hidden><div class="notice" id="notice" role="status"></div>
 
 <script>
 'use strict';
@@ -1212,13 +1214,11 @@ const TABS=5,
 const emojiLabels=Array(EMOJI_SLOTS).fill(''),
   textLabels=Array(TEXT_SLOTS).fill('');
 
-const LEGACY_PRESET_LABELS=new Set(['👏','💖','😂','😢','💪','✨','🔔','✅','🌿','🦌','🍪','📚','🌟','🌸','📯','⭕','✖️','🎹','🫢','🪨','🪞','🥊','💥','🎉','📛取得','📛進化','長攻撃','吹雪','扉開け','扉閉じ','拍手','正解','退場']);
 
 const BGM_TAB_DEFAULTS=['明るい','穏やか','切ない','緊張','その他'],
   TEXT_TAB_DEFAULTS=['標準','感謝','力業','1','2'],
   EMOJI_TAB_DEFAULTS=[...TEXT_TAB_DEFAULTS];
 
-const LEGACY_EMOJI_TABS=['標準','感謝','力業','1','2','その他'];
 
 const REC_DEFAULTS={
   micVolume:100,
@@ -1271,8 +1271,6 @@ const defaults=()=>({
   bgmTabs:[...BGM_TAB_DEFAULTS],
   bgms:BGM_TAB_DEFAULTS.flatMap((_,tab)=>Array.from({length:BGM_SLOTS},(_,slot)=>newBgm(tab,slot))),
   master:100,
-  seVolume:100,
-  bgmVolume:100,
   playMode:'restart',
   seDb:-18,
   bgmDb:-30,
@@ -1285,7 +1283,6 @@ const defaults=()=>({
 
 const dbGain=db=>db<=-60?0:Math.pow(10,db/20);
 
-const pctToDb=p=>p<=0?-60:Math.max(-60,Math.min(0,Math.round(20*Math.log10(p/100)*2)/2));
 
 const fmtDb=db=>db<=-60?'消音':(db>0?'+':'')+(+db).toFixed(1)+'dB';
 
@@ -1353,16 +1350,8 @@ function normalize(raw){
 
   base.rec={...REC_DEFAULTS,...(raw.rec&&typeof raw.rec==='object'?raw.rec:{})};
 
-  {
-    const v=base.rec.videoEffect;
-    if(v==='snow'){
-      base.rec.videoEffect='winter'
-    }else if(v==='image'){
-      base.rec.videoEffect='winter';
-      base.rec.effectSource='image'
-    }else if(!['none','spring','summer','autumn','winter'].includes(v))base.rec.videoEffect='none';
-    if(!['default','image'].includes(base.rec.effectSource))base.rec.effectSource='default'
-  }
+  if(!['none','spring','summer','autumn','winter'].includes(base.rec.videoEffect))base.rec.videoEffect='none';
+  if(!['default','image'].includes(base.rec.effectSource))base.rec.effectSource='default';
 
   for(const [k,min,max] of [['effectCount',10,120],['effectSpeed',20,180],['effectScale',30,160],['effectOpacity',10,100]])base.rec[k]=Number.isFinite(+base.rec[k])?Math.max(min,Math.min(max,+base.rec[k])):REC_DEFAULTS[k];
 
@@ -1381,25 +1370,12 @@ function normalize(raw){
 
   base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<base.programs.length?raw.currentProgram:(raw.currentProgram===-1?-1:0);
 
-  if(Array.isArray(raw.sounds)&&raw.sounds.some(x=>x&&x.emoji)&&!raw.sounds.some(x=>x&&x.type)){
-    const old=raw.sounds.filter(x=>x&&typeof x==='object').map((s,i)=>({...newSound('emoji',s.emoji||'🔔',i),...s,label:s.emoji||'🔔',type:'emoji',category:s.assetId?s.category||'全て':'全て',order:i}));
-
-    base.sounds=[...old,...emojiLabels.slice(old.length).map((x,i)=>newSound('emoji',x,old.length+i)),...textLabels.map((x,i)=>newSound('text',x,i))];
-
-    if(raw.bgm?.assetId||raw.bgm?.name)base.bgms=[{id:id(),name:raw.bgm.name||'BGM',volume:raw.bgm.volume??100,assetId:raw.bgm.assetId||null,fileName:raw.bgm.fileName||''}];
-
-    base.master=raw.master??100;
-    base.playMode=raw.playMode||'restart';
-    base.categories=Array.isArray(raw.categories)?raw.categories:base.categories;
-    return ensureBgmSlots(ensureTextSlots(ensureEmojiSlots(ensureSlots(base))));
-  }
-
   base.sounds=Array.isArray(raw.sounds)?raw.sounds.filter(x=>x&&typeof x==='object').map((s,i)=>({...newSound(s.type==='text'?'text':'emoji',s.label??'',i),...s})):base.sounds;
 
   base.bgms=Array.isArray(raw.bgms)?raw.bgms.filter(x=>x&&typeof x==='object'):[];
   base.categories=Array.isArray(raw.categories)?raw.categories:base.categories;
 
-  const realSounds=t=>base.sounds.filter(x=>x.type===t&&(x.assetId||x.configured||(x.label&&!LEGACY_PRESET_LABELS.has(x.label))));
+  const realSounds=t=>base.sounds.filter(x=>x.type===t&&(x.assetId||x.configured||x.label));
 
   base.emojiTabs=fitTabs(raw.emojiTabs,EMOJI_TAB_DEFAULTS,realSounds('emoji'));
 
@@ -1407,12 +1383,12 @@ function normalize(raw){
 
   base.bgmTabs=Array.isArray(raw.bgmTabs)&&raw.bgmTabs.length?raw.bgmTabs.slice(0,BGM_TAB_MAX).map(x=>String(x||'名義').slice(0,40)):[...BGM_TAB_DEFAULTS];
 
-  for(const key of ['master','seVolume','bgmVolume'])base[key]=Number.isFinite(+raw[key])?+raw[key]:base[key];
+  base.master=Number.isFinite(+raw.master)?+raw.master:base.master;
 
   base.voDb=Number.isFinite(+raw.voDb)&&raw.voDb!==null?+raw.voDb:base.voDb;
   base.envDb=Number.isFinite(+raw.envDb)&&raw.envDb!==null?+raw.envDb:base.envDb;
 
-  for(const [k,leg] of [['seDb','seVolume'],['bgmDb','bgmVolume']])base[k]=Number.isFinite(+raw[k])&&raw[k]!==null?+raw[k]:(Number.isFinite(+raw[leg])?pctToDb(+raw[leg]):base[k]);
+  for(const k of ['seDb','bgmDb'])base[k]=Number.isFinite(+raw[k])&&raw[k]!==null?+raw[k]:base[k];
   base.playMode=raw.playMode==='overlap'?'overlap':'restart';
   return ensureBgmSlots(ensureTextSlots(ensureEmojiSlots(ensureSlots(base))));
 }
@@ -1422,15 +1398,12 @@ function ensureSlots(config){
     delete s.favorite;
     if(s.type==='text')s.category='全て';
     if(!s.assetId){
-      if(s.configured===true||(s.label&&!LEGACY_PRESET_LABELS.has(s.label)))s.configured=true;
+      if(s.configured===true||s.label)s.configured=true;
    else{
         Object.assign(s,{label:'',category:'全て',volume:100,shortcut:'',configured:false})
       }
     }else s.configured=true
   }
-
-  const oldPreset=['感謝','感情','力業','システム','その他'];
-  if(config.categories.length===oldPreset.length&&config.categories.every((c,i)=>c===oldPreset[i])&&!config.sounds.some(s=>s.type==='emoji'&&s.configured&&s.category!=='全て'))config.categories=[];
 
   return config
 }
@@ -1474,11 +1447,6 @@ function ensureGrid(config,type,SL,tabs=TABS){
   for(const s of real){
     let pref=Number.isInteger(s.tabIndex)&&s.tabIndex>=0?Math.min(s.tabIndex,tabs-1):0;
 
-    if(type==='emoji'&&!Number.isInteger(s.tabIndex)&&s.category&&s.category!=='全て'){
-      const m=LEGACY_EMOJI_TABS.indexOf(s.category);
-      pref=m>=0?Math.min(m,tabs-1):tabs-1
-    }
-
     let slot=Number.isInteger(s.slotIndex)&&s.slotIndex>=0&&s.slotIndex<SL&&s.tabIndex===pref?s.slotIndex:-1;
 
     if(slot<0||taken.has(pref*SL+slot)){
@@ -1499,8 +1467,8 @@ function ensureGrid(config,type,SL,tabs=TABS){
   return config;
 }
 
-const SE_COLS={emoji:6,text:5},
-  SE_MIN={emoji:EMOJI_SLOTS,text:TEXT_SLOTS},
+const SE_COLS={emoji:6,text:5,env:4},
+  SE_MIN={emoji:EMOJI_SLOTS,text:TEXT_SLOTS,env:ENV_SLOTS},
   SE_MAX=600;
 
 const isRealSound=s=>s.assetId||s.configured||s.imageId;
@@ -1548,7 +1516,7 @@ const ensureSe=(config,type)=>{
 };
 
 function growSe(){
-  for(const type of ['emoji','text']){
+  for(const type of ['emoji','text','env']){
     const need=seSlotsNeeded(cfg,type);
     cfg.sounds=cfg.sounds.filter(s=>s.type!==type||isRealSound(s)||!(s.slotIndex>=need));
     const have=new Set(cfg.sounds.filter(s=>s.type===type).map(s=>s.slotIndex));
@@ -1565,7 +1533,7 @@ function fixedSlots(config,type,min,cols){
   return Math.max(min,Math.ceil(Math.max(max+1,used)/cols)*cols)
 }
 
-const ensureTextSlots=config=>ensureGrid(ensureGrid(ensureSe(config,'text'),'voice',fixedSlots(config,'voice',VOICE_SLOTS,5),1),'env',fixedSlots(config,'env',ENV_SLOTS,4),1);
+const ensureTextSlots=config=>ensureSe(ensureGrid(ensureSe(config,'text'),'voice',fixedSlots(config,'voice',VOICE_SLOTS,5),1),'env');
 
 const BGM_COLS=3,
   BGM_MIN=12,
@@ -1577,8 +1545,7 @@ function bgmSlotsNeeded(list){
   return Math.min(BGM_MAX,Math.max(BGM_MIN,(Math.floor(max/BGM_COLS)+2)*BGM_COLS))
 }
 
-const BGM_TAB_MAX=21,
-  BGM_STD_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_bgm_std_v1';
+const BGM_TAB_MAX=21;
 let bgmCurTab=0;
 let bgmOwnerIds=null;
 
@@ -1625,13 +1592,6 @@ function setBgmProfiles(profiles,curId,follow){
   const list=[{id:'std',name:'標準'},...profiles],
     ids=list.slice(0,BGM_TAB_MAX).map(p=>p.id),
     real=cfg.bgms.filter(bgmReal);
-  // 0.6.5で先頭の名義へ入れた曲は、一度だけ「標準」へ移す
-  let moved=false;
-  try{moved=!!localStorage.getItem(BGM_STD_KEY)}catch(_){moved=true}
-  if(!moved){
-    for(const b of real)if(b.owner===profiles[0].id){b.owner='std';b.tabIndex=0}
-    try{localStorage.setItem(BGM_STD_KEY,'1')}catch(_){}
-  }
   const
 orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(y)||(x.slotIndex??0)-(y.slotIndex??0));
   for(const b of real)if(ids.includes(b.owner))b.tabIndex=ids.indexOf(b.owner);
@@ -1773,17 +1733,47 @@ const putAsset=(k,b)=>idbPut('assets',k,b),
   getAsset=k=>idbGet('assets',k),
   deleteAsset=k=>idbDel('assets',k);
 
-function persist(){
+// 音側の設定も、操作が止まってから約0.4秒後（最長2秒）にまとめて書く。確定操作は persistNow()
+let persistTm=0,persistFirst=0;
+function persistNow(){
+  clearTimeout(persistTm);persistTm=0;persistFirst=0;
   try{
-    localStorage.setItem(KEY,JSON.stringify(cfg))
+    localStorage.setItem(KEY,JSON.stringify(cfg));
+    persist.failed=false
   }catch(e){
+    persist.failed=true;
     if(!persist.warned){
       persist.warned=true;
       console.warn('設定を保存できない環境です',e.name);
-      toast('設定を保存できません。移行前に設定ファイルを書き出してください',8000)
+      toast('設定を保存できません。端末の空き容量をご確認のうえ、設定ファイルを書き出してください',8000)
     }
   }
+  saveBadge();
+  return !persist.failed
 }
+function persist(){
+  const now=Date.now();
+  if(!persistFirst)persistFirst=now;
+  clearTimeout(persistTm);
+  persistTm=setTimeout(persistNow,Math.max(0,Math.min(400,persistFirst+2000-now)));
+  saveBadge()
+}
+function saveBadge(){
+  const el=document.getElementById('saveState');
+  if(!el)return;
+  const v=window.__otonohaSaveState?.()||'saved',a=persist.failed?'failed':persistTm?'pending':'saved',
+    s=a==='failed'||v==='failed'?'failed':a==='pending'||v==='pending'?'pending':'saved';
+  if(el.dataset.s===s)return;
+  el.dataset.s=s;
+  el.textContent=s==='failed'?'設定の保存：保存できていません（端末の空き容量をご確認ください）':s==='pending'?'設定の保存：まもなく保存します':'設定の保存：保存済み'
+}
+function flushSaves(){
+  if(persistTm)persistNow();
+  try{window.__otonohaSaveFlush?.()}catch(_){}
+}
+window.addEventListener('pagehide',flushSaves);
+window.addEventListener('beforeunload',flushSaves);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flushSaves()});
 
 function toast(msg,ms=2400){
   const el=$('#notice');
@@ -5808,7 +5798,6 @@ const DB_KEY={se:'seDb',bgm:'bgmDb',vo:'voDb',env:'envDb'};
 function setDb(kind,db){
   const key=DB_KEY[kind];
   cfg[key]=Math.max(-60,Math.min(0,Math.round(db*2)/2));
-  if(kind==='se'||kind==='bgm')cfg[kind==='se'?'seVolume':'bgmVolume']=Math.round(dbGain(cfg[key])*1000)/10;
   $('#'+kind+'Volume').value=cfg[key];
   $('#'+kind+'Val').textContent=fmtDb(cfg[key]);
   updateGains();
@@ -6194,10 +6183,6 @@ window.addEventListener('beforeunload',e=>{
   }
 });
 
-const PACK_MAGIC='MTKSPACK',
-  PACK_FORMAT='meltune-kissa-pack',
-  PACK_EXT='.kissa';
-
 const LIVE_MAGIC='OTNHLIVE',
   LIVE_FORMAT='otonoha-live-pack',
   LIVE_EXT='.live';
@@ -6234,18 +6219,6 @@ function packBlob(magic,head,blobs){
   return new Blob([magic,len,h,...blobs],{type:'application/octet-stream'})
 }
 
-async function exportPack(){
-  try{
-    toast('書き出しています…',60000);
-    const {conf,assets,blobs,off}=await buildSoundPack();
-    download(packBlob(PACK_MAGIC,{format:PACK_FORMAT,version:1,app:look.title,created:new Date().toISOString(),config:conf,look:lookForExport(),assets},blobs),packFileName());
-    toast(`効果音・BGMの設定を書き出しました（.kissa・音源${assets.filter(a=>a.kind==='audio').length}件・${(off/1048576).toFixed(1)}MB）`,4000);
-  }catch(e){
-    console.error(e);
-    toast('書き出しに失敗しました（'+errText(e)+'）',6000)
-  }
-}
-
 async function exportLive(){
   const st=window.__otonohaStudio;
   if(!st){toast('映像側の準備中です。少し待ってからお試しください');return}
@@ -6260,20 +6233,13 @@ async function exportLive(){
       off+=b.size;
       images++
     }
-    download(packBlob(LIVE_MAGIC,{format:LIVE_FORMAT,version:1,app:look.title,created:new Date().toISOString(),config:conf,look:lookForExport(),studio:studio.state,assets},blobs),packFileName().replace(/\.kissa$/,LIVE_EXT));
+    download(packBlob(LIVE_MAGIC,{format:LIVE_FORMAT,version:1,app:look.title,created:new Date().toISOString(),config:conf,look:lookForExport(),studio:studio.state,assets},blobs),packFileName());
     toast(`すべての設定を書き出しました（.live・音源${assets.filter(a=>a.kind==='audio').length}件・画像${images}枚・${(off/1048576).toFixed(1)}MB）`,5000);
   }catch(e){
     console.error(e);
     toast('書き出しに失敗しました（'+errText(e)+'）',6000)
   }
 }
-
-const blobData=blob=>new Promise((resolve,reject)=>{
-  const r=new FileReader();
-  r.onload=()=>resolve(r.result);
-  r.onerror=()=>reject(r.error);
-  r.readAsDataURL(blob)
-});
 
 function errText(e){
   if(!e)return '原因不明';
@@ -6282,33 +6248,10 @@ function errText(e){
   return e.userMessage||((e.name&&e.name!=='Error'?e.name+'：':'')+(e.message||String(e)))
 }
 
-function dataUrlToBlob(u){
-  const comma=u.indexOf(','),
-    meta=u.slice(5,comma),
-    type=meta.split(';')[0]||'',
-    b64=meta.includes(';base64');
-  const body=u.slice(comma+1);
-
-  if(!b64)return new Blob([decodeURIComponent(body)],{type});
-
-  const parts=[],
-    STEP=1<<20;
-  for(let i=0;i<body.length;i+=STEP){
-    const bin=atob(body.slice(i,i+STEP));
-    const a=new Uint8Array(bin.length);
-    for(let j=0;j<bin.length;j++)a[j]=bin.charCodeAt(j);
-    parts.push(a)
-  }
-
-  return new Blob(parts,{type});
-}
-
 async function readPackHeader(file){
   const first=new Uint8Array(await file.slice(0,12).arrayBuffer());
 
-  const magic=String.fromCharCode(...first.slice(0,8));
-  if(magic!==PACK_MAGIC&&magic!==LIVE_MAGIC)return null;
-  const live=magic===LIVE_MAGIC;
+  if(String.fromCharCode(...first.slice(0,8))!==LIVE_MAGIC)return null;
 
   if(first.length<12)throw Error('設定ファイルのヘッダーが途中で切れています');
 
@@ -6318,7 +6261,7 @@ async function readPackHeader(file){
 
   const head=JSON.parse(new TextDecoder().decode(await file.slice(12,12+len).arrayBuffer()));
 
-  if(head.format!==(live?LIVE_FORMAT:PACK_FORMAT)||!head.config||(live&&(!head.studio||typeof head.studio!=='object')))throw Object.assign(Error(''),{userMessage:'設定ファイルの中身を読み取れませんでした'});
+  if(head.format!==LIVE_FORMAT||!head.config||!head.studio||typeof head.studio!=='object')throw Object.assign(Error(''),{userMessage:'設定ファイルの中身を読み取れませんでした'});
 
   if(!head.config||typeof head.config!=='object'||Array.isArray(head.config)||!Array.isArray(head.assets))throw Error('設定ファイルの形式が正しくありません');
 
@@ -6326,7 +6269,7 @@ async function readPackHeader(file){
   let end=0;
 
   for(const a of head.assets){
-    if(!a||typeof a.key!=='string'||!(live?['audio','image','cover','studio']:['audio','image','cover']).includes(a.kind)||!Number.isSafeInteger(a.offset)||!Number.isSafeInteger(a.size)||a.offset<end||a.size<0||a.offset+a.size>file.size-12-len)throw Error('設定ファイルの音源・画像の範囲が壊れています');
+    if(!a||typeof a.key!=='string'||!['audio','image','cover','studio'].includes(a.kind)||!Number.isSafeInteger(a.offset)||!Number.isSafeInteger(a.size)||a.offset<end||a.size<0||a.offset+a.size>file.size-12-len)throw Error('設定ファイルの音源・画像の範囲が壊れています');
 
     const key=(a.kind==='cover'?'cover:':a.kind==='studio'?'studio:':'asset:')+a.key;
     if(seen.has(key))throw Error('設定ファイルの音源・画像キーが重複しています');
@@ -6334,7 +6277,7 @@ async function readPackHeader(file){
     end=a.offset+a.size;
   }
 
-  return {head,base:12+len,live};
+  return {head,base:12+len};
 }
 
 async function applyImported(incoming,stored,coverBlob,progCovers={}){
@@ -6372,17 +6315,8 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
     await setCover('default',coverBlob)
   }
 
-  for(const [k,b] of Object.entries(progCovers)){
-    const m=/^prog-(.+)$/.exec(k);
-    const isOld=m&&!/-\d$/.test(k);
-    const key=isOld?progCoverKey(m[1],0):k;
-    await setCover(key,b);
-    if(isOld){
-      const pr=cfg.programs.find(x=>x.id===m[1]);
-      if(pr&&!(pr.coverIdx>=0))pr.coverIdx=0
-    }
-  }
-  persist();
+  for(const [k,b] of Object.entries(progCovers))await setCover(k,b);
+  persistNow();
 
   renderPrograms();
   renderEffectControls();
@@ -6395,16 +6329,11 @@ async function applyImported(incoming,stored,coverBlob,progCovers={}){
 }
 
 $('#exportBtn').onclick=exportLive;
-$('#exportKissaBtn').onclick=exportPack;
 $('#importBtn').onclick=()=>$('#importFile').click();
 
 $('#importFile').onchange=async e=>{
   const file=e.target.files[0];
   if(!file)return;
-  if(/\.json$/i.test(file.name)&&window.__otonohaImportJson){
-    e.target.value='';
-    return window.__otonohaImportJson({target:{files:[file],value:''}})
-  }
   if(rec.state!=='idle'||videoJob||studioCapturing){
     e.target.value='';
     toast('収録・動画書き出しが終わってから読み込んでください');
@@ -6420,7 +6349,7 @@ $('#importFile').onchange=async e=>{
     if(pack){
       const st=window.__otonohaStudio,
         studioBlobs={};
-      if(pack.live){
+      {
         if(!st)throw Object.assign(Error(''),{userMessage:'映像側の準備中です。少し待ってからお試しください'});
         if(st.busy())throw Object.assign(Error(''),{userMessage:'動画の収録が終わってから読み込んでください'});
         for(const a of pack.head.assets)if(a.kind==='studio'){
@@ -6430,7 +6359,7 @@ $('#importFile').onchange=async e=>{
         }
         await st.validate(studioBlobs)
       }
-      if(!await askConfirm(pack.live?'現在の効果音・BGM・立ち絵・名義・降らせる画像・背景・台本・映像設定を、読み込む内容ですべて置き換えますか？\n録音したテイクと収録済みの動画は残ります。':'現在の効果音・BGMの設定を、読み込む内容で置き換えますか？\n立ち絵・映像設定と、録音したテイクは残ります。','置き換える',pack.live?'すべての設定の読み込み（.live）':'効果音・BGMの読み込み（.kissa）')){
+      if(!await askConfirm('現在の効果音・BGM・立ち絵・名義・降らせる画像・背景・台本・映像設定・歌枠ノートを、読み込む内容ですべて置き換えますか？\n録音したテイクと収録済みの動画は残ります。','置き換える','すべての設定の読み込み（.live）')){
         toast('読み込みを取り消しました');
         return
       }
@@ -6471,10 +6400,10 @@ $('#importFile').onchange=async e=>{
       incoming.rec.effectImageAsset=map.get(EFFECT_ASSET)||null;
       await applyImported(incoming,n,cover,progCovers);
       if(pack.head.look)lookCommit(lookSanitize(pack.head.look));
-      if(pack.live)await st.apply(pack.head.studio,studioBlobs);
+      await st.apply(pack.head.studio,studioBlobs);
       return;
     }
-    throw Object.assign(Error(''),{userMessage:'このアプリの設定ファイル（.live／.kissa）ではありません'});
+    throw Object.assign(Error(''),{userMessage:'配信処オトノハの設定ファイル（.live）ではありません'});
    }catch(err){
     console.error(err);
     for(const k of added)await deleteAsset(k);
@@ -6495,7 +6424,7 @@ function lookForExport(){
 
 function packFileName(){
   const base=(lookSaved.title||'settings').replace(/[\\/:*?"<>|（）()\s]+/g,'_').replace(/^_+|_+$/g,'')||'settings';
-  return base+'_settings'+PACK_EXT
+  return base+'_settings'+LIVE_EXT
 }
 
 function lookRenderUI(){
@@ -7036,16 +6965,38 @@ fps:30,
     g=canvas.getContext('2d'),
     levelData=new Float32Array(2048);
 
-  function save(){
+  // 保存は、操作が止まってから約0.4秒後（続けて操作していても2秒以内）にまとめて書く。
+  // 名義の切替などで画面の値を設定へ移す処理（syncChar）は、呼ばれたその場で行う。
+  let saveTm=0,saveFirst=0,saveSt='saved',saveBig=false;
+  function saveWrite(){
+    clearTimeout(saveTm);saveTm=0;saveFirst=0;
     try{
-      syncChar()
-    }catch(_){}
-    try{
-      localStorage.setItem(KEY_S,JSON.stringify(state))
+      const json=JSON.stringify(state);
+      localStorage.setItem(KEY_S,json);
+      saveSt='saved';
+      if(json.length>3500000&&!saveBig){saveBig=true;toast('映像設定と歌枠ノートの記録が大きくなっています（約'+(json.length/1048576).toFixed(1)+'MB）。設定ファイル（.live）への書き出しをおすすめします',9000)}
     }catch(e){
-      toast('スタジオ設定を保存できません。設定を書き出してください',5000)
+      if(saveSt!=='failed')toast('スタジオ設定を保存できません。端末の空き容量をご確認のうえ、設定を書き出してください',8000);
+      saveSt='failed'
     }
+    saveBadge?.();
+    return saveSt==='saved'
   }
+  function save(){
+    try{syncChar()}catch(_){}
+    const now=Date.now();
+    if(!saveFirst)saveFirst=now;
+    if(saveSt!=='failed')saveSt='pending';
+    clearTimeout(saveTm);
+    saveTm=setTimeout(saveWrite,Math.max(0,Math.min(400,saveFirst+2000-now)));
+    saveBadge?.()
+  }
+  function saveNow(){
+    try{syncChar()}catch(_){}
+    return saveWrite()
+  }
+  window.__otonohaSaveState=()=>saveSt;
+  window.__otonohaSaveFlush=()=>saveTm?saveWrite():saveSt!=='failed';
 
   function sanitize(v){
     v=v&&typeof v==='object'&&!Array.isArray(v)?v:{};
@@ -7057,12 +7008,12 @@ fps:30,
     }
     for(const k of ['blink','bounce','show'])if(typeof v[k]==='boolean')out[k]=v[k];
     for(const k of ['title','cue','prompt','script'])if(typeof v[k]==='string')out[k]=v[k].slice(0,150000);
-    {const ev=v.effect==='image'?'p:img':v.effect;if((['none','spring','summer','autumn','winter'].includes(ev)||/^p:[a-z0-9]{1,24}$/.test(ev)))out.effect=ev}
+    if(['none','spring','summer','autumn','winter'].includes(v.effect)||/^p:[a-z0-9]{1,24}$/.test(v.effect))out.effect=v.effect;
     if(['cafe','transparent','green','blue','black','image'].includes(v.bg))out.bg=v.bg;
     if(Array.isArray(v.songs))out.songs=v.songs.slice(0,300).filter(x=>x&&typeof x.title==='string').map(x=>({title:x.title.slice(0,200),artist:String(x.artist||'').slice(0,200)}));
     {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last)}));
-     if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).slice(-5000).map(x=>({id:S(x.id,16),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)}));
+     if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).map(x=>{const o={id:S(x.id,16)||Math.random().toString(36).slice(2,10),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)};if(Number.isFinite(Number(x.off0)))o.off0=Math.max(0,Math.floor(Number(x.off0)));return o});
      if(Array.isArray(v.legacyVideos))out.legacyVideos=v.legacyVideos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,60).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at),missing:x.missing===true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
@@ -7108,7 +7059,7 @@ fps:30,
       const MV=['flutter','leaf','rise','snow','roll'],mk=(x,id,name)=>{const o={id,name:String(name||'画像のプリセット').slice(0,30)};for(const k in R){const n=Number(x[k]);o[k]=Number.isFinite(n)?Math.max(R[k][0],Math.min(R[k][1],n)):out[k]}o.imageMotion=MV.includes(x.imageMotion)?x.imageMotion:'flutter';return o};
       out.fxPresets=[];
       if(Array.isArray(v.fxPresets)){const seenP=new Set();for(const x of v.fxPresets.slice(0,30)){if(!x||typeof x!=='object'||typeof x.id!=='string'||!/^[a-z0-9]{1,24}$/.test(x.id)||seenP.has(x.id))continue;seenP.add(x.id);out.fxPresets.push(mk(x,x.id,x.name))}}
-      else{const x=src.image&&typeof src.image==='object'?src.image:{imageMotion:out.imageMotion};out.fxPresets.push(mk(x,'img','好きな画像'))}
+      else out.fxPresets.push(mk({imageMotion:out.imageMotion},'img','好きな画像'))
       const okP=e=>!/^p:/.test(e)||out.fxPresets.some(p=>'p:'+p.id===e);
       if(!okP(out.effect))out.effect='none';
       for(const k of ['standby','away','end'])if(!okP(out.scenes[k].effect))out.scenes[k].effect='keep'
@@ -7804,7 +7755,7 @@ function karaDefaults(){
 const SB={
     title:E('songTitle'),artist:E('songArtist'),memo:E('songMemo'),
     set:E('songList'),rep:E('repList'),repFilter:E('repFilter'),repCount:E('repCount'),
-    log:E('singLog'),sessBtn:E('singSessBtn'),sessState:E('singSessState'),now:E('singNow'),
+    log:E('singLog'),sessBtn:E('singSessBtn'),sessState:E('singSessState'),now:E('singNow'),undo:E('singUndo'),
     core:E('songbookCore'),home:E('songbookHome'),away:E('songbookAway')
   };
   const songKey=(t,a)=>(t||'').trim().toLowerCase()+'\n'+(a||'').trim().toLowerCase();
@@ -7823,31 +7774,70 @@ const SB={
     }else if(memo)s.memo=memo.slice(0,200);
     return s
   }
-  const hms=sec=>{sec=Math.max(0,Math.floor(sec));const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;return (h?String(h).padStart(2,'0')+':':'00:')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')};
+  const hms=sec=>{sec=Math.max(0,Math.floor(sec));const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')};
+  // 「1:02:03」「12:34」「95」を秒に。読めなければ null
+  function parseHms(v){
+    const s=String(v||'').trim().replace(/[：]/g,':').replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));
+    if(!/^\d+(?::\d{1,2}){0,2}$/.test(s))return null;
+    const p=s.split(':').map(Number);
+    if(p.slice(1).some(x=>x>59))return null;
+    return p.reduce((a,x)=>a*60+x,0)
+  }
   const curProfName=()=>(state.profiles||[]).find(p=>p.id===state.profileId)?.name||'';
+  const sessItems=id=>logList().filter(x=>x.sess===id).sort((a,b)=>a.off-b.off);
+  const sessLast=()=>state.singSess?sessItems(state.singSess.id).at(-1)||null:null;
+  let sbLast=null;
 
   function sessStart(){
     state.singSess={id:sbId(),start:new Date().toISOString(),prof:curProfName()};
-    save();renderSongs();
+    sbLast=null;
+    saveNow();renderSess();logSessUpdate(state.singSess.id);
     toast('歌唱の記録を始めました。「♪ 歌い始め」を押すと、ここからの経過時間と一緒に残ります',6000)
   }
   function sessEnd(){
     if(!state.singSess)return;
-    const n=logList().filter(x=>x.sess===state.singSess.id).length;
-    state.singSess=null;save();renderSongs();
-    toast('記録を終えました（'+n+'曲）。下の「歌唱の記録」に残っています',5000)
+    const id=state.singSess.id,n=sessItems(id).length;
+    state.singSess=null;sbLast=null;
+    saveNow();renderSess();logSessUpdate(id);
+    toast('記録を終えました（'+n+'曲）。下の「これまでの記録」に残っています',5000)
   }
+  // 歌唱1回の記録。画面は、いまの曲・その回の行・その曲の集計だけを書き換える
   function sing(t,a){
     if(!t)return;
     if(!state.singSess)sessStart();
-    const ss=state.singSess,now=new Date(),off=(now-new Date(ss.start))/1000;
-    const log=logList();
-    log.push({id:sbId(),t:now.toISOString(),title:t,artist:a||'',sess:ss.id,start:ss.start,off:Math.round(off),prof:ss.prof||curProfName()});
-    if(log.length>5000)log.splice(0,log.length-5000);
+    const ss=state.singSess,now=new Date(),off=Math.round((now-new Date(ss.start))/1000);
+    const x={id:sbId(),t:now.toISOString(),title:t,artist:a||'',sess:ss.id,start:ss.start,off,prof:ss.prof||curProfName()};
+    logList().push(x);
     const r=repAdd(t,a);
-    if(r){r.count=(r.count||0)+1;r.last=now.toISOString()}
-    save();renderSongs();
-    toast('「'+t+'」を記録しました（'+hms(off)+'）',3000)
+    if(r){r.count=(r.count||0)+1;r.last=x.t}
+    sbLast=x;
+    saveNow();
+    renderSess();logSessUpdate(ss.id);if(r)repRowUpdate(r);
+    toast('「'+t+'」を記録しました（'+hms(off)+'）。間違えたときは「直前の記録を取り消す」',3500)
+  }
+  // 記録を1件消す。曲リストの回数と最後に歌った日も合わせて戻す
+  function logRemove(x){
+    const log=logList(),i=log.indexOf(x);
+    if(i<0)return;
+    log.splice(i,1);
+    const r=repFind(x.title,x.artist);
+    if(r){
+      r.count=Math.max(0,(r.count||0)-1);
+      if(r.last===x.t){const k=songKey(x.title,x.artist);r.last=log.filter(y=>songKey(y.title,y.artist)===k).reduce((m,y)=>y.t>m?y.t:m,'')}
+    }
+    if(sbLast===x)sbLast=sessLast();
+    saveNow();
+    renderSess();logSessUpdate(x.sess);if(r)repRowUpdate(r)
+  }
+  function logRetime(x,sec){
+    const r=repFind(x.title,x.artist),oldT=x.t;
+    if(!Number.isFinite(x.off0))x.off0=x.off;
+    x.off=sec;
+    x.t=new Date(new Date(x.start).getTime()+sec*1000).toISOString();
+    if(r&&r.last===oldT)r.last=x.t;
+    if(state.singSess?.id===x.sess)sbLast=sessLast();
+    saveNow();
+    renderSess();logSessUpdate(x.sess);if(r)repRowUpdate(r)
   }
 
   E('songAdd').onclick=()=>{
@@ -7855,14 +7845,14 @@ const SB={
     if(!v.title){toast('曲名を入力してください');return}
     if(state.songs.length>=300){toast('セトリは300曲までです');return}
     state.songs.push({title:v.title,artist:v.artist});
-    repAdd(v.title,v.artist,v.memo);
-    save();renderSongs();sbClear()
+    const r=repAdd(v.title,v.artist,v.memo);
+    save();renderSet();if(r)repRowUpdate(r);sbClear()
   };
   E('repAdd').onclick=()=>{
     const v=sbInput();
     if(!v.title){toast('曲名を入力してください');return}
-    const had=!!repFind(v.title,v.artist);
-    if(repAdd(v.title,v.artist,v.memo)){save();renderSongs();sbClear();toast(had?'登録済みの曲です（メモを更新しました）':'曲リストに登録しました')}
+    const had=!!repFind(v.title,v.artist),r=repAdd(v.title,v.artist,v.memo);
+    if(r){save();repRowUpdate(r);sbClear();toast(had?'登録済みの曲です（メモを更新しました）':'曲リストに登録しました')}
   };
   E('singNowBtn').onclick=()=>{
     const v=sbInput();
@@ -7875,12 +7865,19 @@ const SB={
     window.open('https://www.google.com/search?q='+encodeURIComponent([v.title,v.artist,'歌詞'].filter(Boolean).join(' ')),'_blank')
   };
   SB.sessBtn.onclick=()=>state.singSess?sessEnd():sessStart();
+  SB.undo.onclick=()=>{
+    const x=sbLast||sessLast();
+    if(!x){toast('取り消せる記録はありません');return}
+    logRemove(x);
+    toast('「'+x.title+'」（'+hms(x.off)+'）の記録を取り消しました',4000)
+  };
   E('songCopy').onclick=()=>copy(state.songs.map((s,i)=>`${i+1}. ${s.title}${s.artist?' / '+s.artist:''}`).join('\n'));
-  E('songClear').onclick=e=>armed(e.currentTarget,'もう一度押すとセトリを空にする',()=>{state.songs=[];save();renderSongs()});
-  SB.repFilter.oninput=()=>renderRep();
+  E('songClear').onclick=e=>armed(e.currentTarget,'もう一度押すとセトリを空にする',()=>{state.songs=[];save();renderSet()});
+  {let tm=0;SB.repFilter.oninput=()=>{clearTimeout(tm);tm=setTimeout(renderRep,180)}}
 
   function rowBtn(label,cls,fn,title){const b=document.createElement('button');b.type='button';b.textContent=label;if(cls)b.className=cls;if(title)b.title=title;b.onclick=fn;return b}
   function songSpan(t,a,extra){const s=document.createElement('span');s.className='sb-name';s.textContent=t+(a?' / '+a:'');if(extra){const x=document.createElement('small');x.textContent=extra;s.append(x)}return s}
+  function sbEmpty(tag,text){const e=document.createElement(tag);e.className=tag==='p'?'studio-note sb-empty':'sb-empty';e.textContent=text;return e}
 
   function renderSet(){
     SB.set.replaceChildren();
@@ -7892,28 +7889,51 @@ const SB={
         rowBtn('外す','',()=>{state.songs.splice(i,1);save();renderSet()}));
       SB.set.append(li)
     });
-    if(!state.songs.length){const li=document.createElement('li');li.className='sb-empty';li.textContent='セトリは空です。上で曲名を入れて「セトリに追加」、または曲リストの「セトリへ」で追加できます';SB.set.append(li)}
+    if(!state.songs.length)SB.set.append(sbEmpty('li','セトリは空です。上で曲名を入れて「セトリに追加」、または曲リストの「セトリへ」で追加できます'))
+  }
+
+  // 曲リスト：行は曲のIDごとに持ち、歌った曲だけ書き換える
+  const repRows=new Map();
+  const repInfo=s=>(s.count?'歌った回数 '+s.count+'回':'まだ記録なし')+(s.last?'・最後 '+s.last.slice(0,10):'')+(s.memo?'・'+s.memo:'');
+  const repMatch=(s,q)=>!q||(s.title+' '+s.artist+' '+(s.memo||'')).toLowerCase().includes(q);
+  function repRow(s){
+    const li=document.createElement('li');
+    li.dataset.rep=s.id;
+    li.append(rowBtn('♪ 歌い始め','sb-sing',()=>sing(s.title,s.artist)),songSpan(s.title,s.artist,repInfo(s)),
+      rowBtn('セトリへ','',()=>{state.songs.push({title:s.title,artist:s.artist});save();renderSet();toast('セトリに追加しました')}),
+      rowBtn('削除','',e=>armed(e.currentTarget,'もう一度押すと削除',()=>{state.repertoire=repList().filter(x=>x!==s);save();repRows.get(s.id)?.remove();repRows.delete(s.id);SB.repCount.textContent=repList().length+'曲'})));
+    repRows.set(s.id,li);
+    return li
+  }
+  function repRowUpdate(s){
+    SB.repCount.textContent=repList().length+'曲';
+    const q=SB.repFilter.value.trim().toLowerCase(),li=repRows.get(s.id);
+    if(li){li.querySelector('.sb-name small').textContent=repInfo(s);if(!q&&s.last&&SB.rep.firstElementChild!==li)SB.rep.prepend(li);return}
+    if(!repMatch(s,q))return;
+    SB.rep.querySelector('.sb-empty')?.remove();
+    SB.rep.prepend(repRow(s))
   }
   function renderRep(){
     const q=SB.repFilter.value.trim().toLowerCase(),all=repList();
-    const list=all.filter(s=>!q||(s.title+' '+s.artist+' '+(s.memo||'')).toLowerCase().includes(q)).sort((a,b)=>(b.last||'').localeCompare(a.last||'')||a.title.localeCompare(b.title,'ja'));
+    const list=all.filter(s=>repMatch(s,q)).sort((a,b)=>(b.last||'').localeCompare(a.last||'')||a.title.localeCompare(b.title,'ja'));
     SB.repCount.textContent=all.length+'曲';
-    SB.rep.replaceChildren();
-    for(const s of list.slice(0,300)){
-      const li=document.createElement('li');
-      const info=(s.count?'歌った回数 '+s.count+'回':'まだ記録なし')+(s.last?'・最後 '+s.last.slice(0,10):'')+(s.memo?'・'+s.memo:'');
-      li.append(rowBtn('♪ 歌い始め','sb-sing',()=>sing(s.title,s.artist)),songSpan(s.title,s.artist,info),
-        rowBtn('セトリへ','',()=>{state.songs.push({title:s.title,artist:s.artist});save();renderSet();toast('セトリに追加しました')}),
-        rowBtn('削除','',e=>armed(e.currentTarget,'もう一度押すと削除',()=>{state.repertoire=repList().filter(x=>x!==s);save();renderRep()})));
-      SB.rep.append(li)
-    }
-    if(list.length>300){const li=document.createElement('li');li.className='sb-empty';li.textContent='ほか'+(list.length-300)+'曲（絞り込みで探せます）';SB.rep.append(li)}
-    if(!all.length){const li=document.createElement('li');li.className='sb-empty';li.textContent='まだ曲が登録されていません。上で曲名・アーティストを入れて「曲リストに登録」を押すか、「♪ 歌い始め」で記録すると自動で登録されます';SB.rep.append(li)}
+    repRows.clear();
+    SB.rep.replaceChildren(...list.slice(0,300).map(repRow));
+    if(list.length>300)SB.rep.append(sbEmpty('li','ほか'+(list.length-300)+'曲（絞り込みで探せます）'));
+    if(!all.length)SB.rep.append(sbEmpty('li','まだ曲が登録されていません。上で曲名・アーティストを入れて「曲リストに登録」を押すか、「♪ 歌い始め」で記録すると自動で登録されます'))
   }
+
   function sessions(){
     const m=new Map();
     for(const x of logList()){if(!m.has(x.sess))m.set(x.sess,{id:x.sess,start:x.start,prof:x.prof,items:[]});m.get(x.sess).items.push(x)}
+    const ss=state.singSess;
+    if(ss&&!m.has(ss.id))m.set(ss.id,{id:ss.id,start:ss.start,prof:ss.prof,items:[]});
+    for(const s of m.values())s.items.sort((a,b)=>a.off-b.off);
     return [...m.values()].sort((a,b)=>(b.start||'').localeCompare(a.start||''))
+  }
+  function sessOf(id){
+    const items=sessItems(id),ss=state.singSess,f=items[0]||(ss&&ss.id===id?ss:null);
+    return f?{id,start:f.start,prof:f.prof,items}:null
   }
   const localTime=iso=>{const d=new Date(iso);return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
   function sessText(s){return s.items.map(x=>`${hms(x.off)} ${x.title}${x.artist?' / '+x.artist:''}`).join('\n')}
@@ -7926,34 +7946,94 @@ const SB={
   function saveCsv(list,name){
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([sessCsv(list)],{type:'text/csv'}));a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)
   }
+
+  // これまでの記録：回の見出しだけ先に作り、開いたときに中の行を作る
+  const SESS_PAGE=30;
+  let sessShown=SESS_PAGE;
+  const sessBoxes=new Map();
+  function sessSummary(s){return localTime(s.start)+'　'+(s.prof||'')+'　'+s.items.length+'曲'+(state.singSess?.id===s.id?'（記録中）':'')}
+  function logItemRow(x){
+    const li=document.createElement('li');
+    li.dataset.log=x.id;
+    const name=songSpan(hms(x.off)+'　'+x.title,x.artist,Number.isFinite(x.off0)&&x.off0!==x.off?'時刻を直しました（記録した時刻 '+hms(x.off0)+'）':'');
+    const edit=rowBtn('時刻','',()=>{
+      const inp=document.createElement('input');
+      inp.className='sb-time';inp.value=hms(x.off);inp.inputMode='numeric';inp.setAttribute('aria-label','経過時間（時:分:秒）');
+      let done=false;
+      const finish=ok=>{
+        if(done)return;done=true;
+        if(!ok){inp.onblur=null;inp.replaceWith(edit);logSessUpdate(x.sess);return}
+        const sec=parseHms(inp.value);
+        if(sec===null){toast('「1:02:03」「12:34」のように入力してください',4000);done=false;inp.focus();return}
+        inp.onblur=null;inp.replaceWith(edit);
+        if(sec!==x.off)logRetime(x,sec)
+      };
+      inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();finish(true)}else if(e.key==='Escape'){e.preventDefault();finish(false)}};
+      inp.onblur=()=>finish(true);
+      edit.replaceWith(inp);inp.focus();inp.select()
+    },'経過時間を直します（Enterで確定、Escで取り消し）');
+    li.append(name,edit,rowBtn('消す','',e=>armed(e.currentTarget,'もう一度押すと消す',()=>logRemove(x))));
+    return li
+  }
+  function sessFill(s,rec){
+    rec.ol.replaceChildren(...s.items.map(logItemRow));
+    if(!s.items.length)rec.ol.append(sbEmpty('li','まだ曲は記録されていません'));
+    rec.filled=true
+  }
+  function sessBox(s){
+    const box=document.createElement('details');box.className='sb-sess';box.dataset.sess=s.id;
+    const sum=document.createElement('summary');sum.textContent=sessSummary(s);
+    const ol=document.createElement('ol');
+    const row=document.createElement('div');row.className='studio-row';
+    row.append(rowBtn('タイムスタンプをコピー（概要欄用）','accent',()=>{const c=sessOf(s.id);if(c)copy(sessText(c))}),
+      rowBtn('CSVで保存','',()=>{const c=sessOf(s.id);if(c)saveCsv([c],'utawaku_'+c.start.slice(0,10)+'.csv')}),
+      rowBtn('この回の記録を削除','',e=>armed(e.currentTarget,'もう一度押すと削除',()=>{
+        const gone=logList().filter(y=>y.sess===s.id);
+        for(const x of gone){const r=repFind(x.title,x.artist);if(r)r.count=Math.max(0,(r.count||0)-1)}
+        state.singLog=logList().filter(y=>y.sess!==s.id);
+        for(const x of gone){const r=repFind(x.title,x.artist);if(r&&r.last===x.t){const k=songKey(x.title,x.artist);r.last=state.singLog.filter(y=>songKey(y.title,y.artist)===k).reduce((m,y)=>y.t>m?y.t:m,'')}}
+        if(state.singSess?.id===s.id){state.singSess=null;sbLast=null}
+        saveNow();renderSess();renderRep();renderLog()
+      })));
+    const rec={box,sum,ol,filled:false};
+    box.ontoggle=()=>{if(box.open&&!rec.filled){const c=sessOf(s.id);if(c)sessFill(c,rec)}};
+    box.append(sum,ol,row);
+    sessBoxes.set(s.id,rec);
+    return rec
+  }
+  function logSessUpdate(id){
+    const s=sessOf(id),rec=sessBoxes.get(id);
+    if(!s){if(rec){rec.box.remove();sessBoxes.delete(id)}if(!logList().length&&!state.singSess)renderLog();return}
+    if(!rec){renderLog();return}
+    rec.sum.textContent=sessSummary(s);
+    // 時刻を入力している最中は行を作り直さない（確定・取り消しのときに作り直す）
+    if(rec.ol.contains(document.activeElement)&&document.activeElement.classList.contains('sb-time'))return;
+    if(rec.filled||rec.box.open)sessFill(s,rec)
+  }
   function renderLog(){
+    sessBoxes.clear();
     SB.log.replaceChildren();
     const ss=sessions();
-    for(const s of ss.slice(0,30)){
-      const box=document.createElement('details');box.className='sb-sess';box.open=s===ss[0];
-      const sum=document.createElement('summary');sum.textContent=localTime(s.start)+'　'+(s.prof||'')+'　'+s.items.length+'曲'+(state.singSess?.id===s.id?'（記録中）':'');
-      const ol=document.createElement('ol');
-      for(const x of s.items){const li=document.createElement('li');li.append(songSpan(hms(x.off)+'　'+x.title,x.artist),rowBtn('消す','',()=>{state.singLog=logList().filter(y=>y!==x);save();renderLog()}));ol.append(li)}
-      const row=document.createElement('div');row.className='studio-row';
-      row.append(rowBtn('タイムスタンプをコピー（概要欄用）','accent',()=>copy(sessText(s))),
-        rowBtn('CSVで保存','',()=>saveCsv([s],'utawaku_'+s.start.slice(0,10)+'.csv')),
-        rowBtn('この回の記録を削除','',e=>armed(e.currentTarget,'もう一度押すと削除',()=>{state.singLog=logList().filter(y=>y.sess!==s.id);if(state.singSess?.id===s.id)state.singSess=null;save();renderSongs()})));
-      box.append(sum,ol,row);SB.log.append(box)
-    }
-    if(!ss.length){const p=document.createElement('p');p.className='studio-note';p.textContent='まだ記録はありません。歌枠を始めるときに「● 歌唱の記録を始める」を押し、歌うたびに「♪ 歌い始め」を押すと、ここに経過時間つきで残ります。';SB.log.append(p)}
-    else{const row=document.createElement('div');row.className='studio-row';row.append(rowBtn('すべての記録をCSVで保存','',()=>saveCsv(ss,'utawaku_all.csv')));SB.log.append(row)}
+    for(const s of ss.slice(0,sessShown)){const rec=sessBox(s);SB.log.append(rec.box);if(s===ss[0]){rec.box.open=true;sessFill(s,rec)}}
+    if(!ss.length){SB.log.append(sbEmpty('p','まだ記録はありません。歌枠を始めるときに「● 歌唱の記録を始める」を押し、歌うたびに「♪ 歌い始め」を押すと、ここに経過時間つきで残ります。'));return}
+    const row=document.createElement('div');row.className='studio-row';
+    if(ss.length>sessShown)row.append(rowBtn('さらに前の回を表示（残り'+(ss.length-sessShown)+'回）','',()=>{sessShown+=SESS_PAGE;renderLog()}));
+    row.append(rowBtn('すべての記録をCSVで保存','',()=>saveCsv(sessions(),'utawaku_all.csv')));
+    SB.log.append(row)
   }
   function renderSess(){
     const ss=state.singSess;
     SB.sessBtn.textContent=ss?'■ 記録を終える':'● 歌唱の記録を始める';
     SB.sessBtn.classList.toggle('recording',!!ss);
-    if(!ss){SB.sessState.textContent='記録していません';SB.now.textContent='';return}
+    if(!ss){SB.sessState.textContent='記録していません';SB.now.textContent='';SB.undo.hidden=true;return}
     SB.sessState.textContent='記録中 '+hms((Date.now()-new Date(ss.start))/1000)+'（'+localTime(ss.start)+'から）';
-    const last=logList().filter(x=>x.sess===ss.id).at(-1);
-    SB.now.textContent=last?'いま：'+last.title+(last.artist?' / '+last.artist:'')+'（'+hms(last.off)+'〜）':''
+    const last=sbLast;
+    SB.now.textContent=last?'いま：'+last.title+(last.artist?' / '+last.artist:'')+'（'+hms(last.off)+'〜）':'';
+    SB.undo.hidden=!last
   }
-  setInterval(()=>{if(state.singSess)renderSess()},1000);
-  function renderSongs(){renderSess();renderSet();renderRep();renderLog()}
+  // 毎秒の更新は経過時間の表示だけ（記録の全件はたどらない）
+  setInterval(()=>{if(state.singSess)SB.sessState.textContent='記録中 '+hms((Date.now()-new Date(state.singSess.start))/1000)+'（'+localTime(state.singSess.start)+'から）'},1000);
+  function renderSongs(){sbLast=sessLast();renderSess();renderSet();renderRep();renderLog()}
 
   // 別タブで開く：ノートの部品をそのタブへ移し、閉じたら戻す
   let sbWin=null;
@@ -10034,12 +10114,19 @@ let frameToken=0,
     if((v.status==='temp'||v.status==='failed')&&v.mem&&vidPersistent())kids.push(vidButton('ブラウザ内に保存を再試行','','',()=>vidCommit(v,true)));
     if(v.status==='orphan')kids.push(vidButton('一覧に戻す','','この動画データを一覧に登録し直します（データは変わりません）',()=>vidRestore(v)));
     if(v.status==='stored'||v.status==='orphan')kids.push(vidButton('削除','','このブラウザ内に保存した動画を消します。書き出し済みのファイルは消えません',e=>armed(e.currentTarget,'もう一度押すと削除',()=>vidRemove(v))));
-    else if(v.status==='missing'||v.status==='unknown')kids.push(vidButton('一覧から外す','','この行だけを外します。ほかの動画やファイルには触れません',e=>armed(e.currentTarget,'もう一度押すと外す',()=>{
-      state.legacyVideos=(state.legacyVideos||[]).filter(x=>x.id!==v.m.id);save();vidDrop(v)
-    })));
+    else if(v.status==='missing'||v.status==='unknown')kids.push(vidButton('一覧から外す','','この行だけを外します。ほかの動画やファイルには触れません',e=>armed(e.currentTarget,'もう一度押すと外す',()=>vidForget(v))));
     else if(v.status!=='saving')kids.push(vidButton('一覧から消す','','一時保持している動画を手放します。書き出し済みのファイルは消えません',e=>armed(e.currentTarget,'もう一度押すと消す',()=>{v.mem=null;vidDrop(v)})));
     row.replaceChildren(...kids);
     return row
+  }
+  // 実体のない行を外す。目録（vmeta）にある行は、目録の削除が終わってから画面から消す
+  async function vidForget(v){
+    if(v.cat){
+      try{await vidQueue(()=>vidTx(s=>s.delete(VMETA+v.m.id)))}
+      catch(_){toast('一覧から外せませんでした。もう一度お試しください',5000);return}
+    }
+    if((state.legacyVideos||[]).some(x=>x.id===v.m.id)){state.legacyVideos=state.legacyVideos.filter(x=>x.id!==v.m.id);saveNow()}
+    vidDrop(v)
   }
   function vidDrop(v){const i=vids.indexOf(v);if(i>=0)vids.splice(i,1);v.el?.remove();renderVideoInfo()}
   async function vidRemove(v){
@@ -10124,7 +10211,7 @@ let frameToken=0,
       try{cat=await vidCatalog()}catch(_){}
     }
     const metaIds=new Set(cat.metas.map(x=>x.id)),list=[];
-    for(const m of cat.metas.sort((a,b)=>String(b.at).localeCompare(String(a.at))))list.push({m,mem:null,status:'stored'});
+    for(const m of cat.metas.sort((a,b)=>String(b.at).localeCompare(String(a.at))))list.push(cat.blobs.has(VBLOB+m.id)?{m,mem:null,status:'stored'}:{m,mem:null,status:'missing',cat:true});
     for(const m of state.legacyVideos||[])if(!metaIds.has(m.id))list.push({m,mem:null,status:m.missing?'missing':'unknown'});
     for(const k of cat.blobs){
       const id=String(k).slice(VBLOB.length);
@@ -10160,16 +10247,6 @@ let frameToken=0,
   E('vidFormat').value=state.vidFormat;E('vidQuality').value=String(state.vidQuality);
   E('vidFormat').onchange=e=>{state.vidFormat=e.target.value==='webm'?'webm':'mp4';save()};
   E('vidQuality').onchange=e=>{state.vidQuality=Number(e.target.value)||8;save()};
-
-  function blobData(blob){
-    return new Promise((resolve,reject)=>{
-      const r=new FileReader();
-      r.onload=()=>resolve(r.result);
-      r.onerror=reject;
-      r.readAsDataURL(blob)
-    })
-  }
-
 
   function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg|[xy][a-z0-9]{1,8})$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)||/^scene-(?:standby|away|end)$/.test(id)||/^msc-[a-z0-9]{1,12}$/.test(id)}
   async function studioValidate(decoded){
@@ -10221,52 +10298,11 @@ let frameToken=0,
       renderExprUI();
       paragraph=0;
       renderValues();
-      save();
+      saveNow();
   }
   function studioCollect(){syncChar();const assets={};for(const[id,b]of Object.entries(assetBlobs))if(!/^png[0-3]$/.test(id))assets[id]=b;for(const[id,b]of Object.entries(charBlobs))assets[id]=b;const out=JSON.parse(JSON.stringify(state));delete out.legacyVideos;delete out.videos;return {state:out,assets}}
   window.__otonohaVideoRec=()=>studioCapturing||captureStarting;
   window.__otonohaStudio={collect:studioCollect,validate:studioValidate,apply:async(s,d)=>{await studioApply(s,d);toast('立ち絵・映像設定も読み込みました')},busy:()=>studioCapturing||captureStarting};
-
-  window.__otonohaImportJson=async e=>{
-    const f=e.target.files[0];
-    if(!f)return;
-    if(rec.state!=='idle'||videoJob||studioCapturing||captureStarting){
-      e.target.value='';
-      toast('収録・動画書き出しが終わってから読み込んでください');
-      return
-    }
-    try{
-      if(!ready)throw Error('準備中です');
-      {
-        const mg=String.fromCharCode(...new Uint8Array(await f.slice(0,8).arrayBuffer()));
-        if(mg==='MTKSPACK'||mg==='OTNHLIVE'||/\.(kissa|live)$/i.test(f.name)){
-          e.target.value='';
-          const h=document.getElementById('importFile').onchange;
-          if(h)await h({target:{files:[f],value:''}});
-          return
-        }
-      }
-      if(f.size>180*1024*1024)throw Error('設定ファイルが大きすぎます');
-      const data=JSON.parse(await f.text());
-      if(data.format!=='otonoha-visual-studio'||data.version!==1||!data.state||!data.assets)throw Error('対応するスタジオ設定ではありません');
-      const decoded={};
-      for(const[id,url]of Object.entries(data.assets)){
-        if(typeof url!=='string'||!/^data:image\/(png|webp|jpeg);base64,/.test(url))throw Error('未対応の画像データです');
-        decoded[id]=dataUrlToBlob(url)
-      }
-      await studioValidate(decoded);
-      if(!await askConfirm('現在の立ち絵・名義・台本・映像設定を、読み込む内容で置き換えますか？\n効果音・BGMは変更しません。','置き換える','スタジオ設定の読み込み')){
-        toast('読み込みを取り消しました');
-        return
-      }
-      await studioApply(data.state,decoded);
-      toast('スタジオ設定を読み込みました')
-    }catch(err){
-      toast('読み込めませんでした：'+err.message,6000)
-    }finally{
-      e.target.value=''
-    }
-  };
 
   window.addEventListener('beforeunload',e=>{
     if(studioCapturing||captureStarting){
