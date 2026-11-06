@@ -68,7 +68,10 @@ function render(){
   }
 
   {
-    const list=trimSlots('voice',cfg.sounds.filter(s=>s.type==='voice').sort((a,b)=>a.order-b.order));
+    const names=voiceOwnerIds?cfg.bgmTabs.slice(0,voiceOwnerIds.length):['標準'];
+    $('#voiceTabs').hidden=names.length<2;
+    $('#voiceTabs').innerHTML=names.map((name,i)=>`<button class="chip ${i===voiceTab?'active':''}" data-voice-tab="${i}">${esc(name)}</button>`).join('');
+    const list=trimSlots('voice',cfg.sounds.filter(s=>s.type==='voice'&&s.tabIndex===voiceTab).sort((a,b)=>a.order-b.order));
 
     $('#voiceGrid').innerHTML=list.map(s=>{
       const loaded=!!s.assetId,
@@ -88,6 +91,7 @@ function render(){
 
 function save(){
   growSe();
+  growVoices();
   growBgm();
   persist();
   render()
@@ -126,6 +130,12 @@ function openSound(s,type){
   $('#labelCaption').textContent=type==='emoji'?'ボタン名（絵文字1文字）':type==='env'?'ボタン名（最大6文字）':type==='voice'?'ボタン名（なくても可・12文字まで）':'ボタン名（最大3文字）';
   $('#labelHelp').textContent=type==='emoji'?'絵文字1文字を指定します。':type==='env'?'押すとループ再生、もう一度押すと止まります。':type==='voice'?'画像の下に小さく表示されます。画像がないときはボタンに文字で表示します。':'絵文字も1文字として数えます。';
   $('#imageField').hidden=type!=='voice';
+  {
+    const names=voiceOwnerIds?cfg.bgmTabs.slice(0,voiceOwnerIds.length):['標準'],sel=$('#voiceOwnerSel');
+    sel.innerHTML=names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join('');
+    sel.value=String(s?.tabIndex??voiceTab);
+    $('#voiceOwnerField').hidden=type!=='voice'||names.length<2
+  }
   $('#imageFile').value='';
   $('#currentImage').textContent=s?.imageId?(s.imageName||'登録済み'):'画像未登録';
   $('#soundVol').previousElementSibling.firstChild.textContent=type==='voice'?'このボイスの音量：':type==='env'?'この環境音の音量：':'この効果音の音量：';
@@ -351,6 +361,14 @@ $('#textTabs').onclick=e=>{
   const tab=e.target.closest('[data-text-tab]');
   if(tab){
     textTab=+tab.dataset.textTab;
+    render()
+  }
+};
+
+$('#voiceTabs').onclick=e=>{
+  const tab=e.target.closest('[data-voice-tab]');
+  if(tab){
+    voiceTab=+tab.dataset.voiceTab;
     render()
   }
 };
@@ -793,6 +811,24 @@ $('#soundForm').onsubmit=async e=>{
     }
 
     Object.assign(old,{label,volume:+$('#soundVol').value,assetId,fileName,shortcut:$('#shortcutInput').value.trim(),configured:true},type==='voice'?{imageId,imageName}:{});
+    let movedTo=null;
+    if(type==='voice'&&voiceOwnerIds){
+      const to=+$('#voiceOwnerSel').value;
+      if(Number.isInteger(to)&&to!==old.tabIndex&&to>=0&&to<voiceOwnerIds.length){
+        const free=cfg.sounds.filter(x=>x.type==='voice'&&x.tabIndex===to&&!isRealSound(x)).sort((a,b)=>a.slotIndex-b.slotIndex)[0],
+          from={owner:old.owner,tabIndex:old.tabIndex,slotIndex:old.slotIndex,order:old.order};
+        if(free){
+          const fs=free.slotIndex;
+          Object.assign(free,from);
+          Object.assign(old,{owner:voiceOwnerIds[to],tabIndex:to,slotIndex:fs,order:fs})
+        }else{
+          const n=cfg.sounds.filter(x=>x.type==='voice'&&x.tabIndex===to).length;
+          cfg.sounds.push({...newSound('voice','',from.slotIndex),...from});
+          Object.assign(old,{owner:voiceOwnerIds[to],tabIndex:to,slotIndex:n,order:n})
+        }
+        movedTo=to
+      }
+    }
     save();
     closeModal('soundModal');
     if(file&&previousAsset)await deleteAsset(previousAsset);
@@ -800,7 +836,7 @@ $('#soundForm').onsubmit=async e=>{
       await deleteAsset(prevImg);
       imgUrls.delete(prevImg)
     }
-    toast(type==='voice'?'ボイスを保存しました':type==='env'?'環境音を保存しました':'効果音を保存しました')
+    toast(movedTo!==null?'ボイスを「'+cfg.bgmTabs[movedTo]+'」のタブへ移しました':type==='voice'?'ボイスを保存しました':type==='env'?'環境音を保存しました':'効果音を保存しました')
   }catch(err){
     console.error(err);
     toast('音源を保存できませんでした。空き容量をご確認ください')

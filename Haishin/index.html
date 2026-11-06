@@ -931,7 +931,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.7.1 / マスコットの名義の付け替え・ミニキャラ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.7.2 / ボイスを標準＋名義ごとのタブに</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -996,7 +996,7 @@ lookPaint(look);
 <main class="shell in-workspace" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span><label class="pad-size">ボタンの大きさ<select id="padSize"><option value="s">小</option><option value="m">中</option><option value="l">大</option></select></label></div>
 <section class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
 <section class="section"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
-<section class="section"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="bgm-tabs voice-tabs" id="voiceTabs" role="tablist" aria-label="ボイスの名義" hidden></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
 <section class="section"><div class="section-title"><h2>環境音 <span>04 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
 <section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは「標準」と名義ごとのタブです。名義専用のタブを開いているときに名義を切り替えると、その名義のタブに移ります。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
 </div></main>
@@ -1194,7 +1194,7 @@ lookPaint(look);
  <div class="field"><label>番組の並び順</label><div class="move-row"><button type="button" class="btn" id="progMovePrev">← 前へ</button><button type="button" class="btn" id="progMoveNext">次へ →</button></div></div>
  <div class="modal-actions"><button type="button" class="btn danger" id="progDel">この番組を削除</button><div class="actions-right"><button type="button" class="btn" data-close="progModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <input type="file" id="progCoverFile" accept="image/*" hidden>
-<div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field" id="imageField" hidden><label for="imageFile">ボタンの画像</label><div class="filebox"><input id="imageFile" type="file" accept="image/*"><small id="currentImage"></small></div></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field" id="voiceOwnerField" hidden><label for="voiceOwnerSel">入れる名義のタブ</label><select id="voiceOwnerSel"></select></div><div class="field" id="imageField" hidden><label for="imageFile">ボタンの画像</label><div class="filebox"><input id="imageFile" type="file" accept="image/*"><small id="currentImage"></small></div></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back" id="bgmModal"><form class="modal" id="bgmForm"><h2 id="bgmHeading">BGMの設定</h2><input type="hidden" id="bgmId"><div class="field"><label for="bgmNameInput">表示名</label><input id="bgmNameInput" maxlength="80" required placeholder="例：午後の喫茶店"></div><div class="field"><label for="bgmFile">音源ファイル</label><div class="filebox"><input id="bgmFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentBgmFile"></small></div></div><div class="field"><label for="bgmVolModal">この曲の音量：<span id="bgmVolModalVal"></span></label><input id="bgmVolModal" type="range" min="0" max="100"></div><div class="field"><label for="bgmOwnerSel">入れる名義のタブ</label><select id="bgmOwnerSel"></select></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="bgmMovePrev">← 前へ</button><button type="button" class="btn" id="bgmMoveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="resetBgm">選択リセット</button><div class="actions-right"><button type="button" class="btn" data-close="bgmModal">キャンセル</button><button type="submit" class="btn gold">保存</button></div></div></form></div>
 <div class="modal-back" id="emojiTabsModal"><form class="modal" id="emojiTabsForm"><h2>絵文字SEのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの効果音は各タブに残ります。</p><div class="category-list" id="emojiTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="emojiTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back" id="bgmTabsModal"><form class="modal" id="bgmTabsForm"><h2>BGMのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの曲は各タブに残ります。</p><div class="category-list" id="bgmTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="bgmTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
@@ -1538,7 +1538,45 @@ function fixedSlots(config,type,min,cols){
   return Math.max(min,Math.ceil(Math.max(max+1,used)/cols)*cols)
 }
 
-const ensureTextSlots=config=>ensureSe(ensureGrid(ensureSe(config,'text'),'voice',fixedSlots(config,'voice',VOICE_SLOTS,5),1),'env');
+const ensureTextSlots=config=>layoutVoices(ensureSe(ensureSe(config,'text'),'env'),null);
+
+// ボイスは「標準」＋名義ごとのタブ（owner＝'std' か名義のid）。各タブは最後の行まで埋まると1行増える
+const VOICE_COLS=5,VOICE_MAX=600;
+let voiceOwnerIds=null,voiceTab=0;
+const voiceOwnerOf=s=>typeof s.owner==='string'&&s.owner?s.owner:'std';
+function voiceSlotsNeeded(items){
+  let max=-1;
+  for(const s of items)if(isRealSound(s)&&Number.isInteger(s.slotIndex))max=Math.max(max,s.slotIndex);
+  return Math.min(VOICE_MAX,Math.max(VOICE_SLOTS,(Math.floor(max/VOICE_COLS)+2)*VOICE_COLS))
+}
+function layoutVoices(config,ids){
+  const all=config.sounds.filter(s=>s.type==='voice'),
+    real=all.filter(isRealSound),
+    empty=all.filter(s=>!isRealSound(s));
+  if(!ids)ids=['std',...new Set(real.map(voiceOwnerOf).filter(o=>o!=='std'))];
+  for(const s of real)if(!ids.includes(voiceOwnerOf(s)))s.owner=ids[0];
+  const out=config.sounds.filter(s=>s.type!=='voice');
+  ids.forEach((owner,t)=>{
+    const items=real.filter(s=>voiceOwnerOf(s)===owner).sort((a,b)=>(a.slotIndex??a.order??0)-(b.slotIndex??b.order??0)),
+      N=voiceSlotsNeeded(items),taken=new Set();
+    for(const s of items){
+      let i=Number.isInteger(s.slotIndex)&&s.slotIndex>=0&&s.slotIndex<N&&!taken.has(s.slotIndex)?s.slotIndex:-1;
+      if(i<0)for(let k=0;k<VOICE_MAX;k++)if(!taken.has(k)){i=k;break}
+      taken.add(i);
+      Object.assign(s,{owner,tabIndex:t,slotIndex:i,order:i});
+      out.push(s)
+    }
+    const spare=empty.filter(s=>voiceOwnerOf(s)===owner);
+    for(let i=0;i<N;i++)if(!taken.has(i)){
+      const k=spare.findIndex(s=>s.slotIndex===i),e=k>=0?spare.splice(k,1)[0]:{...newSound('voice','',i)};
+      Object.assign(e,{owner,tabIndex:t,slotIndex:i,order:i});
+      out.push(e)
+    }
+  });
+  config.sounds=out;
+  return config
+}
+function growVoices(){layoutVoices(cfg,voiceOwnerIds)}
 
 const BGM_COLS=3,
   BGM_MIN=12,
@@ -1592,6 +1630,7 @@ function ensureBgmSlots(config){
 }
 
 // 名義（映像側のプロフィール）がそのままBGMのタブになる。名義のない曲・消した名義の曲は先頭の名義のタブへ
+const cur0=(ids,curId)=>ids.indexOf(curId);
 function setBgmProfiles(profiles,curId,follow){
   if(!cfg||!Array.isArray(profiles)||!profiles.length)return;
   const list=[{id:'std',name:'標準'},...profiles],
@@ -1609,6 +1648,13 @@ orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(
     b.owner=ids[0];b.tabIndex=0;b.slotIndex=s
   }
   bgmOwnerIds=ids;
+  const vSig=()=>JSON.stringify(cfg.sounds.filter(s=>s.type==='voice'&&isRealSound(s)).map(s=>[s.id,s.owner,s.slotIndex]));
+  const vBefore=vSig();
+  voiceOwnerIds=ids;
+  layoutVoices(cfg,ids);
+  if(follow&&cur0(ids,curId)>0&&voiceTab>0)voiceTab=cur0(ids,curId);
+  if(voiceTab>=ids.length)voiceTab=0;
+  const vChanged=vBefore!==vSig();
   const before=JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join();
   cfg.bgms=ids.flatMap((owner,t)=>bgmTabSlots(real.filter(b=>b.owner===owner),t,owner));
   cfg.bgmTabs=list.slice(0,BGM_TAB_MAX).map(p=>String(p.name||'名義').slice(0,40));
@@ -1616,7 +1662,7 @@ orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(
   bgmCurTab=cur>0?cur:0;
   if(follow&&cur>0&&bgmTab>0)bgmTab=cur;
   if(bgmTab>=ids.length)bgmTab=0;
-  if(before!==JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join())persist();
+  if(vChanged||before!==JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join())persist();
   render();
   renderPrograms?.()
 }
@@ -5330,7 +5376,10 @@ function render(){
   }
 
   {
-    const list=trimSlots('voice',cfg.sounds.filter(s=>s.type==='voice').sort((a,b)=>a.order-b.order));
+    const names=voiceOwnerIds?cfg.bgmTabs.slice(0,voiceOwnerIds.length):['標準'];
+    $('#voiceTabs').hidden=names.length<2;
+    $('#voiceTabs').innerHTML=names.map((name,i)=>`<button class="chip ${i===voiceTab?'active':''}" data-voice-tab="${i}">${esc(name)}</button>`).join('');
+    const list=trimSlots('voice',cfg.sounds.filter(s=>s.type==='voice'&&s.tabIndex===voiceTab).sort((a,b)=>a.order-b.order));
 
     $('#voiceGrid').innerHTML=list.map(s=>{
       const loaded=!!s.assetId,
@@ -5350,6 +5399,7 @@ function render(){
 
 function save(){
   growSe();
+  growVoices();
   growBgm();
   persist();
   render()
@@ -5388,6 +5438,12 @@ function openSound(s,type){
   $('#labelCaption').textContent=type==='emoji'?'ボタン名（絵文字1文字）':type==='env'?'ボタン名（最大6文字）':type==='voice'?'ボタン名（なくても可・12文字まで）':'ボタン名（最大3文字）';
   $('#labelHelp').textContent=type==='emoji'?'絵文字1文字を指定します。':type==='env'?'押すとループ再生、もう一度押すと止まります。':type==='voice'?'画像の下に小さく表示されます。画像がないときはボタンに文字で表示します。':'絵文字も1文字として数えます。';
   $('#imageField').hidden=type!=='voice';
+  {
+    const names=voiceOwnerIds?cfg.bgmTabs.slice(0,voiceOwnerIds.length):['標準'],sel=$('#voiceOwnerSel');
+    sel.innerHTML=names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join('');
+    sel.value=String(s?.tabIndex??voiceTab);
+    $('#voiceOwnerField').hidden=type!=='voice'||names.length<2
+  }
   $('#imageFile').value='';
   $('#currentImage').textContent=s?.imageId?(s.imageName||'登録済み'):'画像未登録';
   $('#soundVol').previousElementSibling.firstChild.textContent=type==='voice'?'このボイスの音量：':type==='env'?'この環境音の音量：':'この効果音の音量：';
@@ -5613,6 +5669,14 @@ $('#textTabs').onclick=e=>{
   const tab=e.target.closest('[data-text-tab]');
   if(tab){
     textTab=+tab.dataset.textTab;
+    render()
+  }
+};
+
+$('#voiceTabs').onclick=e=>{
+  const tab=e.target.closest('[data-voice-tab]');
+  if(tab){
+    voiceTab=+tab.dataset.voiceTab;
     render()
   }
 };
@@ -6055,6 +6119,24 @@ $('#soundForm').onsubmit=async e=>{
     }
 
     Object.assign(old,{label,volume:+$('#soundVol').value,assetId,fileName,shortcut:$('#shortcutInput').value.trim(),configured:true},type==='voice'?{imageId,imageName}:{});
+    let movedTo=null;
+    if(type==='voice'&&voiceOwnerIds){
+      const to=+$('#voiceOwnerSel').value;
+      if(Number.isInteger(to)&&to!==old.tabIndex&&to>=0&&to<voiceOwnerIds.length){
+        const free=cfg.sounds.filter(x=>x.type==='voice'&&x.tabIndex===to&&!isRealSound(x)).sort((a,b)=>a.slotIndex-b.slotIndex)[0],
+          from={owner:old.owner,tabIndex:old.tabIndex,slotIndex:old.slotIndex,order:old.order};
+        if(free){
+          const fs=free.slotIndex;
+          Object.assign(free,from);
+          Object.assign(old,{owner:voiceOwnerIds[to],tabIndex:to,slotIndex:fs,order:fs})
+        }else{
+          const n=cfg.sounds.filter(x=>x.type==='voice'&&x.tabIndex===to).length;
+          cfg.sounds.push({...newSound('voice','',from.slotIndex),...from});
+          Object.assign(old,{owner:voiceOwnerIds[to],tabIndex:to,slotIndex:n,order:n})
+        }
+        movedTo=to
+      }
+    }
     save();
     closeModal('soundModal');
     if(file&&previousAsset)await deleteAsset(previousAsset);
@@ -6062,7 +6144,7 @@ $('#soundForm').onsubmit=async e=>{
       await deleteAsset(prevImg);
       imgUrls.delete(prevImg)
     }
-    toast(type==='voice'?'ボイスを保存しました':type==='env'?'環境音を保存しました':'効果音を保存しました')
+    toast(movedTo!==null?'ボイスを「'+cfg.bgmTabs[movedTo]+'」のタブへ移しました':type==='voice'?'ボイスを保存しました':type==='env'?'環境音を保存しました':'効果音を保存しました')
   }catch(err){
     console.error(err);
     toast('音源を保存できませんでした。空き容量をご確認ください')
