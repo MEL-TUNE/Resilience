@@ -316,6 +316,11 @@ body[data-outwin]:not([data-pv-on]) #studioStageWrap{display:none}
 .scene-pv .studio-note{text-align:center}
 .msc-owner{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 10px;padding:8px;border-radius:10px;background:var(--a-p-12)}
 .msc-owner button{border:1px solid var(--a-p-45);border-radius:999px;padding:6px 12px;background:var(--hi);font-size:12px;cursor:pointer}
+.msc-all{margin:8px 0;padding:6px 10px;border:1px solid var(--a-p-30);border-radius:10px}
+.msc-all summary{cursor:pointer;font-size:13px;font-weight:700}
+.msc-all-list li{gap:10px}
+.msc-all-list select{max-width:12em;padding:4px}
+.msc-thumb{width:40px;height:40px;object-fit:contain;flex:0 0 40px;font-size:9px;color:var(--muted);display:grid;place-items:center;border:1px dashed var(--a-p-30);border-radius:6px;background:var(--paper)}
 .msc-owner button.selected{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .sb-list{list-style:none;padding:0;margin:6px 0 10px;font-size:13px}
 .sb-list li{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--a-p-20)}
