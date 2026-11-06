@@ -148,16 +148,38 @@ fps:30,
     g=canvas.getContext('2d'),
     levelData=new Float32Array(2048);
 
-  function save(){
+  // 保存は、操作が止まってから約0.4秒後（続けて操作していても2秒以内）にまとめて書く。
+  // 名義の切替などで画面の値を設定へ移す処理（syncChar）は、呼ばれたその場で行う。
+  let saveTm=0,saveFirst=0,saveSt='saved',saveBig=false;
+  function saveWrite(){
+    clearTimeout(saveTm);saveTm=0;saveFirst=0;
     try{
-      syncChar()
-    }catch(_){}
-    try{
-      localStorage.setItem(KEY_S,JSON.stringify(state))
+      const json=JSON.stringify(state);
+      localStorage.setItem(KEY_S,json);
+      saveSt='saved';
+      if(json.length>3500000&&!saveBig){saveBig=true;toast('映像設定と歌枠ノートの記録が大きくなっています（約'+(json.length/1048576).toFixed(1)+'MB）。設定ファイル（.live）への書き出しをおすすめします',9000)}
     }catch(e){
-      toast('スタジオ設定を保存できません。設定を書き出してください',5000)
+      if(saveSt!=='failed')toast('スタジオ設定を保存できません。端末の空き容量をご確認のうえ、設定を書き出してください',8000);
+      saveSt='failed'
     }
+    saveBadge?.();
+    return saveSt==='saved'
   }
+  function save(){
+    try{syncChar()}catch(_){}
+    const now=Date.now();
+    if(!saveFirst)saveFirst=now;
+    if(saveSt!=='failed')saveSt='pending';
+    clearTimeout(saveTm);
+    saveTm=setTimeout(saveWrite,Math.max(0,Math.min(400,saveFirst+2000-now)));
+    saveBadge?.()
+  }
+  function saveNow(){
+    try{syncChar()}catch(_){}
+    return saveWrite()
+  }
+  window.__otonohaSaveState=()=>saveSt;
+  window.__otonohaSaveFlush=()=>saveTm?saveWrite():saveSt!=='failed';
 
   function sanitize(v){
     v=v&&typeof v==='object'&&!Array.isArray(v)?v:{};
@@ -169,12 +191,12 @@ fps:30,
     }
     for(const k of ['blink','bounce','show'])if(typeof v[k]==='boolean')out[k]=v[k];
     for(const k of ['title','cue','prompt','script'])if(typeof v[k]==='string')out[k]=v[k].slice(0,150000);
-    {const ev=v.effect==='image'?'p:img':v.effect;if((['none','spring','summer','autumn','winter'].includes(ev)||/^p:[a-z0-9]{1,24}$/.test(ev)))out.effect=ev}
+    if(['none','spring','summer','autumn','winter'].includes(v.effect)||/^p:[a-z0-9]{1,24}$/.test(v.effect))out.effect=v.effect;
     if(['cafe','transparent','green','blue','black','image'].includes(v.bg))out.bg=v.bg;
     if(Array.isArray(v.songs))out.songs=v.songs.slice(0,300).filter(x=>x&&typeof x.title==='string').map(x=>({title:x.title.slice(0,200),artist:String(x.artist||'').slice(0,200)}));
     {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last)}));
-     if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).slice(-5000).map(x=>({id:S(x.id,16),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)}));
+     if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).map(x=>{const o={id:S(x.id,16)||Math.random().toString(36).slice(2,10),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)};if(Number.isFinite(Number(x.off0)))o.off0=Math.max(0,Math.floor(Number(x.off0)));return o});
      if(Array.isArray(v.legacyVideos))out.legacyVideos=v.legacyVideos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,60).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at),missing:x.missing===true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
@@ -220,7 +242,7 @@ fps:30,
       const MV=['flutter','leaf','rise','snow','roll'],mk=(x,id,name)=>{const o={id,name:String(name||'画像のプリセット').slice(0,30)};for(const k in R){const n=Number(x[k]);o[k]=Number.isFinite(n)?Math.max(R[k][0],Math.min(R[k][1],n)):out[k]}o.imageMotion=MV.includes(x.imageMotion)?x.imageMotion:'flutter';return o};
       out.fxPresets=[];
       if(Array.isArray(v.fxPresets)){const seenP=new Set();for(const x of v.fxPresets.slice(0,30)){if(!x||typeof x!=='object'||typeof x.id!=='string'||!/^[a-z0-9]{1,24}$/.test(x.id)||seenP.has(x.id))continue;seenP.add(x.id);out.fxPresets.push(mk(x,x.id,x.name))}}
-      else{const x=src.image&&typeof src.image==='object'?src.image:{imageMotion:out.imageMotion};out.fxPresets.push(mk(x,'img','好きな画像'))}
+      else out.fxPresets.push(mk({imageMotion:out.imageMotion},'img','好きな画像'))
       const okP=e=>!/^p:/.test(e)||out.fxPresets.some(p=>'p:'+p.id===e);
       if(!okP(out.effect))out.effect='none';
       for(const k of ['standby','away','end'])if(!okP(out.scenes[k].effect))out.scenes[k].effect='keep'

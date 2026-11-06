@@ -79,18 +79,29 @@ async function test(name, fn) {
     assert.equal(vm.runInContext("sanitize({legacyVideos:[{id:'q1',missing:true}]}).legacyVideos[0].missing", c), true);
     assert.equal(vm.runInContext("sanitize({fmt:9}).fmt", c), 2);
   });
-  await test('Pack reader rejects duplicate asset keys', async () => {
+  await test('Settings file reader accepts only .live and rejects duplicate asset keys', async () => {
     const c = vm.createContext({ Blob, TextDecoder, Uint8Array, DataView, Set, Error });
-    vm.runInContext("const PACK_MAGIC='MTKSPACK',LIVE_MAGIC='OTNHLIVE',PACK_FORMAT='meltune-kissa-pack',LIVE_FORMAT='otonoha-live-pack';" + find(audio, 'FunctionDeclaration', 'readPackHeader'), c);
-    const head = new TextEncoder().encode(JSON.stringify({ format: 'meltune-kissa-pack', config: {}, assets: [
+    vm.runInContext("const LIVE_MAGIC='OTNHLIVE',LIVE_FORMAT='otonoha-live-pack';" + find(audio, 'FunctionDeclaration', 'readPackHeader'), c);
+    const len = new Uint8Array(4), enc = o => new TextEncoder().encode(JSON.stringify(o));
+    const dup = enc({ format: 'otonoha-live-pack', config: {}, studio: {}, assets: [
       { key: 'same', kind: 'audio', offset: 0, size: 1 }, { key: 'same', kind: 'audio', offset: 1, size: 1 }
-    ] }));
-    const len = new Uint8Array(4); new DataView(len.buffer).setUint32(0, head.length, true);
-    c.file = new Blob(['MTKSPACK', len, head, new Uint8Array(2)]);
+    ] });
+    new DataView(len.buffer).setUint32(0, dup.length, true);
+    c.file = new Blob(['OTNHLIVE', len, dup, new Uint8Array(2)]);
     await assert.rejects(vm.runInContext('readPackHeader(file)', c), /重複/);
-    const valid = new TextEncoder().encode(JSON.stringify({format:'meltune-kissa-pack',config:{},assets:[]}));
-    new DataView(len.buffer).setUint32(0, valid.length, true); c.file = new Blob(['MTKSPACK',len,valid]);
+    const valid = enc({ format: 'otonoha-live-pack', config: {}, studio: {}, assets: [] });
+    new DataView(len.buffer).setUint32(0, valid.length, true); c.file = new Blob(['OTNHLIVE', len, valid]);
     assert.ok((await vm.runInContext('readPackHeader(file)', c)).head.config);
+    const kissa = enc({ format: 'meltune-kissa-pack', config: {}, assets: [] });
+    new DataView(len.buffer).setUint32(0, kissa.length, true); c.file = new Blob(['MTKSPACK', len, kissa]);
+    assert.equal(await vm.runInContext('readPackHeader(file)', c), null);
+  });
+  await test('Singing history is no longer cut at 5,000 entries and keeps the original time after an edit', () => {
+    const c = visualContext();
+    vm.runInContext("var big=sanitize({singLog:Array.from({length:6200},(_,i)=>({id:'x'+i,t:'2026-01-01T00:00:00.000Z',title:'曲'+i,sess:'s1',start:'2026-01-01T00:00:00.000Z',off:i,off0:i===3?1:undefined}))});", c);
+    assert.equal(vm.runInContext('big.singLog.length', c), 6200);
+    assert.equal(vm.runInContext('big.singLog[3].off0', c), 1);
+    assert.equal(vm.runInContext("'off0' in big.singLog[4]", c), false);
   });
   await test('Stopping an audio recording keeps the microphone muted', async () => {
     const c = vm.createContext({ console, setTimeout });
@@ -119,12 +130,13 @@ async function test(name, fn) {
     resume(); await Promise.all([a,b]);
     assert.equal(vm.runInContext('rec.state', c), 'idle');
   });
-  await test('Studio JSON import refuses changes during capture', async () => {
+  await test('Settings file import refuses changes during capture', async () => {
     let handler;
-    walk.simple(parse(visual), {AssignmentExpression(n){if(visual.slice(n.left.start,n.left.end)==="window.__otonohaImportJson")handler=visual.slice(n.right.start,n.right.end);}});
-    const c=vm.createContext({console,readAttempt:false,notice:'',rec:{state:'recording'},videoJob:null,studioCapturing:false,captureStarting:false,ready:true});
+    walk.simple(parse(audio), {AssignmentExpression(n){if(audio.slice(n.left.start,n.left.end)==="$('#importFile').onchange")handler=audio.slice(n.right.start,n.right.end);}});
+    assert.ok(handler);
+    const c=vm.createContext({console,readAttempt:false,notice:'',rec:{state:'recording'},videoJob:null,studioCapturing:false});
     vm.runInContext('function toast(s){notice=s};var handler='+handler,c);
-    c.event={target:{files:[{slice(){c.readAttempt=true;throw Error('must not read while recording')}}],value:'selected'}};
+    c.event={target:{files:[{name:'a.live',slice(){c.readAttempt=true;throw Error('must not read while recording')}}],value:'selected'}};
     await vm.runInContext('handler(event)',c);
     assert.equal(c.readAttempt,false);
     assert.match(c.notice,/終わってから/);

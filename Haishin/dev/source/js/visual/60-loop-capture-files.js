@@ -397,12 +397,19 @@
     if((v.status==='temp'||v.status==='failed')&&v.mem&&vidPersistent())kids.push(vidButton('ブラウザ内に保存を再試行','','',()=>vidCommit(v,true)));
     if(v.status==='orphan')kids.push(vidButton('一覧に戻す','','この動画データを一覧に登録し直します（データは変わりません）',()=>vidRestore(v)));
     if(v.status==='stored'||v.status==='orphan')kids.push(vidButton('削除','','このブラウザ内に保存した動画を消します。書き出し済みのファイルは消えません',e=>armed(e.currentTarget,'もう一度押すと削除',()=>vidRemove(v))));
-    else if(v.status==='missing'||v.status==='unknown')kids.push(vidButton('一覧から外す','','この行だけを外します。ほかの動画やファイルには触れません',e=>armed(e.currentTarget,'もう一度押すと外す',()=>{
-      state.legacyVideos=(state.legacyVideos||[]).filter(x=>x.id!==v.m.id);save();vidDrop(v)
-    })));
+    else if(v.status==='missing'||v.status==='unknown')kids.push(vidButton('一覧から外す','','この行だけを外します。ほかの動画やファイルには触れません',e=>armed(e.currentTarget,'もう一度押すと外す',()=>vidForget(v))));
     else if(v.status!=='saving')kids.push(vidButton('一覧から消す','','一時保持している動画を手放します。書き出し済みのファイルは消えません',e=>armed(e.currentTarget,'もう一度押すと消す',()=>{v.mem=null;vidDrop(v)})));
     row.replaceChildren(...kids);
     return row
+  }
+  // 実体のない行を外す。目録（vmeta）にある行は、目録の削除が終わってから画面から消す
+  async function vidForget(v){
+    if(v.cat){
+      try{await vidQueue(()=>vidTx(s=>s.delete(VMETA+v.m.id)))}
+      catch(_){toast('一覧から外せませんでした。もう一度お試しください',5000);return}
+    }
+    if((state.legacyVideos||[]).some(x=>x.id===v.m.id)){state.legacyVideos=state.legacyVideos.filter(x=>x.id!==v.m.id);saveNow()}
+    vidDrop(v)
   }
   function vidDrop(v){const i=vids.indexOf(v);if(i>=0)vids.splice(i,1);v.el?.remove();renderVideoInfo()}
   async function vidRemove(v){
@@ -487,7 +494,7 @@
       try{cat=await vidCatalog()}catch(_){}
     }
     const metaIds=new Set(cat.metas.map(x=>x.id)),list=[];
-    for(const m of cat.metas.sort((a,b)=>String(b.at).localeCompare(String(a.at))))list.push({m,mem:null,status:'stored'});
+    for(const m of cat.metas.sort((a,b)=>String(b.at).localeCompare(String(a.at))))list.push(cat.blobs.has(VBLOB+m.id)?{m,mem:null,status:'stored'}:{m,mem:null,status:'missing',cat:true});
     for(const m of state.legacyVideos||[])if(!metaIds.has(m.id))list.push({m,mem:null,status:m.missing?'missing':'unknown'});
     for(const k of cat.blobs){
       const id=String(k).slice(VBLOB.length);
@@ -523,16 +530,6 @@
   E('vidFormat').value=state.vidFormat;E('vidQuality').value=String(state.vidQuality);
   E('vidFormat').onchange=e=>{state.vidFormat=e.target.value==='webm'?'webm':'mp4';save()};
   E('vidQuality').onchange=e=>{state.vidQuality=Number(e.target.value)||8;save()};
-
-  function blobData(blob){
-    return new Promise((resolve,reject)=>{
-      const r=new FileReader();
-      r.onload=()=>resolve(r.result);
-      r.onerror=reject;
-      r.readAsDataURL(blob)
-    })
-  }
-
 
   function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg|[xy][a-z0-9]{1,8})$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)||/^scene-(?:standby|away|end)$/.test(id)||/^msc-[a-z0-9]{1,12}$/.test(id)}
   async function studioValidate(decoded){
@@ -584,52 +581,11 @@
       renderExprUI();
       paragraph=0;
       renderValues();
-      save();
+      saveNow();
   }
   function studioCollect(){syncChar();const assets={};for(const[id,b]of Object.entries(assetBlobs))if(!/^png[0-3]$/.test(id))assets[id]=b;for(const[id,b]of Object.entries(charBlobs))assets[id]=b;const out=JSON.parse(JSON.stringify(state));delete out.legacyVideos;delete out.videos;return {state:out,assets}}
   window.__otonohaVideoRec=()=>studioCapturing||captureStarting;
   window.__otonohaStudio={collect:studioCollect,validate:studioValidate,apply:async(s,d)=>{await studioApply(s,d);toast('立ち絵・映像設定も読み込みました')},busy:()=>studioCapturing||captureStarting};
-
-  window.__otonohaImportJson=async e=>{
-    const f=e.target.files[0];
-    if(!f)return;
-    if(rec.state!=='idle'||videoJob||studioCapturing||captureStarting){
-      e.target.value='';
-      toast('収録・動画書き出しが終わってから読み込んでください');
-      return
-    }
-    try{
-      if(!ready)throw Error('準備中です');
-      {
-        const mg=String.fromCharCode(...new Uint8Array(await f.slice(0,8).arrayBuffer()));
-        if(mg==='MTKSPACK'||mg==='OTNHLIVE'||/\.(kissa|live)$/i.test(f.name)){
-          e.target.value='';
-          const h=document.getElementById('importFile').onchange;
-          if(h)await h({target:{files:[f],value:''}});
-          return
-        }
-      }
-      if(f.size>180*1024*1024)throw Error('設定ファイルが大きすぎます');
-      const data=JSON.parse(await f.text());
-      if(data.format!=='otonoha-visual-studio'||data.version!==1||!data.state||!data.assets)throw Error('対応するスタジオ設定ではありません');
-      const decoded={};
-      for(const[id,url]of Object.entries(data.assets)){
-        if(typeof url!=='string'||!/^data:image\/(png|webp|jpeg);base64,/.test(url))throw Error('未対応の画像データです');
-        decoded[id]=dataUrlToBlob(url)
-      }
-      await studioValidate(decoded);
-      if(!await askConfirm('現在の立ち絵・名義・台本・映像設定を、読み込む内容で置き換えますか？\n効果音・BGMは変更しません。','置き換える','スタジオ設定の読み込み')){
-        toast('読み込みを取り消しました');
-        return
-      }
-      await studioApply(data.state,decoded);
-      toast('スタジオ設定を読み込みました')
-    }catch(err){
-      toast('読み込めませんでした：'+err.message,6000)
-    }finally{
-      e.target.value=''
-    }
-  };
 
   window.addEventListener('beforeunload',e=>{
     if(studioCapturing||captureStarting){

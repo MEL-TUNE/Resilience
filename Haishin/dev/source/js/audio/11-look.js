@@ -10,7 +10,7 @@ function lookForExport(){
 
 function packFileName(){
   const base=(lookSaved.title||'settings').replace(/[\\/:*?"<>|（）()\s]+/g,'_').replace(/^_+|_+$/g,'')||'settings';
-  return base+'_settings'+PACK_EXT
+  return base+'_settings'+LIVE_EXT
 }
 
 function lookRenderUI(){
