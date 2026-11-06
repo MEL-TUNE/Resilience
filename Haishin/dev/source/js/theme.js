@@ -19,7 +19,15 @@ const LOOK_PRESETS={
 
   strawberry:{name:'いちごパフェ',bg:'#f8dee6',paper:'#fff8fa',accent:'#de5b82',decor:'#8b5a48'},
 
-  hotchoco:{name:'ホットショコラ',bg:'#36271f',paper:'#46342b',accent:'#d8a873',decor:'#c2775c'}
+  hotchoco:{name:'ホットショコラ',bg:'#36271f',paper:'#46342b',accent:'#d8a873',decor:'#c2775c'},
+
+  purin:{name:'プリンアラモード',bg:'#f5e3b8',paper:'#fffaee',accent:'#93542a',decor:'#d73a4d'},
+
+  omurice:{name:'オムライス',bg:'#fbe7a8',paper:'#fffcf0',accent:'#cc4630',decor:'#5f9142'},
+
+  coffeejelly:{name:'コーヒーゼリー',bg:'#1b1512',paper:'#2a211c',accent:'#ecdcc2',decor:'#a46a43'},
+
+  nightsoda:{name:'夜のクリームソーダ',bg:'#10221f',paper:'#1b322e',accent:'#86d8ac',decor:'#ee5468'}
 };
 
 const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];

@@ -236,18 +236,27 @@ body{padding-top:var(--mini-h,0px)}
 .scene-font-row .studio-field{margin:0}
 .live-console{border:2px solid var(--scene-c,#d64545);border-radius:14px;padding:12px;margin:10px 0;background:var(--hi)}
 body{--scene-c:#d64545}
-body[data-cur-scene="standby"]{--scene-c:#d8901a}
+body[data-cur-scene="standby"]{--scene-c:#a96c0c}
 body[data-cur-scene="away"]{--scene-c:#2f78c4}
 body[data-cur-scene="end"]{--scene-c:#7b5ea7}
+:root[data-tone="dark"] body{--scene-c:#ff7f72}
+:root[data-tone="dark"] body[data-cur-scene="standby"]{--scene-c:#f2b04a}
+:root[data-tone="dark"] body[data-cur-scene="away"]{--scene-c:#73b3ff}
+:root[data-tone="dark"] body[data-cur-scene="end"]{--scene-c:#bca2f2}
 .onair-head{display:flex;align-items:center;gap:10px;margin:0 0 10px}
 .onair-head strong{font-size:20px;letter-spacing:.06em;color:var(--scene-c)}
 .onair-lamp{width:16px;height:16px;border-radius:50%;background:var(--scene-c);box-shadow:0 0 0 4px color-mix(in srgb,var(--scene-c) 25%,transparent)}
 .scene-switch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .scene-switch button{--c:#d64545;border:2px solid var(--c);border-radius:12px;padding:14px 6px;font-size:16px;font-weight:700;background:var(--hi);color:var(--c);cursor:pointer}
-.scene-switch button[data-scene="standby"]{--c:#d8901a}
+.scene-switch button[data-scene="standby"]{--c:#a96c0c}
 .scene-switch button[data-scene="away"]{--c:#2f78c4}
 .scene-switch button[data-scene="end"]{--c:#7b5ea7}
 .scene-switch button[aria-pressed="true"]{background:var(--c);color:#fff;box-shadow:0 3px 0 color-mix(in srgb,var(--c) 55%,#000)}
+:root[data-tone="dark"] .scene-switch button{--c:#ff7f72}
+:root[data-tone="dark"] .scene-switch button[data-scene="standby"]{--c:#f2b04a}
+:root[data-tone="dark"] .scene-switch button[data-scene="away"]{--c:#73b3ff}
+:root[data-tone="dark"] .scene-switch button[data-scene="end"]{--c:#bca2f2}
+:root[data-tone="dark"] .scene-switch button[aria-pressed="true"]{color:#1d1411}
 .sound-stop{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--a-p-20)}
 .sound-now{display:flex;gap:6px;align-items:center;min-width:0;font-size:13px}
 .sound-now span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
