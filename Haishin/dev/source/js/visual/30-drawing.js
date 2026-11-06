@@ -432,8 +432,7 @@
       let size=p.size*(.5+p.depth*.9)*S.fxSize/100*(H>W?1.1:1),
         x=p.x,
         y=p.y,
-        rot=p.r,
-        flip=1;
+        rot=p.r;
 
       if(beh==='roll'){
         const step=size*(4.4+rnd(p.i+.6)*2.2),
@@ -442,7 +441,8 @@
         rot=p.dir*p.dist/(size*.95)
       }
 
-      if(beh==='flutter')flip=Math.max(.14,Math.abs(Math.cos(t*2.2*(.6+p.depth*.4)+p.phase)));else if(beh==='leaf')flip=.45+.55*Math.abs(Math.cos(t*1.1+p.phase));
+      // ひらひら・葉っぱの揺れは回転だけで表す（画像の縦横比は変えない）
+      if(beh==='flutter')rot+=Math.sin(t*2.2*(.6+p.depth*.4)+p.phase)*.38;else if(beh==='leaf')rot+=Math.sin(t*1.1+p.phase)*.28;
 
       const faceMask=Math.exp(-(((x-geo.cx)/(185*faceR))**2+((y-geo.faceY)/(170*faceR))**2));
 
@@ -465,7 +465,6 @@
       g.translate(x,y);
       g.rotate(rot+(beh==='flutter'?Math.sin(t/4.2+p.phase)*.22:0));
       g.globalAlpha=alpha;
-      if(flip!==1)g.scale(flip,1);
 
       if(kind==='image'){
         if(pics.length){
