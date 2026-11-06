@@ -1,7 +1,7 @@
 /* マスコット */
 
   let mscSel='',mscLast=0;const mscEnv={},mscRun={};
-  const MSC_MAX=10,MSC_ON_SCREEN=2;
+  const MSC_MAX=30,MSC_ON_SCREEN=4;
   // マスコットは名義ごと（owner＝名義のid）。持ち主のないものは、画面に出していた名義（なければ先頭の名義）のものにする
   function claimMascots(){
     const ps=state.profiles||[];
@@ -44,7 +44,7 @@
       else if(m.motion==='sway'){const s=Math.sin(t*TAU*.45*sp+seed);rot=s*6*deg*a;dy=-Math.abs(s)*3*u*a}
       else if(m.motion==='hop'){const ph=(t*1.5*sp+seed)%1;dy=-4*ph*(1-ph)*18*u*a}
       else if(m.motion==='shake'){const s=Math.floor(t*11*sp);dx=(rnd(s+seed)-.5)*10*u*a;dy=(rnd(s+seed+.31)-.5)*6*u*a;rot=(rnd(s+seed+.67)-.5)*8*deg*a}
-      const on=state.speaker===m.id&&m.talk,target=on?Math.max(talkEnv,mouth?.6:0):0,e0=mscEnv[m.id]||0,e1=e0+(target-e0)*Math.min(1,dtp*(target>e0?14:5));
+      const on=m.kind==='mini'?(state.speaker==='self'&&m.talk):(state.speaker===m.id&&m.talk),target=on?Math.max(talkEnv,mouth?.6:0):0,e0=mscEnv[m.id]||0,e1=e0+(target-e0)*Math.min(1,dtp*(target>e0?14:5));
       mscEnv[m.id]=e1;
       if(e1>.01){dy-=e1*(5+Math.abs(Math.sin(t*TAU*4.2))*10)*u;rot+=Math.sin(t*TAU*4.2)*e1*3*deg}
       const spc=avSprite(im,{x:0,y:0,w:im.width,h:im.height},f);
@@ -92,7 +92,7 @@
     g.restore()
   }
   function renderSpeakerBar(){
-    const bar=E('speakerBar'),list=myMascots().filter(m=>m.talk&&m.show);
+    const bar=E('speakerBar'),list=myMascots().filter(m=>m.talk&&m.show&&m.kind!=='mini');
     if(state.speaker!=='self'&&!list.some(m=>m.id===state.speaker))state.speaker='self';
     bar.hidden=!list.length;bar.replaceChildren();
     if(!list.length)return;
@@ -111,20 +111,68 @@
     const list=myMascots();
     if(!list.some(m=>m.id===mscSel))mscSel=list[0]?.id||'';
     const chips=E('mascotChips');chips.replaceChildren();
-    for(const m of list){const b=document.createElement('button');b.type='button';b.textContent=m.name+(images['msc-'+m.id]?'':'（画像なし）');b.classList.toggle('selected',m.id===mscSel);b.onclick=()=>{mscSel=m.id;renderMascotUI()};chips.append(b)}
+    for(const m of list){const b=document.createElement('button');b.type='button';b.textContent=(m.kind==='mini'?'ミニキャラ：':'')+m.name+(images['msc-'+m.id]?'':'（画像なし）');b.classList.toggle('selected',m.id===mscSel);b.onclick=()=>{mscSel=m.id;renderMascotUI()};chips.append(b)}
     const m=mscCur();
     E('mascotEdit').hidden=!m;E('mascotDel').disabled=!m;
     if(m){
       if(document.activeElement!==E('mscName'))E('mscName').value=m.name;
+      E('mscKind').value=m.kind==='mini'?'mini':'mascot';
+      E('mscTalkText').textContent=m.kind==='mini'?'自分の声で動く（話者が「本人」のとき）':'話者ボタンに出す（声でぴこぴこ）';
+      E('mscOwnerSel').replaceChildren(...(state.profiles||[]).map(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;o.selected=p.id===m.owner;return o}));
       E('mscShow').checked=m.show;E('mscTalk').checked=m.talk;E('mscMotion').value=m.motion;E('mscFace').value=m.face||'none';
       for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])if(document.activeElement!==E(id))E(id).value=m[k];
       E('mscAmpVal').textContent=m.amp+'%';E('mscSpeedVal').textContent=m.speed+'%';E('mscSizeVal').textContent=m.size+'%';
       E('mscFileName').textContent=assetBlobs['msc-'+m.id]?(state.assetNames['msc-'+m.id]||'画像'):'未登録'
     }
     renderSpeakerBar();
-    renderMascotBar()
+    renderMascotBar();
+    renderMscAll()
   }
 
+  // 名義の付け替え。移した先では画面に出さない状態から始める（出す・出さないは名義ごとの設定のため）
+  function moveMascot(m,owner){
+    if(!m||m.owner===owner||!(state.profiles||[]).some(p=>p.id===owner))return false;
+    const to=state.profiles.find(p=>p.id===owner);
+    if((state.mascots||[]).filter(x=>x.owner===owner).length>=MSC_MAX){toast('「'+to.name+'」のマスコット・ミニキャラはすでに'+MSC_MAX+'体あります',5000);return false}
+    for(const p of state.profiles)if(Array.isArray(p.mscShow))p.mscShow=p.mscShow.filter(id=>id!==m.id);
+    m.owner=owner;m.show=false;
+    if(state.speaker===m.id)state.speaker='self';
+    return true
+  }
+  let mscThumbs=[];
+  function renderMscAll(){
+    const box=E('mscAllList');
+    if(!box)return;
+    E('mscAllCount').textContent=(state.mascots||[]).length+'体';
+    if(!E('mscAll').open){box.replaceChildren();return}
+    for(const u of mscThumbs)URL.revokeObjectURL(u);
+    mscThumbs=[];
+    const ps=state.profiles||[];
+    const rows=(state.mascots||[]).map(m=>{
+      const li=document.createElement('li');
+      const b=assetBlobs['msc-'+m.id];
+      const im=document.createElement(b?'img':'span');
+      im.className='msc-thumb';
+      if(b){const u=URL.createObjectURL(b);mscThumbs.push(u);im.src=u;im.alt=''}else im.textContent='画像なし';
+      const name=document.createElement('span');name.className='sb-name';name.textContent=(m.kind==='mini'?'ミニキャラ：':'')+m.name;
+      const sel=document.createElement('select');sel.setAttribute('aria-label','「'+m.name+'」の名義');
+      sel.append(...ps.map(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;o.selected=p.id===m.owner;return o}));
+      sel.onchange=()=>{if(moveMascot(m,sel.value)){save();syncMascotsFromProfile();renderMascotUI();toast('「'+m.name+'」を「'+ps.find(p=>p.id===sel.value).name+'」へ移しました',3000)}else sel.value=m.owner};
+      li.append(im,name,sel);
+      return li
+    });
+    box.replaceChildren(...rows);
+    if(!rows.length)box.append(Object.assign(document.createElement('li'),{className:'sb-empty',textContent:'まだ登録がありません'}))
+  }
+  E('mscAll').ontoggle=renderMscAll;
+  E('mscOwnerSel').onchange=e=>{
+    const m=mscCur();if(!m)return;
+    const to=(state.profiles||[]).find(p=>p.id===e.target.value);
+    if(!moveMascot(m,e.target.value)){e.target.value=m.owner;return}
+    save();renderMascotUI();
+    toast('「'+m.name+'」を「'+to.name+'」へ移しました。「表示する名義」で「'+to.name+'」を選ぶと編集できます',5000)
+  };
+  E('mscKind').onchange=e=>{const m=mscCur();if(m){m.kind=e.target.value==='mini'?'mini':'mascot';if(m.kind==='mini'&&state.speaker===m.id)state.speaker='self';save();renderMascotUI()}};
   function syncMascotsFromProfile(){
     const p=curProfile(),list=myMascots();
     if(!p)return;
@@ -134,7 +182,7 @@
   }
   function shownCount(except){return myMascots().filter(m=>m.show&&m!==except).length}
   function setMascotShow(m,on){
-    if(on&&!m.show&&shownCount(m)>=MSC_ON_SCREEN){toast('画面に出せるマスコットは同時に2体までです。ほかのマスコットを先に外してください',4500);return false}
+    if(on&&!m.show&&shownCount(m)>=MSC_ON_SCREEN){toast('画面に出せるのは同時に'+MSC_ON_SCREEN+'体までです。ほかのマスコット・ミニキャラを先に外してください',4500);return false}
     m.show=on;if(!on&&state.speaker===m.id)state.speaker='self';
     const p=curProfile();if(p)p.mscShow=myMascots().filter(x=>x.show).map(x=>x.id).slice(0,MSC_ON_SCREEN);
     save();renderMascotUI();return true
@@ -147,11 +195,11 @@
   }
   E('mascotAdd').onclick=()=>{
     state.mascots=state.mascots||[];
-    if(myMascots().length>=MSC_MAX){toast('マスコットは1つの名義につき10体までです');return}
+    if(myMascots().length>=MSC_MAX){toast('マスコット・ミニキャラは1つの名義につき'+MSC_MAX+'体までです');return}
     let id;do id=Math.random().toString(36).slice(2,8);while(state.mascots.some(m=>m.id===id));
     const n=myMascots().length;
     const pp=curProfile(),canShow=shownCount()<MSC_ON_SCREEN;
-    state.mascots.push({id,name:'マスコット'+(n+1),show:canShow,owner:state.profileId,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40,face:'none'});
+    state.mascots.push({id,name:'マスコット'+(n+1),kind:'mascot',show:canShow,owner:state.profileId,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40,face:'none'});
     if(canShow&&pp){pp.mscShow=[...(pp.mscShow||[]),id].slice(0,MSC_ON_SCREEN)}
     mscSel=id;save();renderMascotUI();toast('マスコットを追加しました。画像を登録してください')
   };

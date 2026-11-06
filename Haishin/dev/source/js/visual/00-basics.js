@@ -252,7 +252,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     out.vidFormat=v.vidFormat==='webm'?'webm':'mp4';
     out.vidQuality=[4.5,8,16].includes(Number(v.vidQuality))?Number(v.vidQuality):8;
     {const MV=['float','sway','hop','run','shake','still'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];
-     if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,200)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40),face:['none','right','left'].includes(m.face)?m.face:'none',owner:typeof m.owner==='string'&&/^[a-z0-9]{1,16}$/.test(m.owner)?m.owner:''})}
+     if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,600)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40),face:['none','right','left'].includes(m.face)?m.face:'none',kind:m.kind==='mini'?'mini':'mascot',owner:typeof m.owner==='string'&&/^[a-z0-9]{1,16}$/.test(m.owner)?m.owner:''})}
      
      out.speaker=typeof v.speaker==='string'&&(v.speaker==='self'||out.mascots.some(m=>m.id===v.speaker))?v.speaker:'self';
      out.sceneBoost=num(v.sceneBoost,0,12,6)}
@@ -262,7 +262,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
       chars:Array.isArray(p.chars)?p.chars.filter(c=>typeof c==='string'&&/^[a-z0-9]{1,24}$/.test(c)).slice(0,60):[],
       cur:typeof p.cur==='string'?p.cur:'',
       snap:p.snap&&typeof p.snap==='object'?p.snap:{},
-      mscShow:Array.isArray(p.mscShow)?p.mscShow.filter(x=>typeof x==='string'&&/^[a-z0-9]{1,12}$/.test(x)).slice(0,2):null
+      mscShow:Array.isArray(p.mscShow)?p.mscShow.filter(x=>typeof x==='string'&&/^[a-z0-9]{1,12}$/.test(x)).slice(0,4):null
     }));
     if(v.chars&&typeof v.chars==='object'){
       out.chars={};
