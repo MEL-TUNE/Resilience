@@ -87,11 +87,9 @@
     popS=0,
     singPh=0,
     hopPh=0,
-    stepPh=0,
+    wanPh=0,
     iyaPh=0;
   const mw={sing:0,hop:0,shake:0,wander:0,iya:0};
-  // 右往左往：左右の行き先へゆっくり歩いて止まり、ときどき途中で引き返す（-1〜1の位置）
-  const wd={from:0,to:0,t:0,dur:1,wait:.6};
 
   function vnoise(x,seed){
     const i=Math.floor(x),
@@ -153,35 +151,24 @@
       dy+=y*kH
     }
 
+    // 右往左往：周期の違うゆっくりした揺れを重ね、止まらずに左右をうろうろする。速さも向きの変わり目もなめらかに続く
     if(mw.wander>.001){
-      const kW=state.motionWander/100,R=W*.15*kW;
-      let v=0;
-      if(wd.wait>0)wd.wait-=dtp;
-      else{
-        wd.t+=dtp;
-        if(wd.t>=wd.dur){
-          wd.from=wd.to;wd.t=0;wd.wait=.45+Math.random()*1.3;
-          let nx=Math.random()<.3?wd.from+(Math.random()-.5)*.6:-Math.sign(wd.from||(Math.random()-.5))*(.35+Math.random()*.65);
-          wd.to=Math.max(-1,Math.min(1,nx));
-          wd.dur=1.3+Math.abs(wd.to-wd.from)*1.2
-        }
-      }
-      const p=wd.wait>0?1:Math.min(1,wd.t/wd.dur),s=p*p*(3-2*p),x=wd.wait>0?wd.to:wd.from+(wd.to-wd.from)*s;
-      if(wd.wait<=0)v=(wd.to-wd.from)*6*p*(1-p)/wd.dur;
-      const sp=Math.abs(v)*R;
-      stepPh+=dtp*sp/Math.max(20*u,geo.h*.07);
-      dx+=x*R*mw.wander;
-      dy-=Math.abs(Math.sin(stepPh*Math.PI))*Math.min(1,sp/(60*u))*2.4*u*mw.wander;
-      rot+=Math.max(-1,Math.min(1,v*R/(W*.12)))*.02*Math.min(1.4,kW+.2)*mw.wander
+      const kW=state.motionWander/100*mw.wander,R=W*.13;
+      wanPh+=dtp;
+      const p=wanPh,
+        x=.62*Math.sin(p*TAU/7.3)+.28*Math.sin(p*TAU/4.4+1.7)+.10*Math.sin(p*TAU/2.9+.4),
+        v=(.62*Math.cos(p*TAU/7.3)*TAU/7.3+.28*Math.cos(p*TAU/4.4+1.7)*TAU/4.4+.10*Math.cos(p*TAU/2.9+.4)*TAU/2.9);
+      dx+=x*R*kW;
+      rot+=v*.012*kW
     }
 
+    // いやいや：小刻みに左右へ。速さと大きさをゆっくり変わる揺らぎで少しずつずらし、規則的に見えないようにする
     if(mw.iya>.001){
       const kI=state.motionIya/100*mw.iya;
-      iyaPh+=dtp;
-      const c=iyaPh%2.1,env=c<1.3?Math.pow(Math.sin(Math.PI*c/1.3),.6):0,s=Math.sin(c*Math.PI*2*2.3);
-      rot+=s*env*13*u/arm*kI;
-      dx-=s*env*2.4*u*kI;
-      dy+=env*1.4*u*kI
+      iyaPh+=dtp*TAU*(2.4+.75*vnoise(t*1.1,.23));
+      const amp=.7+.3*vnoise(t*.8,.91),s=Math.sin(iyaPh);
+      dx+=s*amp*6*u*kI;
+      rot+=Math.sin(iyaPh-.5)*amp*7*u/arm*kI
     }
 
     if(mw.shake>.001){
