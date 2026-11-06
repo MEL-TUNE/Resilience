@@ -25,7 +25,7 @@
       if(!im)continue;
       const seed=(m.id.charCodeAt(0)+m.id.charCodeAt(m.id.length-1))*.173,a=m.amp/100,sp=m.speed/100,
         h=H*m.size/100,f=h/im.height,w=im.width*f;
-      let x=W/2+m.x*W/200,y=H/2+m.y*H/200,dx=0,dy=0,rot=0,flip=false,sx=1,sy=1;
+      let x=W/2+m.x*W/200,y=H/2+m.y*H/200,dx=0,dy=0,rot=0,sx=1,sy=1;
       if(m.motion==='run'){
         const r=mscRun[m.id]||(mscRun[m.id]={x,y,tx:x,ty:y,wait:.4,dir:1,ph:0});
         const minX=w*.38,maxX=Math.max(minX,W-w*.38),minY=h*.38,maxY=Math.max(minY,H-h*.38),cl=(v,a,b)=>Number.isFinite(v)?Math.max(a,Math.min(b,v)):(a+b)/2;
@@ -38,7 +38,6 @@
           else{r.x+=ddx/dist*v*dtp;r.y+=ddy/dist*v*dtp;if(Math.abs(ddx)>.5)r.dir=ddx>0?1:-1;r.ph+=dtp*v/(26*u)}}
         x=r.x;y=r.y;
         if(r.wait<=0){dy=-Math.abs(Math.sin(r.ph))*10*u*a;rot=Math.sin(r.ph*2)*2.5*deg*a}
-        flip=(m.face==='right'&&r.dir<0)||(m.face==='left'&&r.dir>0)
       }else delete mscRun[m.id];
       // ぴょんぴょん戯れる：小さく跳ねる回数をまとめて繰り返し、ときどき横へ跳んで向きを変える。着地でむにっと縮む
       if(m.motion==='play'){
@@ -62,7 +61,6 @@
         const sq=r.sq*(r.wait>0?1:Math.max(0,1-p*4));
         sy=1-.12*sq*a;sx=1+.08*sq*a;
         if(p>0&&p<.5){sy+=.05*a*Math.sin(Math.PI*p*2);sx-=.03*a*Math.sin(Math.PI*p*2)}
-        flip=(m.face==='right'&&r.dir<0)||(m.face==='left'&&r.dir>0)
       }else delete mscPlay[m.id];
       // お散歩：決めた高さのまま左右へてくてく歩き、ときどき立ち止まって見回し、端や気まぐれで引き返す
       if(m.motion==='walk'){
@@ -80,7 +78,6 @@
           rot=Math.sin(r.ph*Math.PI)*4*deg*a
         }
         x=r.x;
-        flip=(m.face==='right'&&r.dir<0)||(m.face==='left'&&r.dir>0)
       }else delete mscWalk[m.id];
       if(m.motion==='float'){dy=Math.sin(t*TAU*.3*sp+seed)*12*u*a;dx=Math.sin(t*TAU*.17*sp+seed*2)*6*u*a;rot=Math.sin(t*TAU*.23*sp+seed)*3*deg*a}
       else if(m.motion==='sway'){const s=Math.sin(t*TAU*.45*sp+seed);rot=s*6*deg*a;dy=-Math.abs(s)*3*u*a}
@@ -91,7 +88,7 @@
       if(e1>.01){dy-=e1*(5+Math.abs(Math.sin(t*TAU*4.2))*10)*u;rot+=Math.sin(t*TAU*4.2)*e1*3*deg}
       const spc=avSprite(im,{x:0,y:0,w:im.width,h:im.height},f);
       const pvy=m.motion==='play'||m.motion==='walk'?h/2:0;
-      g.save();g.translate(x+dx,y+dy+pvy);g.rotate(rot+(m.tilt||0)*deg);g.scale((flip!==!!m.mirror?-1:1)*sx,sy);if(pvy)g.translate(0,-pvy);g.imageSmoothingEnabled=true;g.imageSmoothingQuality=state.light?'medium':'high';
+      g.save();g.translate(x+dx,y+dy+pvy);g.rotate(rot+(m.tilt||0)*deg);if(sx!==1||sy!==1)g.scale(sx,sy);if(pvy)g.translate(0,-pvy);g.imageSmoothingEnabled=true;g.imageSmoothingQuality=state.light?'medium':'high';
       if(spc)g.drawImage(spc.c,-spc.dw/2,-spc.dh/2);else g.drawImage(im,-w/2,-h/2,w,h);
       g.restore();
       m._box={x:x-w/2,y:y-h/2,w,h}
@@ -162,8 +159,8 @@
       E('mscKind').value=m.kind==='mini'?'mini':'mascot';
       E('mscTalkText').textContent=m.kind==='mini'?'自分の声で動く（話者が「本人」のとき）':'話者ボタンに出す（声でぴこぴこ）';
       E('mscOwnerSel').replaceChildren(...(state.profiles||[]).map(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;o.selected=p.id===m.owner;return o}));
-      E('mscTilt').value=m.tilt||0;E('mscTiltVal').textContent=(m.tilt||0)+'°';E('mscMirror').checked=!!m.mirror;
-      E('mscShow').checked=m.show;E('mscTalk').checked=m.talk;E('mscMotion').value=m.motion;E('mscFace').value=m.face||'none';
+      E('mscTilt').value=m.tilt||0;E('mscTiltVal').textContent=(m.tilt||0)+'°';
+      E('mscShow').checked=m.show;E('mscTalk').checked=m.talk;E('mscMotion').value=m.motion;
       for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])if(document.activeElement!==E(id))E(id).value=m[k];
       E('mscAmpVal').textContent=m.amp+'%';E('mscSpeedVal').textContent=m.speed+'%';E('mscSizeVal').textContent=m.size+'%';
       E('mscFileName').textContent=assetBlobs['msc-'+m.id]?(state.assetNames['msc-'+m.id]||'画像'):'未登録'
@@ -243,7 +240,7 @@
     let id;do id=Math.random().toString(36).slice(2,8);while(state.mascots.some(m=>m.id===id));
     const n=myMascots().length;
     const pp=curProfile(),canShow=shownCount()<MSC_ON_SCREEN;
-    state.mascots.push({id,name:'マスコット'+(n+1),kind:'mascot',show:canShow,owner:state.profileId,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40,face:'none'});
+    state.mascots.push({id,name:'マスコット'+(n+1),kind:'mascot',show:canShow,owner:state.profileId,talk:false,motion:'float',amp:100,speed:100,size:22,x:Math.max(-90,60-n*18),y:40});
     if(canShow&&pp){pp.mscShow=[...(pp.mscShow||[]),id].slice(0,MSC_ON_SCREEN)}
     mscSel=id;save();renderMascotUI();toast('マスコットを追加しました。画像を登録してください')
   };
@@ -260,10 +257,8 @@
   };
   E('mscName').oninput=e=>{const m=mscCur();if(m){m.name=e.target.value.slice(0,20)||'マスコット';save();renderMascotUI()}};
   E('mscShow').onchange=e=>{const m=mscCur();if(m&&!setMascotShow(m,e.target.checked))e.target.checked=m.show};
-  E('mscFace').onchange=e=>{const m=mscCur();if(m){m.face=e.target.value;save()}};
   E('mscTalk').onchange=e=>{const m=mscCur();if(m){m.talk=e.target.checked;save();renderMascotUI()}};
   E('mscMotion').onchange=e=>{const m=mscCur();if(m){m.motion=e.target.value;save()}};
   E('mscTilt').addEventListener('input',e=>{const m=mscCur();if(m){m.tilt=Math.max(-180,Math.min(180,Number(e.target.value)||0));E('mscTiltVal').textContent=m.tilt+'°';save()}});
   E('mscTilt').addEventListener('dblclick',()=>{const m=mscCur();if(m){m.tilt=0;E('mscTilt').value=0;E('mscTiltVal').textContent='0°';save()}});
-  E('mscMirror').onchange=e=>{const m=mscCur();if(m){m.mirror=e.target.checked;save()}};
   for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])E(id).addEventListener('input',e=>{const m=mscCur();if(m){m[k]=Number(e.target.value);save();renderMascotUI()}});
