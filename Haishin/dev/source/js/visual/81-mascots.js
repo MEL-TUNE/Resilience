@@ -59,22 +59,29 @@
         dy=-4*p*(1-p)*r.h;
         rot=(r.tx-r.fx)/(60*u)*8*deg*Math.sin(Math.PI*p);
       }else delete mscPlay[m.id];
-      // お散歩：決めた高さのまま左右へてくてく歩き、ときどき立ち止まって見回し、端や気まぐれで引き返す
+      // お散歩：ぴょこぴょこ跳ねながら、行き先を次々に変えてあちこちへ進む。向きはなめらかに曲がって変わる
       if(m.motion==='walk'){
-        const lo=w*.5,hi=Math.max(lo,W-w*.5);
-        const r=mscWalk[m.id]||(mscWalk[m.id]={x:Math.max(lo,Math.min(hi,x)),dir:Math.random()<.5?-1:1,ph:0,wait:0,look:0,go:3+Math.random()*4});
-        r.x=Math.max(lo,Math.min(hi,r.x));
-        if(drag&&drag.target===m){r.x=x;r.wait=.8}
-        if(r.wait>0){r.wait-=dtp;r.look+=dtp;rot=Math.sin(r.look*TAU*.7)*4*deg*a;dy=0}
+        const minX=w*.5,maxX=Math.max(minX,W-w*.5),minY=h*.5,maxY=Math.max(minY,H-h*.5),cl=(v,lo,hi)=>Number.isFinite(v)?Math.max(lo,Math.min(hi,v)):(lo+hi)/2;
+        const r=mscWalk[m.id]||(mscWalk[m.id]={x,y,tx:x,ty:y,ang:Math.random()*TAU,ph:0,wait:0,left:0});
+        r.x=cl(r.x,minX,maxX);r.y=cl(r.y,minY,maxY);
+        if(drag&&drag.target===m){r.x=x;r.y=y;r.tx=x;r.ty=y;r.wait=.6}
+        const pick=()=>{const R=Math.min(W,H)*(.12+Math.random()*.24),a2=r.ang+(Math.random()-.5)*Math.PI*1.9;r.tx=cl(r.x+Math.cos(a2)*R,minX,maxX);r.ty=cl(r.y+Math.sin(a2)*R,minY,maxY);r.left=.9+Math.random()*1.8};
+        r.ph+=dtp*sp/.36;
+        const hp=r.ph%1;
+        if(r.wait>0){r.wait-=dtp;dy=-4*hp*(1-hp)*6*u*a;rot=Math.sin(r.ph*Math.PI)*3*deg*a;if(r.wait<=0)pick()}
         else{
-          const v=48*u*sp;
-          r.x+=r.dir*v*dtp;r.ph+=dtp*v/(14*u);r.go-=dtp;
-          if(r.x<=lo||r.x>=hi){r.dir=r.x<=lo?1:-1}
-          if(r.go<=0){r.go=2.5+Math.random()*5;if(Math.random()<.55){r.wait=.7+Math.random()*1.6;r.look=0}if(Math.random()<.35)r.dir*=-1}
-          dy=-Math.abs(Math.sin(r.ph*Math.PI))*5*u*a;
-          rot=Math.sin(r.ph*Math.PI)*4*deg*a
+          const ddx=r.tx-r.x,ddy=r.ty-r.y,dist=Math.hypot(ddx,ddy);
+          r.left-=dtp;
+          if(dist<14*u||r.left<=0){if(Math.random()<.18)r.wait=.4+Math.random()*.7;else pick()}
+          const want=Math.atan2(ddy,ddx),da=Math.atan2(Math.sin(want-r.ang),Math.cos(want-r.ang));
+          r.ang+=Math.max(-1,Math.min(1,da))*Math.min(1,dtp*3.4);
+          const v=62*u*sp*(.75+.5*Math.sin(Math.PI*hp));
+          r.x=cl(r.x+Math.cos(r.ang)*v*dtp,minX,maxX);r.y=cl(r.y+Math.sin(r.ang)*v*dtp,minY,maxY);
+          if(r.x<=minX||r.x>=maxX||r.y<=minY||r.y>=maxY)pick();
+          dy=-4*hp*(1-hp)*13*u*a;
+          rot=Math.cos(r.ang)*Math.sin(Math.PI*hp)*6*deg*a
         }
-        x=r.x;
+        x=r.x;y=r.y;
       }else delete mscWalk[m.id];
       if(m.motion==='float'){dy=Math.sin(t*TAU*.3*sp+seed)*12*u*a;dx=Math.sin(t*TAU*.17*sp+seed*2)*6*u*a;rot=Math.sin(t*TAU*.23*sp+seed)*3*deg*a}
       else if(m.motion==='sway'){const s=Math.sin(t*TAU*.45*sp+seed);rot=s*6*deg*a;dy=-Math.abs(s)*3*u*a}

@@ -931,7 +931,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.7.5 / 画像の左右反転・ゆがみをすべて撤去</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.7.6 / 右往左往・いやいや・お散歩の動きを作り直し</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -1080,7 +1080,7 @@ lookPaint(look);
 <p class="studio-note">動画の透過保持は保証しません。背景を抜く収録・配信には緑／青を選んでください。</p>
 </aside>
 </div></section>
-<section class="studio-card mascot-card grp-visual" data-modes="stream video" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット・ミニキャラ</h2><div class="msc-owner"><span class="studio-mini">表示する名義</span><span id="mscOwner" class="char-chips"></span></div><p class="studio-note">立ち絵とは別に、小さな画像を名義ごとに最大30体まで登録できます（いま選んでいる名義のものが並びます）。種類は「マスコット」と「ミニキャラ（自分）」から選べます。ミニキャラは、話者が「本人」のときに自分の声で動きます。画面に出すのは名義ごとに4体までで、下の「この名義で画面に出すもの」で選びます。別の名義に入ってしまったものは、編集欄の「名義」か、下の「すべての名義をまとめて見る」で移せます。マスコットは立ち絵の後ろに表示します。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div class="msc-pick"><strong>この名義で画面に出すもの（4体まで）</strong><div class="studio-row mascot-bar" role="group" aria-label="画面に出すマスコット" id="mascotBar"></div></div><div class="studio-mini">登録したマスコット・ミニキャラ（押すと下で編集）</div><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ 追加</button><button type="button" id="mascotDel">これを削除</button></div><details class="msc-all" id="mscAll"><summary>すべての名義をまとめて見る（<span id="mscAllCount">0体</span>）・名義を移す</summary><p class="studio-mini">右の欄で名義を選ぶと、その名義へ移ります。移した先では「画面に出さない」状態になります。</p><ul id="mscAllList" class="sb-list msc-all-list"></ul></details><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><label class="studio-field">種類<select id="mscKind"><option value="mascot">マスコット</option><option value="mini">ミニキャラ（自分）</option></select></label><label class="studio-field">名義<select id="mscOwnerSel" aria-label="このマスコットの名義"></select></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> この名義で画面に出す（4体まで）</label><label class="studio-field"><input type="checkbox" id="mscTalk"> <span id="mscTalkText">話者ボタンに出す（声でぴこぴこ）</span></label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="play">ぴょんぴょん戯れる</option><option value="walk">お散歩（左右に歩き回る）</option><option value="run">画面中を走り回る</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">傾き <output id="mscTiltVal">0°</output><input id="mscTilt" type="range" min="-180" max="180" step="1" title="ダブルクリックで0°に戻します"></label><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
+<section class="studio-card mascot-card grp-visual" data-modes="stream video" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット・ミニキャラ</h2><div class="msc-owner"><span class="studio-mini">表示する名義</span><span id="mscOwner" class="char-chips"></span></div><p class="studio-note">立ち絵とは別に、小さな画像を名義ごとに最大30体まで登録できます（いま選んでいる名義のものが並びます）。種類は「マスコット」と「ミニキャラ（自分）」から選べます。ミニキャラは、話者が「本人」のときに自分の声で動きます。画面に出すのは名義ごとに4体までで、下の「この名義で画面に出すもの」で選びます。別の名義に入ってしまったものは、編集欄の「名義」か、下の「すべての名義をまとめて見る」で移せます。マスコットは立ち絵の後ろに表示します。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div class="msc-pick"><strong>この名義で画面に出すもの（4体まで）</strong><div class="studio-row mascot-bar" role="group" aria-label="画面に出すマスコット" id="mascotBar"></div></div><div class="studio-mini">登録したマスコット・ミニキャラ（押すと下で編集）</div><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ 追加</button><button type="button" id="mascotDel">これを削除</button></div><details class="msc-all" id="mscAll"><summary>すべての名義をまとめて見る（<span id="mscAllCount">0体</span>）・名義を移す</summary><p class="studio-mini">右の欄で名義を選ぶと、その名義へ移ります。移した先では「画面に出さない」状態になります。</p><ul id="mscAllList" class="sb-list msc-all-list"></ul></details><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><label class="studio-field">種類<select id="mscKind"><option value="mascot">マスコット</option><option value="mini">ミニキャラ（自分）</option></select></label><label class="studio-field">名義<select id="mscOwnerSel" aria-label="このマスコットの名義"></select></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> この名義で画面に出す（4体まで）</label><label class="studio-field"><input type="checkbox" id="mscTalk"> <span id="mscTalkText">話者ボタンに出す（声でぴこぴこ）</span></label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="play">ぴょんぴょん戯れる</option><option value="walk">お散歩（跳ねながらあちこちへ）</option><option value="run">画面中を走り回る</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">傾き <output id="mscTiltVal">0°</output><input id="mscTilt" type="range" min="-180" max="180" step="1" title="ダブルクリックで0°に戻します"></label><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
 <section class="studio-card scene-card grp-audio" data-modes="stream"><details class="scene-details" id="studioSinkBox"><summary>配信に届く音（配信用の出力先）</summary>
 <p class="studio-note">配信モードでは、マイクの声はこのアプリから出しません（口パクの判定にだけ使います）。OBSではマイク（AG03など）を直接取り込み、このアプリの音はブラウザの音として取り込みます。下の出力先は、効果音・BGMだけを仮想オーディオ機器へ分けて送りたいときに使います。動画モードでは、マイク＋効果音・BGM・環境音のミックスを送ります。</p><p class="studio-note">配信用の出力先を選ぶと、そのミックス（ダッキング・リミッター・ミュート反映済み）を、その音声機器へ別に送ります。仮想オーディオ機器を選び、配信ソフトではその機器だけを音声として取り込む構成を想定しています。普段のイヤホン・ヘッドホンを選ぶと、自分の声が遅れて聞こえます。</p>
 <div class="studio-row"><select id="studioSinkSel" aria-label="配信用の出力先"><option value="">使わない</option></select><button id="studioSinkList">一覧を更新</button><button id="studioSinkToggle">送出を開始</button></div>
@@ -8945,11 +8945,9 @@ let W=1280,
     popS=0,
     singPh=0,
     hopPh=0,
-    stepPh=0,
+    wanPh=0,
     iyaPh=0;
   const mw={sing:0,hop:0,shake:0,wander:0,iya:0};
-  // 右往左往：左右の行き先へゆっくり歩いて止まり、ときどき途中で引き返す（-1〜1の位置）
-  const wd={from:0,to:0,t:0,dur:1,wait:.6};
 
   function vnoise(x,seed){
     const i=Math.floor(x),
@@ -9011,35 +9009,24 @@ let W=1280,
       dy+=y*kH
     }
 
+    // 右往左往：周期の違うゆっくりした揺れを重ね、止まらずに左右をうろうろする。速さも向きの変わり目もなめらかに続く
     if(mw.wander>.001){
-      const kW=state.motionWander/100,R=W*.15*kW;
-      let v=0;
-      if(wd.wait>0)wd.wait-=dtp;
-      else{
-        wd.t+=dtp;
-        if(wd.t>=wd.dur){
-          wd.from=wd.to;wd.t=0;wd.wait=.45+Math.random()*1.3;
-          let nx=Math.random()<.3?wd.from+(Math.random()-.5)*.6:-Math.sign(wd.from||(Math.random()-.5))*(.35+Math.random()*.65);
-          wd.to=Math.max(-1,Math.min(1,nx));
-          wd.dur=1.3+Math.abs(wd.to-wd.from)*1.2
-        }
-      }
-      const p=wd.wait>0?1:Math.min(1,wd.t/wd.dur),s=p*p*(3-2*p),x=wd.wait>0?wd.to:wd.from+(wd.to-wd.from)*s;
-      if(wd.wait<=0)v=(wd.to-wd.from)*6*p*(1-p)/wd.dur;
-      const sp=Math.abs(v)*R;
-      stepPh+=dtp*sp/Math.max(20*u,geo.h*.07);
-      dx+=x*R*mw.wander;
-      dy-=Math.abs(Math.sin(stepPh*Math.PI))*Math.min(1,sp/(60*u))*2.4*u*mw.wander;
-      rot+=Math.max(-1,Math.min(1,v*R/(W*.12)))*.02*Math.min(1.4,kW+.2)*mw.wander
+      const kW=state.motionWander/100*mw.wander,R=W*.13;
+      wanPh+=dtp;
+      const p=wanPh,
+        x=.62*Math.sin(p*TAU/7.3)+.28*Math.sin(p*TAU/4.4+1.7)+.10*Math.sin(p*TAU/2.9+.4),
+        v=(.62*Math.cos(p*TAU/7.3)*TAU/7.3+.28*Math.cos(p*TAU/4.4+1.7)*TAU/4.4+.10*Math.cos(p*TAU/2.9+.4)*TAU/2.9);
+      dx+=x*R*kW;
+      rot+=v*.012*kW
     }
 
+    // いやいや：小刻みに左右へ。速さと大きさをゆっくり変わる揺らぎで少しずつずらし、規則的に見えないようにする
     if(mw.iya>.001){
       const kI=state.motionIya/100*mw.iya;
-      iyaPh+=dtp;
-      const c=iyaPh%2.1,env=c<1.3?Math.pow(Math.sin(Math.PI*c/1.3),.6):0,s=Math.sin(c*Math.PI*2*2.3);
-      rot+=s*env*13*u/arm*kI;
-      dx-=s*env*2.4*u*kI;
-      dy+=env*1.4*u*kI
+      iyaPh+=dtp*TAU*(2.4+.75*vnoise(t*1.1,.23));
+      const amp=.7+.3*vnoise(t*.8,.91),s=Math.sin(iyaPh);
+      dx+=s*amp*6*u*kI;
+      rot+=Math.sin(iyaPh-.5)*amp*7*u/arm*kI
     }
 
     if(mw.shake>.001){
@@ -10797,22 +10784,29 @@ let mscSel='',mscLast=0;const mscEnv={},mscRun={},mscPlay={},mscWalk={};
         dy=-4*p*(1-p)*r.h;
         rot=(r.tx-r.fx)/(60*u)*8*deg*Math.sin(Math.PI*p);
       }else delete mscPlay[m.id];
-      // お散歩：決めた高さのまま左右へてくてく歩き、ときどき立ち止まって見回し、端や気まぐれで引き返す
+      // お散歩：ぴょこぴょこ跳ねながら、行き先を次々に変えてあちこちへ進む。向きはなめらかに曲がって変わる
       if(m.motion==='walk'){
-        const lo=w*.5,hi=Math.max(lo,W-w*.5);
-        const r=mscWalk[m.id]||(mscWalk[m.id]={x:Math.max(lo,Math.min(hi,x)),dir:Math.random()<.5?-1:1,ph:0,wait:0,look:0,go:3+Math.random()*4});
-        r.x=Math.max(lo,Math.min(hi,r.x));
-        if(drag&&drag.target===m){r.x=x;r.wait=.8}
-        if(r.wait>0){r.wait-=dtp;r.look+=dtp;rot=Math.sin(r.look*TAU*.7)*4*deg*a;dy=0}
+        const minX=w*.5,maxX=Math.max(minX,W-w*.5),minY=h*.5,maxY=Math.max(minY,H-h*.5),cl=(v,lo,hi)=>Number.isFinite(v)?Math.max(lo,Math.min(hi,v)):(lo+hi)/2;
+        const r=mscWalk[m.id]||(mscWalk[m.id]={x,y,tx:x,ty:y,ang:Math.random()*TAU,ph:0,wait:0,left:0});
+        r.x=cl(r.x,minX,maxX);r.y=cl(r.y,minY,maxY);
+        if(drag&&drag.target===m){r.x=x;r.y=y;r.tx=x;r.ty=y;r.wait=.6}
+        const pick=()=>{const R=Math.min(W,H)*(.12+Math.random()*.24),a2=r.ang+(Math.random()-.5)*Math.PI*1.9;r.tx=cl(r.x+Math.cos(a2)*R,minX,maxX);r.ty=cl(r.y+Math.sin(a2)*R,minY,maxY);r.left=.9+Math.random()*1.8};
+        r.ph+=dtp*sp/.36;
+        const hp=r.ph%1;
+        if(r.wait>0){r.wait-=dtp;dy=-4*hp*(1-hp)*6*u*a;rot=Math.sin(r.ph*Math.PI)*3*deg*a;if(r.wait<=0)pick()}
         else{
-          const v=48*u*sp;
-          r.x+=r.dir*v*dtp;r.ph+=dtp*v/(14*u);r.go-=dtp;
-          if(r.x<=lo||r.x>=hi){r.dir=r.x<=lo?1:-1}
-          if(r.go<=0){r.go=2.5+Math.random()*5;if(Math.random()<.55){r.wait=.7+Math.random()*1.6;r.look=0}if(Math.random()<.35)r.dir*=-1}
-          dy=-Math.abs(Math.sin(r.ph*Math.PI))*5*u*a;
-          rot=Math.sin(r.ph*Math.PI)*4*deg*a
+          const ddx=r.tx-r.x,ddy=r.ty-r.y,dist=Math.hypot(ddx,ddy);
+          r.left-=dtp;
+          if(dist<14*u||r.left<=0){if(Math.random()<.18)r.wait=.4+Math.random()*.7;else pick()}
+          const want=Math.atan2(ddy,ddx),da=Math.atan2(Math.sin(want-r.ang),Math.cos(want-r.ang));
+          r.ang+=Math.max(-1,Math.min(1,da))*Math.min(1,dtp*3.4);
+          const v=62*u*sp*(.75+.5*Math.sin(Math.PI*hp));
+          r.x=cl(r.x+Math.cos(r.ang)*v*dtp,minX,maxX);r.y=cl(r.y+Math.sin(r.ang)*v*dtp,minY,maxY);
+          if(r.x<=minX||r.x>=maxX||r.y<=minY||r.y>=maxY)pick();
+          dy=-4*hp*(1-hp)*13*u*a;
+          rot=Math.cos(r.ang)*Math.sin(Math.PI*hp)*6*deg*a
         }
-        x=r.x;
+        x=r.x;y=r.y;
       }else delete mscWalk[m.id];
       if(m.motion==='float'){dy=Math.sin(t*TAU*.3*sp+seed)*12*u*a;dx=Math.sin(t*TAU*.17*sp+seed*2)*6*u*a;rot=Math.sin(t*TAU*.23*sp+seed)*3*deg*a}
       else if(m.motion==='sway'){const s=Math.sin(t*TAU*.45*sp+seed);rot=s*6*deg*a;dy=-Math.abs(s)*3*u*a}
