@@ -16,7 +16,7 @@
         continue
       }
       let n=Number(c[k]);
-      if(!Number.isFinite(n)&&/^motion(Sing|Hop|Shake)$/.test(k))n=Number(c.motionAmt);
+      if(!Number.isFinite(n)&&/^motion(Sing|Hop|Shake|Wander|Iya)$/.test(k))n=Number(c.motionAmt);
       o[k]=Number.isFinite(n)?Math.max(CHAR_RANGES[k][0],Math.min(CHAR_RANGES[k][1],n)):defaults[k]
     }
     return o
@@ -53,7 +53,7 @@
   }
 
   function profileSnap(){
-    return {scenes:JSON.parse(JSON.stringify(state.scenes)),bg:state.bg}
+    return {scenes:JSON.parse(JSON.stringify(state.scenes)),bg:state.bg,sceneFont:state.sceneFont}
   }
 
   function normScenes(x){
@@ -179,6 +179,8 @@
     const s=p.snap||{};
     state.scenes=normScenes(s.scenes);
     if(['cafe','transparent','green','blue','black','image'].includes(s.bg))state.bg=s.bg;
+    if(typeof s.sceneFont==='string'&&s.sceneFont in SCENE_FONTS)state.sceneFont=s.sceneFont;
+    syncSceneFontUI();
 for(const q of particles)q.beh='';
     state.charId='';
     activateChar(p.cur,true);

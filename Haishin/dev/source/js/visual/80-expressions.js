@@ -42,7 +42,7 @@
       b.onclick=()=>setExpr(id);bar.append(b)
     }
   }
-  const EXPR_MOTION=[['none','動かさない（そのままの動き）'],['shake','ガタガタ'],['hop','ぴょんぴょん'],['sing','歌うゆらぎ']];
+  const EXPR_MOTION=[['none','動かさない（そのままの動き）'],['shake','ガタガタ'],['hop','ぴょんぴょん'],['sing','歌うゆらぎ'],['wander','右往左往'],['iya','いやいや']];
   function exprThumb(cid,slot){
     const b=charBlobs[charKey(cid,slot)];
     if(!b)return '';
