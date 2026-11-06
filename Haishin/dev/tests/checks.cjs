@@ -141,6 +141,20 @@ async function test(name, fn) {
     assert.equal(c.readAttempt,false);
     assert.match(c.notice,/終わってから/);
   });
+  await test('Images are never mirrored or stretched (no negative or uneven canvas scale outside the built-in vector motifs)', () => {
+    const bad = [];
+    for (const [name, src] of [['audio', audio], ['visual', visual]]) {
+      walk.simple(parse(src), { CallExpression(n) {
+        const c = n.callee;
+        if (c.type !== 'MemberExpression' || c.property.name !== 'scale' || n.arguments.length < 1) return;
+        const obj = src.slice(c.object.start, c.object.end), args = n.arguments.map(a => src.slice(a.start, a.end));
+        // p.scale は、効果音動画用の花びら・葉っぱの形（画像ではないベクター図形）を作る処理だけ
+        if (obj === 'p') return;
+        if (args.length !== 2 || args[0] !== args[1] || /^-/.test(args[0])) bad.push(name + ': ' + src.slice(n.start, n.end));
+      } });
+    }
+    assert.deepEqual(bad, []);
+  });
   console.log(JSON.stringify({ mode: original ? 'original' : 'revised', passed, failed }));
   process.exitCode = failed ? 1 : 0;
 })();

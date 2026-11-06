@@ -599,12 +599,11 @@ function drawEffectFrame(canvas,base,time,settings,image){
     TAU=Math.PI*2;
 
   let blossom=false;
-  const put=(x,y,r,rot,sx,sy,wx,wy)=>{
+  // 画像は回転と位置だけで動かす（縦横比は変えない）
+  const put=(x,y,r,rot)=>{
     g.save();
     g.translate(x,y);
-    if(wx)g.scale(wx,wy);
     g.rotate(rot);
-    g.scale(sx,sy);
 
     if(useImg){
       const ratio=image.width/image.height,
@@ -630,7 +629,7 @@ function drawEffectFrame(canvas,base,time,settings,image){
 
       const x=a(3)*S+Math.sin(time*.45*(.6+a(4))+a(5)*TAU)*S*.035;
 
-      put(x,y,r,useImg?Math.sin(time*.3+a(6)*TAU)*.3:0,1,1);
+      put(x,y,r,useImg?Math.sin(time*.3+a(6)*TAU)*.3:0);
     }else if(settings.mode==='spring'){
       const span=S+r*6,
         prog=time*S*.11*sp*(.6+depth),
@@ -641,7 +640,7 @@ function drawEffectFrame(canvas,base,time,settings,image){
       const flip=Math.cos(time*.8*(.6+a(6))+a(7)*TAU);
       blossom=a(10)<.1;
 
-      put(x,y,r,a(8)*TAU+time*(a(9)-.5)*.7,Math.max(.15,Math.abs(flip)),1);
+      put(x,y,r,a(8)*TAU+time*(a(9)-.5)*.7+flip*.38);
     }else if(settings.mode==='summer'){
       const span=S+r*6,
         rise=((a(2)*span+time*S*.15*sp*(.55+depth))%span),
@@ -650,7 +649,7 @@ function drawEffectFrame(canvas,base,time,settings,image){
 
       const x=a(3)*S+Math.sin(time*2.6*(.6+a(4))+a(5)*TAU)*S*(.006+pos*.014);
 
-      put(x,y,r*.8,0,1,1);
+      put(x,y,r*.8,0);
     }else{
       const dir=a(2)<.5?1:-1,
         span=S+r*6,
@@ -663,7 +662,7 @@ function drawEffectFrame(canvas,base,time,settings,image){
       const hop=(dist/(r*(4.2+a(4)*2))+a(5))%1,
         height=r*(2.6+a(6)*2.4)*4*hop*(1-hop);
 
-      put(x,floor-height,r,dir*dist/r,1,1);
+      put(x,floor-height,r,dir*dist/r);
     }
   }
 

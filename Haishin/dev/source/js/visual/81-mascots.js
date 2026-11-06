@@ -25,7 +25,7 @@
       if(!im)continue;
       const seed=(m.id.charCodeAt(0)+m.id.charCodeAt(m.id.length-1))*.173,a=m.amp/100,sp=m.speed/100,
         h=H*m.size/100,f=h/im.height,w=im.width*f;
-      let x=W/2+m.x*W/200,y=H/2+m.y*H/200,dx=0,dy=0,rot=0,sx=1,sy=1;
+      let x=W/2+m.x*W/200,y=H/2+m.y*H/200,dx=0,dy=0,rot=0;
       if(m.motion==='run'){
         const r=mscRun[m.id]||(mscRun[m.id]={x,y,tx:x,ty:y,wait:.4,dir:1,ph:0});
         const minX=w*.38,maxX=Math.max(minX,W-w*.38),minY=h*.38,maxY=Math.max(minY,H-h*.38),cl=(v,a,b)=>Number.isFinite(v)?Math.max(a,Math.min(b,v)):(a+b)/2;
@@ -39,14 +39,14 @@
         x=r.x;y=r.y;
         if(r.wait<=0){dy=-Math.abs(Math.sin(r.ph))*10*u*a;rot=Math.sin(r.ph*2)*2.5*deg*a}
       }else delete mscRun[m.id];
-      // ぴょんぴょん戯れる：小さく跳ねる回数をまとめて繰り返し、ときどき横へ跳んで向きを変える。着地でむにっと縮む
+      // ぴょんぴょん戯れる：小さく跳ねる回数をまとめて繰り返し、ときどき横へ跳んで向きを変える
       if(m.motion==='play'){
-        const r=mscPlay[m.id]||(mscPlay[m.id]={ox:0,fx:0,tx:0,t:0,dur:.42,left:3,wait:.2,dir:1,h:16,sq:0});
-        if(r.wait>0){r.wait-=dtp;r.sq=Math.max(0,r.sq-dtp*5)}
+        const r=mscPlay[m.id]||(mscPlay[m.id]={ox:0,fx:0,tx:0,t:0,dur:.42,left:3,wait:.2,dir:1,h:16});
+        if(r.wait>0)r.wait-=dtp;
         else{
           r.t+=dtp*sp;
           if(r.t>=r.dur){
-            r.fx=r.tx;r.t=0;r.sq=1;
+            r.fx=r.tx;r.t=0;
             if(--r.left<=0){r.left=2+Math.floor(Math.random()*4);r.wait=.35+Math.random()*1.1}
             const lim=70*u,jump=Math.random()<.45?(Math.random()-.5)*60*u*a:0;
             r.tx=Math.max(-lim,Math.min(lim,r.fx+jump));
@@ -58,9 +58,6 @@
         dx=r.fx+(r.tx-r.fx)*p;
         dy=-4*p*(1-p)*r.h;
         rot=(r.tx-r.fx)/(60*u)*8*deg*Math.sin(Math.PI*p);
-        const sq=r.sq*(r.wait>0?1:Math.max(0,1-p*4));
-        sy=1-.12*sq*a;sx=1+.08*sq*a;
-        if(p>0&&p<.5){sy+=.05*a*Math.sin(Math.PI*p*2);sx-=.03*a*Math.sin(Math.PI*p*2)}
       }else delete mscPlay[m.id];
       // お散歩：決めた高さのまま左右へてくてく歩き、ときどき立ち止まって見回し、端や気まぐれで引き返す
       if(m.motion==='walk'){
@@ -88,7 +85,7 @@
       if(e1>.01){dy-=e1*(5+Math.abs(Math.sin(t*TAU*4.2))*10)*u;rot+=Math.sin(t*TAU*4.2)*e1*3*deg}
       const spc=avSprite(im,{x:0,y:0,w:im.width,h:im.height},f);
       const pvy=m.motion==='play'||m.motion==='walk'?h/2:0;
-      g.save();g.translate(x+dx,y+dy+pvy);g.rotate(rot+(m.tilt||0)*deg);if(sx!==1||sy!==1)g.scale(sx,sy);if(pvy)g.translate(0,-pvy);g.imageSmoothingEnabled=true;g.imageSmoothingQuality=state.light?'medium':'high';
+      g.save();g.translate(x+dx,y+dy+pvy);g.rotate(rot+(m.tilt||0)*deg);if(pvy)g.translate(0,-pvy);g.imageSmoothingEnabled=true;g.imageSmoothingQuality=state.light?'medium':'high';
       if(spc)g.drawImage(spc.c,-spc.dw/2,-spc.dh/2);else g.drawImage(im,-w/2,-h/2,w,h);
       g.restore();
       m._box={x:x-w/2,y:y-h/2,w,h}
