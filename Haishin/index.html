@@ -931,7 +931,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.7.2 / ボイスを標準＋名義ごとのタブに</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.7.3 / 名義ごとの画面フォント・マスコットの傾き・新しい動き</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -961,7 +961,7 @@ lookPaint(look);
 <p class="outwin-note">配信用の映像ウインドウを表示中のため、ここのプレビューは止めています。<button type="button" id="pvToggle">プレビューも表示する</button></p><div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas></div></div>
 <div class="rec-panel" aria-label="映像の収録"><div class="rec-main"><button id="studioRec" class="rec-big rec-start" type="button">● 収録開始</button><button id="studioStop" class="rec-big rec-stop" type="button" disabled>■ 停止して保存</button></div><div class="rec-extra"><button id="studioRetake" type="button" disabled title="今の収録を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button><button id="studioDiscard" class="discard" type="button" disabled title="収録を止めて、保存せずに捨てます">✕ 停止して破棄</button></div><div class="rec-sub"><span id="studioRecTime" role="status" class="rec-time">未収録</span><label class="rec-opt">番組<select id="vidProg" aria-label="番組（初期BGM）"></select></label><label class="rec-opt">形式<select id="vidFormat"><option value="mp4">MP4（写真アプリ向け）</option><option value="webm">WebM</option></select></label><label class="rec-opt">画質<select id="vidQuality"><option value="8">高画質</option><option value="16">最高画質（容量大）</option><option value="4.5">標準</option></select></label></div><p class="rec-note" id="vidProgNote"></p><p class="rec-note" id="studioVideoInfo"></p><div id="studioVideos" class="studio-tray" aria-label="収録した動画"></div></div>
 <div class="live-console" id="liveConsole"><div class="onair-head"><span class="onair-lamp" aria-hidden="true"></span><strong id="studioSceneState" role="status">配信中</strong></div><div class="scene-switch" role="group" aria-label="配信の状態"><button type="button" data-scene="live" class="selected" aria-pressed="true">配信中</button><button type="button" data-scene="standby" aria-pressed="false">準備中</button><button type="button" data-scene="away" aria-pressed="false">離席中</button><button type="button" data-scene="end" aria-pressed="false">配信終了</button></div><div class="sound-stop"><div class="sound-now"><span aria-hidden="true">♪</span><span id="consoleBgmName">BGM：なし</span></div><label class="console-bgm-pick">流すBGM<select id="consoleBgmSel"></select></label><button type="button" class="stop-btn" id="consoleBgmStop" disabled>▶ BGMを流す</button><button type="button" class="stop-btn stop-all" id="consoleAllStop">■ 効果音とBGMをすべて止める</button></div></div>
-<div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">設定</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
+<div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">設定</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button><button data-motion="wander" aria-pressed="false">右往左往</button><button data-motion="iya" aria-pressed="false">いやいや</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
 <details class="scene-details" id="quickTune"><summary>見た目をその場で調整（開いているあいだだけ、プレビューの立ち絵・マスコットをドラッグで動かせます）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">この欄を閉じると位置はロックされ、プレビューに触れても動きません。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
 </section>
 <section class="studio-card mode-section" id="studioPlan" style="margin-top:16px">
@@ -1061,7 +1061,7 @@ lookPaint(look);
 <label class="studio-field">口が開く音量 <output id="thresholdValue">−38 dB</output><input type="range" id="studioThreshold" min="-65" max="-5" step="1" value="-38"></label>
 <label class="studio-field">口を閉じるまで <output id="holdValue">140 ms</output><input type="range" id="studioHold" min="40" max="600" step="10" value="140"></label>
 <div class="studio-inline"><label class="studio-field">口の動き<select id="studioMouthMode"><option value="hold">声が出ているあいだ開けたまま</option><option value="flap">声が出ているあいだパクパクを繰り返す</option></select></label></div><div class="studio-inline"><label class="studio-field">パクパクの長さ（いちばん短いとき） <output id="flapMinValue">80 ms</output><input type="range" id="studioFlapMin" min="40" max="400" step="10" value="80"></label><label class="studio-field">パクパクの長さ（いちばん長いとき） <output id="flapMaxValue">220 ms</output><input type="range" id="studioFlapMax" min="40" max="600" step="10" value="220"></label></div><p class="studio-note">「口が開く音量」を超えた声に反応します。パクパクは、開けている時間・閉じている時間を、この範囲の中から毎回ランダムに決めます。映像のなめらかさ（fps）より速くは動けません（10fpsなら100msより短くしても同じ動きです）。</p><label class="studio-field"><input id="studioBlink" type="checkbox" checked> 自動まばたき（約3〜6秒おき）</label>
-<details><summary>位置・サイズを調整</summary><label class="studio-field">大きさ <output id="scaleVal">85%</output><input id="studioScale" type="range" min="10" max="500" value="85"></label><label class="studio-field">左右<input id="studioX" type="range" min="-300" max="300" value="0"></label><label class="studio-field">上下（大きくした立ち絵の頭が切れるときは右へ動かすと下がります） <output id="yVal">0%</output><input id="studioY" type="range" min="-200" max="500" value="0"></label><label class="studio-field"><input id="studioBounce" type="checkbox" checked> 発話時に少し弾む</label></details><fieldset class="scene-set motion-set"><legend>動きの大きさ・速さ（キャラクターごとに保存）</legend><label class="studio-field">歌うゆらぎの大きさ <output data-out="studioMotionSing"></output><input id="studioMotionSing" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">歌うゆらぎの速さ <output data-out="studioMotionSingSpeed"></output><input id="studioMotionSingSpeed" type="range" min="40" max="200" step="5" value="100"></label><label class="studio-field">ぴょんぴょんの大きさ <output data-out="studioMotionHop"></output><input id="studioMotionHop" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">ガタガタの大きさ <output data-out="studioMotionShake"></output><input id="studioMotionShake" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">呼吸・話すときの動きの大きさ <output data-out="studioMotionAmt"></output><input id="studioMotionAmt" type="range" min="0" max="200" step="5" value="100"></label><p class="studio-note">どの動きも立ち絵の縦横比は変えず、位置の移動と傾きだけで動かします。0%にするとその動きは止まります。動きを切り替えるときは0.3秒ほどかけてなめらかに移ります。</p></fieldset>
+<details><summary>位置・サイズを調整</summary><label class="studio-field">大きさ <output id="scaleVal">85%</output><input id="studioScale" type="range" min="10" max="500" value="85"></label><label class="studio-field">左右<input id="studioX" type="range" min="-300" max="300" value="0"></label><label class="studio-field">上下（大きくした立ち絵の頭が切れるときは右へ動かすと下がります） <output id="yVal">0%</output><input id="studioY" type="range" min="-200" max="500" value="0"></label><label class="studio-field"><input id="studioBounce" type="checkbox" checked> 発話時に少し弾む</label></details><fieldset class="scene-set motion-set"><legend>動きの大きさ・速さ（キャラクターごとに保存）</legend><label class="studio-field">歌うゆらぎの大きさ <output data-out="studioMotionSing"></output><input id="studioMotionSing" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">歌うゆらぎの速さ <output data-out="studioMotionSingSpeed"></output><input id="studioMotionSingSpeed" type="range" min="40" max="200" step="5" value="100"></label><label class="studio-field">ぴょんぴょんの大きさ <output data-out="studioMotionHop"></output><input id="studioMotionHop" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">ガタガタの大きさ <output data-out="studioMotionShake"></output><input id="studioMotionShake" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">右往左往の歩く幅 <output data-out="studioMotionWander"></output><input id="studioMotionWander" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">いやいやの大きさ <output data-out="studioMotionIya"></output><input id="studioMotionIya" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">呼吸・話すときの動きの大きさ <output data-out="studioMotionAmt"></output><input id="studioMotionAmt" type="range" min="0" max="200" step="5" value="100"></label><p class="studio-note">どの動きも立ち絵の縦横比は変えず、位置の移動と傾きだけで動かします。0%にするとその動きは止まります。動きを切り替えるときは0.3秒ほどかけてなめらかに移ります。</p></fieldset>
 <hr class="studio-divider">
 <label class="studio-field">季節の演出・画像のプリセット（量・速さ・大きさ・濃さは、季節とプリセットごとに保存。名義・キャラクターを切り替えても変わりません）<select id="studioEffect"><option value="none">なし</option></select></label><div class="fx-preset"><div class="studio-row"><button type="button" id="fxPresetNew">＋ 画像のプリセットを作る</button><button type="button" id="fxPresetDup" class="fxp-only">複製</button><button type="button" id="fxPresetDel" class="fxp-only">このプリセットを削除</button></div><label class="studio-field fxp-only">プリセットの名前<input id="fxPresetName" type="text" maxlength="30" placeholder="例：彼岸花／マカロン"></label></div>
 <div class="studio-field fxp-only">このプリセットの画像（最大6枚・登録した画像を混ぜて降らせます）<div class="png-grid fx-grid" id="particleSlots"></div></div>
@@ -1080,7 +1080,7 @@ lookPaint(look);
 <p class="studio-note">動画の透過保持は保証しません。背景を抜く収録・配信には緑／青を選んでください。</p>
 </aside>
 </div></section>
-<section class="studio-card mascot-card grp-visual" data-modes="stream video" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット・ミニキャラ</h2><div class="msc-owner"><span class="studio-mini">表示する名義</span><span id="mscOwner" class="char-chips"></span></div><p class="studio-note">立ち絵とは別に、小さな画像を名義ごとに最大30体まで登録できます（いま選んでいる名義のものが並びます）。種類は「マスコット」と「ミニキャラ（自分）」から選べます。ミニキャラは、話者が「本人」のときに自分の声で動きます。画面に出すのは名義ごとに4体までで、下の「この名義で画面に出すもの」で選びます。別の名義に入ってしまったものは、編集欄の「名義」か、下の「すべての名義をまとめて見る」で移せます。マスコットは立ち絵の後ろに表示します。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div class="msc-pick"><strong>この名義で画面に出すもの（4体まで）</strong><div class="studio-row mascot-bar" role="group" aria-label="画面に出すマスコット" id="mascotBar"></div></div><div class="studio-mini">登録したマスコット・ミニキャラ（押すと下で編集）</div><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ 追加</button><button type="button" id="mascotDel">これを削除</button></div><details class="msc-all" id="mscAll"><summary>すべての名義をまとめて見る（<span id="mscAllCount">0体</span>）・名義を移す</summary><p class="studio-mini">右の欄で名義を選ぶと、その名義へ移ります。移した先では「画面に出さない」状態になります。</p><ul id="mscAllList" class="sb-list msc-all-list"></ul></details><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><label class="studio-field">種類<select id="mscKind"><option value="mascot">マスコット</option><option value="mini">ミニキャラ（自分）</option></select></label><label class="studio-field">名義<select id="mscOwnerSel" aria-label="このマスコットの名義"></select></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> この名義で画面に出す（4体まで）</label><label class="studio-field"><input type="checkbox" id="mscTalk"> <span id="mscTalkText">話者ボタンに出す（声でぴこぴこ）</span></label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="run">画面中を走り回る</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><label class="studio-field">走り回るときの向き<select id="mscFace"><option value="none">左右を反転しない</option><option value="right">元の画像が右向き（左へ走るときは反転）</option><option value="left">元の画像が左向き（右へ走るときは反転）</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
+<section class="studio-card mascot-card grp-visual" data-modes="stream video" id="mascotPanel"><p class="studio-kicker">MASCOT</p><h2>マスコット・ミニキャラ</h2><div class="msc-owner"><span class="studio-mini">表示する名義</span><span id="mscOwner" class="char-chips"></span></div><p class="studio-note">立ち絵とは別に、小さな画像を名義ごとに最大30体まで登録できます（いま選んでいる名義のものが並びます）。種類は「マスコット」と「ミニキャラ（自分）」から選べます。ミニキャラは、話者が「本人」のときに自分の声で動きます。画面に出すのは名義ごとに4体までで、下の「この名義で画面に出すもの」で選びます。別の名義に入ってしまったものは、編集欄の「名義」か、下の「すべての名義をまとめて見る」で移せます。マスコットは立ち絵の後ろに表示します。位置はここか、配信画面のプレビューをドラッグして動かします。「話者ボタンに出す」をオンにすると、配信画面の話者ボタンでそのマスコットを選んでいるあいだ、マイクの声に合わせてマスコットがぴこぴこ動き、立ち絵の口パクは止まります。</p><div class="msc-pick"><strong>この名義で画面に出すもの（4体まで）</strong><div class="studio-row mascot-bar" role="group" aria-label="画面に出すマスコット" id="mascotBar"></div></div><div class="studio-mini">登録したマスコット・ミニキャラ（押すと下で編集）</div><div id="mascotChips" class="char-chips"></div><div class="studio-row"><button type="button" id="mascotAdd">＋ 追加</button><button type="button" id="mascotDel">これを削除</button></div><details class="msc-all" id="mscAll"><summary>すべての名義をまとめて見る（<span id="mscAllCount">0体</span>）・名義を移す</summary><p class="studio-mini">右の欄で名義を選ぶと、その名義へ移ります。移した先では「画面に出さない」状態になります。</p><ul id="mscAllList" class="sb-list msc-all-list"></ul></details><div id="mascotEdit"><div class="studio-inline"><label class="studio-field">名前<input id="mscName" type="text" maxlength="20"></label><label class="studio-field">種類<select id="mscKind"><option value="mascot">マスコット</option><option value="mini">ミニキャラ（自分）</option></select></label><label class="studio-field">名義<select id="mscOwnerSel" aria-label="このマスコットの名義"></select></label><div class="studio-field">画像<label class="bg-pick"><input type="file" id="mscFile" accept="image/png,image/webp,image/jpeg" aria-label="マスコットの画像"></label><span class="png-name" id="mscFileName">未登録</span></div></div><div class="studio-inline"><label class="studio-field"><input type="checkbox" id="mscShow"> この名義で画面に出す（4体まで）</label><label class="studio-field"><input type="checkbox" id="mscTalk"> <span id="mscTalkText">話者ボタンに出す（声でぴこぴこ）</span></label></div><label class="studio-field">動き<select id="mscMotion"><option value="float">ふわふわ浮遊</option><option value="sway">ゆらゆら揺れる</option><option value="hop">ぴょこぴょこ跳ねる</option><option value="play">ぴょんぴょん戯れる</option><option value="walk">お散歩（左右に歩き回る）</option><option value="run">画面中を走り回る</option><option value="shake">がくがく</option><option value="still">静止</option></select></label><label class="studio-field">走り回るときの向き<select id="mscFace"><option value="none">左右を反転しない</option><option value="right">元の画像が右向き（左へ走るときは反転）</option><option value="left">元の画像が左向き（右へ走るときは反転）</option></select></label><div class="studio-inline"><label class="studio-field">ふわふわの度合い（動きの大きさ） <output id="mscAmpVal"></output><input id="mscAmp" type="range" min="0" max="200" step="5"></label><label class="studio-field">動きの速さ <output id="mscSpeedVal"></output><input id="mscSpeed" type="range" min="20" max="300" step="5"></label></div><label class="studio-field">大きさ <output id="mscSizeVal"></output><input id="mscSize" type="range" min="3" max="90" step="1"></label><div class="studio-inline"><label class="studio-field">傾き <output id="mscTiltVal">0°</output><input id="mscTilt" type="range" min="-180" max="180" step="1" title="ダブルクリックで0°に戻します"></label><label class="studio-field"><input type="checkbox" id="mscMirror"> 画像を左右反転する</label><label class="studio-field">左右<input id="mscX" type="range" min="-100" max="100" step="1"></label><label class="studio-field">上下<input id="mscY" type="range" min="-100" max="100" step="1"></label></div></div></section>
 <section class="studio-card scene-card grp-audio" data-modes="stream"><details class="scene-details" id="studioSinkBox"><summary>配信に届く音（配信用の出力先）</summary>
 <p class="studio-note">配信モードでは、マイクの声はこのアプリから出しません（口パクの判定にだけ使います）。OBSではマイク（AG03など）を直接取り込み、このアプリの音はブラウザの音として取り込みます。下の出力先は、効果音・BGMだけを仮想オーディオ機器へ分けて送りたいときに使います。動画モードでは、マイク＋効果音・BGM・環境音のミックスを送ります。</p><p class="studio-note">配信用の出力先を選ぶと、そのミックス（ダッキング・リミッター・ミュート反映済み）を、その音声機器へ別に送ります。仮想オーディオ機器を選び、配信ソフトではその機器だけを音声として取り込む構成を想定しています。普段のイヤホン・ヘッドホンを選ぶと、自分の声が遅れて聞こえます。</p>
 <div class="studio-row"><select id="studioSinkSel" aria-label="配信用の出力先"><option value="">使わない</option></select><button id="studioSinkList">一覧を更新</button><button id="studioSinkToggle">送出を開始</button></div>
@@ -6962,6 +6962,8 @@ $('#consoleAllStop').onclick=()=>stopAll();
     motionSingSpeed:100,
     motionHop:100,
     motionShake:100,
+    motionWander:100,
+    motionIya:100,
     fxSeason:null,
     fxPresets:null,
 fps:30,
@@ -7007,7 +7009,7 @@ fps:30,
     closing=false,
     captureStarting=false;
 
-  var CHAR_KEYS=['threshold','hold','blink','bounce','scale','x','y','motionAmt','motionSing','motionSingSpeed','motionHop','motionShake'],
+  var CHAR_KEYS=['threshold','hold','blink','bounce','scale','x','y','motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya'],
     CHAR_RANGES={
     threshold:[-65,-5],
     hold:[40,600],
@@ -7018,7 +7020,9 @@ fps:30,
     motionSing:[0,200],
     motionSingSpeed:[40,200],
     motionHop:[0,200],
-    motionShake:[0,200]
+    motionShake:[0,200],
+    motionWander:[0,200],
+    motionIya:[0,200]
   };
   var charBlobs={},
     charImgs={},
@@ -7113,7 +7117,7 @@ fps:30,
     if(out.flapMax<out.flapMin)out.flapMax=out.flapMin;
     if(typeof v.sinkId==='string')out.sinkId=v.sinkId.slice(0,300);
     if(['landscape','portrait'].includes(v.aspect))out.aspect=v.aspect;
-    for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake']){
+    for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya']){
       const n=Number(v[k]);
       if(Number.isFinite(n))out[k]=Math.max(CHAR_RANGES[k][0],Math.min(CHAR_RANGES[k][1],n))
     }
@@ -7155,8 +7159,8 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     out.light=v.light===true;
     out.vidFormat=v.vidFormat==='webm'?'webm':'mp4';
     out.vidQuality=[4.5,8,16].includes(Number(v.vidQuality))?Number(v.vidQuality):8;
-    {const MV=['float','sway','hop','run','shake','still'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];
-     if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,600)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40),face:['none','right','left'].includes(m.face)?m.face:'none',kind:m.kind==='mini'?'mini':'mascot',owner:typeof m.owner==='string'&&/^[a-z0-9]{1,16}$/.test(m.owner)?m.owner:''})}
+    {const MV=['float','sway','hop','run','shake','still','play','walk'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];
+     if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,600)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40),face:['none','right','left'].includes(m.face)?m.face:'none',tilt:num(m.tilt,-180,180,0),mirror:m.mirror===true,kind:m.kind==='mini'?'mini':'mascot',owner:typeof m.owner==='string'&&/^[a-z0-9]{1,16}$/.test(m.owner)?m.owner:''})}
      
      out.speaker=typeof v.speaker==='string'&&(v.speaker==='self'||out.mascots.some(m=>m.id===v.speaker))?v.speaker:'self';
      out.sceneBoost=num(v.sceneBoost,0,12,6)}
@@ -7341,6 +7345,8 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     studioMotionSingSpeed:'motionSingSpeed',
     studioMotionHop:'motionHop',
     studioMotionShake:'motionShake',
+    studioMotionWander:'motionWander',
+    studioMotionIya:'motionIya',
     studioImageMotion:'imageMotion'
   };
 
@@ -8163,7 +8169,7 @@ function cleanChar(c){
         continue
       }
       let n=Number(c[k]);
-      if(!Number.isFinite(n)&&/^motion(Sing|Hop|Shake)$/.test(k))n=Number(c.motionAmt);
+      if(!Number.isFinite(n)&&/^motion(Sing|Hop|Shake|Wander|Iya)$/.test(k))n=Number(c.motionAmt);
       o[k]=Number.isFinite(n)?Math.max(CHAR_RANGES[k][0],Math.min(CHAR_RANGES[k][1],n)):defaults[k]
     }
     return o
@@ -8200,7 +8206,7 @@ function cleanChar(c){
   }
 
   function profileSnap(){
-    return {scenes:JSON.parse(JSON.stringify(state.scenes)),bg:state.bg}
+    return {scenes:JSON.parse(JSON.stringify(state.scenes)),bg:state.bg,sceneFont:state.sceneFont}
   }
 
   function normScenes(x){
@@ -8326,6 +8332,8 @@ function cleanChar(c){
     const s=p.snap||{};
     state.scenes=normScenes(s.scenes);
     if(['cafe','transparent','green','blue','black','image'].includes(s.bg))state.bg=s.bg;
+    if(typeof s.sceneFont==='string'&&s.sceneFont in SCENE_FONTS)state.sceneFont=s.sceneFont;
+    syncSceneFontUI();
 for(const q of particles)q.beh='';
     state.charId='';
     activateChar(p.cur,true);
@@ -8926,7 +8934,7 @@ let W=1280,
 
   let motion='still',
     talkEnv=0;
-  const MOTION_LABEL={still:'直立',sing:'歌うゆらぎ',hop:'ぴょんぴょん',shake:'ガタガタ'};
+  const MOTION_LABEL={still:'直立',sing:'歌うゆらぎ',hop:'ぴょんぴょん',shake:'ガタガタ',wander:'右往左往',iya:'いやいや'};
 
   const rnd=n=>{
     const v=Math.sin(n*127.1+311.7)*43758.5453;
@@ -8937,8 +8945,12 @@ let W=1280,
     envS=0,
     popS=0,
     singPh=0,
-    hopPh=0;
-  const mw={sing:0,hop:0,shake:0};
+    hopPh=0,
+    stepPh=0,
+    iyaPh=0;
+  const mw={sing:0,hop:0,shake:0,wander:0,iya:0};
+  // 右往左往：左右の行き先へゆっくり歩いて止まり、ときどき途中で引き返す（-1〜1の位置）
+  const wd={from:0,to:0,t:0,dur:1,wait:.6};
 
   function vnoise(x,seed){
     const i=Math.floor(x),
@@ -8998,6 +9010,37 @@ let W=1280,
       else if(ph<.66){const x=(ph-.16)/.5;y=-4*x*(1-x)*J}
       else if(ph<.82)y=D*1.15*Math.sin((ph-.66)/.16*Math.PI);
       dy+=y*kH
+    }
+
+    if(mw.wander>.001){
+      const kW=state.motionWander/100,R=W*.15*kW;
+      let v=0;
+      if(wd.wait>0)wd.wait-=dtp;
+      else{
+        wd.t+=dtp;
+        if(wd.t>=wd.dur){
+          wd.from=wd.to;wd.t=0;wd.wait=.45+Math.random()*1.3;
+          let nx=Math.random()<.3?wd.from+(Math.random()-.5)*.6:-Math.sign(wd.from||(Math.random()-.5))*(.35+Math.random()*.65);
+          wd.to=Math.max(-1,Math.min(1,nx));
+          wd.dur=1.3+Math.abs(wd.to-wd.from)*1.2
+        }
+      }
+      const p=wd.wait>0?1:Math.min(1,wd.t/wd.dur),s=p*p*(3-2*p),x=wd.wait>0?wd.to:wd.from+(wd.to-wd.from)*s;
+      if(wd.wait<=0)v=(wd.to-wd.from)*6*p*(1-p)/wd.dur;
+      const sp=Math.abs(v)*R;
+      stepPh+=dtp*sp/Math.max(20*u,geo.h*.07);
+      dx+=x*R*mw.wander;
+      dy-=Math.abs(Math.sin(stepPh*Math.PI))*Math.min(1,sp/(60*u))*2.4*u*mw.wander;
+      rot+=Math.max(-1,Math.min(1,v*R/(W*.12)))*.02*Math.min(1.4,kW+.2)*mw.wander
+    }
+
+    if(mw.iya>.001){
+      const kI=state.motionIya/100*mw.iya;
+      iyaPh+=dtp;
+      const c=iyaPh%2.1,env=c<1.3?Math.pow(Math.sin(Math.PI*c/1.3),.6):0,s=Math.sin(c*Math.PI*2*2.3);
+      rot+=s*env*13*u/arm*kI;
+      dx-=s*env*2.4*u*kI;
+      dy+=env*1.4*u*kI
     }
 
     if(mw.shake>.001){
@@ -9672,13 +9715,14 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     const f=sceneFont(),s=fontSheets[f.q];
     E('sceneFontNote').textContent=!f.q?'':s?.failed?'フォントを読み込めませんでした（インターネットに接続していないときは端末の文字で表示します）':'Google Fontsから読み込みます。インターネットに接続していないときは端末の文字で表示します。'
   }
-  {
+  function syncSceneFontUI(){
     const sel=E('sceneFont');
-    sel.replaceChildren(...Object.entries(SCENE_FONTS).map(([k,f])=>new Option(f.name,k)));
+    if(!sel.options.length)sel.replaceChildren(...Object.entries(SCENE_FONTS).map(([k,f])=>new Option(f.name,k)));
     sel.value=state.sceneFont in SCENE_FONTS?state.sceneFont:'hachimaru';
-    sel.onchange=e=>{state.sceneFont=e.target.value;save();renderSceneFontNote()};
     renderSceneFontNote()
   }
+  E('sceneFont').onchange=e=>{state.sceneFont=e.target.value;save();renderSceneFontNote()};
+  syncSceneFontUI();
   function textWidth(s){
     const m=g.measureText(s);
     return Math.max(m.width,(m.actualBoundingBoxLeft||0)+(m.actualBoundingBoxRight||0))
@@ -10651,7 +10695,7 @@ let curExpr='';
       b.onclick=()=>setExpr(id);bar.append(b)
     }
   }
-  const EXPR_MOTION=[['none','動かさない（そのままの動き）'],['shake','ガタガタ'],['hop','ぴょんぴょん'],['sing','歌うゆらぎ']];
+  const EXPR_MOTION=[['none','動かさない（そのままの動き）'],['shake','ガタガタ'],['hop','ぴょんぴょん'],['sing','歌うゆらぎ'],['wander','右往左往'],['iya','いやいや']];
   function exprThumb(cid,slot){
     const b=charBlobs[charKey(cid,slot)];
     if(!b)return '';
@@ -10696,7 +10740,7 @@ let curExpr='';
     save();renderExprUI()
   };
 
-let mscSel='',mscLast=0;const mscEnv={},mscRun={};
+let mscSel='',mscLast=0;const mscEnv={},mscRun={},mscPlay={},mscWalk={};
   const MSC_MAX=30,MSC_ON_SCREEN=4;
   // マスコットは名義ごと（owner＝名義のid）。持ち主のないものは、画面に出していた名義（なければ先頭の名義）のものにする
   function claimMascots(){
@@ -10721,7 +10765,7 @@ let mscSel='',mscLast=0;const mscEnv={},mscRun={};
       if(!im)continue;
       const seed=(m.id.charCodeAt(0)+m.id.charCodeAt(m.id.length-1))*.173,a=m.amp/100,sp=m.speed/100,
         h=H*m.size/100,f=h/im.height,w=im.width*f;
-      let x=W/2+m.x*W/200,y=H/2+m.y*H/200,dx=0,dy=0,rot=0,flip=false;
+      let x=W/2+m.x*W/200,y=H/2+m.y*H/200,dx=0,dy=0,rot=0,flip=false,sx=1,sy=1;
       if(m.motion==='run'){
         const r=mscRun[m.id]||(mscRun[m.id]={x,y,tx:x,ty:y,wait:.4,dir:1,ph:0});
         const minX=w*.38,maxX=Math.max(minX,W-w*.38),minY=h*.38,maxY=Math.max(minY,H-h*.38),cl=(v,a,b)=>Number.isFinite(v)?Math.max(a,Math.min(b,v)):(a+b)/2;
@@ -10736,6 +10780,48 @@ let mscSel='',mscLast=0;const mscEnv={},mscRun={};
         if(r.wait<=0){dy=-Math.abs(Math.sin(r.ph))*10*u*a;rot=Math.sin(r.ph*2)*2.5*deg*a}
         flip=(m.face==='right'&&r.dir<0)||(m.face==='left'&&r.dir>0)
       }else delete mscRun[m.id];
+      // ぴょんぴょん戯れる：小さく跳ねる回数をまとめて繰り返し、ときどき横へ跳んで向きを変える。着地でむにっと縮む
+      if(m.motion==='play'){
+        const r=mscPlay[m.id]||(mscPlay[m.id]={ox:0,fx:0,tx:0,t:0,dur:.42,left:3,wait:.2,dir:1,h:16,sq:0});
+        if(r.wait>0){r.wait-=dtp;r.sq=Math.max(0,r.sq-dtp*5)}
+        else{
+          r.t+=dtp*sp;
+          if(r.t>=r.dur){
+            r.fx=r.tx;r.t=0;r.sq=1;
+            if(--r.left<=0){r.left=2+Math.floor(Math.random()*4);r.wait=.35+Math.random()*1.1}
+            const lim=70*u,jump=Math.random()<.45?(Math.random()-.5)*60*u*a:0;
+            r.tx=Math.max(-lim,Math.min(lim,r.fx+jump));
+            if(Math.abs(r.tx-r.fx)>2)r.dir=r.tx>r.fx?1:-1;
+            r.h=(10+Math.random()*12)*u*a;r.dur=.34+Math.random()*.16
+          }
+        }
+        const p=r.wait>0?0:Math.min(1,r.t/r.dur);
+        dx=r.fx+(r.tx-r.fx)*p;
+        dy=-4*p*(1-p)*r.h;
+        rot=(r.tx-r.fx)/(60*u)*8*deg*Math.sin(Math.PI*p);
+        const sq=r.sq*(r.wait>0?1:Math.max(0,1-p*4));
+        sy=1-.12*sq*a;sx=1+.08*sq*a;
+        if(p>0&&p<.5){sy+=.05*a*Math.sin(Math.PI*p*2);sx-=.03*a*Math.sin(Math.PI*p*2)}
+        flip=(m.face==='right'&&r.dir<0)||(m.face==='left'&&r.dir>0)
+      }else delete mscPlay[m.id];
+      // お散歩：決めた高さのまま左右へてくてく歩き、ときどき立ち止まって見回し、端や気まぐれで引き返す
+      if(m.motion==='walk'){
+        const lo=w*.5,hi=Math.max(lo,W-w*.5);
+        const r=mscWalk[m.id]||(mscWalk[m.id]={x:Math.max(lo,Math.min(hi,x)),dir:Math.random()<.5?-1:1,ph:0,wait:0,look:0,go:3+Math.random()*4});
+        r.x=Math.max(lo,Math.min(hi,r.x));
+        if(drag&&drag.target===m){r.x=x;r.wait=.8}
+        if(r.wait>0){r.wait-=dtp;r.look+=dtp;rot=Math.sin(r.look*TAU*.7)*4*deg*a;dy=0}
+        else{
+          const v=48*u*sp;
+          r.x+=r.dir*v*dtp;r.ph+=dtp*v/(14*u);r.go-=dtp;
+          if(r.x<=lo||r.x>=hi){r.dir=r.x<=lo?1:-1}
+          if(r.go<=0){r.go=2.5+Math.random()*5;if(Math.random()<.55){r.wait=.7+Math.random()*1.6;r.look=0}if(Math.random()<.35)r.dir*=-1}
+          dy=-Math.abs(Math.sin(r.ph*Math.PI))*5*u*a;
+          rot=Math.sin(r.ph*Math.PI)*4*deg*a
+        }
+        x=r.x;
+        flip=(m.face==='right'&&r.dir<0)||(m.face==='left'&&r.dir>0)
+      }else delete mscWalk[m.id];
       if(m.motion==='float'){dy=Math.sin(t*TAU*.3*sp+seed)*12*u*a;dx=Math.sin(t*TAU*.17*sp+seed*2)*6*u*a;rot=Math.sin(t*TAU*.23*sp+seed)*3*deg*a}
       else if(m.motion==='sway'){const s=Math.sin(t*TAU*.45*sp+seed);rot=s*6*deg*a;dy=-Math.abs(s)*3*u*a}
       else if(m.motion==='hop'){const ph=(t*1.5*sp+seed)%1;dy=-4*ph*(1-ph)*18*u*a}
@@ -10744,7 +10830,8 @@ let mscSel='',mscLast=0;const mscEnv={},mscRun={};
       mscEnv[m.id]=e1;
       if(e1>.01){dy-=e1*(5+Math.abs(Math.sin(t*TAU*4.2))*10)*u;rot+=Math.sin(t*TAU*4.2)*e1*3*deg}
       const spc=avSprite(im,{x:0,y:0,w:im.width,h:im.height},f);
-      g.save();g.translate(x+dx,y+dy);g.rotate(rot);if(flip)g.scale(-1,1);g.imageSmoothingEnabled=true;g.imageSmoothingQuality=state.light?'medium':'high';
+      const pvy=m.motion==='play'||m.motion==='walk'?h/2:0;
+      g.save();g.translate(x+dx,y+dy+pvy);g.rotate(rot+(m.tilt||0)*deg);g.scale((flip!==!!m.mirror?-1:1)*sx,sy);if(pvy)g.translate(0,-pvy);g.imageSmoothingEnabled=true;g.imageSmoothingQuality=state.light?'medium':'high';
       if(spc)g.drawImage(spc.c,-spc.dw/2,-spc.dh/2);else g.drawImage(im,-w/2,-h/2,w,h);
       g.restore();
       m._box={x:x-w/2,y:y-h/2,w,h}
@@ -10815,6 +10902,7 @@ let mscSel='',mscLast=0;const mscEnv={},mscRun={};
       E('mscKind').value=m.kind==='mini'?'mini':'mascot';
       E('mscTalkText').textContent=m.kind==='mini'?'自分の声で動く（話者が「本人」のとき）':'話者ボタンに出す（声でぴこぴこ）';
       E('mscOwnerSel').replaceChildren(...(state.profiles||[]).map(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;o.selected=p.id===m.owner;return o}));
+      E('mscTilt').value=m.tilt||0;E('mscTiltVal').textContent=(m.tilt||0)+'°';E('mscMirror').checked=!!m.mirror;
       E('mscShow').checked=m.show;E('mscTalk').checked=m.talk;E('mscMotion').value=m.motion;E('mscFace').value=m.face||'none';
       for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])if(document.activeElement!==E(id))E(id).value=m[k];
       E('mscAmpVal').textContent=m.amp+'%';E('mscSpeedVal').textContent=m.speed+'%';E('mscSizeVal').textContent=m.size+'%';
@@ -10915,6 +11003,9 @@ let mscSel='',mscLast=0;const mscEnv={},mscRun={};
   E('mscFace').onchange=e=>{const m=mscCur();if(m){m.face=e.target.value;save()}};
   E('mscTalk').onchange=e=>{const m=mscCur();if(m){m.talk=e.target.checked;save();renderMascotUI()}};
   E('mscMotion').onchange=e=>{const m=mscCur();if(m){m.motion=e.target.value;save()}};
+  E('mscTilt').addEventListener('input',e=>{const m=mscCur();if(m){m.tilt=Math.max(-180,Math.min(180,Number(e.target.value)||0));E('mscTiltVal').textContent=m.tilt+'°';save()}});
+  E('mscTilt').addEventListener('dblclick',()=>{const m=mscCur();if(m){m.tilt=0;E('mscTilt').value=0;E('mscTiltVal').textContent='0°';save()}});
+  E('mscMirror').onchange=e=>{const m=mscCur();if(m){m.mirror=e.target.checked;save()}};
   for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])E(id).addEventListener('input',e=>{const m=mscCur();if(m){m[k]=Number(e.target.value);save();renderMascotUI()}});
 
 for(const k of ['standby','away','end']){

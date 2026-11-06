@@ -189,13 +189,14 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     const f=sceneFont(),s=fontSheets[f.q];
     E('sceneFontNote').textContent=!f.q?'':s?.failed?'フォントを読み込めませんでした（インターネットに接続していないときは端末の文字で表示します）':'Google Fontsから読み込みます。インターネットに接続していないときは端末の文字で表示します。'
   }
-  {
+  function syncSceneFontUI(){
     const sel=E('sceneFont');
-    sel.replaceChildren(...Object.entries(SCENE_FONTS).map(([k,f])=>new Option(f.name,k)));
+    if(!sel.options.length)sel.replaceChildren(...Object.entries(SCENE_FONTS).map(([k,f])=>new Option(f.name,k)));
     sel.value=state.sceneFont in SCENE_FONTS?state.sceneFont:'hachimaru';
-    sel.onchange=e=>{state.sceneFont=e.target.value;save();renderSceneFontNote()};
     renderSceneFontNote()
   }
+  E('sceneFont').onchange=e=>{state.sceneFont=e.target.value;save();renderSceneFontNote()};
+  syncSceneFontUI();
   function textWidth(s){
     const m=g.measureText(s);
     return Math.max(m.width,(m.actualBoundingBoxLeft||0)+(m.actualBoundingBoxRight||0))
