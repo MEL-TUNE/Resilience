@@ -502,7 +502,7 @@ function memoryDB(){
               for(const key of [...m.keys()])if(f(key))m.delete(key)
             }),
 
-            getAll:()=>req(()=>[...m.values()]),
+            getAll:r=>req(()=>r?[...m.keys()].sort().filter(hit(r)).map(k=>m.get(k)):[...m.values()]),
             getAllKeys:r=>req(()=>{
               const keys=[...m.keys()].sort();
               return r?keys.filter(hit(r)):keys

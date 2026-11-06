@@ -31,6 +31,11 @@
 .studio-take{padding:8px 0;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--a-p-20);font-size:12px}
 .studio-take a{color:var(--accent)}
 .studio-take span{flex:1}
+.studio-take{flex-wrap:wrap}
+.studio-take .vname{flex:1 1 220px;min-width:0;word-break:break-all}
+.studio-take .vstate{flex:0 0 auto;font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--a-p-45);background:var(--paper)}
+.studio-take.vid-stored .vstate{border-color:var(--accent)}
+.studio-take.vid-temp .vstate,.studio-take.vid-failed .vstate,.studio-take.vid-missing .vstate,.studio-take.vid-orphan .vstate,.studio-take.vid-unknown .vstate{border-style:dashed;font-weight:700}
 .studio-card details summary{cursor:pointer;font-size:12px}
 .studio-header-line{display:flex;justify-content:space-between;align-items:center}
 .studio-header-line small{font-size:10px;color:var(--muted)}
@@ -225,7 +230,7 @@ body{padding-top:var(--mini-h,0px)}
   .rec-sub{display:grid;grid-template-columns:1fr;gap:6px}
   .rec-opt select{flex:1 1 0;width:0;font-size:13px}
   .studio-take{flex-wrap:wrap}
-  .studio-take span{flex-basis:100%;word-break:break-all}
+  .studio-take .vname{flex-basis:100%}
   .scene-bar button,.motion-bar button,.char-bar button,.expr-bar button,.speaker-bar button{padding:7px 9px;font-size:12px}
 }
 .rec-note{font-size:11px;color:var(--muted);margin:6px 0 0}

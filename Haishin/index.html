@@ -518,6 +518,11 @@ a{color:var(--accent)}
 .studio-take{padding:8px 0;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--a-p-20);font-size:12px}
 .studio-take a{color:var(--accent)}
 .studio-take span{flex:1}
+.studio-take{flex-wrap:wrap}
+.studio-take .vname{flex:1 1 220px;min-width:0;word-break:break-all}
+.studio-take .vstate{flex:0 0 auto;font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--a-p-45);background:var(--paper)}
+.studio-take.vid-stored .vstate{border-color:var(--accent)}
+.studio-take.vid-temp .vstate,.studio-take.vid-failed .vstate,.studio-take.vid-missing .vstate,.studio-take.vid-orphan .vstate,.studio-take.vid-unknown .vstate{border-style:dashed;font-weight:700}
 .studio-card details summary{cursor:pointer;font-size:12px}
 .studio-header-line{display:flex;justify-content:space-between;align-items:center}
 .studio-header-line small{font-size:10px;color:var(--muted)}
@@ -712,7 +717,7 @@ body{padding-top:var(--mini-h,0px)}
   .rec-sub{display:grid;grid-template-columns:1fr;gap:6px}
   .rec-opt select{flex:1 1 0;width:0;font-size:13px}
   .studio-take{flex-wrap:wrap}
-  .studio-take span{flex-basis:100%;word-break:break-all}
+  .studio-take .vname{flex-basis:100%}
   .scene-bar button,.motion-bar button,.char-bar button,.expr-bar button,.speaker-bar button{padding:7px 9px;font-size:12px}
 }
 .rec-note{font-size:11px;color:var(--muted);margin:6px 0 0}
@@ -919,7 +924,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.6.8 / 収録した動画をブラウザ内に保存</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.6.9 / 動画保存の状態表示と目録の分離</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -989,7 +994,7 @@ lookPaint(look);
 <section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは「標準」と名義ごとのタブです。名義専用のタブを開いているときに名義を切り替えると、その名義のタブに移ります。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
 </div></main>
 </div>
-<details class="studio-card studio-help"><summary>使い方</summary><p data-modes="stream"><strong>配信モード（PC＋OBS）</strong>：このアプリは映像と、効果音・BGM・環境音だけを作ります。マイクの声は口パクの判定にだけ使い、アプリからは出しません。OBSでは「配信用の映像ウインドウ」をウィンドウキャプチャで取り込み、音はブラウザの音（効果音・BGM）とマイク（AG03など）を別々に取り込みます。録画はOBS側で行ってください。</p><p data-modes="video"><strong>動画モード（スマホ・タブレット向け）</strong>：立ち絵とBGM・効果音つきの動画を、この画面で収録して保存します。マイクの声も動画に入ります。収録した動画はこのブラウザ内に最大30本まで残り、あとから保存・共有・削除できます。</p><p data-modes="radio"><strong>音声モード</strong>：ラジオのように声とBGM・効果音を録音します。</p><p>準備：「設定」の「表情と演出」で立ち絵を登録（4枚の表情差分か1枚）→ マイクをつなぐ → 声を出して「口が開く音量」を調整 → 効果音・BGMを登録。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別のブラウザや別のURLへは自動で引き継がないので、「設定」の「すべてを書き出す（.live）」で書き出してから移してください。</p></details>
+<details class="studio-card studio-help"><summary>使い方</summary><p data-modes="stream"><strong>配信モード（PC＋OBS）</strong>：このアプリは映像と、効果音・BGM・環境音だけを作ります。マイクの声は口パクの判定にだけ使い、アプリからは出しません。OBSでは「配信用の映像ウインドウ」をウィンドウキャプチャで取り込み、音はブラウザの音（効果音・BGM）とマイク（AG03など）を別々に取り込みます。録画はOBS側で行ってください。</p><p data-modes="video"><strong>動画モード（スマホ・タブレット向け）</strong>：立ち絵とBGM・効果音つきの動画を、この画面で収録して保存します。マイクの声も動画に入ります。収録した動画はこのブラウザ内に最大30本まで残り、あとから保存・共有・削除できます。各動画の横には「ブラウザ内に保存」「一時保持のみ」などの状態が出ます。30本を超えた分は古い動画を自動では消さず一時保持になるので、古い動画を削除してから「ブラウザ内に保存を再試行」を押してください。ブラウザ内の動画は「すべてを書き出す（.live）」には入りません。</p><p data-modes="radio"><strong>音声モード</strong>：ラジオのように声とBGM・効果音を録音します。</p><p>準備：「設定」の「表情と演出」で立ち絵を登録（4枚の表情差分か1枚）→ マイクをつなぐ → 声を出して「口が開く音量」を調整 → 効果音・BGMを登録。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別のブラウザや別のURLへは自動で引き継がないので、「設定」の「すべてを書き出す（.live）」で書き出してから移してください。</p></details>
 </section>
 
 
@@ -1693,7 +1698,7 @@ function memoryDB(){
               for(const key of [...m.keys()])if(f(key))m.delete(key)
             }),
 
-            getAll:()=>req(()=>[...m.values()]),
+            getAll:r=>req(()=>r?[...m.keys()].sort().filter(hit(r)).map(k=>m.get(k)):[...m.values()]),
             getAllKeys:r=>req(()=>{
               const keys=[...m.keys()].sort();
               return r?keys.filter(hit(r)):keys
@@ -6920,7 +6925,8 @@ $('#consoleAllStop').onclick=()=>stopAll();
     show:false,
     songs:[],
     repertoire:[],
-    videos:[],
+    fmt:2,
+    legacyVideos:[],
     singLog:[],
     singSess:null,
     assetNames:{},
@@ -7003,9 +7009,27 @@ fps:30,
     switchAt=-1e9,
     charUrls=[],
     trimCache=new WeakMap();
+  // 保存形式の版。1＝0.6.8まで（動画一覧を設定内に保持）、2＝動画の目録を設定から分離。
+  const STATE_FMT=2;
+  let stateRawBackup=null,stateRawFmt=0;
+  function migrateState(s){
+    if(!s||typeof s!=='object'||Array.isArray(s))return s;
+    const f=Number(s.fmt)||1;
+    if(f<2){
+      const old=Array.isArray(s.legacyVideos)?s.legacyVideos:[],seen=new Set(old.map(x=>x&&x.id));
+      s.legacyVideos=[...old,...(Array.isArray(s.videos)?s.videos:[]).filter(x=>x&&!seen.has(x.id))];
+      delete s.videos;
+      s.fmt=2
+    }
+    return s
+  }
   try{
-    const saved=JSON.parse(localStorage.getItem(KEY_S)||'null');
-    if(saved&&typeof saved==='object')state={...defaults,...saved}
+    const raw=localStorage.getItem(KEY_S),saved=JSON.parse(raw||'null');
+    if(saved&&typeof saved==='object'&&!Array.isArray(saved)){
+      const f=Number(saved.fmt)||1;
+      if(f!==STATE_FMT){stateRawBackup=raw;stateRawFmt=f}
+      state={...defaults,...migrateState(saved)}
+    }
   }catch(_){}
 
   const canvas=E('studioCanvas'),
@@ -7039,7 +7063,7 @@ fps:30,
     {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last)}));
      if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).slice(-5000).map(x=>({id:S(x.id,16),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)}));
-     if(Array.isArray(v.videos))out.videos=v.videos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,30).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at)||new Date().toISOString(),stored:true}));
+     if(Array.isArray(v.legacyVideos))out.legacyVideos=v.legacyVideos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,60).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at),missing:x.missing===true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
     out.scenes={};
@@ -7114,6 +7138,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     if(typeof v.charId==='string')out.charId=v.charId.slice(0,24);
     if(['fade','cut'].includes(v.switchFx))out.switchFx=v.switchFx;
     if(['s','m','l'].includes(v.padSize))out.padSize=v.padSize;
+    out.fmt=STATE_FMT;
     return out
   }
 
@@ -9920,82 +9945,199 @@ let frameToken=0,
     },350))
   };
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-  const VID_MAX=30;
-  function videoMeta(){if(!Array.isArray(state.videos))state.videos=[];return state.videos}
-  async function videoBlob(m,mem){
-    if(mem)return mem;
-    const b=await getAsset('video:'+m.id);
+  const VID_MAX=30,VMETA='vmeta:',VBLOB='video:';
+  // 動画は設定（state）とは別に、IndexedDBの assets に「実体 video:ID」と「目録 vmeta:ID」を同じトランザクションで置く。
+  const vids=[];
+  let vidQ=Promise.resolve();
+  function vidQueue(fn){const run=vidQ.then(()=>fn());vidQ=run.catch(()=>{});return run}
+  const vidRange=p=>IDBKeyRange.bound(p,p+'￿');
+  const vidPersistent=()=>!!(ready&&db&&!db.memory);
+  const vidMetaOf=m=>({id:m.id,name:String(m.name||'otonoha.mp4').slice(0,120),size:Math.max(0,Number(m.size)||0),type:String(m.type||'').slice(0,40),at:m.at||new Date().toISOString(),v:1});
+  const VST={saving:'保存処理中…',stored:'ブラウザ内に保存',temp:'一時保持のみ（この画面を閉じると消えます）',failed:'保存失敗・一時保持（この画面を閉じると消えます）',missing:'実体なし（この端末に動画データがありません）',orphan:'一覧から外れていた動画データ',unknown:'保存状態を確認できません'};
+  function vidTx(work,mode='readwrite'){
+    return new Promise((resolve,reject)=>{
+      let t;
+      try{t=db.transaction('assets',mode)}catch(e){reject(e);return}
+      const out={};
+      t.oncomplete=()=>resolve(out);
+      t.onerror=()=>reject(t.error||Error('保存に失敗しました'));
+      t.onabort=()=>reject(out.reason||t.error||Error('保存を中止しました'));
+      try{work(t.objectStore('assets'),t,out)}catch(e){out.reason=e;try{t.abort()}catch(_){reject(e)}}
+    })
+  }
+  function vidStore(m,blob){
+    return vidQueue(()=>vidTx((s,t,out)=>{
+      const r=s.getAllKeys(vidRange(VMETA));
+      r.onsuccess=()=>{
+        const keys=r.result||[];
+        if(!keys.includes(VMETA+m.id)&&keys.length>=VID_MAX){out.reason=Object.assign(Error('full'),{full:true});t.abort();return}
+        try{
+          s.put(blob,VBLOB+m.id);
+          s.put(vidMetaOf(m),VMETA+m.id)
+        }catch(e){out.reason=e;t.abort()}
+      }
+    }))
+  }
+  function vidDelete(id){return vidQueue(()=>vidTx(s=>{s.delete(VBLOB+id);s.delete(VMETA+id)}))}
+  function vidCatalog(){
+    return vidTx((s,t,out)=>{
+      const a=s.getAll(vidRange(VMETA)),k=s.getAllKeys(vidRange(VBLOB));
+      a.onsuccess=()=>{out.metas=(a.result||[]).filter(x=>x&&typeof x.id==='string')};
+      k.onsuccess=()=>{out.blobs=new Set(k.result||[])}
+    },'readonly')
+  }
+  async function videoBlob(v){
+    if(v.mem)return v.mem;
+    if(!vidPersistent())throw Error('この動画のデータが見つかりません');
+    const b=await getAsset(VBLOB+v.m.id);
     if(!b)throw Error('この動画のデータが見つかりません');
     return b
   }
-  function videoRow(m,mem){
-    const row=document.createElement('div');
-    row.className='studio-take';
-    const span=document.createElement('span');
-    const d=new Date(m.at);
-    span.textContent=m.name+' / '+(m.size/1048576).toFixed(1)+' MB'+(m.stored?'':'（この画面を閉じると消えます）');
-    span.title=d.toLocaleString('ja-JP');
-    row.append(span);
-    const saveBtn=document.createElement('button');
-    saveBtn.type='button';saveBtn.className='vbtn vsave';saveBtn.textContent='ファイルに保存';
-    saveBtn.onclick=async()=>{
-      try{
-        const b=await videoBlob(m,mem),u=URL.createObjectURL(b),a=document.createElement('a');
-        a.href=u;a.download=m.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000)
-      }catch(e){toast(e.message||'保存できませんでした',5000)}
-    };
-    if(navigator.canShare){
-      const sh=document.createElement('button');
-      sh.type='button';sh.className='vbtn primary';sh.textContent=isIOS?'写真に保存（共有）':'共有';
-      sh.title='共有の画面で「ビデオを保存」を選ぶと、写真アプリに入ります';
-      sh.onclick=async()=>{
+  function vidDownload(v){
+    return videoBlob(v).then(b=>{
+      const u=URL.createObjectURL(b),a=document.createElement('a');
+      a.href=u;a.download=v.m.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);
+      return true
+    })
+  }
+  function vidButton(text,cls,title,fn){
+    const b=document.createElement('button');
+    b.type='button';b.className='vbtn'+(cls?' '+cls:'');b.textContent=text;if(title)b.title=title;b.onclick=fn;
+    return b
+  }
+  function vidPaint(v){
+    const row=v.el||(v.el=document.createElement('div'));
+    row.className='studio-take vid-'+v.status;
+    row.dataset.vid=v.m.id;
+    const name=document.createElement('span');
+    name.className='vname';
+    name.textContent=v.m.name+(v.m.size?' / '+(v.m.size/1048576).toFixed(1)+' MB':'');
+    if(v.m.at)name.title=new Date(v.m.at).toLocaleString('ja-JP');
+    const st=document.createElement('span');
+    st.className='vstate';
+    st.textContent=VST[v.status]||'';
+    const kids=[name,st];
+    const has=v.mem||v.status==='stored'||v.status==='orphan';
+    if(has){
+      if(navigator.canShare)kids.push(vidButton(isIOS?'写真に保存（共有）':'共有','primary','共有の画面で「ビデオを保存」を選ぶと、写真アプリに入ります',async()=>{
         try{
-          const b=await videoBlob(m,mem),file=new File([b],m.name,{type:b.type||m.type});
+          const b=await videoBlob(v),file=new File([b],v.m.name,{type:b.type||v.m.type});
           if(!navigator.canShare({files:[file]}))throw Error('この端末では共有できません。「ファイルに保存」をお使いください');
           await navigator.share({files:[file]})
         }catch(e){if(e?.name!=='AbortError')toast(e.message||'共有できませんでした。「ファイルに保存」をお使いください',5000)}
-      };
-      row.append(sh)
+      }));
+      kids.push(vidButton('ファイルに保存','vsave','',async()=>{
+        try{await vidDownload(v);toast('ファイルのダウンロードを開始しました。完了はブラウザのダウンロード表示でご確認ください',5000)}
+        catch(e){toast(e.message||'書き出せませんでした',5000)}
+      }))
     }
-    const del=document.createElement('button');
-    del.type='button';del.className='vbtn';del.textContent='削除';
-    del.title='このブラウザ内に保存した動画を消します。書き出し済みのファイルは消えません';
-    del.onclick=e=>armed(e.currentTarget,'もう一度押すと削除',async()=>{
-      try{await deleteAsset('video:'+m.id)}catch(_){}
-      state.videos=videoMeta().filter(x=>x.id!==m.id);save();row.remove();renderVideoInfo()
-    });
-    row.append(saveBtn,del);
+    if((v.status==='temp'||v.status==='failed')&&v.mem&&vidPersistent())kids.push(vidButton('ブラウザ内に保存を再試行','','',()=>vidCommit(v,true)));
+    if(v.status==='orphan')kids.push(vidButton('一覧に戻す','','この動画データを一覧に登録し直します（データは変わりません）',()=>vidRestore(v)));
+    if(v.status==='stored'||v.status==='orphan')kids.push(vidButton('削除','','このブラウザ内に保存した動画を消します。書き出し済みのファイルは消えません',e=>armed(e.currentTarget,'もう一度押すと削除',()=>vidRemove(v))));
+    else if(v.status==='missing'||v.status==='unknown')kids.push(vidButton('一覧から外す','','この行だけを外します。ほかの動画やファイルには触れません',e=>armed(e.currentTarget,'もう一度押すと外す',()=>{
+      state.legacyVideos=(state.legacyVideos||[]).filter(x=>x.id!==v.m.id);save();vidDrop(v)
+    })));
+    else if(v.status!=='saving')kids.push(vidButton('一覧から消す','','一時保持している動画を手放します。書き出し済みのファイルは消えません',e=>armed(e.currentTarget,'もう一度押すと消す',()=>{v.mem=null;vidDrop(v)})));
+    row.replaceChildren(...kids);
     return row
   }
+  function vidDrop(v){const i=vids.indexOf(v);if(i>=0)vids.splice(i,1);v.el?.remove();renderVideoInfo()}
+  async function vidRemove(v){
+    try{await vidDelete(v.m.id)}
+    catch(e){toast('削除できませんでした。動画は残っています。もう一度お試しください',6000);return}
+    vidDrop(v);
+    toast('動画を削除しました',2500)
+  }
+  async function vidRestore(v){
+    try{
+      const b=await getAsset(VBLOB+v.m.id);
+      if(!b)throw Error('');
+      const m={...v.m,name:v.m.name,size:b.size,type:b.type||'',at:v.m.at||new Date().toISOString()};
+      await vidStore(m,b);
+      v.m=m;v.status='stored';vidPaint(v);renderVideoInfo();
+      toast('一覧に戻しました',2500)
+    }catch(e){toast(e?.full?'ブラウザ内の動画が'+VID_MAX+'本あるため戻せません。古い動画を削除してからお試しください':'一覧に戻せませんでした',6000)}
+  }
+  // 戻り値：stored / full / temp / failed。結果は行の表示に残し、あとからの通知で上書きしない。
+  async function vidCommit(v,retry){
+    if(!v.mem)return v.status;
+    if(!vidPersistent()){
+      v.status='temp';vidPaint(v);renderVideoInfo();
+      if(retry)toast('この画面ではブラウザ内に保存できません。「ファイルに保存」で書き出してください',6000);
+      return ready&&db?'temp':'failed'
+    }
+    v.status='saving';vidPaint(v);
+    let res;
+    try{await vidStore(v.m,v.mem);v.status='stored';v.mem=null;res='stored'}
+    catch(e){v.status=e?.full?'temp':'failed';res=e?.full?'full':'failed'}
+    vidPaint(v);renderVideoInfo();
+    if(retry)toast(res==='stored'?'ブラウザ内に保存しました':res==='full'?'ブラウザ内の動画が'+VID_MAX+'本あるため、まだ保存できません。古い動画を削除してから再試行してください':'ブラウザ内に保存できませんでした（空き容量をご確認ください）',6000);
+    return res
+  }
   async function renderVideoInfo(){
-    const n=videoMeta().length,el=E('studioVideoInfo');
+    const el=E('studioVideoInfo');
     if(!el)return;
-    let q='';
-    try{const s=await navigator.storage?.estimate?.();if(s&&s.quota)q='・このサイトの保存容量 '+(s.usage/1048576).toFixed(0)+' MB／上限の目安 '+(s.quota/1073741824).toFixed(1)+' GB'}catch(_){}
-    el.textContent=n?'ブラウザ内に保存した動画 '+n+'本'+q:''
+    const n=vids.filter(v=>v.status==='stored').length,t=vids.filter(v=>v.mem).length,miss=vids.filter(v=>v.status==='missing'||v.status==='orphan').length;
+    const parts=[];
+    if(n)parts.push('ブラウザ内に保存した動画 '+n+'／'+VID_MAX+'本');
+    if(t)parts.push('一時保持 '+t+'本（画面を閉じると消えます）');
+    if(miss)parts.push('要確認 '+miss+'件');
+    if(parts.length&&vidPersistent())try{const s=await navigator.storage?.estimate?.();if(s&&s.quota)parts.push('このサイトの保存容量 '+(s.usage/1048576).toFixed(0)+' MB／上限の目安 '+(s.quota/1073741824).toFixed(1)+' GB')}catch(_){}
+    el.textContent=parts.length?parts.join('・')+'。ブラウザ内の保存は、サイトデータの削除などで消えることがあります。残したい動画はファイルに書き出してください':''
   }
   async function addVideoRow(blob,name){
-    const m={id:Math.random().toString(36).slice(2,10),name,size:blob.size,type:blob.type,at:new Date().toISOString(),stored:false};
-    if(videoMeta().length<VID_MAX){
-      try{
-        if(!ready)throw Error('');
-        await putAsset('video:'+m.id,blob);
-        m.stored=true;
-        videoMeta().unshift({...m});
-        save()
-      }catch(_){toast('動画をブラウザ内に保存できませんでした（空き容量をご確認ください）。この画面を閉じる前に保存してください',7000)}
-    }else toast('ブラウザ内に保存できる動画は'+VID_MAX+'本までです。古い動画を削除すると、次から保存できます。今回の動画はこの画面を閉じると消えます',8000);
-    const row=videoRow(m,blob);
-    E('studioVideos').prepend(row);
-    renderVideoInfo();
-    if(isIOS)toast('収録できました。「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります',7000);
-    else{row.querySelector('.vsave').click();toast('動画を保存しました。一覧に残るので、あとから「ファイルに保存」でもう一度保存できます',6000)}
+    const v={m:{id:Math.random().toString(36).slice(2,10),name,size:blob.size,type:blob.type,at:new Date().toISOString()},mem:blob,status:'saving'};
+    vids.unshift(v);
+    E('studioVideos').prepend(vidPaint(v));
+    let dl=false;
+    if(!isIOS)try{dl=await vidDownload(v)}catch(_){}
+    const res=await vidCommit(v,false);
+    const tail=isIOS?'「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります':dl?'ファイルのダウンロードを開始しました（完了はブラウザの表示でご確認ください）':'「ファイルに保存」で書き出せます';
+    if(res==='stored')toast('収録できました。ブラウザ内に保存し、'+tail,7000);
+    else if(res==='full')toast('ブラウザ内の動画が'+VID_MAX+'本あるため、今回の動画は一時保持です（古い動画は自動では消しません）。古い動画を削除すると「ブラウザ内に保存を再試行」で保存できます。'+tail,11000);
+    else if(res==='temp')toast('この画面ではブラウザ内に保存できないため、一時保持です。'+tail,9000);
+    else toast('ブラウザ内に保存できませんでした（空き容量をご確認ください）。一時保持のまま残しています。'+tail,10000)
   }
-  function renderStoredVideos(){
+  // 起動時：目録を読み、0.6.8までの設定内の動画一覧（legacyVideos）を実体と照合して移す。実体のないものは「実体なし」として残し、勝手に消さない。
+  async function renderStoredVideos(){
     const box=E('studioVideos');
-    box.replaceChildren(...videoMeta().map(m=>videoRow(m,null)));
-    renderVideoInfo()
+    const legacy=Array.isArray(state.legacyVideos)?state.legacyVideos:[];
+    for(const v of vids.filter(v=>!v.mem))vidDrop(v);
+    if(!vidPersistent()){
+      for(const m of legacy)vids.push({m,mem:null,status:'unknown'});
+      box.append(...vids.filter(v=>!v.mem).map(vidPaint));
+      renderVideoInfo();
+      return
+    }
+    let cat;
+    try{cat=await vidCatalog()}catch(e){toast('保存した動画の一覧を読めませんでした',5000);return}
+    if(legacy.length){
+      const keep=[],have=new Set(cat.metas.map(x=>x.id));
+      for(const m of legacy){
+        if(have.has(m.id))continue;
+        if(cat.blobs.has(VBLOB+m.id)){
+          try{await vidQueue(()=>vidTx(s=>s.put(vidMetaOf(m),VMETA+m.id)));continue}catch(_){keep.push(m);continue}
+        }
+        keep.push({...m,missing:true})
+      }
+      if(keep.length!==legacy.length||keep.some((m,i)=>m.missing!==legacy[i].missing)){state.legacyVideos=keep;save()}
+      try{cat=await vidCatalog()}catch(_){}
+    }
+    const metaIds=new Set(cat.metas.map(x=>x.id)),list=[];
+    for(const m of cat.metas.sort((a,b)=>String(b.at).localeCompare(String(a.at))))list.push({m,mem:null,status:'stored'});
+    for(const m of state.legacyVideos||[])if(!metaIds.has(m.id))list.push({m,mem:null,status:m.missing?'missing':'unknown'});
+    for(const k of cat.blobs){
+      const id=String(k).slice(VBLOB.length);
+      if(metaIds.has(id)||list.some(v=>v.m.id===id))continue;
+      list.push({m:{id,name:'動画データ（ID '+id+'）',size:0,type:'',at:''},mem:null,status:'orphan'})
+    }
+    vids.push(...list);
+    box.append(...list.map(vidPaint));
+    renderVideoInfo();
+    // 一覧から外れていたデータの大きさは、1件ずつ取り出して確かめる（中身は読み込まない）
+    for(const v of list.filter(v=>v.status==='orphan'))try{const b=await getAsset(VBLOB+v.m.id);if(b){v.m.size=b.size;v.m.type=b.type||'';vidPaint(v)}}catch(_){}
   }
+  window.__otonohaVideos={list:()=>vids.map(v=>({id:v.m.id,status:v.status,mem:!!v.mem,name:v.m.name})),catalog:()=>vidCatalog(),reload:()=>renderStoredVideos()};
 
   let vidProgSig='';
   function renderVidProg(){
@@ -10041,6 +10183,7 @@ let frameToken=0,
   }
   async function studioApply(rawState,decoded){
       const clean=sanitize(rawState);
+      clean.legacyVideos=state.legacyVideos||[];
       const tx=db.transaction('assets','readwrite');
       for(const id of new Set(['png0','png1','png2','png3',...PARTICLE_IDS,'background',...Object.keys(assetBlobs),...Object.keys(charBlobs),...Object.keys(decoded)])){
         const s=tx.objectStore('assets');
@@ -10080,7 +10223,7 @@ let frameToken=0,
       renderValues();
       save();
   }
-  function studioCollect(){syncChar();const assets={};for(const[id,b]of Object.entries(assetBlobs))if(!/^png[0-3]$/.test(id))assets[id]=b;for(const[id,b]of Object.entries(charBlobs))assets[id]=b;return {state:JSON.parse(JSON.stringify(state)),assets}}
+  function studioCollect(){syncChar();const assets={};for(const[id,b]of Object.entries(assetBlobs))if(!/^png[0-3]$/.test(id))assets[id]=b;for(const[id,b]of Object.entries(charBlobs))assets[id]=b;const out=JSON.parse(JSON.stringify(state));delete out.legacyVideos;delete out.videos;return {state:out,assets}}
   window.__otonohaVideoRec=()=>studioCapturing||captureStarting;
   window.__otonohaStudio={collect:studioCollect,validate:studioValidate,apply:async(s,d)=>{await studioApply(s,d);toast('立ち絵・映像設定も読み込みました')},busy:()=>studioCapturing||captureStarting};
 
@@ -10712,6 +10855,11 @@ applyPerf();
       return
     }
     ready=true;
+    if(stateRawBackup&&!db.memory)try{
+      const k='backup:visual-state-fmt'+stateRawFmt;
+      if(!(await getAsset(k)))await putAsset(k,stateRawBackup);
+      if(stateRawFmt>STATE_FMT)toast('新しい版で保存された映像設定を読み込みました。元の設定はブラウザ内に控えています',8000)
+    }catch(_){}
     for(const id of new Set([...PARTICLE_IDS,'background',...presetImageIds(),'scene-standby','scene-away','scene-end',...(state.mascots||[]).map(m=>'msc-'+m.id)]))try{
       const b=await getAsset(ASSET+id);
       if(b)await installAsset(id,b,state.assetNames[id],false)

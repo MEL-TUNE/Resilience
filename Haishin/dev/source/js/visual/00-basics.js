@@ -37,7 +37,8 @@
     show:false,
     songs:[],
     repertoire:[],
-    videos:[],
+    fmt:2,
+    legacyVideos:[],
     singLog:[],
     singSess:null,
     assetNames:{},
@@ -120,9 +121,27 @@ fps:30,
     switchAt=-1e9,
     charUrls=[],
     trimCache=new WeakMap();
+  // 保存形式の版。1＝0.6.8まで（動画一覧を設定内に保持）、2＝動画の目録を設定から分離。
+  const STATE_FMT=2;
+  let stateRawBackup=null,stateRawFmt=0;
+  function migrateState(s){
+    if(!s||typeof s!=='object'||Array.isArray(s))return s;
+    const f=Number(s.fmt)||1;
+    if(f<2){
+      const old=Array.isArray(s.legacyVideos)?s.legacyVideos:[],seen=new Set(old.map(x=>x&&x.id));
+      s.legacyVideos=[...old,...(Array.isArray(s.videos)?s.videos:[]).filter(x=>x&&!seen.has(x.id))];
+      delete s.videos;
+      s.fmt=2
+    }
+    return s
+  }
   try{
-    const saved=JSON.parse(localStorage.getItem(KEY_S)||'null');
-    if(saved&&typeof saved==='object')state={...defaults,...saved}
+    const raw=localStorage.getItem(KEY_S),saved=JSON.parse(raw||'null');
+    if(saved&&typeof saved==='object'&&!Array.isArray(saved)){
+      const f=Number(saved.fmt)||1;
+      if(f!==STATE_FMT){stateRawBackup=raw;stateRawFmt=f}
+      state={...defaults,...migrateState(saved)}
+    }
   }catch(_){}
 
   const canvas=E('studioCanvas'),
@@ -156,7 +175,7 @@ fps:30,
     {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last)}));
      if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).slice(-5000).map(x=>({id:S(x.id,16),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)}));
-     if(Array.isArray(v.videos))out.videos=v.videos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,30).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at)||new Date().toISOString(),stored:true}));
+     if(Array.isArray(v.legacyVideos))out.legacyVideos=v.legacyVideos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,60).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at),missing:x.missing===true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
     out.scenes={};
@@ -231,6 +250,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     if(typeof v.charId==='string')out.charId=v.charId.slice(0,24);
     if(['fade','cut'].includes(v.switchFx))out.switchFx=v.switchFx;
     if(['s','m','l'].includes(v.padSize))out.padSize=v.padSize;
+    out.fmt=STATE_FMT;
     return out
   }
 
