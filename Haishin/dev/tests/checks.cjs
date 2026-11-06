@@ -25,8 +25,8 @@ function variable(code, name) {
 }
 function visualContext() {
   const c = vm.createContext({ console });
-  vm.runInContext(['defaults', 'CHAR_KEYS', 'CHAR_RANGES'].map(n => variable(visual, n)).join('\n') +
-    ['sanitize', 'sceneClean', 'cleanChar', 'ensureProfiles', 'newCharId', 'curChar', 'curProfile', 'pickValues', 'profileSnap'].map(n => find(visual, 'FunctionDeclaration', n)).join('\n') +
+  vm.runInContext(['defaults', 'CHAR_KEYS', 'CHAR_RANGES', 'STATE_FMT'].map(n => variable(visual, n)).join('\n') +
+    ['migrateState', 'sanitize', 'sceneClean', 'cleanChar', 'ensureProfiles', 'newCharId', 'curChar', 'curProfile', 'pickValues', 'profileSnap'].map(n => find(visual, 'FunctionDeclaration', n)).join('\n') +
     ';var state={...defaults};', c);
   return c;
 }
@@ -63,6 +63,21 @@ async function test(name, fn) {
     const c = visualContext();
     assert.equal(vm.runInContext('sanitize(null).fps', c), 30);
     assert.equal(vm.runInContext('sanitize([]).fps', c), 30);
+  });
+  await test('State format 1 moves the video list out of settings without losing entries (and twice is harmless)', () => {
+    const c = visualContext();
+    vm.runInContext("var s1=migrateState({videos:[{id:'a1',name:'x.mp4'},{id:'b2'}]});var s2=migrateState(JSON.parse(JSON.stringify(s1)));", c);
+    assert.equal(vm.runInContext('s1.fmt', c), 2);
+    assert.equal(vm.runInContext('s1.videos', c), undefined);
+    assert.equal(vm.runInContext('s1.legacyVideos.map(x=>x.id).join()', c), 'a1,b2');
+    assert.equal(vm.runInContext('JSON.stringify(s1)===JSON.stringify(s2)', c), true);
+  });
+  await test('Imported settings never carry a video list; legacy rows keep their missing flag', () => {
+    const c = visualContext();
+    assert.equal(vm.runInContext("sanitize({videos:[{id:'zz'}]}).legacyVideos.length", c), 0);
+    assert.equal(vm.runInContext("sanitize({videos:[{id:'zz'}]}).videos", c), undefined);
+    assert.equal(vm.runInContext("sanitize({legacyVideos:[{id:'q1',missing:true}]}).legacyVideos[0].missing", c), true);
+    assert.equal(vm.runInContext("sanitize({fmt:9}).fmt", c), 2);
   });
   await test('Pack reader rejects duplicate asset keys', async () => {
     const c = vm.createContext({ Blob, TextDecoder, Uint8Array, DataView, Set, Error });
