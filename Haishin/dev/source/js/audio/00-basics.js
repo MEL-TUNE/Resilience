@@ -335,7 +335,45 @@ function fixedSlots(config,type,min,cols){
   return Math.max(min,Math.ceil(Math.max(max+1,used)/cols)*cols)
 }
 
-const ensureTextSlots=config=>ensureSe(ensureGrid(ensureSe(config,'text'),'voice',fixedSlots(config,'voice',VOICE_SLOTS,5),1),'env');
+const ensureTextSlots=config=>layoutVoices(ensureSe(ensureSe(config,'text'),'env'),null);
+
+// ボイスは「標準」＋名義ごとのタブ（owner＝'std' か名義のid）。各タブは最後の行まで埋まると1行増える
+const VOICE_COLS=5,VOICE_MAX=600;
+let voiceOwnerIds=null,voiceTab=0;
+const voiceOwnerOf=s=>typeof s.owner==='string'&&s.owner?s.owner:'std';
+function voiceSlotsNeeded(items){
+  let max=-1;
+  for(const s of items)if(isRealSound(s)&&Number.isInteger(s.slotIndex))max=Math.max(max,s.slotIndex);
+  return Math.min(VOICE_MAX,Math.max(VOICE_SLOTS,(Math.floor(max/VOICE_COLS)+2)*VOICE_COLS))
+}
+function layoutVoices(config,ids){
+  const all=config.sounds.filter(s=>s.type==='voice'),
+    real=all.filter(isRealSound),
+    empty=all.filter(s=>!isRealSound(s));
+  if(!ids)ids=['std',...new Set(real.map(voiceOwnerOf).filter(o=>o!=='std'))];
+  for(const s of real)if(!ids.includes(voiceOwnerOf(s)))s.owner=ids[0];
+  const out=config.sounds.filter(s=>s.type!=='voice');
+  ids.forEach((owner,t)=>{
+    const items=real.filter(s=>voiceOwnerOf(s)===owner).sort((a,b)=>(a.slotIndex??a.order??0)-(b.slotIndex??b.order??0)),
+      N=voiceSlotsNeeded(items),taken=new Set();
+    for(const s of items){
+      let i=Number.isInteger(s.slotIndex)&&s.slotIndex>=0&&s.slotIndex<N&&!taken.has(s.slotIndex)?s.slotIndex:-1;
+      if(i<0)for(let k=0;k<VOICE_MAX;k++)if(!taken.has(k)){i=k;break}
+      taken.add(i);
+      Object.assign(s,{owner,tabIndex:t,slotIndex:i,order:i});
+      out.push(s)
+    }
+    const spare=empty.filter(s=>voiceOwnerOf(s)===owner);
+    for(let i=0;i<N;i++)if(!taken.has(i)){
+      const k=spare.findIndex(s=>s.slotIndex===i),e=k>=0?spare.splice(k,1)[0]:{...newSound('voice','',i)};
+      Object.assign(e,{owner,tabIndex:t,slotIndex:i,order:i});
+      out.push(e)
+    }
+  });
+  config.sounds=out;
+  return config
+}
+function growVoices(){layoutVoices(cfg,voiceOwnerIds)}
 
 const BGM_COLS=3,
   BGM_MIN=12,
@@ -389,6 +427,7 @@ function ensureBgmSlots(config){
 }
 
 // 名義（映像側のプロフィール）がそのままBGMのタブになる。名義のない曲・消した名義の曲は先頭の名義のタブへ
+const cur0=(ids,curId)=>ids.indexOf(curId);
 function setBgmProfiles(profiles,curId,follow){
   if(!cfg||!Array.isArray(profiles)||!profiles.length)return;
   const list=[{id:'std',name:'標準'},...profiles],
@@ -406,6 +445,13 @@ orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(
     b.owner=ids[0];b.tabIndex=0;b.slotIndex=s
   }
   bgmOwnerIds=ids;
+  const vSig=()=>JSON.stringify(cfg.sounds.filter(s=>s.type==='voice'&&isRealSound(s)).map(s=>[s.id,s.owner,s.slotIndex]));
+  const vBefore=vSig();
+  voiceOwnerIds=ids;
+  layoutVoices(cfg,ids);
+  if(follow&&cur0(ids,curId)>0&&voiceTab>0)voiceTab=cur0(ids,curId);
+  if(voiceTab>=ids.length)voiceTab=0;
+  const vChanged=vBefore!==vSig();
   const before=JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join();
   cfg.bgms=ids.flatMap((owner,t)=>bgmTabSlots(real.filter(b=>b.owner===owner),t,owner));
   cfg.bgmTabs=list.slice(0,BGM_TAB_MAX).map(p=>String(p.name||'名義').slice(0,40));
@@ -413,7 +459,7 @@ orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(
   bgmCurTab=cur>0?cur:0;
   if(follow&&cur>0&&bgmTab>0)bgmTab=cur;
   if(bgmTab>=ids.length)bgmTab=0;
-  if(before!==JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join())persist();
+  if(vChanged||before!==JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join())persist();
   render();
   renderPrograms?.()
 }
