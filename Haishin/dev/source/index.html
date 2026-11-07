@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.0 / オトノハ連携・AI観客席（手渡し）・ボイス録り</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.1 / セリフ帳にスロット（役柄×セリフ）・まとめて追加</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button><button data-mode="aivoice">AIキャラ・声</button></nav>
@@ -66,9 +66,37 @@
 <label class="studio-field">このシチュエーションのセリフ（1行に1つ・直接書き換えられます）<textarea id="serifText" class="studio-textarea" rows="6"></textarea></label>
 <div class="studio-row"><button type="button" id="serifDel">このシチュエーションを削除</button></div>
 </div>
+<div class="studio-row"><button type="button" id="serifUndo" disabled>↶ 元に戻す</button></div>
 <div class="studio-row play-big"><button type="button" id="serifRandom" class="accent">🎲 ランダムに出す</button><button type="button" id="serifPrev">← 前</button><button type="button" id="serifNext">次 →</button><button type="button" id="serifHide">吹き出しを消す</button></div>
 <p class="studio-mini" id="serifNow"></p>
 <div class="studio-inline"><label class="studio-field">吹き出しの位置<select id="serifPos"><option value="bottom">下</option><option value="top">上</option><option value="left">左下（字幕の上）</option><option value="right">右下（字幕の上）</option></select></label><label class="studio-field"><input type="checkbox" id="serifName"> 名義の名前を添える</label></div>
+<h3>スロット（役柄×セリフ）</h3>
+<p class="studio-note">筋肉室スロットと同じ2段の抽選です。シチュエーション（役柄）をくじで引き、その中のセリフをくじで引きます。どちらも、全部出し終えるまで同じものを繰り返しません。下で選んだシチュエーションだけを対象にでき、何も選ばなければ、セリフのあるものすべてが対象です。</p>
+<div class="studio-row play-big"><button type="button" id="slotSpin" class="accent">🎰 抽選開始</button><button type="button" id="slotRe">役柄だけ引き直す</button><button type="button" id="slotRb">セリフだけ引き直す</button><button type="button" id="slotHide">画面から消す</button></div>
+<p class="studio-mini" id="slotNow" aria-live="polite"></p>
+<details class="sb-opts"><summary>スロットの設定・抽選の対象・ログ</summary>
+<div class="studio-inline"><label class="studio-field">Aの名前<input id="slotAName" maxlength="20"></label><label class="studio-field">Bの名前<input id="slotBName" maxlength="20"></label>
+<label class="studio-field">文字が切り替わる時間<select id="slotDur"><option value="0">すぐ表示</option><option value="0.5">0.5秒</option><option value="1">1秒</option><option value="1.5">1.5秒</option><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option></select></label>
+<label class="studio-field">結果が出たときの効果音<select id="slotSe"></select></label>
+<label class="studio-field">配信画面での見た目<select id="slotLook"><option value="machine">スロットの筐体</option><option value="bubble">セリフの吹き出し</option></select></label></div>
+<div class="studio-mini">抽選の対象（押して選ぶ・もう一度押すと外す）</div>
+<label class="studio-field">名前やセリフで絞り込む<input id="slotFind" type="search" maxlength="40" placeholder="例：ツンデレ／プリン"></label>
+<div class="studio-row app-chips" id="slotUse"></div>
+<div class="studio-row"><button type="button" id="slotImport">筋肉室スロットの設定JSONを読み込む</button><input id="slotFile" type="file" accept=".json,application/json" hidden><button type="button" id="slotExport">筋肉室スロットの形で書き出す</button><button type="button" id="slotCopyLog">抽選ログをコピー</button><button type="button" id="slotReset">リセット（くじとログを最初から）</button></div>
+<ol class="sb-list aud-log" id="slotLog" aria-label="抽選ログ"></ol>
+</details>
+<details class="sb-opts"><summary>役柄とセリフをまとめて増やす（AIに頼む・まとめて貼り付け）</summary>
+<p class="studio-note">今のセリフ帳を全部添えた依頼文をコピーして、ClaudeやChatGPTに渡します。返ってきたJSONを下の欄に貼り付けると、新しい役柄は新しいシチュエーションに、同じ名前の役柄にはセリフとして足します。全角・半角や空白の違いだけのセリフは、同じものとして足しません。意味が似ているかどうかまでは見分けないので、中身を確かめてから足してください。</p>
+<div class="studio-inline"><label class="studio-field">頼み方<select id="slotAiMode"><option value="new">新しい役柄を作る</option><option value="add">選んだ役柄にセリフを足す</option></select></label>
+<label class="studio-field">新しい役柄の数<select id="slotAiRoles"><option>3</option><option selected>6</option><option>10</option></select></label>
+<label class="studio-field">1つの役柄のセリフ数<select id="slotAiLines"><option>5</option><option selected>10</option><option>20</option></select></label></div>
+<label class="studio-field">方向・世界観・避けたいこと（ここに書いた内容は保存されます）<textarea id="slotAiNote" class="studio-textarea" rows="3" maxlength="2000" placeholder="例：穏やかなユーモア。1本は50〜120文字くらい。既存の場面やオチの焼き直しは避ける"></textarea></label>
+<div class="studio-row"><button type="button" id="slotAiPrompt">AIに頼む文をコピー（今のセリフ帳を添えます）</button></div>
+<label class="studio-field">AIの返答（JSON）や、筋肉室スロットの設定JSONの中身を貼り付け<textarea id="slotBulk" class="studio-textarea" rows="4" placeholder='{"roles":[{"name":"役柄","lines":["セリフ","セリフ"]}]}'></textarea></label>
+<div class="studio-row"><button type="button" id="slotBulkCheck">中身を確かめる</button><button type="button" id="slotBulkGo" class="accent" disabled>確かめた内容で足す</button></div>
+<p class="studio-mini" id="slotBulkInfo" aria-live="polite"></p>
+<ul class="sb-list aud-log" id="slotBulkPrev" aria-label="足す内容"></ul>
+</details>
 <h3>ルーレット・サイコロ</h3>
 <div class="studio-inline"><label class="studio-field">サイコロの数<select id="diceN"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option></select></label><label class="studio-field">目の数<select id="diceF"><option value="6">6面（ふつうのサイコロ）</option><option value="4">4面</option><option value="8">8面</option><option value="10">10面</option><option value="12">12面</option><option value="20">20面</option><option value="100">1〜100</option></select></label><label class="studio-field">画面の位置<select id="playPos"><option value="center">中央</option><option value="left">左</option><option value="right">右</option></select></label></div>
 <label class="studio-field">ルーレットの項目（1行に1つ・2〜24個）<textarea id="wheelItems" class="studio-textarea" rows="4" placeholder="例：&#10;歌う&#10;セリフを言う&#10;罰ゲーム&#10;もう一回"></textarea></label>

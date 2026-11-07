@@ -76,3 +76,11 @@
 - オトノハ連携（Otonoha Bridge 1）は js/visual/14-bridge.js。決まりは dev/otonoha-bridge-1.md。命令を足すときは version を変えずに type を足し、意味の変わる変更をするときは otonoha:2 として並行して受け付けてください（既存のアプリを壊さないため）。
 - AI観客席は js/visual/15-audience.js。依頼文と検証は AI観客席 0.8（exe内の lib/personality.js）の規則に合わせています。つなぎ先を足すときは、audPrompt() の文をそのまま送り、返答を audParse() に通す形にしてください。
 - ボイス録りは js/visual/16-voicerec.js。録音は IndexedDB の vr:ID に WAV で保存します。
+
+---
+
+## 2026-11-07 追記（STUDIO 0.9.1）
+
+- スロット（役柄×セリフ）は js/visual/17-slot.js。役柄はセリフ帳のシチュエーションそのもので、別の保存場所は持ちません（設定は state.slot）。筋肉室スロット単体版（kinniku-slot-* の保存キー）とはデータを共有せず、やり取りは version 3 のJSONです。
+- 取り込みは slotPlan()（見積もり・変更しない）→ slotApply() の順。重複の判定は 13-plays.js の serifNorm()（NFKC・空白除去・小文字）です。セリフ帳を変える操作の前には serifKeep() で取り消し用の控えを取ってください。
+- 単体版のキー操作（Space・A・B）は入れていません。オトノハは効果音ボタンに利用者が1文字のキーを割り当てられるため、ぶつかるからです。

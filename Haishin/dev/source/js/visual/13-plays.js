@@ -6,6 +6,19 @@
   // 画面に出しているもの（保存しない）
   const play={serif:null,serifAt:0,dice:null,wheel:null};
   let serifBag=[];
+  // 重複の判定：全角・半角、空白、英字の大小をそろえて比べる（意味が似ているかは判定しない）
+  const serifNorm=t=>String(t).normalize('NFKC').replace(/\s+/gu,'').toLowerCase();
+  // セリフ帳の取り消し（このページを開いている間だけ、20回分）
+  const serifUndo=[];
+  function serifKeep(what){
+    serifUndo.push({what,data:JSON.stringify(serifList()),sel:state.serifSel});
+    if(serifUndo.length>20)serifUndo.shift();
+    renderUndo()
+  }
+  function renderUndo(){
+    const b=E('serifUndo'),u=serifUndo.at(-1);
+    b.disabled=!u;b.textContent=u?'↶ 元に戻す（'+u.what+'）':'↶ 元に戻す'
+  }
 
   // ---- セリフ帳
   function serifLines(s){return (s?.lines||[]).filter(x=>x.trim())}
@@ -16,7 +29,8 @@
     E('serifEdit').hidden=!cur;
     if(cur){E('serifTitle').value=cur.title;E('serifText').value=cur.lines.join('\n')}
     E('serifPos').value=state.serifPos;E('serifName').checked=state.serifName;
-    E('serifNow').textContent=play.serif?'表示中：'+play.serif.text:'画面には出していません'
+    E('serifNow').textContent=play.serif?'表示中：'+play.serif.text:'画面には出していません';
+    renderUndo();renderSlot()
   }
   function serifShow(s,text){
     play.serif={title:s.title,text,at:performance.now()};
@@ -48,7 +62,7 @@
   };
   E('serifTitle').oninput=e=>{const s=serifCur();if(s){s.title=e.target.value.slice(0,80)||'シチュエーション';save();const o=E('serifSel').selectedOptions[0];if(o)o.textContent=s.title+'（'+serifLines(s).length+'）'}};
   E('serifText').oninput=e=>{const s=serifCur();if(s){s.lines=e.target.value.split('\n').slice(0,LINE_MAX).map(x=>x.slice(0,300));serifBag=[];save();const o=E('serifSel').selectedOptions[0];if(o)o.textContent=s.title+'（'+serifLines(s).length+'）'}};
-  E('serifDel').onclick=e=>armed(e.currentTarget,'もう一度押すと削除',()=>{state.serifs=serifList().filter(x=>x.id!==state.serifSel);state.serifSel='';save();renderSerifs()});
+  E('serifDel').onclick=e=>armed(e.currentTarget,'もう一度押すと削除',()=>{serifKeep('「'+(serifCur()?.title||'').slice(0,12)+'」の削除');state.serifs=serifList().filter(x=>x.id!==state.serifSel);state.serifSel='';save();renderSerifs()});
   E('serifPrompt').onclick=()=>{
     const s=serifCur(),t=s?.title||E('serifNew').value.trim();
     if(!t){toast('シチュエーションを入力するか選んでください');return}
@@ -64,13 +78,23 @@
     if(!s){toast('先にシチュエーションを選ぶか作ってください');return}
     const add=E('serifIn').value.split('\n').map(x=>x.trim().replace(/^(\d+[.)．、]|[-・*●])\s*/,'').replace(/^[「『](.*)[」』]$/,'$1')).filter(Boolean);
     if(!add.length){toast('貼り付ける欄にセリフを入れてください');return}
-    s.lines=[...serifLines(s),...add].slice(0,LINE_MAX);E('serifIn').value='';serifBag=[];save();renderSerifs();
-    toast(add.length+'個のセリフを足しました',2500)
+    const have=new Set(serifLines(s).map(serifNorm)),nl=[];
+    for(const x of add){const k=serifNorm(x);if(!have.has(k)){have.add(k);nl.push(x.slice(0,300))}}
+    const room=Math.max(0,LINE_MAX-serifLines(s).length),put=nl.slice(0,room);
+    if(put.length)serifKeep('セリフの追加');
+    s.lines=[...serifLines(s),...put];E('serifIn').value='';serifBag=[];save();renderSerifs();
+    toast(put.length+'個のセリフを足しました'+(add.length-nl.length?'（同じセリフ '+(add.length-nl.length)+'個は足していません）':'')+(nl.length>put.length?'（'+LINE_MAX+'個の上限を超えた '+(nl.length-put.length)+'個は入りませんでした）':''),4000)
+  };
+  E('serifUndo').onclick=()=>{
+    const u=serifUndo.pop();if(!u)return;
+    try{state.serifs=JSON.parse(u.data)}catch(_){return}
+    state.serifSel=serifList().some(x=>x.id===u.sel)?u.sel:'';serifBag=[];
+    save();renderSerifs();toast('元に戻しました（'+u.what+'）',2500)
   };
   E('serifRandom').onclick=()=>serifPick('random');
   E('serifNext').onclick=()=>serifPick('next');
   E('serifPrev').onclick=()=>serifPick('prev');
-  E('serifHide').onclick=()=>{play.serif=null;renderSerifs()};
+  E('serifHide').onclick=()=>{play.serif=null;play.slot=null;renderSerifs()};
   E('serifPos').onchange=e=>{state.serifPos=e.target.value;save()};
   E('serifName').onchange=e=>{state.serifName=e.target.checked;save()};
 
@@ -107,7 +131,13 @@
     const out=[];
     for(const para of String(text).split('\n')){
       let line='';
-      for(const c of [...para]){if(line&&g.measureText(line+c).width>maxW){out.push(line);line=c}else line+=c}
+      for(const c of [...para]){
+        if(line&&g.measureText(line+c).width>maxW){
+          // 句読点や閉じかっこを行の頭に置かない：前の1文字と一緒に次の行へ送る
+          if(/[、。，．,.！？!?」』）)】…ーぁぃぅぇぉっゃゅょァィゥェォッャュョ]/.test(c)&&[...line].length>1){const a=[...line];out.push(a.slice(0,-1).join(''));line=a.at(-1)+c}
+          else{out.push(line);line=c}
+        }else line+=c
+      }
       out.push(line)
     }
     if(out.length>max){out.length=max;out[max-1]=out[max-1].slice(0,-1)+'…'}
@@ -213,8 +243,8 @@
     g.restore()
   }
   function drawPlays(now){
-    if(!play.serif&&!play.dice&&!play.wheel)return;
+    if(!play.serif&&!play.dice&&!play.wheel&&!play.slot)return;
     const k=Math.min(W,H)/720;
-    drawWheel(now,k);drawDice(now,k);drawSerif(k)
+    drawWheel(now,k);drawDice(now,k);drawSlot(now,k);drawSerif(k)
   }
   function renderPlays(){renderSerifs();renderPlayOpts()}
