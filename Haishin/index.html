@@ -988,7 +988,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.0 / オトノハ連携・AI観客席（手渡し）・ボイス録り</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.1 / セリフ帳にスロット（役柄×セリフ）・まとめて追加</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button><button data-mode="aivoice">AIキャラ・声</button></nav>
@@ -1043,9 +1043,37 @@ lookPaint(look);
 <label class="studio-field">このシチュエーションのセリフ（1行に1つ・直接書き換えられます）<textarea id="serifText" class="studio-textarea" rows="6"></textarea></label>
 <div class="studio-row"><button type="button" id="serifDel">このシチュエーションを削除</button></div>
 </div>
+<div class="studio-row"><button type="button" id="serifUndo" disabled>↶ 元に戻す</button></div>
 <div class="studio-row play-big"><button type="button" id="serifRandom" class="accent">🎲 ランダムに出す</button><button type="button" id="serifPrev">← 前</button><button type="button" id="serifNext">次 →</button><button type="button" id="serifHide">吹き出しを消す</button></div>
 <p class="studio-mini" id="serifNow"></p>
 <div class="studio-inline"><label class="studio-field">吹き出しの位置<select id="serifPos"><option value="bottom">下</option><option value="top">上</option><option value="left">左下（字幕の上）</option><option value="right">右下（字幕の上）</option></select></label><label class="studio-field"><input type="checkbox" id="serifName"> 名義の名前を添える</label></div>
+<h3>スロット（役柄×セリフ）</h3>
+<p class="studio-note">筋肉室スロットと同じ2段の抽選です。シチュエーション（役柄）をくじで引き、その中のセリフをくじで引きます。どちらも、全部出し終えるまで同じものを繰り返しません。下で選んだシチュエーションだけを対象にでき、何も選ばなければ、セリフのあるものすべてが対象です。</p>
+<div class="studio-row play-big"><button type="button" id="slotSpin" class="accent">🎰 抽選開始</button><button type="button" id="slotRe">役柄だけ引き直す</button><button type="button" id="slotRb">セリフだけ引き直す</button><button type="button" id="slotHide">画面から消す</button></div>
+<p class="studio-mini" id="slotNow" aria-live="polite"></p>
+<details class="sb-opts"><summary>スロットの設定・抽選の対象・ログ</summary>
+<div class="studio-inline"><label class="studio-field">Aの名前<input id="slotAName" maxlength="20"></label><label class="studio-field">Bの名前<input id="slotBName" maxlength="20"></label>
+<label class="studio-field">文字が切り替わる時間<select id="slotDur"><option value="0">すぐ表示</option><option value="0.5">0.5秒</option><option value="1">1秒</option><option value="1.5">1.5秒</option><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option></select></label>
+<label class="studio-field">結果が出たときの効果音<select id="slotSe"></select></label>
+<label class="studio-field">配信画面での見た目<select id="slotLook"><option value="machine">スロットの筐体</option><option value="bubble">セリフの吹き出し</option></select></label></div>
+<div class="studio-mini">抽選の対象（押して選ぶ・もう一度押すと外す）</div>
+<label class="studio-field">名前やセリフで絞り込む<input id="slotFind" type="search" maxlength="40" placeholder="例：ツンデレ／プリン"></label>
+<div class="studio-row app-chips" id="slotUse"></div>
+<div class="studio-row"><button type="button" id="slotImport">筋肉室スロットの設定JSONを読み込む</button><input id="slotFile" type="file" accept=".json,application/json" hidden><button type="button" id="slotExport">筋肉室スロットの形で書き出す</button><button type="button" id="slotCopyLog">抽選ログをコピー</button><button type="button" id="slotReset">リセット（くじとログを最初から）</button></div>
+<ol class="sb-list aud-log" id="slotLog" aria-label="抽選ログ"></ol>
+</details>
+<details class="sb-opts"><summary>役柄とセリフをまとめて増やす（AIに頼む・まとめて貼り付け）</summary>
+<p class="studio-note">今のセリフ帳を全部添えた依頼文をコピーして、ClaudeやChatGPTに渡します。返ってきたJSONを下の欄に貼り付けると、新しい役柄は新しいシチュエーションに、同じ名前の役柄にはセリフとして足します。全角・半角や空白の違いだけのセリフは、同じものとして足しません。意味が似ているかどうかまでは見分けないので、中身を確かめてから足してください。</p>
+<div class="studio-inline"><label class="studio-field">頼み方<select id="slotAiMode"><option value="new">新しい役柄を作る</option><option value="add">選んだ役柄にセリフを足す</option></select></label>
+<label class="studio-field">新しい役柄の数<select id="slotAiRoles"><option>3</option><option selected>6</option><option>10</option></select></label>
+<label class="studio-field">1つの役柄のセリフ数<select id="slotAiLines"><option>5</option><option selected>10</option><option>20</option></select></label></div>
+<label class="studio-field">方向・世界観・避けたいこと（ここに書いた内容は保存されます）<textarea id="slotAiNote" class="studio-textarea" rows="3" maxlength="2000" placeholder="例：穏やかなユーモア。1本は50〜120文字くらい。既存の場面やオチの焼き直しは避ける"></textarea></label>
+<div class="studio-row"><button type="button" id="slotAiPrompt">AIに頼む文をコピー（今のセリフ帳を添えます）</button></div>
+<label class="studio-field">AIの返答（JSON）や、筋肉室スロットの設定JSONの中身を貼り付け<textarea id="slotBulk" class="studio-textarea" rows="4" placeholder='{"roles":[{"name":"役柄","lines":["セリフ","セリフ"]}]}'></textarea></label>
+<div class="studio-row"><button type="button" id="slotBulkCheck">中身を確かめる</button><button type="button" id="slotBulkGo" class="accent" disabled>確かめた内容で足す</button></div>
+<p class="studio-mini" id="slotBulkInfo" aria-live="polite"></p>
+<ul class="sb-list aud-log" id="slotBulkPrev" aria-label="足す内容"></ul>
+</details>
 <h3>ルーレット・サイコロ</h3>
 <div class="studio-inline"><label class="studio-field">サイコロの数<select id="diceN"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option></select></label><label class="studio-field">目の数<select id="diceF"><option value="6">6面（ふつうのサイコロ）</option><option value="4">4面</option><option value="8">8面</option><option value="10">10面</option><option value="12">12面</option><option value="20">20面</option><option value="100">1〜100</option></select></label><label class="studio-field">画面の位置<select id="playPos"><option value="center">中央</option><option value="left">左</option><option value="right">右</option></select></label></div>
 <label class="studio-field">ルーレットの項目（1行に1つ・2〜24個）<textarea id="wheelItems" class="studio-textarea" rows="4" placeholder="例：&#10;歌う&#10;セリフを言う&#10;罰ゲーム&#10;もう一回"></textarea></label>
@@ -7118,6 +7146,7 @@ $('#consoleAllStop').onclick=()=>stopAll();
     setlistHide:'',
     apps:[],
     aud:null,
+    slot:null,
     vr:null,
     serifs:[],
     serifSel:'',
@@ -7329,6 +7358,7 @@ fps:30,
         recent:(Array.isArray(a.recent)?a.recent:[]).slice(0,8).map(r=>({event:S(r?.event,400),comments:(Array.isArray(r?.comments)?r.comments:[]).slice(0,5).map(c=>({name:S(c?.name,40),text:S(c?.text,140)}))})),
         cast:a.cast.filter(c=>c&&typeof c.id==='string'&&c.core&&typeof c.core==='object').slice(0,5).map(c=>({id:S(c.id,24),enabled:c.enabled!==false,core:Object.fromEntries(['name','role','firstPerson','secondPerson','voice','summary','boundaries'].map(k=>[k,S(c.core[k],500)])),display:{icon:S(c.display?.icon,4),color:/^#[0-9a-f]{6}$/i.test(c.display?.color)?c.display.color:'#f4e6d8'},tuning:Object.fromEntries(Object.entries(c.tuning||{}).filter(([k,x])=>/^[a-z]{2,20}$/.test(k)).map(([k,x])=>[k,Math.max(0,Math.min(100,Number(x)||0))])),lexicon:Object.fromEntries(Object.entries(c.lexicon||{}).filter(([k,x])=>/^[a-z]{2,20}$/.test(k)&&Array.isArray(x)).map(([k,x])=>[k,x.slice(0,20).map(s=>S(s,120))]))}))}
     }
+    if(v.slot&&typeof v.slot==='object'){const c=v.slot;out.slot={aName:S(c.aName,20)||'役柄',bName:S(c.bName,20)||'セリフ',dur:Math.max(0,Math.min(10,Number(c.dur)||0)),se:S(c.se,40),use:(Array.isArray(c.use)?c.use:[]).filter(x=>typeof x==='string'&&/^[a-z0-9]{1,16}$/.test(x)).slice(0,100),look:c.look==='bubble'?'bubble':'machine',aiNote:S(c.aiNote,2000)}}
     if(v.vr&&typeof v.vr==='object'&&Array.isArray(v.vr.lines)){
       const r=v.vr;
       out.vr={speaker:S(r.speaker,30)||'speaker',trim:r.trim!==false,autoNext:r.autoNext!==false,lines:r.lines.filter(l=>l&&/^[a-z0-9]{1,16}$/.test(l.id)).slice(0,2000).map(l=>({id:l.id,text:S(l.text,300),...(l.done?{done:true,secs:Number(l.secs)||0,rate:Number(l.rate)||48000,notes:(Array.isArray(l.notes)?l.notes:[]).slice(0,4).map(n=>S(n,40))}:{})}))};
@@ -7589,6 +7619,7 @@ for(const [id,k]of Object.entries(bindings)){
     renderParagraph();
     renderSongs();
     renderPlays();
+    renderSlot();
     renderAud();
     renderVoiceRec();
     renderKara();
@@ -8624,6 +8655,19 @@ const SERIF_MAX=100,LINE_MAX=300;
   // 画面に出しているもの（保存しない）
   const play={serif:null,serifAt:0,dice:null,wheel:null};
   let serifBag=[];
+  // 重複の判定：全角・半角、空白、英字の大小をそろえて比べる（意味が似ているかは判定しない）
+  const serifNorm=t=>String(t).normalize('NFKC').replace(/\s+/gu,'').toLowerCase();
+  // セリフ帳の取り消し（このページを開いている間だけ、20回分）
+  const serifUndo=[];
+  function serifKeep(what){
+    serifUndo.push({what,data:JSON.stringify(serifList()),sel:state.serifSel});
+    if(serifUndo.length>20)serifUndo.shift();
+    renderUndo()
+  }
+  function renderUndo(){
+    const b=E('serifUndo'),u=serifUndo.at(-1);
+    b.disabled=!u;b.textContent=u?'↶ 元に戻す（'+u.what+'）':'↶ 元に戻す'
+  }
 
   // ---- セリフ帳
   function serifLines(s){return (s?.lines||[]).filter(x=>x.trim())}
@@ -8634,7 +8678,8 @@ const SERIF_MAX=100,LINE_MAX=300;
     E('serifEdit').hidden=!cur;
     if(cur){E('serifTitle').value=cur.title;E('serifText').value=cur.lines.join('\n')}
     E('serifPos').value=state.serifPos;E('serifName').checked=state.serifName;
-    E('serifNow').textContent=play.serif?'表示中：'+play.serif.text:'画面には出していません'
+    E('serifNow').textContent=play.serif?'表示中：'+play.serif.text:'画面には出していません';
+    renderUndo();renderSlot()
   }
   function serifShow(s,text){
     play.serif={title:s.title,text,at:performance.now()};
@@ -8666,7 +8711,7 @@ const SERIF_MAX=100,LINE_MAX=300;
   };
   E('serifTitle').oninput=e=>{const s=serifCur();if(s){s.title=e.target.value.slice(0,80)||'シチュエーション';save();const o=E('serifSel').selectedOptions[0];if(o)o.textContent=s.title+'（'+serifLines(s).length+'）'}};
   E('serifText').oninput=e=>{const s=serifCur();if(s){s.lines=e.target.value.split('\n').slice(0,LINE_MAX).map(x=>x.slice(0,300));serifBag=[];save();const o=E('serifSel').selectedOptions[0];if(o)o.textContent=s.title+'（'+serifLines(s).length+'）'}};
-  E('serifDel').onclick=e=>armed(e.currentTarget,'もう一度押すと削除',()=>{state.serifs=serifList().filter(x=>x.id!==state.serifSel);state.serifSel='';save();renderSerifs()});
+  E('serifDel').onclick=e=>armed(e.currentTarget,'もう一度押すと削除',()=>{serifKeep('「'+(serifCur()?.title||'').slice(0,12)+'」の削除');state.serifs=serifList().filter(x=>x.id!==state.serifSel);state.serifSel='';save();renderSerifs()});
   E('serifPrompt').onclick=()=>{
     const s=serifCur(),t=s?.title||E('serifNew').value.trim();
     if(!t){toast('シチュエーションを入力するか選んでください');return}
@@ -8682,13 +8727,23 @@ const SERIF_MAX=100,LINE_MAX=300;
     if(!s){toast('先にシチュエーションを選ぶか作ってください');return}
     const add=E('serifIn').value.split('\n').map(x=>x.trim().replace(/^(\d+[.)．、]|[-・*●])\s*/,'').replace(/^[「『](.*)[」』]$/,'$1')).filter(Boolean);
     if(!add.length){toast('貼り付ける欄にセリフを入れてください');return}
-    s.lines=[...serifLines(s),...add].slice(0,LINE_MAX);E('serifIn').value='';serifBag=[];save();renderSerifs();
-    toast(add.length+'個のセリフを足しました',2500)
+    const have=new Set(serifLines(s).map(serifNorm)),nl=[];
+    for(const x of add){const k=serifNorm(x);if(!have.has(k)){have.add(k);nl.push(x.slice(0,300))}}
+    const room=Math.max(0,LINE_MAX-serifLines(s).length),put=nl.slice(0,room);
+    if(put.length)serifKeep('セリフの追加');
+    s.lines=[...serifLines(s),...put];E('serifIn').value='';serifBag=[];save();renderSerifs();
+    toast(put.length+'個のセリフを足しました'+(add.length-nl.length?'（同じセリフ '+(add.length-nl.length)+'個は足していません）':'')+(nl.length>put.length?'（'+LINE_MAX+'個の上限を超えた '+(nl.length-put.length)+'個は入りませんでした）':''),4000)
+  };
+  E('serifUndo').onclick=()=>{
+    const u=serifUndo.pop();if(!u)return;
+    try{state.serifs=JSON.parse(u.data)}catch(_){return}
+    state.serifSel=serifList().some(x=>x.id===u.sel)?u.sel:'';serifBag=[];
+    save();renderSerifs();toast('元に戻しました（'+u.what+'）',2500)
   };
   E('serifRandom').onclick=()=>serifPick('random');
   E('serifNext').onclick=()=>serifPick('next');
   E('serifPrev').onclick=()=>serifPick('prev');
-  E('serifHide').onclick=()=>{play.serif=null;renderSerifs()};
+  E('serifHide').onclick=()=>{play.serif=null;play.slot=null;renderSerifs()};
   E('serifPos').onchange=e=>{state.serifPos=e.target.value;save()};
   E('serifName').onchange=e=>{state.serifName=e.target.checked;save()};
 
@@ -8725,7 +8780,13 @@ const SERIF_MAX=100,LINE_MAX=300;
     const out=[];
     for(const para of String(text).split('\n')){
       let line='';
-      for(const c of [...para]){if(line&&g.measureText(line+c).width>maxW){out.push(line);line=c}else line+=c}
+      for(const c of [...para]){
+        if(line&&g.measureText(line+c).width>maxW){
+          // 句読点や閉じかっこを行の頭に置かない：前の1文字と一緒に次の行へ送る
+          if(/[、。，．,.！？!?」』）)】…ーぁぃぅぇぉっゃゅょァィゥェォッャュョ]/.test(c)&&[...line].length>1){const a=[...line];out.push(a.slice(0,-1).join(''));line=a.at(-1)+c}
+          else{out.push(line);line=c}
+        }else line+=c
+      }
       out.push(line)
     }
     if(out.length>max){out.length=max;out[max-1]=out[max-1].slice(0,-1)+'…'}
@@ -8831,9 +8892,9 @@ const SERIF_MAX=100,LINE_MAX=300;
     g.restore()
   }
   function drawPlays(now){
-    if(!play.serif&&!play.dice&&!play.wheel)return;
+    if(!play.serif&&!play.dice&&!play.wheel&&!play.slot)return;
     const k=Math.min(W,H)/720;
-    drawWheel(now,k);drawDice(now,k);drawSerif(k)
+    drawWheel(now,k);drawDice(now,k);drawSlot(now,k);drawSerif(k)
   }
   function renderPlays(){renderSerifs();renderPlayOpts()}
 
@@ -9407,6 +9468,242 @@ const VR_MAX=2000;
     }finally{E('vrExport').disabled=false}
   };
   function renderVoiceRec(){vrRender();vrRenderList()}
+
+const slotCfg=()=>state.slot||(state.slot={aName:'役柄',bName:'セリフ',dur:1,se:'',use:[],look:'machine'});
+  let slotRoleBag=[],slotLineBags={},slotLog=[];
+  // 抽選の対象：選んだシチュエーション（未選択なら、セリフのあるものすべて）
+  function slotPool(){
+    const use=slotCfg().use||[],all=serifList().filter(s=>serifLines(s).length);
+    const pick=all.filter(s=>use.includes(s.id));
+    return pick.length?pick:all
+  }
+  function slotShuffle(a){for(let i=a.length-1;i>0;i--){const j=playRnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
+  function slotPickRole(pool){
+    const ids=pool.map(s=>s.id);
+    slotRoleBag=slotRoleBag.filter(id=>ids.includes(id));
+    if(!slotRoleBag.length)slotRoleBag=slotShuffle([...ids]);
+    const id=slotRoleBag.pop();
+    return pool.find(s=>s.id===id)
+  }
+  function slotPickLine(s){
+    const lines=serifLines(s);
+    if(!slotLineBags[s.id]?.length||slotLineBags[s.id].some(i=>i>=lines.length))slotLineBags[s.id]=slotShuffle(lines.map((_,i)=>i));
+    return lines[slotLineBags[s.id].pop()]
+  }
+  // what: 'all'（役柄→セリフ）, 'a'（役柄だけ引き直す）, 'b'（セリフだけ引き直す）
+  function slotSpin(what){
+    const pool=slotPool();
+    if(!pool.length){toast('セリフのあるシチュエーションがありません');return}
+    const cur=play.slot;
+    if(cur&&!cur.done)return;
+    let role=cur&&what==='b'?serifList().find(s=>s.id===cur.roleId)||null:null,line=cur&&what==='a'?cur.line:'';
+    if(what!=='b'||!role)role=slotPickRole(pool);
+    if(what!=='a'||!line)line=slotPickLine(role);
+    play.serif=null;
+    play.slot={what,roleId:role.id,role:role.title,line,names:pool.map(s=>s.title),lines:serifLines(role),at:performance.now(),dur:Math.max(0,Math.min(10,Number(slotCfg().dur)||0))*1000,done:false};
+    // 配信画面を描いていないとき（企画卓を見ているとき・別タブのとき）も、時間が来たら結果を確定する
+    const me=play.slot;setTimeout(()=>{if(play.slot===me&&!me.done)slotDone()},me.dur+30);
+    renderSlot()
+  }
+  function slotDone(){
+    const s=play.slot;
+    s.done=true;
+    slotLog.unshift({role:s.role,line:s.line});slotLog.length=Math.min(slotLog.length,200);
+    const se=slotCfg().se&&(typeof cfg!=='undefined'?cfg.sounds:[]).find(x=>x.id===slotCfg().se&&x.assetId);
+    if(se)playSound(se);
+    bridgeEmit('serif',{text:s.line,title:s.role,slot:true});
+    audEvent(slotCfg().aName+'「'+s.role+'」×'+slotCfg().bName+'「'+s.line.slice(0,40)+'」');
+    renderSlot()
+  }
+  function renderSlot(){
+    const c=slotCfg(),s=play.slot;
+    E('slotAName').value=c.aName;E('slotBName').value=c.bName;E('slotDur').value=String(c.dur);E('slotLook').value=c.look;
+    E('slotSpin').textContent='🎰 抽選開始（'+c.aName+'×'+c.bName+'）';E('slotRe').textContent=c.aName+'だけ引き直す';E('slotRb').textContent=c.bName+'だけ引き直す';
+    const ses=(typeof cfg!=='undefined'?cfg.sounds:[]).filter(x=>x.assetId&&(x.type==='emoji'||x.type==='text'));
+    E('slotSe').replaceChildren(new Option('鳴らさない',''),...ses.map(x=>new Option((x.label||x.fileName||'効果音').slice(0,30),x.id)));
+    E('slotSe').value=ses.some(x=>x.id===c.se)?c.se:'';
+    const box=E('slotUse'),use=c.use||[],q=serifNorm(E('slotFind').value||'');
+    box.replaceChildren(...serifList().filter(x=>serifLines(x).length&&(!q||use.includes(x.id)||serifNorm(x.title).includes(q)||serifLines(x).some(l=>serifNorm(l).includes(q)))).map(x=>{
+      const b=document.createElement('button');b.type='button';b.textContent=x.title+'（'+serifLines(x).length+'）';
+      b.className=use.includes(x.id)?'selected':'';b.setAttribute('aria-pressed',use.includes(x.id));
+      b.onclick=()=>{c.use=use.includes(x.id)?use.filter(i=>i!==x.id):[...use,x.id];save();renderSlot()};
+      return b
+    }));
+    E('slotAiNote').value=c.aiNote||'';
+    E('slotNow').textContent=s?(s.done?c.aName+'「'+s.role+'」×'+c.bName+'「'+s.line+'」':'抽選中…'):'画面には出していません';
+    E('slotLog').replaceChildren(...slotLog.slice(0,50).map((x,i)=>{const li=document.createElement('li');li.textContent=String(slotLog.length-i).padStart(3,'0')+'　'+x.role+'：'+x.line;return li}))
+  }
+  E('slotSpin').onclick=()=>slotSpin('all');
+  E('slotRe').onclick=()=>slotSpin('a');
+  E('slotRb').onclick=()=>slotSpin('b');
+  E('slotHide').onclick=()=>{play.slot=null;renderSlot()};
+  E('slotReset').onclick=()=>{if(play.slot&&!play.slot.done)return;play.slot=null;slotRoleBag=[];slotLineBags={};slotLog=[];renderSlot()};
+  E('slotCopyLog').onclick=()=>copy(slotLog.slice().reverse().map((x,i)=>String(i+1).padStart(3,'0')+'　'+x.role+'：'+x.line).join('\n'));
+  E('slotAName').oninput=e=>{slotCfg().aName=e.target.value.slice(0,20)||'役柄';save();renderSlot()};
+  E('slotBName').oninput=e=>{slotCfg().bName=e.target.value.slice(0,20)||'セリフ';save();renderSlot()};
+  E('slotDur').onchange=e=>{slotCfg().dur=Math.max(0,Math.min(10,Number(e.target.value)||0));save()};
+  E('slotSe').onchange=e=>{slotCfg().se=e.target.value;save()};
+  E('slotLook').onchange=e=>{slotCfg().look=e.target.value==='bubble'?'bubble':'machine';save()};
+  // 筋肉室スロットの設定JSON（version 3：{config, roles:[{name, lines}]}）を、セリフ帳のシチュエーションとして読み込む
+  E('slotImport').onclick=()=>E('slotFile').click();
+  E('slotFile').onchange=async e=>{
+    const f=e.target.files[0];e.target.value='';if(!f)return;
+    try{
+      const j=JSON.parse(await f.text());
+      if(!j||!Array.isArray(j.roles))throw Error('筋肉室スロットの設定JSON（roles が入ったもの）ではありません');
+      const c=slotCfg(),plan=slotPlan(j.roles);
+      if(!plan.newRoles.length&&!plan.addTo.length)throw Error('足せるセリフがありませんでした（すべて登録済みか、空でした）');
+      serifKeep('JSONの読み込み');slotApply(plan);
+      if(j.config){if(typeof j.config.aName==='string')c.aName=j.config.aName.slice(0,20)||c.aName;if(typeof j.config.bName==='string')c.bName=j.config.bName.slice(0,20)||c.bName;if(Number.isFinite(Number(j.config.duration)))c.dur=Math.max(0,Math.min(10,Number(j.config.duration)))}
+      save();renderSerifs();renderSlot();
+      toast('読み込みました：'+slotPlanText(plan),7000)
+    }catch(err){toast(err.message||'読み込めませんでした',6000)}
+  };
+  // 取り込みの見積もり（まだ変えない）：同じ名前の役柄には足し、新しい名前は新しいシチュエーションにする
+  function slotPlan(roles){
+    const plan={newRoles:[],addTo:[],dup:0,over:0,skipRoles:0},byTitle=new Map(serifList().map(s=>[serifNorm(s.title),s]));
+    const pending=new Map();
+    for(const r of (Array.isArray(roles)?roles:[]).slice(0,200)){
+      const title=String(r?.name??r?.title??'').trim().slice(0,80);
+      const lines=(Array.isArray(r?.lines)?r.lines:[]).map(x=>String(x??'').replace(/\s*\n\s*/g,' ').trim().slice(0,300)).filter(Boolean);
+      if(!title)continue;
+      const key=serifNorm(title),same=byTitle.get(key);
+      let slot=pending.get(key);
+      if(!slot){
+        if(same)slot={s:same,have:new Set(serifLines(same).map(serifNorm)),lines:[],room:LINE_MAX-serifLines(same).length};
+        else{
+          if(serifList().length+plan.newRoles.length>=SERIF_MAX){plan.skipRoles++;continue}
+          slot={title,have:new Set(),lines:[],room:LINE_MAX};plan.newRoles.push(slot)
+        }
+        pending.set(key,slot)
+      }
+      for(const l of lines){
+        const k=serifNorm(l);
+        if(slot.have.has(k)){plan.dup++;continue}
+        if(slot.lines.length>=slot.room){plan.over++;continue}
+        slot.have.add(k);slot.lines.push(l)
+      }
+    }
+    plan.addTo=[...pending.values()].filter(x=>x.s&&x.lines.length);
+    return plan
+  }
+  function slotApply(plan){
+    for(const r of plan.newRoles)serifList().push({id:Math.random().toString(36).slice(2,10),title:r.title,lines:r.lines});
+    for(const a of plan.addTo)a.s.lines=[...serifLines(a.s),...a.lines];
+    serifBag=[];slotLineBags={}
+  }
+  function slotPlanText(p){
+    const nl=p.newRoles.reduce((n,r)=>n+r.lines.length,0),al=p.addTo.reduce((n,a)=>n+a.lines.length,0);
+    return [p.newRoles.length?'新しいシチュエーション '+p.newRoles.length+'個（セリフ '+nl+'本）':'',p.addTo.length?'登録済みの '+p.addTo.length+'個にセリフ '+al+'本':'',
+      p.dup?'同じセリフ '+p.dup+'本は足しません':'',p.over?'1つ'+LINE_MAX+'本の上限を超える '+p.over+'本は入りません':'',p.skipRoles?'シチュエーションの上限（'+SERIF_MAX+'個）を超える '+p.skipRoles+'個は入りません':''].filter(Boolean).join('・')||'足せるものはありません'
+  }
+  // AIへの依頼文：今のセリフ帳を全部添えて、重なりを避けてもらう
+  E('slotAiNote').oninput=e=>{slotCfg().aiNote=e.target.value.slice(0,2000);save()};
+  E('slotAiPrompt').onclick=()=>{
+    const c=slotCfg(),mode=E('slotAiMode').value,nr=Number(E('slotAiRoles').value)||6,nl=Number(E('slotAiLines').value)||10;
+    const all=serifList().filter(s=>s.title.trim()).map(s=>({name:s.title,lines:serifLines(s)}));
+    const targets=mode==='add'?serifList().filter(s=>(c.use||[]).includes(s.id)).map(s=>s.title):[];
+    if(mode==='add'&&!targets.length){toast('「抽選の対象」で、セリフを足したい役柄を選んでください',5000);return}
+    const persona=(E('planPrompt')?.value||'').trim(),note=(c.aiNote||'').trim();
+    copy([
+      'あなたは配信のセリフ読み上げ企画の台本作家です。下の【今のデータ】を全部読んでから、まだ無い'+c.aName+'と'+c.bName+'を作ってください。',
+      persona?'【演じる人・企画の設定】\n'+persona:'',
+      '【お願い】\n'+(mode==='add'
+        ?'次の'+c.aName+'それぞれに、'+c.bName+'を'+nl+'本ずつ足してください。'+c.aName+'の名前は一字も変えないでください。\n'+targets.map(t=>'・'+t).join('\n')
+        :'新しい'+c.aName+'を'+nr+'個、それぞれに'+c.bName+'を'+nl+'本ずつ作ってください。今ある'+c.aName+'と同じ名前や、言い換えただけの名前は避けてください。'),
+      note?'【方向・世界観・避けたいこと】\n'+note:'',
+      '【重なりを避ける】\n今のデータと同じ文、語尾や小道具だけを変えた文、同じ場面で同じオチの文は作らないでください。1本の中で改行しないでください。',
+      '【返答の形】\n次の形のJSONだけを返してください。前置き・説明・コードブロックの記号は付けないでください。\n{"roles":[{"name":"'+c.aName+'の名前","lines":["'+c.bName+'","'+c.bName+'"]}]}',
+      '【今のデータ】\n'+(all.length?JSON.stringify({roles:all}):'（まだありません）')
+    ].filter(Boolean).join('\n\n'));
+    toast('依頼文をコピーしました（今のセリフ帳 '+all.length+'個を添えています）',4000)
+  };
+  // まとめて貼り付け：確かめてから足す
+  let slotBulkPlan=null;
+  function slotBulkParse(text){
+    let t=String(text).trim().replace(/^```[a-z]*\s*/i,'').replace(/```\s*$/,'').trim();
+    const a=t.indexOf('{'),b=t.lastIndexOf('}');
+    if(a<0||b<a)throw Error('JSON（{"roles":[...]} の形）が見つかりません');
+    const j=JSON.parse(t.slice(a,b+1));
+    if(!Array.isArray(j?.roles))throw Error('roles が入っていません');
+    return j.roles
+  }
+  E('slotBulk').oninput=()=>{slotBulkPlan=null;E('slotBulkGo').disabled=true;E('slotBulkInfo').textContent='';E('slotBulkPrev').replaceChildren()};
+  E('slotBulkCheck').onclick=()=>{
+    slotBulkPlan=null;E('slotBulkGo').disabled=true;E('slotBulkPrev').replaceChildren();
+    try{
+      const plan=slotPlan(slotBulkParse(E('slotBulk').value));
+      E('slotBulkInfo').textContent=slotPlanText(plan);
+      const li=(head,lines)=>{const x=document.createElement('li');x.textContent=head+'\n'+lines.map(l=>'・'+l).join('\n');x.style.whiteSpace='pre-wrap';return x};
+      E('slotBulkPrev').replaceChildren(...plan.newRoles.filter(r=>r.lines.length).map(r=>li('【新】'+r.title,r.lines)),...plan.addTo.map(a=>li('【足す】'+a.s.title,a.lines)));
+      plan.newRoles=plan.newRoles.filter(r=>r.lines.length);
+      if(plan.newRoles.length||plan.addTo.length){slotBulkPlan=plan;E('slotBulkGo').disabled=false}
+    }catch(err){E('slotBulkInfo').textContent='読めませんでした：'+(err.message||err)}
+  };
+  E('slotBulkGo').onclick=()=>{
+    if(!slotBulkPlan)return;
+    // 確かめた後にセリフ帳が変わっていたら、もう一度見積もる
+    let plan;try{plan=slotPlan(slotBulkParse(E('slotBulk').value));plan.newRoles=plan.newRoles.filter(r=>r.lines.length)}catch(_){return}
+    if(!plan.newRoles.length&&!plan.addTo.length){toast('足せるものがありません');return}
+    serifKeep('まとめて追加');slotApply(plan);save();renderSerifs();
+    toast('足しました：'+slotPlanText(plan),6000);
+    E('slotBulk').value='';E('slotBulk').oninput()
+  };
+  E('slotFind').oninput=()=>renderSlot();
+  E('slotExport').onclick=()=>{
+    const c=slotCfg(),roles=slotPool().map(s=>({name:s.title,lines:serifLines(s)}));
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({version:3,config:{title:'筋肉室スロット',sub:'セリフ読み上げ企画',aName:c.aName,bName:c.bName,spin:'抽選開始',intro:'',duration:c.dur,ratio:'landscape',footer:''},roles},null,2)],{type:'application/json'}));a.download='筋肉室スロット設定.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)
+  };
+
+  // 配信画面：筐体（ビスケット色の枠、緑の鋲、ピンクの役柄窓、クリームのセリフ窓）。図形だけで描き、画像は使わない
+  function drawSlot(now,k){
+    const s=play.slot;
+    if(!s)return;
+    const c=slotCfg(),t=s.dur?Math.min(1,(now-s.at)/s.dur):1;
+    if(t>=1&&!s.done)slotDone();
+    const spinA=!s.done&&s.what!=='b',spinB=!s.done&&s.what==='b';
+    const flick=(arr,fb)=>arr.length?arr[Math.floor(now/70)%arr.length]:fb;
+    const roleTxt=spinA?flick(s.names,s.role):s.role,lineTxt=s.what==='all'&&!s.done?'抽選中……':spinB?flick(s.lines,s.line):s.line;
+    if(c.look==='bubble'){
+      if(s.done&&!s.bub){s.bub=true;play.serif={title:s.role,text:s.line,at:performance.now(),who:s.role};renderSerifs()}
+      return
+    }
+    const w=Math.min(W*.62,820*k),x=state.playPos==='left'?40*k:state.playPos==='right'?W-40*k-w:(W-w)/2,y=36*k;
+    const fsA=40*k;
+    g.save();
+    let fsB=26*k,lines;
+    for(;;){g.font=sceneFontCss(fsB,lineTxt);lines=wrapLines('「'+lineTxt+'」',w-90*k,99);if(lines.length<=4||fsB<=16*k)break;fsB-=2*k}
+    if(lines.length>7)lines=wrapLines('「'+lineTxt+'」',w-90*k,7);
+    const lhB=fsB*1.55,hA=fsA*1.9,hB=Math.max(lhB*2.4,lines.length*lhB+30*k);
+    const h=44*k+36*k+hA+14*k+hB+30*k;
+    // 筐体
+    g.fillStyle='rgba(92,65,48,.16)';g.beginPath();g.roundRect(x+6*k,y+8*k,w,h,30*k);g.fill();
+    g.fillStyle='#e8c984';g.beginPath();g.roundRect(x,y,w,h,30*k);g.fill();
+    const ix=x+9*k,iy=y+9*k,iw=w-18*k,ih=h-18*k;
+    const grd=g.createLinearGradient(0,iy,0,iy+ih);grd.addColorStop(0,'#fffdf7');grd.addColorStop(1,'#fff8e9');
+    g.fillStyle=grd;g.beginPath();g.roundRect(ix,iy,iw,ih,22*k);g.fill();
+    for(const [cx,cy] of [[ix+18*k,iy+18*k],[ix+iw-18*k,iy+18*k],[ix+18*k,iy+ih-18*k],[ix+iw-18*k,iy+ih-18*k]]){
+      g.fillStyle='#a9cfa7';g.strokeStyle='#7faa80';g.lineWidth=2*k;g.beginPath();g.arc(cx,cy,10*k,0,Math.PI*2);g.fill();g.stroke();
+      g.fillStyle='rgba(255,255,255,.7)';g.beginPath();g.arc(cx-3*k,cy-3*k,3.2*k,0,Math.PI*2);g.fill()
+    }
+    // 見出し「役柄 × セリフ」
+    g.textAlign='center';g.textBaseline='middle';
+    const badge=c.aName+'  ×  '+c.bName;g.font=sceneFontCss(17*k,badge);
+    const bw=g.measureText(badge).width+40*k,by=iy+22*k;
+    g.fillStyle='#e3f2df';g.strokeStyle='#acd0aa';g.lineWidth=2*k;g.beginPath();g.roundRect(x+(w-bw)/2,by,bw,32*k,16*k);g.fill();g.stroke();
+    g.fillStyle='#52694f';g.fillText(badge,x+w/2,by+16*k);
+    // 役柄の窓
+    const ay=by+46*k,aw=iw-52*k,ax=x+(w-aw)/2;
+    g.fillStyle='#fff7f9';g.strokeStyle='#dfb4c3';g.lineWidth=4*k;g.beginPath();g.roundRect(ax,ay,aw,hA,22*k);g.fill();g.stroke();
+    g.font=sceneFontCss(fsA,roleTxt);g.fillStyle='#5e4a43';g.fillText(roleTxt,x+w/2,ay+hA/2,aw-30*k);
+    // セリフの窓
+    const byy=ay+hA+14*k;
+    g.fillStyle='#fffaf0';g.strokeStyle='#e4cfa5';g.lineWidth=3*k;g.beginPath();g.roundRect(ax,byy,aw,hB,20*k);g.fill();g.stroke();
+    g.font=sceneFontCss(fsB,lineTxt);g.fillStyle='#5e4a43';
+    const top=byy+(hB-lines.length*lhB)/2;
+    lines.forEach((l,i)=>g.fillText(l,x+w/2,top+i*lhB+lhB/2,aw-30*k));
+    g.restore()
+  }
 
 function cleanChar(c){
     const o={
