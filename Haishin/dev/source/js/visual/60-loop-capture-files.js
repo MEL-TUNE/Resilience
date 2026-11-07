@@ -122,7 +122,7 @@
     }
     drawSceneImage(now);
     effects(dt,now,'front');
-    if(scene==='live'){caption();drawSetlist()}else sceneCaption();
+    if(scene==='live'){caption();drawPlays(now);drawSetlist()}else sceneCaption();
     if(outputWindow&&!outputWindow.closed&&outContext){
       try{
         if(outContext.canvas.width!==W||outContext.canvas.height!==H){

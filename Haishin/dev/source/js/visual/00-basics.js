@@ -50,6 +50,14 @@
     setlistSize:100,
     setlistHide:'',
     apps:[],
+    serifs:[],
+    serifSel:'',
+    serifPos:'bottom',
+    serifName:true,
+    diceN:1,
+    diceF:6,
+    wheelItems:'',
+    playPos:'center',
     appSel:'',
     appLayout:'overlay',
     appPos:'br',
@@ -247,7 +255,15 @@ fps:30,
     out.appSel=out.apps.some(a=>a.id===v.appSel)?v.appSel:'';
     if(['overlay','side'].includes(v.appLayout))out.appLayout=v.appLayout;
     if(['tl','tr','bl','br'].includes(v.appPos))out.appPos=v.appPos;
-    out.appSize=Math.max(15,Math.min(70,Math.round(Number(v.appSize)||35)));}
+    out.appSize=Math.max(15,Math.min(70,Math.round(Number(v.appSize)||35)));
+    if(Array.isArray(v.serifs))out.serifs=v.serifs.filter(s=>s&&/^[a-z0-9]{1,16}$/.test(s.id)).slice(0,100).map(s=>({id:s.id,title:S(s.title,80)||'シチュエーション',lines:(Array.isArray(s.lines)?s.lines:[]).slice(0,300).map(x=>S(x,300)),...(Number.isInteger(s.pos)?{pos:s.pos}:{})}));
+    out.serifSel=out.serifs.some(s=>s.id===v.serifSel)?v.serifSel:'';
+    if(['bottom','top','left','right'].includes(v.serifPos))out.serifPos=v.serifPos;
+    out.serifName=v.serifName!==false;
+    out.diceN=[1,2,3].includes(v.diceN)?v.diceN:1;
+    out.diceF=[4,6,8,10,12,20,100].includes(v.diceF)?v.diceF:6;
+    if(typeof v.wheelItems==='string')out.wheelItems=v.wheelItems.slice(0,2000);
+    if(['center','left','right'].includes(v.playPos))out.playPos=v.playPos;}
     {
       const n=Number(v.karaVol);
       if(Number.isFinite(n))out.karaVol=Math.max(0,Math.min(150,n))
@@ -491,6 +507,7 @@ for(const [id,k]of Object.entries(bindings)){
     }
     renderParagraph();
     renderSongs();
+    renderPlays();
     renderKara();
     renderCharUI();
     renderSceneForm?.();

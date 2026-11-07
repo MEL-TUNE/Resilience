@@ -349,6 +349,7 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 .sb-sess ol{font-size:13px;padding-left:18px}
 .sb-sess li{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:3px 0}
 .sb-away button{margin-left:8px}
+.play-big button{font-size:15px;padding:10px 14px}
 .app-dock{margin-top:18px;padding-top:14px;border-top:1px solid var(--a-p-20)}
 .app-chips button.selected{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .app-url{flex:1 1 260px;margin:0}
