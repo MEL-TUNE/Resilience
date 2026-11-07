@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.8.0 / 企画卓でアプリを開く・概要欄づくり・画面にセトリ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.8.1 / 企画卓にセリフ帳・ルーレット・サイコロ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -53,6 +53,29 @@
 <div class="studio-row"><button id="planNext">次の段落</button><button id="planReset">先頭に戻る</button><label><input id="planShow" type="checkbox"> 進行中の段落を映像にも表示</label></div>
 <div id="planCurrent" class="studio-live-box" aria-live="polite">台本を入力すると、段落ごとに確認できます。</div>
 <p class="studio-note">台本は空行で区切ります。文字のない映像が必要なときは表示チェックを外してください。AI音声の再生・自動口パク連動は今後の拡張です。</p>
+<div class="app-dock play-dock">
+<h3>セリフ帳</h3>
+<p class="studio-note">シチュエーションごとにセリフをためておき、押すたびに配信画面へ吹き出しで出します。セリフは1行に1つ。AIに考えてもらうときは「AIに頼む文をコピー」を使い、返ってきたセリフを貼り付けてください（上の「AIに渡す設定・依頼」の内容も一緒に入ります）。</p>
+<div class="studio-row"><label class="studio-field app-url">新しいシチュエーション<input id="serifNew" type="text" maxlength="80" placeholder="例：雨の日に傘を忘れたあなたを迎えに来た"></label><button type="button" id="serifAdd">＋ 作る</button></div>
+<div class="studio-inline"><label class="studio-field">シチュエーション<select id="serifSel"></select></label><label class="studio-field">AIに頼む数<select id="serifCount"><option>5</option><option selected>10</option><option>20</option><option>30</option></select></label></div>
+<div class="studio-row"><button type="button" id="serifPrompt">AIに頼む文をコピー</button></div>
+<div id="serifEdit" hidden>
+<label class="studio-field">シチュエーションの名前<input id="serifTitle" type="text" maxlength="80"></label>
+<label class="studio-field">AIの返答を貼り付けて足す<textarea id="serifIn" class="studio-textarea" rows="3" placeholder="1行に1つのセリフ。番号やかぎかっこは自動で外します"></textarea></label>
+<div class="studio-row"><button type="button" id="serifPaste">セリフに足す</button></div>
+<label class="studio-field">このシチュエーションのセリフ（1行に1つ・直接書き換えられます）<textarea id="serifText" class="studio-textarea" rows="6"></textarea></label>
+<div class="studio-row"><button type="button" id="serifDel">このシチュエーションを削除</button></div>
+</div>
+<div class="studio-row play-big"><button type="button" id="serifRandom" class="accent">🎲 ランダムに出す</button><button type="button" id="serifPrev">← 前</button><button type="button" id="serifNext">次 →</button><button type="button" id="serifHide">吹き出しを消す</button></div>
+<p class="studio-mini" id="serifNow"></p>
+<div class="studio-inline"><label class="studio-field">吹き出しの位置<select id="serifPos"><option value="bottom">下</option><option value="top">上</option><option value="left">左下（字幕の上）</option><option value="right">右下（字幕の上）</option></select></label><label class="studio-field"><input type="checkbox" id="serifName"> 名義の名前を添える</label></div>
+<h3>ルーレット・サイコロ</h3>
+<div class="studio-inline"><label class="studio-field">サイコロの数<select id="diceN"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option></select></label><label class="studio-field">目の数<select id="diceF"><option value="6">6面（ふつうのサイコロ）</option><option value="4">4面</option><option value="8">8面</option><option value="10">10面</option><option value="12">12面</option><option value="20">20面</option><option value="100">1〜100</option></select></label><label class="studio-field">画面の位置<select id="playPos"><option value="center">中央</option><option value="left">左</option><option value="right">右</option></select></label></div>
+<label class="studio-field">ルーレットの項目（1行に1つ・2〜24個）<textarea id="wheelItems" class="studio-textarea" rows="4" placeholder="例：&#10;歌う&#10;セリフを言う&#10;罰ゲーム&#10;もう一回"></textarea></label>
+<div class="studio-row play-big"><button type="button" id="diceRoll" class="accent">🎲 サイコロを振る</button><button type="button" id="wheelSpin" class="accent">🎡 ルーレットを回す</button><button type="button" id="playClear">画面から消す</button></div>
+<p class="studio-mini" id="playResult" aria-live="polite"></p>
+<p class="studio-mini">セリフの吹き出し・サイコロ・ルーレットは、配信画面・配信用ウインドウ・アプリと立ち絵のウインドウ・収録する動画に映ります。出目と止まる項目は、毎回ブラウザの乱数で決めます。</p>
+</div>
 <div class="app-dock">
 <h3>アプリを並べる</h3>
 <p class="studio-note">AITuberアプリ、セリフを出すゲームなど、HTMLで作ったアプリをここで開けます。HTMLファイルを登録するか、公開しているページのURLを登録してください。下の「別ウインドウで開く」で、アプリの画面に立ち絵（配信画面と同じ絵）を重ねた、OBSに取り込む用のウインドウを作れます。登録したアプリのファイルは、このブラウザ内に保存されます（.live には入りません）。</p>
