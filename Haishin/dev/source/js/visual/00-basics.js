@@ -41,6 +41,19 @@
     legacyVideos:[],
     singLog:[],
     singSess:null,
+    sessInfo:{},
+    descHead:'♪ セットリスト',
+    descEmpty:'blank',
+    setlistShow:'off',
+    setlistPos:'tl',
+    setlistTime:0,
+    setlistSize:100,
+    setlistHide:'',
+    apps:[],
+    appSel:'',
+    appLayout:'overlay',
+    appPos:'br',
+    appSize:35,
     assetNames:{},
     scenes:{standby:{bgm:'keep',effect:'keep',avatar:true,text:''},away:{bgm:'keep',effect:'keep',avatar:false,text:''},end:{bgm:'keep',effect:'keep',avatar:false,text:'ご視聴ありがとうございました'}},
     mascots:[],
@@ -200,7 +213,7 @@ fps:30,
     if(Array.isArray(v.songs))out.songs=v.songs.slice(0,300).filter(x=>x&&typeof x.title==='string').map(x=>({title:x.title.slice(0,200),artist:String(x.artist||'').slice(0,200)}));
     {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last)}));
-     if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).map(x=>{const o={id:S(x.id,16)||Math.random().toString(36).slice(2,10),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)};if(Number.isFinite(Number(x.off0)))o.off0=Math.max(0,Math.floor(Number(x.off0)));return o});
+     if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).map(x=>{const o={id:S(x.id,16)||Math.random().toString(36).slice(2,10),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)};if(Number.isFinite(Number(x.off0)))o.off0=Math.max(0,Math.floor(Number(x.off0)));if(x.ts!==null&&x.ts!==undefined&&Number.isFinite(Number(x.ts)))o.ts=Math.max(0,Math.floor(Number(x.ts)));return o});
      if(Array.isArray(v.legacyVideos))out.legacyVideos=v.legacyVideos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,60).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at),missing:x.missing===true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
@@ -220,6 +233,21 @@ fps:30,
     if(['flutter','leaf','rise','snow','roll'].includes(v.imageMotion))out.imageMotion=v.imageMotion;
     if(Array.isArray(v.karaChannels))out.karaChannels=v.karaChannels.slice(0,60).filter(x=>x&&typeof x==='object').map(x=>({name:String(x.name||'').slice(0,80),url:String(x.url||'').slice(0,300),memo:String(x.memo||'').slice(0,300)}));
     if(['popup','tab','newtab'].includes(v.karaOpen))out.karaOpen=v.karaOpen;
+    {const S=(x,n)=>String(x??'').slice(0,n);
+    out.sessInfo={};
+    if(v.sessInfo&&typeof v.sessInfo==='object'&&!Array.isArray(v.sessInfo))for(const [k,x] of Object.entries(v.sessInfo).slice(0,2000))if(/^[a-z0-9]{1,16}$/.test(k)&&x&&typeof x==='object')out.sessInfo[k]={url:S(x.url,500)};
+    if(typeof v.descHead==='string')out.descHead=v.descHead.slice(0,200);
+    if(['blank','rec','skip'].includes(v.descEmpty))out.descEmpty=v.descEmpty;
+    if(['off','now','list'].includes(v.setlistShow))out.setlistShow=v.setlistShow;
+    if(['tl','tr','bl','br'].includes(v.setlistPos))out.setlistPos=v.setlistPos;
+    if([0,15,30,60,120].includes(v.setlistTime))out.setlistTime=v.setlistTime;
+    out.setlistSize=Math.max(50,Math.min(200,Math.round(Number(v.setlistSize)||100)));
+    out.setlistHide=S(v.setlistHide,16);
+    if(Array.isArray(v.apps))out.apps=v.apps.filter(a=>a&&/^[a-z0-9]{1,16}$/.test(a.id)&&(a.kind==='file'||(a.kind==='url'&&/^https?:\/\//.test(a.url)))).slice(0,12).map(a=>({id:a.id,kind:a.kind,name:S(a.name,40)||'アプリ',...(a.kind==='url'?{url:S(a.url,2000)}:{file:S(a.file,120),store:a.store!==false})}));
+    out.appSel=out.apps.some(a=>a.id===v.appSel)?v.appSel:'';
+    if(['overlay','side'].includes(v.appLayout))out.appLayout=v.appLayout;
+    if(['tl','tr','bl','br'].includes(v.appPos))out.appPos=v.appPos;
+    out.appSize=Math.max(15,Math.min(70,Math.round(Number(v.appSize)||35)));}
     {
       const n=Number(v.karaVol);
       if(Number.isFinite(n))out.karaVol=Math.max(0,Math.min(150,n))
