@@ -21,13 +21,13 @@ const LOOK_PRESETS={
 
   hotchoco:{name:'ホットショコラ',bg:'#36271f',paper:'#46342b',accent:'#d8a873',decor:'#c2775c'},
 
-  purin:{name:'プリンアラモード',bg:'#f5e3b8',paper:'#fffaee',accent:'#93542a',decor:'#d73a4d'},
+  purin:{name:'プリンアラモード',bg:'#fbe09a',paper:'#fffaf0',accent:'#7a3a14',decor:'#e8264a'},
 
-  omurice:{name:'オムライス',bg:'#fbe7a8',paper:'#fffcf0',accent:'#cc4630',decor:'#5f9142'},
+  omurice:{name:'オムライス',bg:'#ffd75e',paper:'#fffbe8',accent:'#b8141f',decor:'#7a4422'},
 
-  coffeejelly:{name:'コーヒーゼリー',bg:'#1b1512',paper:'#2a211c',accent:'#ecdcc2',decor:'#a46a43'},
+  coffeejelly:{name:'コーヒーゼリー',bg:'#170f0b',paper:'#2b1c14',accent:'#f6ead6',decor:'#c98a4b'},
 
-  nightsoda:{name:'夜のクリームソーダ',bg:'#10221f',paper:'#1b322e',accent:'#86d8ac',decor:'#ee5468'}
+  nightsoda:{name:'夜のクリームソーダ',bg:'#0b201d',paper:'#14332d',accent:'#7ee8a8',decor:'#ff4f6a'}
 };
 
 const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];

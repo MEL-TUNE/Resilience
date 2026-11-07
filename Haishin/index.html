@@ -841,6 +841,22 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 .sb-sess ol{font-size:13px;padding-left:18px}
 .sb-sess li{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:3px 0}
 .sb-away button{margin-left:8px}
+.app-dock{margin-top:18px;padding-top:14px;border-top:1px solid var(--a-p-20)}
+.app-chips button.selected{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.app-url{flex:1 1 260px;margin:0}
+.app-stage{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;align-items:start;margin:10px 0}
+.app-frame-box{position:relative;border:1px solid var(--a-p-30);border-radius:12px;overflow:hidden;background:var(--hi);aspect-ratio:16/10;min-height:300px;resize:vertical}
+.app-frame-box iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.app-away{position:absolute;inset:0;display:grid;place-items:center;margin:0;background:var(--paper);font-weight:700}
+.app-mirror-box{margin:0}
+.app-mirror-box canvas{width:100%;height:auto;display:block;border-radius:10px;background:repeating-conic-gradient(#0000000f 0 25%,#0000 0 50%) 0 0/16px 16px}
+@media(max-width:760px){.app-stage{grid-template-columns:1fr}}
+.sb-desc{margin:8px 0 4px;padding:6px 10px;border:1px dashed var(--a-p-30);border-radius:10px}
+.sb-desc summary{cursor:pointer;font-weight:700;font-size:13px}
+.sb-desc-out{min-height:120px;font-variant-numeric:tabular-nums}
+.sb-url{width:100%}
+.sb-opts{margin:10px 0;padding:6px 10px;border:1px solid var(--a-p-30);border-radius:10px}
+.sb-opts summary{cursor:pointer;font-weight:700;font-size:13px}
 .sb-time{width:7.5em;padding:4px 6px;border:1px solid var(--accent);border-radius:6px;font:inherit;font-variant-numeric:tabular-nums}
 .sb-undo-row{margin:0 0 6px}
 .save-state{font-size:11px}
@@ -869,13 +885,13 @@ const LOOK_PRESETS={
 
   hotchoco:{name:'ホットショコラ',bg:'#36271f',paper:'#46342b',accent:'#d8a873',decor:'#c2775c'},
 
-  purin:{name:'プリンアラモード',bg:'#f5e3b8',paper:'#fffaee',accent:'#93542a',decor:'#d73a4d'},
+  purin:{name:'プリンアラモード',bg:'#fbe09a',paper:'#fffaf0',accent:'#7a3a14',decor:'#e8264a'},
 
-  omurice:{name:'オムライス',bg:'#fbe7a8',paper:'#fffcf0',accent:'#cc4630',decor:'#5f9142'},
+  omurice:{name:'オムライス',bg:'#ffd75e',paper:'#fffbe8',accent:'#b8141f',decor:'#7a4422'},
 
-  coffeejelly:{name:'コーヒーゼリー',bg:'#1b1512',paper:'#2a211c',accent:'#ecdcc2',decor:'#a46a43'},
+  coffeejelly:{name:'コーヒーゼリー',bg:'#170f0b',paper:'#2b1c14',accent:'#f6ead6',decor:'#c98a4b'},
 
-  nightsoda:{name:'夜のクリームソーダ',bg:'#10221f',paper:'#1b322e',accent:'#86d8ac',decor:'#ee5468'}
+  nightsoda:{name:'夜のクリームソーダ',bg:'#0b201d',paper:'#14332d',accent:'#7ee8a8',decor:'#ff4f6a'}
 };
 
 const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];
@@ -953,7 +969,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.7.7 / 暗い着せ替えの文字の見やすさ・着せ替え4色を追加</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.8.0 / 企画卓でアプリを開く・概要欄づくり・画面にセトリ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
@@ -995,8 +1011,33 @@ lookPaint(look);
 <div class="studio-row"><button id="planNext">次の段落</button><button id="planReset">先頭に戻る</button><label><input id="planShow" type="checkbox"> 進行中の段落を映像にも表示</label></div>
 <div id="planCurrent" class="studio-live-box" aria-live="polite">台本を入力すると、段落ごとに確認できます。</div>
 <p class="studio-note">台本は空行で区切ります。文字のない映像が必要なときは表示チェックを外してください。AI音声の再生・自動口パク連動は今後の拡張です。</p>
+<div class="app-dock">
+<h3>アプリを並べる</h3>
+<p class="studio-note">AITuberアプリ、セリフを出すゲームなど、HTMLで作ったアプリをここで開けます。HTMLファイルを登録するか、公開しているページのURLを登録してください。下の「別ウインドウで開く」で、アプリの画面に立ち絵（配信画面と同じ絵）を重ねた、OBSに取り込む用のウインドウを作れます。登録したアプリのファイルは、このブラウザ内に保存されます（.live には入りません）。</p>
+<div class="studio-row app-chips" id="appChips"></div>
+<div class="studio-row"><button type="button" id="appAddFile">＋ HTMLファイルを登録</button><input id="appFile" type="file" accept=".html,.htm,text/html" hidden><label class="studio-field app-url">URLで登録<input id="appUrl" type="url" placeholder="https://…"></label><button type="button" id="appAddUrl">URLを登録</button></div>
+<div id="appEdit" hidden><div class="studio-inline"><label class="studio-field">名前<input id="appName" type="text" maxlength="40"></label><p class="studio-mini" id="appWhere"></p></div>
+<label class="studio-field"><input type="checkbox" id="appStore"> アプリの中の保存・マイクを使えるようにする（自作のアプリ向け。切ると、アプリをこのページから隔離して開きます）</label>
+<div class="studio-row"><button type="button" id="appReload">アプリを読み込み直す</button><button type="button" id="appDel">このアプリの登録を外す</button></div></div>
+<div class="app-stage" id="appStageWrap" hidden><div class="app-frame-box"><iframe id="appFrame" title="登録したアプリ"></iframe><p class="app-away" id="appAway" hidden>アプリは別ウインドウで表示中です。</p></div><figure class="app-mirror-box"><canvas id="appMirror" aria-label="立ち絵（配信画面と同じ絵）"></canvas><figcaption class="studio-mini">立ち絵（配信画面と同じ絵）</figcaption></figure></div>
+<div class="studio-inline"><label class="studio-field">別ウインドウでの立ち絵の置き方<select id="appLayout"><option value="overlay">アプリの上に重ねる</option><option value="side">アプリの横に並べる</option></select></label>
+<label class="studio-field">位置<select id="appPos"><option value="br">右下（横に並べるときは右）</option><option value="bl">左下（横に並べるときは左）</option><option value="tr">右上</option><option value="tl">左上</option></select></label>
+<label class="studio-field">立ち絵の大きさ（ウインドウの幅に対して） <output id="appSizeVal">35%</output><input id="appSize" type="range" min="15" max="70" step="1"></label></div>
+<p class="studio-mini" id="appBgNote" hidden>重ねるときは、設定の「背景」を「透過」にすると、立ち絵だけがアプリの上に重なります（いまの背景のままだと、背景ごと四角く重なります）。</p>
+<div class="studio-row"><button type="button" id="appWinBtn" class="accent">アプリと立ち絵を別ウインドウで開く（OBS用）</button></div>
+</div>
 </section>
-<section class="studio-card mode-section" id="studioSongs" style="margin-top:16px"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore"><h3 class="kara-h">曲を入れる</h3><div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div><label class="studio-field">メモ（キー・原曲・音源など、任意）<input id="songMemo" type="text" maxlength="200"></label><div class="studio-row"><button id="repAdd" class="accent" type="button">曲リストに登録</button><button id="songAdd" type="button">セトリに追加</button><button id="singNowBtn" type="button">♪ この曲を歌い始め</button><button id="songSearch" type="button">曲名＋歌詞でWeb検索</button></div><hr class="studio-divider"><h3 class="kara-h">歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびに「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。押し間違えたときは「直前の記録を取り消す」、時刻がずれたときは「これまでの記録」の各曲の「時刻」で直せます（1:02:03 や 12:34 の形で入力）。</p><h3 class="kara-h">セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div><h3 class="kara-h">曲リスト <small id="repCount"></small></h3><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・メモで絞り込み" aria-label="曲リストの絞り込み"><ul id="repList" class="sb-list"></ul><h3 class="kara-h">これまでの記録（回ごと）</h3><div id="singLog"></div></div></div>
+<section class="studio-card mode-section" id="studioSongs" style="margin-top:16px"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore"><h3 class="kara-h">曲を入れる</h3><div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div><label class="studio-field">メモ（キー・原曲・音源など、任意）<input id="songMemo" type="text" maxlength="200"></label><div class="studio-row"><button id="repAdd" class="accent" type="button">曲リストに登録</button><button id="songAdd" type="button">セトリに追加</button><button id="singNowBtn" type="button">♪ この曲を歌い始め</button><button id="songSearch" type="button">曲名＋歌詞でWeb検索</button></div><hr class="studio-divider"><h3 class="kara-h">歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびに「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。押し間違えたときは「直前の記録を取り消す」で戻せます。配信のあとは「これまでの記録」の回を開き、「概要欄を作る」にアーカイブのURLと各曲の時刻を入れると、概要欄にそのまま貼れるセットリストができます。</p><h3 class="kara-h">セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div><h3 class="kara-h">曲リスト <small id="repCount"></small></h3><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・メモで絞り込み" aria-label="曲リストの絞り込み"><ul id="repList" class="sb-list"></ul><details class="sb-opts" id="sbOpts"><summary>配信画面に曲名を出す・概要欄の形</summary>
+<div class="studio-inline"><label class="studio-field">配信画面（PNGTuber画面）に出す<select id="setlistShow"><option value="off">出さない</option><option value="now">いま歌っている曲</option><option value="list">これまでの曲（最新8曲）</option></select></label>
+<label class="studio-field">位置<select id="setlistPos"><option value="tl">左上</option><option value="tr">右上</option><option value="bl">左下</option><option value="br">右下</option></select></label></div>
+<div class="studio-inline"><label class="studio-field">出しておく時間（いま歌っている曲）<select id="setlistTime"><option value="0">歌い終えるまで（次の曲まで）</option><option value="15">歌い始めから15秒</option><option value="30">歌い始めから30秒</option><option value="60">歌い始めから1分</option><option value="120">歌い始めから2分</option></select></label>
+<label class="studio-field">文字の大きさ <output id="setlistSizeVal">100%</output><input id="setlistSize" type="range" min="50" max="200" step="10"></label></div>
+<div class="studio-row"><button type="button" id="setlistHideBtn">画面の曲名をいったん消す</button></div>
+<p class="studio-mini">「♪ 歌い始め」を押すと、曲名と歌手名が配信画面・配信用ウインドウ・収録する動画に出ます。文字は「準備中・離席中の画面」と同じフォントです。</p>
+<div class="studio-inline"><label class="studio-field">概要欄の見出し<input id="descHead" type="text" maxlength="200"></label>
+<label class="studio-field">時刻を入れていない曲<select id="descEmpty"><option value="blank">曲名だけ載せる</option><option value="rec">記録した経過時間を使う</option><option value="skip">載せない</option></select></label></div>
+</details>
+<h3 class="kara-h">これまでの記録（回ごと）</h3><div id="singLog"></div></div></div>
 <div class="kara-block" id="karaBlock">
 <hr class="studio-divider">
 <p class="studio-kicker">KARAOKE / SEARCH</p><h3 class="kara-h">カラオケ音源を探す</h3>
@@ -6966,6 +7007,19 @@ $('#consoleAllStop').onclick=()=>stopAll();
     legacyVideos:[],
     singLog:[],
     singSess:null,
+    sessInfo:{},
+    descHead:'♪ セットリスト',
+    descEmpty:'blank',
+    setlistShow:'off',
+    setlistPos:'tl',
+    setlistTime:0,
+    setlistSize:100,
+    setlistHide:'',
+    apps:[],
+    appSel:'',
+    appLayout:'overlay',
+    appPos:'br',
+    appSize:35,
     assetNames:{},
     scenes:{standby:{bgm:'keep',effect:'keep',avatar:true,text:''},away:{bgm:'keep',effect:'keep',avatar:false,text:''},end:{bgm:'keep',effect:'keep',avatar:false,text:'ご視聴ありがとうございました'}},
     mascots:[],
@@ -7125,7 +7179,7 @@ fps:30,
     if(Array.isArray(v.songs))out.songs=v.songs.slice(0,300).filter(x=>x&&typeof x.title==='string').map(x=>({title:x.title.slice(0,200),artist:String(x.artist||'').slice(0,200)}));
     {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last)}));
-     if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).map(x=>{const o={id:S(x.id,16)||Math.random().toString(36).slice(2,10),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)};if(Number.isFinite(Number(x.off0)))o.off0=Math.max(0,Math.floor(Number(x.off0)));return o});
+     if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).map(x=>{const o={id:S(x.id,16)||Math.random().toString(36).slice(2,10),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)};if(Number.isFinite(Number(x.off0)))o.off0=Math.max(0,Math.floor(Number(x.off0)));if(x.ts!==null&&x.ts!==undefined&&Number.isFinite(Number(x.ts)))o.ts=Math.max(0,Math.floor(Number(x.ts)));return o});
      if(Array.isArray(v.legacyVideos))out.legacyVideos=v.legacyVideos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,60).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at),missing:x.missing===true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
     out.assetNames=v.assetNames&&typeof v.assetNames==='object'?v.assetNames:{};
@@ -7145,6 +7199,21 @@ fps:30,
     if(['flutter','leaf','rise','snow','roll'].includes(v.imageMotion))out.imageMotion=v.imageMotion;
     if(Array.isArray(v.karaChannels))out.karaChannels=v.karaChannels.slice(0,60).filter(x=>x&&typeof x==='object').map(x=>({name:String(x.name||'').slice(0,80),url:String(x.url||'').slice(0,300),memo:String(x.memo||'').slice(0,300)}));
     if(['popup','tab','newtab'].includes(v.karaOpen))out.karaOpen=v.karaOpen;
+    {const S=(x,n)=>String(x??'').slice(0,n);
+    out.sessInfo={};
+    if(v.sessInfo&&typeof v.sessInfo==='object'&&!Array.isArray(v.sessInfo))for(const [k,x] of Object.entries(v.sessInfo).slice(0,2000))if(/^[a-z0-9]{1,16}$/.test(k)&&x&&typeof x==='object')out.sessInfo[k]={url:S(x.url,500)};
+    if(typeof v.descHead==='string')out.descHead=v.descHead.slice(0,200);
+    if(['blank','rec','skip'].includes(v.descEmpty))out.descEmpty=v.descEmpty;
+    if(['off','now','list'].includes(v.setlistShow))out.setlistShow=v.setlistShow;
+    if(['tl','tr','bl','br'].includes(v.setlistPos))out.setlistPos=v.setlistPos;
+    if([0,15,30,60,120].includes(v.setlistTime))out.setlistTime=v.setlistTime;
+    out.setlistSize=Math.max(50,Math.min(200,Math.round(Number(v.setlistSize)||100)));
+    out.setlistHide=S(v.setlistHide,16);
+    if(Array.isArray(v.apps))out.apps=v.apps.filter(a=>a&&/^[a-z0-9]{1,16}$/.test(a.id)&&(a.kind==='file'||(a.kind==='url'&&/^https?:\/\//.test(a.url)))).slice(0,12).map(a=>({id:a.id,kind:a.kind,name:S(a.name,40)||'アプリ',...(a.kind==='url'?{url:S(a.url,2000)}:{file:S(a.file,120),store:a.store!==false})}));
+    out.appSel=out.apps.some(a=>a.id===v.appSel)?v.appSel:'';
+    if(['overlay','side'].includes(v.appLayout))out.appLayout=v.appLayout;
+    if(['tl','tr','bl','br'].includes(v.appPos))out.appPos=v.appPos;
+    out.appSize=Math.max(15,Math.min(70,Math.round(Number(v.appSize)||35)));}
     {
       const n=Number(v.karaVol);
       if(Number.isFinite(n))out.karaVol=Math.max(0,Math.min(150,n))
@@ -7921,6 +7990,7 @@ const SB={
     if(!state.singSess)sessStart();
     const ss=state.singSess,now=new Date(),off=Math.round((now-new Date(ss.start))/1000);
     const x={id:sbId(),t:now.toISOString(),title:t,artist:a||'',sess:ss.id,start:ss.start,off,prof:ss.prof||curProfName()};
+    state.setlistHide='';
     logList().push(x);
     const r=repAdd(t,a);
     if(r){r.count=(r.count||0)+1;r.last=x.t}
@@ -8094,6 +8164,47 @@ const SB={
     if(!s.items.length)rec.ol.append(sbEmpty('li','まだ曲は記録されていません'));
     rec.filled=true
   }
+  // 概要欄：アーカイブのURLと、曲ごとの時刻（あとから入力）でタイムスタンプを作る
+  const ytId=u=>{const m=String(u||'').match(/(?:youtu\.be\/|[?&]v=|\/live\/|\/shorts\/|\/embed\/)([\w-]{11})/);return m?m[1]:''};
+  const tsOf=x=>Number.isFinite(x.ts)?x.ts:state.descEmpty==='rec'?x.off:null;
+  function fmtTs(sec,long){sec=Math.max(0,Math.floor(sec));const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;return long?h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'):Math.floor(sec/60)+':'+String(s).padStart(2,'0')}
+  function descText(s,withLink){
+    const url=state.sessInfo?.[s.id]?.url||'',id=ytId(url),list=s.items.filter(x=>state.descEmpty!=='skip'||tsOf(x)!==null);
+    const long=list.some(x=>(tsOf(x)||0)>=3600),lines=[];
+    if(state.descHead.trim())lines.push(state.descHead.trim());
+    list.forEach((x,i)=>{
+      const t=tsOf(x),name=x.title+(x.artist?' / '+x.artist:'');
+      lines.push((t!==null?fmtTs(t,long)+' ':'')+name+(withLink&&t!==null&&id?'  https://youtu.be/'+id+'?t='+t:''))
+    });
+    return lines.join('\n')
+  }
+  function descBuild(s,rec){
+    const box=rec.descBody;box.replaceChildren();
+    const info=state.sessInfo[s.id]||(state.sessInfo[s.id]={url:''});
+    const url=document.createElement('input');url.type='url';url.className='sb-url';url.placeholder='アーカイブのURL（例：https://www.youtube.com/watch?v=…）';url.value=info.url||'';
+    const urlL=document.createElement('label');urlL.className='studio-field';urlL.append('アーカイブのURL',url);
+    const out=document.createElement('textarea');out.className='studio-textarea sb-desc-out';out.readOnly=true;out.rows=Math.min(14,s.items.length+2);
+    const refresh=()=>{out.value=descText(sessOf(s.id)||s,false)};
+    url.oninput=()=>{info.url=url.value.trim().slice(0,500);save();refresh()};
+    const tbl=document.createElement('ol');tbl.className='sb-list sb-desc-list';
+    for(const x of s.items){
+      const li=document.createElement('li');
+      const inp=document.createElement('input');inp.className='sb-time';inp.inputMode='numeric';inp.placeholder=Number.isFinite(x.ts)?'':'時刻';inp.value=Number.isFinite(x.ts)?fmtTs(x.ts,x.ts>=3600):'';
+      inp.setAttribute('aria-label','「'+x.title+'」のアーカイブ上の時刻');
+      inp.onchange=()=>{const v=inp.value.trim();if(!v){delete x.ts;save();refresh();return}const sec=parseHms(v);if(sec===null){toast('「1:02:03」「12:34」のように入力してください',4000);inp.focus();return}x.ts=sec;inp.value=fmtTs(sec,sec>=3600);save();refresh()};
+      inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();const n=li.nextElementSibling?.querySelector('.sb-time');if(n)n.focus()}};
+      const rb=rowBtn('記録した時刻','',()=>{x.ts=x.off;inp.value=fmtTs(x.off,x.off>=3600);save();refresh()},'歌い始めを押したときの経過時間（'+hms(x.off)+'）を入れます');
+      li.append(inp,songSpan(x.title,x.artist,'記録：'+hms(x.off)),rb);
+      tbl.append(li)
+    }
+    const row=document.createElement('div');row.className='studio-row';
+    row.append(rowBtn('概要欄用にコピー','accent',()=>copy(descText(sessOf(s.id)||s,false))),
+      rowBtn('時刻リンクつきでコピー（Xなど用）','',()=>{if(!ytId(info.url)){toast('YouTubeのURLを入れると、時刻リンクを作れます',4000);return}copy(descText(sessOf(s.id)||s,true))}));
+    const note=document.createElement('p');note.className='studio-mini';
+    note.textContent='アーカイブを見ながら、各曲の歌い始めの時刻を「12:34」「1:02:03」の形で入れてください（Enterで次の曲へ）。下の文が、そのまま概要欄に貼れる形になります。見出しと、時刻を入れていない曲の扱いは「概要欄の形」で変えられます。';
+    box.append(urlL,note,tbl,out,row);
+    refresh()
+  }
   function sessBox(s){
     const box=document.createElement('details');box.className='sb-sess';box.dataset.sess=s.id;
     const sum=document.createElement('summary');sum.textContent=sessSummary(s);
@@ -8109,9 +8220,13 @@ const SB={
         if(state.singSess?.id===s.id){state.singSess=null;sbLast=null}
         saveNow();renderSess();renderRep();renderLog()
       })));
-    const rec={box,sum,ol,filled:false};
+    const desc=document.createElement('details');desc.className='sb-desc';
+    const dsum=document.createElement('summary');dsum.textContent='概要欄を作る（アーカイブのURLと時刻を入れる）';
+    const descBody=document.createElement('div');desc.append(dsum,descBody);
+    const rec={box,sum,ol,filled:false,desc,descBody};
+    desc.ontoggle=()=>{if(desc.open){const c=sessOf(s.id);if(c)descBuild(c,rec)}};
     box.ontoggle=()=>{if(box.open&&!rec.filled){const c=sessOf(s.id);if(c)sessFill(c,rec)}};
-    box.append(sum,ol,row);
+    box.append(sum,ol,row,desc);
     sessBoxes.set(s.id,rec);
     return rec
   }
@@ -8121,8 +8236,9 @@ const SB={
     if(!rec){renderLog();return}
     rec.sum.textContent=sessSummary(s);
     // 時刻を入力している最中は行を作り直さない（確定・取り消しのときに作り直す）
-    if(rec.ol.contains(document.activeElement)&&document.activeElement.classList.contains('sb-time'))return;
-    if(rec.filled||rec.box.open)sessFill(s,rec)
+    if(rec.box.contains(document.activeElement)&&document.activeElement.classList.contains('sb-time'))return;
+    if(rec.filled||rec.box.open)sessFill(s,rec);
+    if(rec.desc.open)descBuild(s,rec)
   }
   function renderLog(){
     sessBoxes.clear();
@@ -8147,7 +8263,48 @@ const SB={
   }
   // 毎秒の更新は経過時間の表示だけ（記録の全件はたどらない）
   setInterval(()=>{if(state.singSess)SB.sessState.textContent='記録中 '+hms((Date.now()-new Date(state.singSess.start))/1000)+'（'+localTime(state.singSess.start)+'から）'},1000);
-  function renderSongs(){sbLast=sessLast();renderSess();renderSet();renderRep();renderLog()}
+  function renderSongs(){sbLast=sessLast();renderSess();renderSet();renderRep();renderLog();renderSongOpts()}
+
+  // 概要欄の形・画面に出すセトリの設定
+  function renderSongOpts(){
+    E('descHead').value=state.descHead;E('descEmpty').value=state.descEmpty;
+    E('setlistShow').value=state.setlistShow;E('setlistPos').value=state.setlistPos;E('setlistTime').value=String(state.setlistTime);
+    E('setlistSize').value=state.setlistSize;E('setlistSizeVal').textContent=state.setlistSize+'%'
+  }
+  const refreshDescs=()=>{for(const [id,rec] of sessBoxes)if(rec.desc.open){const c=sessOf(id);if(c)descBuild(c,rec)}};
+  E('descHead').oninput=e=>{state.descHead=e.target.value.slice(0,200);save();refreshDescs()};
+  E('descEmpty').onchange=e=>{state.descEmpty=e.target.value;save();refreshDescs()};
+  E('setlistShow').onchange=e=>{state.setlistShow=e.target.value;state.setlistHide='';save()};
+  E('setlistPos').onchange=e=>{state.setlistPos=e.target.value;save()};
+  E('setlistTime').onchange=e=>{state.setlistTime=Number(e.target.value)||0;state.setlistHide='';save()};
+  E('setlistSize').oninput=e=>{state.setlistSize=Math.max(50,Math.min(200,Number(e.target.value)||100));E('setlistSizeVal').textContent=state.setlistSize+'%';save()};
+  E('setlistHideBtn').onclick=()=>{const x=sbLast||sessLast();if(!x){toast('画面に出ている曲はありません');return}state.setlistHide=x.id;save();toast('画面の曲名を消しました。次の「♪ 歌い始め」でまた出ます',4000)};
+
+  // 配信画面（PNGTuber画面）に、いま歌っている曲・これまでの曲を描く
+  function slFit(s,maxW){if(g.measureText(s).width<=maxW)return s;let t=s;while(t.length>1&&g.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…'}
+  function drawSetlist(){
+    const mode=state.setlistShow,ss=state.singSess;
+    if(mode==='off'||!ss)return;
+    const items=sessItems(ss.id);
+    if(!items.length)return;
+    const cur=sbLast&&sbLast.sess===ss.id?sbLast:items.at(-1);
+    if(state.setlistHide&&state.setlistHide===cur.id)return;
+    if(mode==='now'&&state.setlistTime>0&&Date.now()-new Date(cur.t).getTime()>state.setlistTime*1000)return;
+    const k=state.setlistSize/100*Math.min(W,H)/720,pad=20*k,m=34*k,maxW=W*.46;
+    const rows=mode==='now'
+      ?[{t:'♪ '+cur.title,size:34,bold:true},...(cur.artist?[{t:cur.artist,size:23}]:[])]
+      :[{t:'セットリスト',size:20,dim:true},...items.slice(-8).map((x,i,a)=>({t:(items.length-a.length+i+1)+'. '+x.title+(x.artist?' / '+x.artist:''),size:24,bold:x===cur,dim:x!==cur,mark:x===cur}))];
+    g.save();
+    g.textBaseline='middle';g.textAlign='left';
+    const lines=rows.map(r=>{g.font=sceneFontCss(r.size*k,r.t);const t=slFit((r.mark?'♪ ':'')+r.t,maxW);return {...r,t,w:g.measureText(t).width,h:r.size*k*1.45}});
+    const w=Math.max(...lines.map(l=>l.w))+pad*2,h=lines.reduce((a,l)=>a+l.h,0)+pad*1.4;
+    const x=state.setlistPos.endsWith('l')?m:W-m-w,y=state.setlistPos.startsWith('t')?m:H-m-h;
+    g.fillStyle='rgba(22,34,29,.66)';g.beginPath();g.roundRect(x,y,w,h,14*k);g.fill();
+    g.strokeStyle='rgba(255,248,232,.35)';g.lineWidth=1;g.beginPath();g.roundRect(x+5*k,y+5*k,w-10*k,h-10*k,10*k);g.stroke();
+    let yy=y+pad*.7;
+    for(const l of lines){g.font=sceneFontCss(l.size*k,l.t);g.fillStyle=l.dim?'rgba(251,245,233,.72)':'#fbf5e9';g.fillText(l.t,x+pad,yy+l.h/2);yy+=l.h}
+    g.restore()
+  }
 
   // 別タブで開く：ノートの部品をそのタブへ移し、閉じたら戻す
   let sbWin=null;
@@ -8173,6 +8330,157 @@ const SB={
   };
   E('songbookReturn').onclick=()=>{try{sbWin?.close()}catch(_){}sbBack()};
   window.addEventListener('pagehide',()=>{try{sbWin?.close()}catch(_){}});
+
+const APP_MAX=12;
+  let appWindow=null,appContext=null,appMirrorAt=0,appBlobUrl='',appBlobFor='';
+  const appList=()=>Array.isArray(state.apps)?state.apps:(state.apps=[]);
+  const appCur=()=>appList().find(a=>a.id===state.appSel)||null;
+  const appWinOpen=()=>!!(appWindow&&!appWindow.closed);
+
+  async function appSrc(a){
+    if(a.kind==='url')return a.url;
+    if(appBlobFor===a.id&&appBlobUrl)return appBlobUrl;
+    const b=await getAsset('app:'+a.id);
+    if(!b)throw Error('このアプリのファイルが見つかりません。もう一度登録してください');
+    if(appBlobUrl)URL.revokeObjectURL(appBlobUrl);
+    appBlobUrl=URL.createObjectURL(b instanceof Blob?new Blob([b],{type:'text/html'}):new Blob([String(b)],{type:'text/html'}));
+    appBlobFor=a.id;
+    return appBlobUrl
+  }
+  // ファイルのアプリは、既定ではこのページと同じ保存領域・マイクを使える形で開く（自作アプリの保存が動くように）。
+  // 切ると sandbox で隔離する（アプリの保存は使えなくなる）
+  function appFrameAttrs(f,a){
+    f.setAttribute('allow','microphone; camera; autoplay; clipboard-read; clipboard-write; fullscreen');
+    if(a.kind==='file'&&!a.store)f.setAttribute('sandbox','allow-scripts allow-forms allow-popups allow-modals allow-downloads');
+    else f.removeAttribute('sandbox')
+  }
+  async function appShow(){
+    const a=appCur(),f=E('appFrame'),wrap=E('appStageWrap');
+    renderApps();
+    if(!a){f.removeAttribute('src');wrap.hidden=true;return}
+    wrap.hidden=false;
+    if(appWinOpen()){f.removeAttribute('src');E('appAway').hidden=false;return}
+    E('appAway').hidden=true;
+    try{
+      const src=await appSrc(a);
+      appFrameAttrs(f,a);
+      if(f.getAttribute('src')!==src)f.src=src
+    }catch(e){toast(e.message||'アプリを開けませんでした',5000)}
+  }
+  function renderApps(){
+    const box=E('appChips'),a=appCur();
+    box.replaceChildren(...appList().map(x=>{
+      const b=document.createElement('button');
+      b.type='button';b.textContent=(x.kind==='url'?'🔗 ':'📄 ')+x.name;
+      b.className=x.id===state.appSel?'selected':'';
+      b.setAttribute('aria-pressed',x.id===state.appSel);
+      b.onclick=()=>{state.appSel=x.id===state.appSel?'':x.id;save();appShow()};
+      return b
+    }));
+    if(!appList().length)box.append(Object.assign(document.createElement('span'),{className:'studio-mini',textContent:'まだ登録がありません'}));
+    E('appEdit').hidden=!a;
+    if(a){
+      E('appName').value=a.name;
+      E('appStore').checked=a.kind==='url'||a.store!==false;
+      E('appStore').disabled=a.kind==='url';
+      E('appWhere').textContent=a.kind==='url'?a.url:'ファイル：'+(a.file||'')
+    }
+    E('appLayout').value=state.appLayout;E('appPos').value=state.appPos;E('appSize').value=state.appSize;
+    E('appSizeVal').textContent=state.appSize+'%';
+    E('appPos').disabled=state.appLayout==='side'&&false;
+    E('appBgNote').hidden=state.appLayout!=='overlay'||state.bg==='transparent';
+    E('appWinBtn').textContent=appWinOpen()?'アプリと立ち絵のウインドウを前に出す':'アプリと立ち絵を別ウインドウで開く（OBS用）'
+  }
+  E('appAddFile').onclick=()=>E('appFile').click();
+  E('appFile').onchange=async e=>{
+    const file=e.target.files[0];e.target.value='';
+    if(!file)return;
+    if(appList().length>=APP_MAX){toast('登録できるアプリは'+APP_MAX+'個までです');return}
+    if(!/\.html?$/i.test(file.name)&&file.type!=='text/html'){toast('HTMLファイル（.html）を選んでください');return}
+    if(file.size>40*1024*1024){toast('40MBを超えるファイルは登録できません');return}
+    const id=Math.random().toString(36).slice(2,10);
+    try{await putAsset('app:'+id,new Blob([await file.arrayBuffer()],{type:'text/html'}))}catch(_){toast('保存できませんでした',4000);return}
+    appList().push({id,kind:'file',name:file.name.replace(/\.html?$/i,'').slice(0,40)||'アプリ',file:file.name.slice(0,120),store:true});
+    state.appSel=id;save();appShow();
+    toast('アプリを登録しました',2500)
+  };
+  E('appAddUrl').onclick=()=>{
+    const u=E('appUrl').value.trim();
+    let url;
+    try{url=new URL(u)}catch(_){toast('https:// から始まるURLを入れてください');return}
+    if(!/^https?:$/.test(url.protocol)){toast('https:// から始まるURLを入れてください');return}
+    if(appList().length>=APP_MAX){toast('登録できるアプリは'+APP_MAX+'個までです');return}
+    const id=Math.random().toString(36).slice(2,10);
+    appList().push({id,kind:'url',name:(url.pathname.split('/').filter(Boolean).pop()||url.hostname).replace(/\.html?$/i,'').slice(0,40),url:url.href.slice(0,2000)});
+    E('appUrl').value='';state.appSel=id;save();appShow();
+    toast('URLを登録しました。表示されないときは、そのサイトが他のページの中での表示を許可していません',6000)
+  };
+  E('appName').oninput=e=>{const a=appCur();if(a){a.name=e.target.value.slice(0,40)||'アプリ';save();renderApps()}};
+  E('appStore').onchange=e=>{const a=appCur();if(a&&a.kind==='file'){a.store=e.target.checked;save();E('appFrame').removeAttribute('src');appShow()}};
+  E('appReload').onclick=()=>{const f=E('appFrame');const s=f.getAttribute('src');if(s){f.removeAttribute('src');setTimeout(()=>{f.src=s},30)}};
+  E('appDel').onclick=e=>armed(e.currentTarget,'もう一度押すと登録を外す',async()=>{
+    const a=appCur();if(!a)return;
+    if(a.kind==='file')await deleteAsset('app:'+a.id);
+    state.apps=appList().filter(x=>x!==a);state.appSel='';save();
+    if(appBlobFor===a.id&&appBlobUrl){URL.revokeObjectURL(appBlobUrl);appBlobUrl='';appBlobFor=''}
+    if(appWinOpen())appWindow.close();
+    appShow()
+  });
+  for(const [id,key] of [['appLayout','appLayout'],['appPos','appPos']])E(id).onchange=e=>{state[key]=e.target.value;save();renderApps();appLayoutWin()};
+  E('appSize').oninput=e=>{state.appSize=Math.max(15,Math.min(70,Number(e.target.value)||35));E('appSizeVal').textContent=state.appSize+'%';save();appLayoutWin()};
+
+  // 別ウインドウ：アプリを全面に、立ち絵の映像（背景を含む配信画面と同じ絵）を重ねるか横に並べる
+  function appLayoutWin(){
+    if(!appWinOpen())return;
+    const d=appWindow.document,c=d.getElementById('pt'),f=d.getElementById('app');
+    if(!c||!f)return;
+    const s=state.appSize,side=state.appLayout==='side',p=state.appPos;
+    d.body.className=side?'side '+(p.endsWith('l')?'left':'right'):'overlay';
+    c.style.width=s+'%';c.style.aspectRatio=W+' / '+H;
+    c.style.left=c.style.right=c.style.top=c.style.bottom='';
+    if(!side){c.style[p.endsWith('l')?'left':'right']='0';c.style[p.startsWith('t')?'top':'bottom']='0'}
+  }
+  E('appWinBtn').onclick=async()=>{
+    if(appWinOpen()){appWindow.focus();return}
+    const a=appCur();
+    if(!a){toast('先にアプリを選んでください');return}
+    let src;
+    try{src=await appSrc(a)}catch(e){toast(e.message,5000);return}
+    appWindow=window.open('','otonoha-app','popup=yes,width=1280,height=720');
+    if(!appWindow){toast('別窓を開くにはポップアップを許可してください',5000);return}
+    const d=appWindow.document;
+    d.open();
+    d.write('<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>オトノハ｜アプリと立ち絵</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;display:block}body.overlay iframe{position:absolute;inset:0;width:100%;height:100%}body.overlay canvas{position:absolute;pointer-events:none}body.side{display:flex;align-items:center}body.side.left{flex-direction:row-reverse}body.side iframe{flex:1;height:100%}body.side canvas{flex:none;height:auto}canvas{display:block}</style></head><body><iframe id="app"></iframe><canvas id="pt"></canvas></body></html>');
+    d.close();
+    const f=d.getElementById('app');
+    appFrameAttrs(f,a);
+    f.src=src;
+    appContext=d.getElementById('pt').getContext('2d');
+    appLayoutWin();
+    E('appFrame').removeAttribute('src');
+    appWindow.addEventListener('pagehide',()=>setTimeout(()=>{if(!appWinOpen()){appContext=null;appShow()}},100));
+    appShow()
+  };
+  setInterval(()=>{if(appWindow&&appWindow.closed){appWindow=null;appContext=null;appShow()}},1000);
+
+  // 毎フレーム：別ウインドウへは配信画面と同じ絵を、ページ内の小窓へは約8fpsで写す
+  function appCopy(now){
+    if(appContext&&appWinOpen()){
+      try{
+        const c=appContext.canvas;
+        if(c.width!==W||c.height!==H){c.width=W;c.height=H}
+        appContext.clearRect(0,0,W,H);appContext.drawImage(canvas,0,0)
+      }catch(_){appContext=null}
+    }
+    const m=E('appMirror');
+    if(!m||E('appStageWrap').hidden||now-appMirrorAt<120)return;
+    const r=m.getBoundingClientRect();
+    if(!r.width||r.bottom<0||r.top>innerHeight)return;
+    appMirrorAt=now;
+    const pw=W>H?480:270,ph=W>H?270:480;
+    if(m.width!==pw||m.height!==ph){m.width=pw;m.height=ph}
+    const cx=m.getContext('2d');cx.clearRect(0,0,pw,ph);cx.drawImage(canvas,0,0,pw,ph)
+  }
 
 function cleanChar(c){
     const o={
@@ -9900,7 +10208,7 @@ let frameToken=0,
       try{
         outputWindow.requestAnimationFrame(run)
       }catch(_){}
-    }
+    }else if(appWinOpen())try{if(!appWindow.document.hidden)appWindow.requestAnimationFrame(run)}catch(_){}
     if(ticker())pendingTick=run;else setTimeout(run,33)
   }
 
@@ -9917,6 +10225,7 @@ let frameToken=0,
   // 映像を見る人がいないとき（音声モードで、配信用ウインドウも収録も設定画面のプレビューもない）は描かない
   function renderNeeded(){
     if(outputWindow&&!outputWindow.closed)return true;
+    if(appWinOpen())return true;
     if(studioCapturing||captureStarting)return true;
     const b=document.body.dataset;
     if(b.app!=='live')return false;
@@ -9976,7 +10285,7 @@ let frameToken=0,
     }
     drawSceneImage(now);
     effects(dt,now,'front');
-    if(scene==='live')caption();else sceneCaption();
+    if(scene==='live'){caption();drawSetlist()}else sceneCaption();
     if(outputWindow&&!outputWindow.closed&&outContext){
       try{
         if(outContext.canvas.width!==W||outContext.canvas.height!==H){
@@ -9990,6 +10299,7 @@ let frameToken=0,
       }
     }
     previewMirror(now);
+    appCopy(now);
     if(now-uiTick>120){
       uiTick=now;
       E('studioMeter').style.width=Math.max(0,Math.min(100,(dbLevel+70)/70*100))+'%';

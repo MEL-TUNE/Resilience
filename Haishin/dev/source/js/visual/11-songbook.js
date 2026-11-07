@@ -55,6 +55,7 @@
     if(!state.singSess)sessStart();
     const ss=state.singSess,now=new Date(),off=Math.round((now-new Date(ss.start))/1000);
     const x={id:sbId(),t:now.toISOString(),title:t,artist:a||'',sess:ss.id,start:ss.start,off,prof:ss.prof||curProfName()};
+    state.setlistHide='';
     logList().push(x);
     const r=repAdd(t,a);
     if(r){r.count=(r.count||0)+1;r.last=x.t}
@@ -228,6 +229,47 @@
     if(!s.items.length)rec.ol.append(sbEmpty('li','まだ曲は記録されていません'));
     rec.filled=true
   }
+  // 概要欄：アーカイブのURLと、曲ごとの時刻（あとから入力）でタイムスタンプを作る
+  const ytId=u=>{const m=String(u||'').match(/(?:youtu\.be\/|[?&]v=|\/live\/|\/shorts\/|\/embed\/)([\w-]{11})/);return m?m[1]:''};
+  const tsOf=x=>Number.isFinite(x.ts)?x.ts:state.descEmpty==='rec'?x.off:null;
+  function fmtTs(sec,long){sec=Math.max(0,Math.floor(sec));const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;return long?h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'):Math.floor(sec/60)+':'+String(s).padStart(2,'0')}
+  function descText(s,withLink){
+    const url=state.sessInfo?.[s.id]?.url||'',id=ytId(url),list=s.items.filter(x=>state.descEmpty!=='skip'||tsOf(x)!==null);
+    const long=list.some(x=>(tsOf(x)||0)>=3600),lines=[];
+    if(state.descHead.trim())lines.push(state.descHead.trim());
+    list.forEach((x,i)=>{
+      const t=tsOf(x),name=x.title+(x.artist?' / '+x.artist:'');
+      lines.push((t!==null?fmtTs(t,long)+' ':'')+name+(withLink&&t!==null&&id?'  https://youtu.be/'+id+'?t='+t:''))
+    });
+    return lines.join('\n')
+  }
+  function descBuild(s,rec){
+    const box=rec.descBody;box.replaceChildren();
+    const info=state.sessInfo[s.id]||(state.sessInfo[s.id]={url:''});
+    const url=document.createElement('input');url.type='url';url.className='sb-url';url.placeholder='アーカイブのURL（例：https://www.youtube.com/watch?v=…）';url.value=info.url||'';
+    const urlL=document.createElement('label');urlL.className='studio-field';urlL.append('アーカイブのURL',url);
+    const out=document.createElement('textarea');out.className='studio-textarea sb-desc-out';out.readOnly=true;out.rows=Math.min(14,s.items.length+2);
+    const refresh=()=>{out.value=descText(sessOf(s.id)||s,false)};
+    url.oninput=()=>{info.url=url.value.trim().slice(0,500);save();refresh()};
+    const tbl=document.createElement('ol');tbl.className='sb-list sb-desc-list';
+    for(const x of s.items){
+      const li=document.createElement('li');
+      const inp=document.createElement('input');inp.className='sb-time';inp.inputMode='numeric';inp.placeholder=Number.isFinite(x.ts)?'':'時刻';inp.value=Number.isFinite(x.ts)?fmtTs(x.ts,x.ts>=3600):'';
+      inp.setAttribute('aria-label','「'+x.title+'」のアーカイブ上の時刻');
+      inp.onchange=()=>{const v=inp.value.trim();if(!v){delete x.ts;save();refresh();return}const sec=parseHms(v);if(sec===null){toast('「1:02:03」「12:34」のように入力してください',4000);inp.focus();return}x.ts=sec;inp.value=fmtTs(sec,sec>=3600);save();refresh()};
+      inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();const n=li.nextElementSibling?.querySelector('.sb-time');if(n)n.focus()}};
+      const rb=rowBtn('記録した時刻','',()=>{x.ts=x.off;inp.value=fmtTs(x.off,x.off>=3600);save();refresh()},'歌い始めを押したときの経過時間（'+hms(x.off)+'）を入れます');
+      li.append(inp,songSpan(x.title,x.artist,'記録：'+hms(x.off)),rb);
+      tbl.append(li)
+    }
+    const row=document.createElement('div');row.className='studio-row';
+    row.append(rowBtn('概要欄用にコピー','accent',()=>copy(descText(sessOf(s.id)||s,false))),
+      rowBtn('時刻リンクつきでコピー（Xなど用）','',()=>{if(!ytId(info.url)){toast('YouTubeのURLを入れると、時刻リンクを作れます',4000);return}copy(descText(sessOf(s.id)||s,true))}));
+    const note=document.createElement('p');note.className='studio-mini';
+    note.textContent='アーカイブを見ながら、各曲の歌い始めの時刻を「12:34」「1:02:03」の形で入れてください（Enterで次の曲へ）。下の文が、そのまま概要欄に貼れる形になります。見出しと、時刻を入れていない曲の扱いは「概要欄の形」で変えられます。';
+    box.append(urlL,note,tbl,out,row);
+    refresh()
+  }
   function sessBox(s){
     const box=document.createElement('details');box.className='sb-sess';box.dataset.sess=s.id;
     const sum=document.createElement('summary');sum.textContent=sessSummary(s);
@@ -243,9 +285,13 @@
         if(state.singSess?.id===s.id){state.singSess=null;sbLast=null}
         saveNow();renderSess();renderRep();renderLog()
       })));
-    const rec={box,sum,ol,filled:false};
+    const desc=document.createElement('details');desc.className='sb-desc';
+    const dsum=document.createElement('summary');dsum.textContent='概要欄を作る（アーカイブのURLと時刻を入れる）';
+    const descBody=document.createElement('div');desc.append(dsum,descBody);
+    const rec={box,sum,ol,filled:false,desc,descBody};
+    desc.ontoggle=()=>{if(desc.open){const c=sessOf(s.id);if(c)descBuild(c,rec)}};
     box.ontoggle=()=>{if(box.open&&!rec.filled){const c=sessOf(s.id);if(c)sessFill(c,rec)}};
-    box.append(sum,ol,row);
+    box.append(sum,ol,row,desc);
     sessBoxes.set(s.id,rec);
     return rec
   }
@@ -255,8 +301,9 @@
     if(!rec){renderLog();return}
     rec.sum.textContent=sessSummary(s);
     // 時刻を入力している最中は行を作り直さない（確定・取り消しのときに作り直す）
-    if(rec.ol.contains(document.activeElement)&&document.activeElement.classList.contains('sb-time'))return;
-    if(rec.filled||rec.box.open)sessFill(s,rec)
+    if(rec.box.contains(document.activeElement)&&document.activeElement.classList.contains('sb-time'))return;
+    if(rec.filled||rec.box.open)sessFill(s,rec);
+    if(rec.desc.open)descBuild(s,rec)
   }
   function renderLog(){
     sessBoxes.clear();
@@ -281,7 +328,48 @@
   }
   // 毎秒の更新は経過時間の表示だけ（記録の全件はたどらない）
   setInterval(()=>{if(state.singSess)SB.sessState.textContent='記録中 '+hms((Date.now()-new Date(state.singSess.start))/1000)+'（'+localTime(state.singSess.start)+'から）'},1000);
-  function renderSongs(){sbLast=sessLast();renderSess();renderSet();renderRep();renderLog()}
+  function renderSongs(){sbLast=sessLast();renderSess();renderSet();renderRep();renderLog();renderSongOpts()}
+
+  // 概要欄の形・画面に出すセトリの設定
+  function renderSongOpts(){
+    E('descHead').value=state.descHead;E('descEmpty').value=state.descEmpty;
+    E('setlistShow').value=state.setlistShow;E('setlistPos').value=state.setlistPos;E('setlistTime').value=String(state.setlistTime);
+    E('setlistSize').value=state.setlistSize;E('setlistSizeVal').textContent=state.setlistSize+'%'
+  }
+  const refreshDescs=()=>{for(const [id,rec] of sessBoxes)if(rec.desc.open){const c=sessOf(id);if(c)descBuild(c,rec)}};
+  E('descHead').oninput=e=>{state.descHead=e.target.value.slice(0,200);save();refreshDescs()};
+  E('descEmpty').onchange=e=>{state.descEmpty=e.target.value;save();refreshDescs()};
+  E('setlistShow').onchange=e=>{state.setlistShow=e.target.value;state.setlistHide='';save()};
+  E('setlistPos').onchange=e=>{state.setlistPos=e.target.value;save()};
+  E('setlistTime').onchange=e=>{state.setlistTime=Number(e.target.value)||0;state.setlistHide='';save()};
+  E('setlistSize').oninput=e=>{state.setlistSize=Math.max(50,Math.min(200,Number(e.target.value)||100));E('setlistSizeVal').textContent=state.setlistSize+'%';save()};
+  E('setlistHideBtn').onclick=()=>{const x=sbLast||sessLast();if(!x){toast('画面に出ている曲はありません');return}state.setlistHide=x.id;save();toast('画面の曲名を消しました。次の「♪ 歌い始め」でまた出ます',4000)};
+
+  // 配信画面（PNGTuber画面）に、いま歌っている曲・これまでの曲を描く
+  function slFit(s,maxW){if(g.measureText(s).width<=maxW)return s;let t=s;while(t.length>1&&g.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…'}
+  function drawSetlist(){
+    const mode=state.setlistShow,ss=state.singSess;
+    if(mode==='off'||!ss)return;
+    const items=sessItems(ss.id);
+    if(!items.length)return;
+    const cur=sbLast&&sbLast.sess===ss.id?sbLast:items.at(-1);
+    if(state.setlistHide&&state.setlistHide===cur.id)return;
+    if(mode==='now'&&state.setlistTime>0&&Date.now()-new Date(cur.t).getTime()>state.setlistTime*1000)return;
+    const k=state.setlistSize/100*Math.min(W,H)/720,pad=20*k,m=34*k,maxW=W*.46;
+    const rows=mode==='now'
+      ?[{t:'♪ '+cur.title,size:34,bold:true},...(cur.artist?[{t:cur.artist,size:23}]:[])]
+      :[{t:'セットリスト',size:20,dim:true},...items.slice(-8).map((x,i,a)=>({t:(items.length-a.length+i+1)+'. '+x.title+(x.artist?' / '+x.artist:''),size:24,bold:x===cur,dim:x!==cur,mark:x===cur}))];
+    g.save();
+    g.textBaseline='middle';g.textAlign='left';
+    const lines=rows.map(r=>{g.font=sceneFontCss(r.size*k,r.t);const t=slFit((r.mark?'♪ ':'')+r.t,maxW);return {...r,t,w:g.measureText(t).width,h:r.size*k*1.45}});
+    const w=Math.max(...lines.map(l=>l.w))+pad*2,h=lines.reduce((a,l)=>a+l.h,0)+pad*1.4;
+    const x=state.setlistPos.endsWith('l')?m:W-m-w,y=state.setlistPos.startsWith('t')?m:H-m-h;
+    g.fillStyle='rgba(22,34,29,.66)';g.beginPath();g.roundRect(x,y,w,h,14*k);g.fill();
+    g.strokeStyle='rgba(255,248,232,.35)';g.lineWidth=1;g.beginPath();g.roundRect(x+5*k,y+5*k,w-10*k,h-10*k,10*k);g.stroke();
+    let yy=y+pad*.7;
+    for(const l of lines){g.font=sceneFontCss(l.size*k,l.t);g.fillStyle=l.dim?'rgba(251,245,233,.72)':'#fbf5e9';g.fillText(l.t,x+pad,yy+l.h/2);yy+=l.h}
+    g.restore()
+  }
 
   // 別タブで開く：ノートの部品をそのタブへ移し、閉じたら戻す
   let sbWin=null;

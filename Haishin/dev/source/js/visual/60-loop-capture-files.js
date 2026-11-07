@@ -45,7 +45,7 @@
       try{
         outputWindow.requestAnimationFrame(run)
       }catch(_){}
-    }
+    }else if(appWinOpen())try{if(!appWindow.document.hidden)appWindow.requestAnimationFrame(run)}catch(_){}
     if(ticker())pendingTick=run;else setTimeout(run,33)
   }
 
@@ -62,6 +62,7 @@
   // 映像を見る人がいないとき（音声モードで、配信用ウインドウも収録も設定画面のプレビューもない）は描かない
   function renderNeeded(){
     if(outputWindow&&!outputWindow.closed)return true;
+    if(appWinOpen())return true;
     if(studioCapturing||captureStarting)return true;
     const b=document.body.dataset;
     if(b.app!=='live')return false;
@@ -121,7 +122,7 @@
     }
     drawSceneImage(now);
     effects(dt,now,'front');
-    if(scene==='live')caption();else sceneCaption();
+    if(scene==='live'){caption();drawSetlist()}else sceneCaption();
     if(outputWindow&&!outputWindow.closed&&outContext){
       try{
         if(outContext.canvas.width!==W||outContext.canvas.height!==H){
@@ -135,6 +136,7 @@
       }
     }
     previewMirror(now);
+    appCopy(now);
     if(now-uiTick>120){
       uiTick=now;
       E('studioMeter').style.width=Math.max(0,Math.min(100,(dbLevel+70)/70*100))+'%';
