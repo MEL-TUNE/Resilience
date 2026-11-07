@@ -1,0 +1,21 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><title>オトノハ連携の見本</title>
+<style>body{font-family:sans-serif;margin:16px;background:#fbf6ee;color:#2e211c}button{margin:4px;padding:8px 12px}#log{white-space:pre-wrap;font-size:12px;background:#fff;padding:8px;border-radius:8px;min-height:80px}</style>
+<h1>オトノハ連携の見本</h1>
+<p id="st">オトノハを探しています…</p>
+<input id="t" value="ほら、こちらへ。迎えに来ましたのよ" size="40"><button id="say">セリフを出す</button>
+<button id="dice">サイコロ</button><button id="wheel">ルーレット</button><button id="cm">コメントを出す</button><button id="clr">消す</button>
+<div id="log"></div>
+<script>
+const send=(type,extra)=>parent.postMessage({otonoha:1,type,...extra},'*');
+const log=s=>{document.getElementById('log').textContent=s+'\n'+document.getElementById('log').textContent};
+addEventListener('message',e=>{const m=e.data;if(!m||m.otonoha!==1)return;
+ if(m.type==='welcome')document.getElementById('st').textContent='つながりました（使える命令：'+m.can.join(' / ')+'）';
+ if(m.type==='event')log('出来事：'+m.name+' '+JSON.stringify(m.data));
+ if(m.type==='error')log('エラー：'+m.error)});
+send('hello',{name:'オトノハ連携の見本',events:['*']});
+document.getElementById('say').onclick=()=>send('say',{text:document.getElementById('t').value,title:'見本'});
+document.getElementById('dice').onclick=()=>send('dice',{count:2,faces:6});
+document.getElementById('wheel').onclick=()=>send('wheel',{items:['歌う','語る','罰ゲーム']});
+document.getElementById('cm').onclick=()=>send('comments',{items:[{name:'リン',icon:'🌻',color:'#ffdf79',text:'見本アプリからのコメント！'}]});
+document.getElementById('clr').onclick=()=>send('clear',{what:'all'});
+</script></html>

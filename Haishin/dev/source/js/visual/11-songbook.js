@@ -60,6 +60,7 @@
     const r=repAdd(t,a);
     if(r){r.count=(r.count||0)+1;r.last=x.t}
     sbLast=x;
+    bridgeEmit('sing',{title:t,artist:a||''});audEvent('歌い始めた曲：'+t+(a?' / '+a:''));
     saveNow();
     renderSess();logSessUpdate(ss.id);if(r)repRowUpdate(r);
     toast('「'+t+'」を記録しました（'+hms(off)+'）。間違えたときは「直前の記録を取り消す」',3500)

@@ -11,10 +11,10 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.8.1 / 企画卓にセリフ帳・ルーレット・サイコロ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.0 / オトノハ連携・AI観客席（手渡し）・ボイス録り</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
-<nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button></nav>
+<nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button><button data-mode="aivoice">AIキャラ・声</button></nav>
 <section class="shell recbar" aria-label="録音"><div class="content recbar-in">
  <div class="prog-row"><div class="prog-chips" id="progChips" role="tablist" aria-label="番組"></div><button class="btn gold" type="button" id="progEdit" hidden>番組の設定</button></div>
  <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><div class="head-btns"><button class="pill" type="button" id="monBtn" title="ヘッドホン・スピーカーから出す音のオン／オフ（録音には影響しません）">モニター音：オン</button><button class="pill danger" id="stopAll">■ 全音停止</button></div></div>
@@ -83,6 +83,8 @@
 <div class="studio-row"><button type="button" id="appAddFile">＋ HTMLファイルを登録</button><input id="appFile" type="file" accept=".html,.htm,text/html" hidden><label class="studio-field app-url">URLで登録<input id="appUrl" type="url" placeholder="https://…"></label><button type="button" id="appAddUrl">URLを登録</button></div>
 <div id="appEdit" hidden><div class="studio-inline"><label class="studio-field">名前<input id="appName" type="text" maxlength="40"></label><p class="studio-mini" id="appWhere"></p></div>
 <label class="studio-field"><input type="checkbox" id="appStore"> アプリの中の保存・マイクを使えるようにする（自作のアプリ向け。切ると、アプリをこのページから隔離して開きます）</label>
+<div class="bridge-box"><label class="studio-field"><input type="checkbox" id="appBridge"> オトノハ連携を使う（アプリから、セリフ・サイコロ・ルーレット・コメントを配信画面に出せる）</label>
+<label class="studio-field"><input type="checkbox" id="appBridgeMore"> 効果音を鳴らす・場面（配信中・準備中など）を切り替えることも許す</label></div>
 <div class="studio-row"><button type="button" id="appReload">アプリを読み込み直す</button><button type="button" id="appDel">このアプリの登録を外す</button></div></div>
 <div class="app-stage" id="appStageWrap" hidden><div class="app-frame-box"><iframe id="appFrame" title="登録したアプリ"></iframe><p class="app-away" id="appAway" hidden>アプリは別ウインドウで表示中です。</p></div><figure class="app-mirror-box"><canvas id="appMirror" aria-label="立ち絵（配信画面と同じ絵）"></canvas><figcaption class="studio-mini">立ち絵（配信画面と同じ絵）</figcaption></figure></div>
 <div class="studio-inline"><label class="studio-field">別ウインドウでの立ち絵の置き方<select id="appLayout"><option value="overlay">アプリの上に重ねる</option><option value="side">アプリの横に並べる</option></select></label>
@@ -90,6 +92,41 @@
 <label class="studio-field">立ち絵の大きさ（ウインドウの幅に対して） <output id="appSizeVal">35%</output><input id="appSize" type="range" min="15" max="70" step="1"></label></div>
 <p class="studio-mini" id="appBgNote" hidden>重ねるときは、設定の「背景」を「透過」にすると、立ち絵だけがアプリの上に重なります（いまの背景のままだと、背景ごと四角く重なります）。</p>
 <div class="studio-row"><button type="button" id="appWinBtn" class="accent">アプリと立ち絵を別ウインドウで開く（OBS用）</button></div>
+<details class="bridge-dev"><summary>オトノハ連携（アプリを作る人向け）</summary>
+<p class="studio-note">企画卓に登録したアプリは、ブラウザ標準の postMessage で「オトノハ連携 1」の決まりに沿って伝言を送ると、配信画面にセリフ・サイコロ・ルーレット・コメントを出したり、歌い始め・場面の切り替え・配信者が話したことなどの出来事を受け取ったりできます。自分のアプリにも、ほかの人が作ったアプリにも、同じ決まりで対応できます。</p>
+<div class="studio-row"><button type="button" id="bridgeDoc">決まりの説明を保存（.md）</button><button type="button" id="bridgeSample">見本アプリを保存（.html）</button></div>
+<p class="studio-mini">見本アプリを「HTMLファイルを登録」で登録すると、そのまま連携を試せます。</p>
+<pre class="bridge-log" id="bridgeLog" aria-live="polite"></pre>
+</details>
+</div>
+<div class="app-dock aud-dock">
+<h3>AI観客席</h3>
+<p class="studio-note">最大5人の架空のAIリスナーが、配信者の発言や配信の出来事（歌い始めた曲、セリフ、サイコロ・ルーレットの結果、場面の切り替え）にコメントします。いまは「手渡し」でつなぎます：依頼文をコピーしてChatGPT／Claudeに貼り、返ってきたJSONを貼り戻すと、配信画面の端にコメントが流れます。人物の作りと依頼文・検証の規則は、AI観客席 0.8 と同じです。</p>
+<div class="studio-inline"><label class="studio-field">つなぎ先<select id="audVia"><option value="handoff">手渡し（ChatGPT／Claudeのプラン内の会話に貼る）</option><option value="soon" disabled>このPCのAI（Ollama・LM Studio）…準備中</option><option value="soon2" disabled>API…準備中</option></select></label><label class="studio-field">配信者の名前（空欄なら名義の名前）<input id="audStreamer" type="text" maxlength="40"></label></div>
+<label class="studio-field">配信の話題<input id="audTopic" type="text" maxlength="2000" placeholder="例：秋の夜長の雑談と歌枠"></label>
+<label class="studio-field">配信者の発言（空欄なら、話題と出来事について観客同士で話します）<textarea id="audSay" class="studio-textarea" rows="2"></textarea></label>
+<p class="studio-mini" id="audEvents"></p>
+<div class="studio-row play-big"><button type="button" id="audMake" class="accent">① 依頼文をコピー</button></div>
+<label class="studio-field">② 返ってきたJSONを貼り付け<textarea id="audIn" class="studio-textarea" rows="3" placeholder='{"comments":[{"id":"sunflower","text":"…"}]}'></textarea></label>
+<div class="studio-row play-big"><button type="button" id="audPut" class="accent">③ コメントを出す</button><button type="button" id="audClear">コメント欄を消す</button></div>
+<p class="studio-mini" id="audStep" aria-live="polite"></p>
+<div class="studio-inline"><label class="studio-field">1回に話す人数の上限<select id="audMax"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label><label class="studio-field">コメント欄の位置<select id="audPos"><option value="right">右</option><option value="left">左</option></select></label><label class="studio-field">出しておく時間<select id="audLife"><option value="8">8秒</option><option value="14">14秒</option><option value="20">20秒</option><option value="30">30秒</option><option value="60">60秒</option></select></label><label class="studio-field"><input type="checkbox" id="audShowChk"> 配信画面に出す</label></div>
+<details class="aud-people"><summary>リスナー（人物）を編集する</summary>
+<div class="studio-row" id="audCast"></div>
+<div class="studio-row"><button type="button" id="audAdd">＋ リスナーを足す</button><button type="button" id="audImport">AI観客席の人物バックアップを読み込む</button><input id="audFile" type="file" accept=".json,application/json" hidden><button type="button" id="audExport">人物バックアップを書き出す</button><button type="button" id="audReset">初期の5人に戻す</button></div>
+<div id="audEdit" hidden>
+<label class="studio-field"><input type="checkbox" id="audOnChk"> 出演する（外すと休憩）</label>
+<div class="studio-inline"><label class="studio-field">名前<input id="audF_name" maxlength="40"></label><label class="studio-field">役どころ<input id="audF_role" maxlength="60"></label><label class="studio-field">一人称<input id="audF_firstPerson" maxlength="20"></label><label class="studio-field">配信者の呼び方<input id="audF_secondPerson" maxlength="20" placeholder="あなた"></label><label class="studio-field">アイコン（絵文字）<input id="audF_icon" maxlength="4"></label><label class="studio-field">色<input id="audF_color" type="color"></label></div>
+<label class="studio-field">話し方<input id="audF_voice" maxlength="200"></label>
+<label class="studio-field">人物像<textarea id="audF_summary" class="studio-textarea" rows="2"></textarea></label>
+<label class="studio-field">してはいけないこと（性格値より優先されます）<textarea id="audF_boundaries" class="studio-textarea" rows="2"></textarea></label>
+<div class="aud-tunes" id="audTune"></div>
+<label class="studio-field">話し方の例（1行に1つ。「歌：」「頑張り：」「恋愛：」「笑い：」「雑談：」「応援：」「恋愛・コラボへの複雑な気持ち：」「ほかの観客への返事：」のどれかで始める）<textarea id="audF_lex" class="studio-textarea" rows="6"></textarea></label>
+<p class="studio-mini">{{char}}＝自分の名前、{{first}}＝一人称、{{second}}＝配信者の呼び方、{{streamer}}＝配信者名、{{char1}}〜{{char5}}＝席の人物名、が使えます。</p>
+<div class="studio-row"><button type="button" id="audDel">この人を席から外す</button></div>
+</div>
+</details>
+<ol class="sb-list aud-log" id="audLog" aria-label="これまでのコメント"></ol>
 </div>
 </section>
 <section class="studio-card mode-section" id="studioSongs" style="margin-top:16px"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore"><h3 class="kara-h">曲を入れる</h3><div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div><label class="studio-field">メモ（キー・原曲・音源など、任意）<input id="songMemo" type="text" maxlength="200"></label><div class="studio-row"><button id="repAdd" class="accent" type="button">曲リストに登録</button><button id="songAdd" type="button">セトリに追加</button><button id="singNowBtn" type="button">♪ この曲を歌い始め</button><button id="songSearch" type="button">曲名＋歌詞でWeb検索</button></div><hr class="studio-divider"><h3 class="kara-h">歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびに「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。押し間違えたときは「直前の記録を取り消す」で戻せます。配信のあとは「これまでの記録」の回を開き、「概要欄を作る」にアーカイブのURLと各曲の時刻を入れると、概要欄にそのまま貼れるセットリストができます。</p><h3 class="kara-h">セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div><h3 class="kara-h">曲リスト <small id="repCount"></small></h3><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・メモで絞り込み" aria-label="曲リストの絞り込み"><ul id="repList" class="sb-list"></ul><details class="sb-opts" id="sbOpts"><summary>配信画面に曲名を出す・概要欄の形</summary>
@@ -120,6 +157,28 @@
 <label class="studio-field"><input id="karaSuppress" type="checkbox" checked> 取り込んだタブ側では音を鳴らさない（アプリのモニター音で聞く。二重に聞こえるのを防ぎます。次に取り込むときから反映）</label>
 <label class="studio-field"><input id="karaAutoFade" type="checkbox" checked> 伴奏が鳴り始めたら（歌い始めたら）BGMと効果音を自動でフェードアウトする</label><label class="studio-field"><input id="karaFadeEnv" type="checkbox"> 環境音（雨音など）も一緒に止める</label><div class="studio-row"><button id="karaSingStart" type="button">歌い始め：BGM・効果音をフェードアウト</button></div><p class="studio-note">自動のフェードアウトは、取り込んだ伴奏タブの音が約2秒以上の無音のあとに鳴り始めたときに働きます。購入音源をアプリの外で流すときなど、伴奏を取り込んでいない場合は「歌い始め」ボタンを使います。</p><p class="studio-note">選ぶ画面では「Chromeタブ」（Edgeでは「タブ」）から伴奏のタブを選び、「タブの音声も共有する」をオンにします。パソコン版のChrome・Edge向けの機能で、スマートフォンでは使えません。伴奏は効果音・BGMと同じく自動で小さくなる処理（ダッキング）の対象外です。モニター音がオフ（スピーカー判定など）のときは、上の「タブ側では鳴らさない」をオンにしていると伴奏が聞こえません。</p></div>
 </div></section>
+<section class="studio-card mode-section" id="studioAiVoice" style="margin-top:16px">
+<p class="studio-kicker">AI CHARACTER / VOICE</p>
+<h2>AIキャラ・声</h2>
+<p class="studio-note">AIキャラクター（たとえば彼岸リオ）に話してもらうための、声の準備の場所です。声の合成エンジン（AivisSpeech など）とのつなぎ込みと、AIキャラクターの口パクは、これから順に足していきます。</p>
+<h3>ボイス録り（音声モデルの学習用の録音）</h3>
+<p class="studio-note">読み上げる文を1文ずつ表示して録音し、音割れ・声の小ささ・雑音・短すぎをその場で確かめます。録った声は、1文1ファイルのWAVと「ファイル名|話者名|JP|文」の一覧（Style-Bert-VITS2 などの学習用の形式）にまとめて、ZIPで書き出せます。声のモデルを作る（学習する）作業は、GPUのあるPCや Google Colab などで別に行います。マイクは、ブラウザの音声加工（エコー除去・雑音抑制・自動音量）を切った状態で開きます。</p>
+<div class="studio-inline"><label class="studio-field">話者名（声の種類ごとに分けると、声質ごとの録音セットになります）<input id="vrSpeaker" maxlength="30"></label><label class="studio-field"><input type="checkbox" id="vrTrim"> 前後の無音を自動で詰める</label><label class="studio-field"><input type="checkbox" id="vrAuto"> 問題がなければ次の文へ進む</label></div>
+<p class="studio-mini" id="vrMicState">マイク：未接続（「録音する」を押すと開きます）</p>
+<div class="vr-meter"><span id="vrMeter"></span></div>
+<p class="studio-mini" id="vrProgress"></p>
+<div class="vr-line" id="vrLine"></div>
+<p class="studio-mini" id="vrLineState"></p>
+<div class="studio-row play-big"><button type="button" id="vrPrev">← 前の文</button><button type="button" id="vrRec" class="accent">● 録音する（Space）</button><button type="button" id="vrPlay">▶ 聞き返す</button><button type="button" id="vrNext">次の文 →</button></div>
+<p class="studio-mini" id="vrStatus" aria-live="polite"></p>
+<details class="sb-opts"><summary>読み上げる文を足す</summary>
+<label class="studio-field">1行に1文（「ITA001:」のような番号は外して読み込みます）<textarea id="vrText" class="studio-textarea" rows="5"></textarea></label>
+<div class="studio-row"><button type="button" id="vrAddLines">文を足す</button><button type="button" id="vrLoadTxt">テキストファイルから読み込む</button><input id="vrTxtFile" type="file" accept=".txt,text/plain" hidden><button type="button" id="vrDelLine">表示中の文と録音を消す</button></div>
+<p class="studio-mini">音声合成の研究用に作られた文章（たとえば ITAコーパス）や、キャラクターのセリフ帳・台本の文を使えます。文章を配布元から入手する場合は、配布元の利用条件をご確認ください。</p>
+</details>
+<ol class="sb-list vr-list" id="vrList"></ol>
+<div class="studio-row"><button type="button" id="vrExport" class="accent">録音をZIPで書き出す</button></div>
+</section>
 </div>
 <main class="shell in-workspace" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span><label class="pad-size">ボタンの大きさ<select id="padSize"><option value="s">小</option><option value="m">中</option><option value="l">大</option></select></label></div>
 <section class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
