@@ -20,6 +20,7 @@
   }
   function serifShow(s,text){
     play.serif={title:s.title,text,at:performance.now()};
+    bridgeEmit('serif',{text,title:s.title});audEvent('セリフ「'+text.slice(0,40)+'」');
     renderSerifs()
   }
   function serifPick(dir){
@@ -118,12 +119,14 @@
     const a=Math.min(1,(performance.now()-s.at)/220);
     g.save();
     g.globalAlpha=a;
-    const fs=32*k,maxW=Math.min(W*.78,1000*k);
+    // AI観客席のコメント欄が出ているときは、その列を避けて置く
+    const audW=state.aud?.show&&audOn.length?Math.min(W*.34,440*k)+40*k:0,audL=audW&&state.aud.pos==='left';
+    const fs=32*k,maxW=Math.min(W*.78,1000*k,W-audW-60*k);
     g.font=sceneFontCss(fs,s.text);
     const lines=wrapLines(s.text,maxW-60*k,4),lh=fs*1.5;
-    const name=state.serifName?((state.profiles||[]).find(p=>p.id===state.profileId)?.name||''):'';
+    const name=s.who||(state.serifName?((state.profiles||[]).find(p=>p.id===state.profileId)?.name||''):'');
     const w=Math.min(maxW,Math.max(...lines.map(l=>g.measureText(l).width))+60*k),h=lines.length*lh+40*k+(name?fs*.9:0);
-    const pos=state.serifPos,x=pos==='left'?40*k:pos==='right'?W-40*k-w:(W-w)/2,y=pos==='top'?40*k:H-60*k-h-(pos==='bottom'?0:H*.18);
+    const pos=state.serifPos,L=audL?audW:0,Rr=audW&&!audL?audW:0,x=pos==='left'?40*k+L:pos==='right'?W-40*k-w-Rr:L+(W-L-Rr-w)/2,y=pos==='top'?40*k:H-60*k-h-(pos==='bottom'?0:H*.18);
     g.fillStyle='rgba(255,251,244,.94)';g.strokeStyle='rgba(60,40,30,.35)';g.lineWidth=2*k;
     g.beginPath();g.roundRect(x,y,w,h,22*k);g.fill();g.stroke();
     let yy=y+22*k;
@@ -135,7 +138,7 @@
   }
   function playAnchor(sz,k){
     const p=state.playPos,m=50*k;
-    return {x:p==='left'?m+sz/2:p==='right'?W-m-sz/2:W/2,y:H*.42}
+    return {x:p==='left'?m+sz/2:p==='right'?W-m-sz/2:W/2,y:play.serif&&state.serifPos!=='top'?H*.36:H*.42}
   }
   function drawDie(cx,cy,s,v,f,rot){
     g.save();g.translate(cx,cy);g.rotate(rot);
@@ -155,7 +158,7 @@
     const d=play.dice;
     if(!d)return;
     const t=Math.min(1,(now-d.at)/d.dur),s=150*k,gap=34*k,n=d.vals.length,tw=n*s+(n-1)*gap,an=playAnchor(tw,k);
-    if(t>=1&&!d.done){d.done=true;renderPlayOpts()}
+    if(t>=1&&!d.done){d.done=true;renderPlayOpts();const tot=d.vals.reduce((a,b)=>a+b,0);bridgeEmit('dice',{values:d.vals,total:tot});audEvent('サイコロの目：'+d.vals.join('・')+(d.vals.length>1?'（合計'+tot+'）':''))}
     d.vals.forEach((v,i)=>{
       const shown=t<1?1+playRnd(d.f):v,
         rot=t<1?(1-t)*(1-t)*Math.sin(now/70+i*2)*.9:0,
@@ -174,8 +177,8 @@
     const r=play.wheel;
     if(!r)return;
     const t=Math.min(1,(now-r.at)/r.dur),e=1-Math.pow(1-t,3.2),ang=r.from+(r.end-r.from)*e;
-    if(t>=1&&!r.done){r.done=true;renderPlayOpts()}
-    const R=Math.min(W,H)*.3,an=playAnchor(R*2,k),n=r.items.length,seg=Math.PI*2/n;
+    if(t>=1&&!r.done){r.done=true;renderPlayOpts();bridgeEmit('wheel',{result:r.items[r.pick]});audEvent('ルーレットの結果：'+r.items[r.pick])}
+    const R=Math.min(W,H)*(play.serif?.25:.3),an=playAnchor(R*2,k),n=r.items.length,seg=Math.PI*2/n;
     g.save();g.translate(an.x,an.y);
     g.fillStyle='rgba(0,0,0,.18)';g.beginPath();g.arc(4*k,6*k,R+8*k,0,Math.PI*2);g.fill();
     for(let i=0;i<n;i++){

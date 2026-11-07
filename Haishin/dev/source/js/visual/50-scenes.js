@@ -60,6 +60,7 @@
     }
 
     scene=name;
+    bridgeEmit('scene',{scene:name});audEvent('場面：'+SCENE_LABEL[name]);
 
     if(name==='live'){
       setMute(!!muteBefore);

@@ -105,6 +105,7 @@
     if(signal)lastTalk=now;
     const was=talking;
     talking=(!micMuted||testing)&&(signal||now-lastTalk<state.hold);
+    if(talking!==was)bridgeEmit('talk',{talking});
     if(talking&&!was){flapOpen=true;flapNext=now+flapLen()}
     else if(talking&&now>=flapNext){flapOpen=!flapOpen;flapNext=now+flapLen()}
     mouth=talking&&(state.mouthMode!=='flap'||flapOpen);
@@ -123,6 +124,7 @@
     drawSceneImage(now);
     effects(dt,now,'front');
     if(scene==='live'){caption();drawPlays(now);drawSetlist()}else sceneCaption();
+    drawAudience(now);
     if(outputWindow&&!outputWindow.closed&&outContext){
       try{
         if(outContext.canvas.width!==W||outContext.canvas.height!==H){
