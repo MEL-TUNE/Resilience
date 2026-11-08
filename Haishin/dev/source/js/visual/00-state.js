@@ -63,6 +63,7 @@
     diceF:6,
     wheelItems:'',
     playPos:'center',
+    playLay:{},
     appSel:'',
     appLayout:'overlay',
     appPos:'br',

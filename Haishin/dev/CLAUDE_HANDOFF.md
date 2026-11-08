@@ -112,3 +112,12 @@
 - 向きごとの位置は 41-aspect-memory.js。いまの値（state.x・y・scale、マスコットの x・y・size・tilt）は、いまの向きのもの。向きを変えるとき aspectStash（前の向きへ控える）→ aspectRestore（次の向きの控えに戻す）。syncChar が chars[id].pos[向き] を、activateChar が控えを使います。
 - drawAvatar(now, talking, blink, cx, view)：view={pose,k,cx,bottom} を渡すと、同じ動きのまま別の場所・倍率で描きます（アプリ表示の透過レイヤー用。1000×1000 に全身を描いてから切り抜く）。動きの計算は1フレームに1回です。
 - tests/checks.cjs の取り出す関数の一覧に aspectPosClean を加えました。
+
+---
+
+## 2026-11-08 追記（STUDIO 0.9.5）
+
+- 0.9.4 の不具合：aspectPosClean が立ち絵の位置を ±100 に切り詰めていた（つまみは横 ±300・縦 -200〜500）。CHAR_RANGES を使うように直した。
+- スロット・ルーレット・サイコロの位置と大きさは state.playLay[向き][slot|wheel|dice]={x,y,s}。描くときに playPlace() が縦横同じ倍率で移し、ドラッグ用の範囲 playBoxes を覚える。
+- ドラッグは「✋ ドラッグで動かす」（dragFree）か、その場で調整が開いているとき。
+- 作者はこのあと ChatGPT で修正・チェックし、修正後の index.html を次のチャットに持ってくる予定。dev/HANDOFF_TO_CHATGPT.md を渡している。戻ってきたら、0.9.5 の index.html と比べて差分を source/ に取り込むこと（ChatGPT には、整形し直さない・変えたところに /* GPT: … */ の印・版の表示を 0.9.5-gpt1 などにする・変更点の一覧、をお願いしている）。

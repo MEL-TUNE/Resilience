@@ -440,3 +440,27 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .bg-item img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:6px;background:var(--a-p-12)}
 .bg-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bg-item.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+
+/* 0.9.5 ドラッグで動かす */
+.drag-row{align-items:center;gap:10px;margin:6px 0}
+.drag-btn{border:2px dashed var(--a-p-45);border-radius:999px;padding:8px 14px;font-weight:700;background:var(--hi);color:var(--ink);cursor:pointer}
+.drag-btn.on{border-style:solid;border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#studioCanvas:not(.locked){cursor:grab}
+
+/* 0.9.5 狭い画面で入力欄がはみ出さないように（グリッドの中身は縮められるように） */
+.studio-field,.studio-inline>*,.expr-row>*,.expr-row .studio-inline>*{min-width:0}
+.studio-field select,.studio-field input,.studio-field textarea{max-width:100%;min-width:0}
+.expr-imgs label{display:block;overflow-wrap:anywhere}
+.expr-imgs input[type=file]{max-width:100%}
+
+/* 0.9.5 ステージの見分けやすさ：ポン出しは「押すと画面に出るもの」、下の欄は「いまの状態を選ぶもの」 */
+.pon-bar{background:var(--a-p-6);border-color:var(--accent)}
+.pon-head strong::before{content:'▶ ';color:var(--accent)}
+.pon-btn{background:var(--hi);border-width:2px;border-color:var(--a-p-45);box-shadow:0 3px 0 var(--a-p-30);text-align:left;padding:12px 14px}
+.pon-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--a-p-30)}
+.pon-btn.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.stage-group{border-top:0;display:grid;gap:8px;margin-top:10px}
+.stage-group>.studio-row{background:var(--a-p-6);border-radius:12px;padding:8px 10px;margin:0;align-items:center}
+.stage-group>.studio-row>.studio-mini:first-child{flex:0 0 100%;font-weight:700;color:var(--ink);opacity:.8;font-size:12px;letter-spacing:.05em}
+.stage-group>.studio-row button:not([aria-pressed="true"]):not(.selected){background:var(--hi)}
+.ghost-btn{border-style:dashed!important;background:transparent!important;font-size:12px}

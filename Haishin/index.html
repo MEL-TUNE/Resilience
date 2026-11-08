@@ -933,6 +933,30 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .bg-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bg-item.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 
+/* 0.9.5 ドラッグで動かす */
+.drag-row{align-items:center;gap:10px;margin:6px 0}
+.drag-btn{border:2px dashed var(--a-p-45);border-radius:999px;padding:8px 14px;font-weight:700;background:var(--hi);color:var(--ink);cursor:pointer}
+.drag-btn.on{border-style:solid;border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+#studioCanvas:not(.locked){cursor:grab}
+
+/* 0.9.5 狭い画面で入力欄がはみ出さないように（グリッドの中身は縮められるように） */
+.studio-field,.studio-inline>*,.expr-row>*,.expr-row .studio-inline>*{min-width:0}
+.studio-field select,.studio-field input,.studio-field textarea{max-width:100%;min-width:0}
+.expr-imgs label{display:block;overflow-wrap:anywhere}
+.expr-imgs input[type=file]{max-width:100%}
+
+/* 0.9.5 ステージの見分けやすさ：ポン出しは「押すと画面に出るもの」、下の欄は「いまの状態を選ぶもの」 */
+.pon-bar{background:var(--a-p-6);border-color:var(--accent)}
+.pon-head strong::before{content:'▶ ';color:var(--accent)}
+.pon-btn{background:var(--hi);border-width:2px;border-color:var(--a-p-45);box-shadow:0 3px 0 var(--a-p-30);text-align:left;padding:12px 14px}
+.pon-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--a-p-30)}
+.pon-btn.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.stage-group{border-top:0;display:grid;gap:8px;margin-top:10px}
+.stage-group>.studio-row{background:var(--a-p-6);border-radius:12px;padding:8px 10px;margin:0;align-items:center}
+.stage-group>.studio-row>.studio-mini:first-child{flex:0 0 100%;font-weight:700;color:var(--ink);opacity:.8;font-size:12px;letter-spacing:.05em}
+.stage-group>.studio-row button:not([aria-pressed="true"]):not(.selected){background:var(--hi)}
+.ghost-btn{border-style:dashed!important;background:transparent!important;font-size:12px}
+
 </style>
 <script>
 'use strict';
@@ -1040,7 +1064,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.4 / 向きごとに立ち絵・マスコットの位置を記憶・コード整理</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.5 / 位置の読み込みの修正・スロットなどの位置と大きさ・スマホ表示</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button><button data-mode="aivoice">AIキャラ・声</button></nav>
@@ -1077,8 +1101,9 @@ lookPaint(look);
 <p class="studio-mini" id="ponEmpty" hidden>企画卓のセリフ帳・アプリを並べるに登録すると、ここに並びます。</p>
 <details class="pon-opts"><summary>並べるもの・アプリの開き方</summary><label class="studio-field">セリフ帳のシチュエーション<select id="ponSerif"></select></label><div class="pon-picks" id="ponPick"></div><div class="studio-row"><button type="button" id="ponAll">すべて並べる</button><label class="studio-field">アプリの開き方<select id="ponApp"><option value="window">アプリと立ち絵のウインドウ（OBS用）で開く</option><option value="page">企画卓の中で開く</option></select></label></div><p class="studio-mini">シチュエーションのボタンは、押すたびにそのシチュエーションのセリフを1つ出します。全部出し終えるまで同じセリフは出ません。セリフ・役柄は企画卓のセリフ帳で前もって登録します。</p></details>
 </section>
-<div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">設定</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button><button data-motion="wander" aria-pressed="false">右往左往</button><button data-motion="iya" aria-pressed="false">いやいや</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
-<details class="scene-details" id="quickTune"><summary>見た目をその場で調整（開いているあいだだけ、プレビューの立ち絵・マスコットをドラッグで動かせます）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">この欄を閉じると位置はロックされ、プレビューに触れても動きません。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
+<div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook" class="ghost-btn">⚙ キャラの設定へ</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button><button data-motion="wander" aria-pressed="false">右往左往</button><button data-motion="iya" aria-pressed="false">いやいや</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
+<div class="studio-row drag-row"><button type="button" id="dragFree" class="drag-btn" aria-pressed="false">✋ ドラッグで動かす：オフ</button><span class="studio-mini" id="dragHint">オンにすると、プレビューの立ち絵・マスコット・スロット・ルーレット・サイコロを指やマウスで動かせます</span></div>
+<details class="scene-details" id="quickTune"><summary>見た目をその場で調整（開いているあいだも、ドラッグで動かせます）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">この欄を閉じると位置はロックされ、プレビューに触れても動きません。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
 </section>
 <section class="studio-card mode-section" id="studioPlan" style="margin-top:16px">
 <p class="studio-kicker">PLANNING / AI HANDOFF</p><h2>企画卓</h2>
@@ -1140,6 +1165,15 @@ lookPaint(look);
 <h3>ルーレット・サイコロ</h3>
 <div class="studio-inline"><label class="studio-field">サイコロの数<select id="diceN"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option></select></label><label class="studio-field">目の数<select id="diceF"><option value="6">6面（ふつうのサイコロ）</option><option value="4">4面</option><option value="8">8面</option><option value="10">10面</option><option value="12">12面</option><option value="20">20面</option><option value="100">1〜100</option></select></label><label class="studio-field">画面の位置<select id="playPos"><option value="center">中央</option><option value="left">左</option><option value="right">右</option></select></label></div>
 <label class="studio-field">ルーレットの項目（1行に1つ・2〜24個）<textarea id="wheelItems" class="studio-textarea" rows="4" placeholder="例：&#10;歌う&#10;セリフを言う&#10;罰ゲーム&#10;もう一回"></textarea></label>
+<details class="sb-opts" id="layBox"><summary>スロット・ルーレット・サイコロの位置と大きさ</summary>
+<p class="studio-mini" id="layWhere"></p>
+<div class="studio-inline"><label class="studio-field">動かすもの<select id="layKind"><option value="slot">🎰 スロット</option><option value="wheel">🎡 ルーレット</option><option value="dice">🎲 サイコロ</option></select></label></div>
+<div class="studio-inline"><label class="studio-field">横（左 0 ←→ 右 100） <output id="layXVal"></output><input id="layX" type="range" min="0" max="100" step="1"></label>
+<label class="studio-field">縦（上 0 ←→ 下 100） <output id="layYVal"></output><input id="layY" type="range" min="0" max="100" step="1"></label>
+<label class="studio-field">大きさ <output id="laySVal"></output><input id="layS" type="range" min="30" max="200" step="1"></label></div>
+<div class="studio-row"><button type="button" id="layLeft">左に寄せる</button><button type="button" id="layCenter">中央</button><button type="button" id="layRight">右に寄せる</button><button type="button" id="layTry">試しに出す</button><button type="button" id="layReset">これまでの置き方に戻す</button></div>
+<p class="studio-mini">映像の向き（横・縦・3:4）ごとに覚えます。ステージの「✋ ドラッグで動かす」をオンにすると、配信画面の上でスロット・ルーレット・サイコロを直接ドラッグして動かせます。</p>
+</details>
 <div class="studio-row play-big"><button type="button" id="diceRoll" class="accent">🎲 サイコロを振る</button><button type="button" id="wheelSpin" class="accent">🎡 ルーレットを回す</button><button type="button" id="playClear">画面から消す</button></div>
 <p class="studio-mini" id="playResult" aria-live="polite"></p>
 <p class="studio-mini">セリフの吹き出し・サイコロ・ルーレットは、配信画面・配信用ウインドウ・アプリと立ち絵のウインドウ・収録する動画に映ります。出目と止まる項目は、毎回ブラウザの乱数で決めます。</p>
@@ -7271,6 +7305,7 @@ $('#consoleAllStop').onclick=()=>stopAll();
     diceF:6,
     wheelItems:'',
     playPos:'center',
+    playLay:{},
     appSel:'',
     appLayout:'overlay',
     appPos:'br',
@@ -7502,7 +7537,8 @@ function sanitize(v){
     out.diceN=[1,2,3].includes(v.diceN)?v.diceN:1;
     out.diceF=[4,6,8,10,12,20,100].includes(v.diceF)?v.diceF:6;
     if(typeof v.wheelItems==='string')out.wheelItems=v.wheelItems.slice(0,2000);
-    if(['center','left','right'].includes(v.playPos))out.playPos=v.playPos;}
+    if(['center','left','right'].includes(v.playPos))out.playPos=v.playPos;
+    if(v.playLay&&typeof v.playLay==='object'){out.playLay={};for(const a of ['landscape','portrait','x34']){const o=v.playLay[a];if(!o||typeof o!=='object')continue;const r={};for(const k of ['slot','wheel','dice']){const q=o[k];if(!q)continue;const x=Number(q.x),y=Number(q.y),s=Number(q.s);if([x,y,s].every(Number.isFinite))r[k]={x:Math.max(0,Math.min(100,x)),y:Math.max(0,Math.min(100,y)),s:Math.max(30,Math.min(200,s))}}out.playLay[a]=r}}}
     {
       const n=Number(v.karaVol);
       if(Number.isFinite(n))out.karaVol=Math.max(0,Math.min(150,n))
@@ -9089,6 +9125,7 @@ const SERIF_MAX=100,LINE_MAX=300;
   function renderPlayOpts(){
     E('diceN').value=String(state.diceN);E('diceF').value=String(state.diceF);
     E('wheelItems').value=state.wheelItems;E('playPos').value=state.playPos;
+    renderLay();
     E('playResult').textContent=play.dice&&play.dice.done?'サイコロ：'+play.dice.vals.join('・')+(play.dice.vals.length>1?'（合計 '+play.dice.vals.reduce((a,b)=>a+b,0)+'）':''):play.wheel&&play.wheel.done?'ルーレット：'+play.wheel.items[play.wheel.pick]:''
   }
   const playRnd=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n};
@@ -9113,6 +9150,26 @@ const SERIF_MAX=100,LINE_MAX=300;
   E('diceF').onchange=e=>{state.diceF=[4,6,8,10,12,20,100].includes(Number(e.target.value))?Number(e.target.value):6;save()};
   E('wheelItems').oninput=e=>{state.wheelItems=e.target.value.slice(0,2000);save()};
   E('playPos').onchange=e=>{state.playPos=e.target.value;save()};
+  // 位置と大きさの欄
+  function layCur(){
+    const kind=E('layKind').value,L=playLayGet(kind),N=playNatural[kind];
+    const df={slot:{x:50,y:30},wheel:{x:50,y:42},dice:{x:50,y:42}}[kind];
+    return L||{x:N?N.x:df.x,y:N?N.y:df.y,s:100}
+  }
+  function renderLay(){
+    const v=layCur();
+    for(const [id,k,u] of [['layX','x','%'],['layY','y','%'],['layS','s','%']]){E(id).value=Math.round(v[k]);E(id+'Val').textContent=Math.round(v[k])+u}
+    E('layWhere').textContent='いまの映像の向き（'+({landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'}[state.aspect])+'）で'+(playLayGet(E('layKind').value)?'決めた位置です':'まだ決めていません（これまでの置き方）')
+  }
+  function layPut(ch){const kind=E('layKind').value,v={...layCur(),...ch};playLaySet(kind,v);save();renderLay()}
+  E('layKind').onchange=renderLay;
+  for(const [id,k] of [['layX','x'],['layY','y'],['layS','s']])E(id).oninput=e=>layPut({[k]:Number(e.target.value)});
+  const layEdge=side=>{const kind=E('layKind').value,N=playNatural[kind],v=layCur(),half=(N?N.w:40)*v.s/100/2,m=24/W*100;return side==='left'?half+m:100-half-m};
+  E('layLeft').onclick=()=>layPut({x:layEdge('left')});
+  E('layCenter').onclick=()=>layPut({x:50});
+  E('layRight').onclick=()=>layPut({x:layEdge('right')});
+  E('layReset').onclick=()=>{playLaySet(E('layKind').value,null);save();renderLay();toast('これまでの置き方に戻しました')};
+  E('layTry').onclick=()=>{const kind=E('layKind').value;if(kind==='slot')slotSpin('all');else if(kind==='wheel')E('wheelSpin').click();else E('diceRoll').click()};
 
   function wrapLines(text,maxW,max){
     const out=[];
@@ -9176,6 +9233,8 @@ const SERIF_MAX=100,LINE_MAX=300;
     if(!d)return;
     const t=Math.min(1,(now-d.at)/d.dur),s=150*k,gap=34*k,n=d.vals.length,tw=n*s+(n-1)*gap,an=playAnchor(tw,k);
     if(t>=1&&!d.done){d.done=true;renderPlayOpts();const tot=d.vals.reduce((a,b)=>a+b,0);bridgeEmit('dice',{values:d.vals,total:tot});audEvent('サイコロの目：'+d.vals.join('・')+(d.vals.length>1?'（合計'+tot+'）':''))}
+    g.save();
+    {const extra=n>1?86*k:0;playPlace('dice',an.x,an.y+extra/2,tw+20*k,s+20*k+extra)}
     d.vals.forEach((v,i)=>{
       const shown=t<1?1+playRnd(d.f):v,
         rot=t<1?(1-t)*(1-t)*Math.sin(now/70+i*2)*.9:0,
@@ -9188,6 +9247,7 @@ const SERIF_MAX=100,LINE_MAX=300;
       g.fillStyle='rgba(22,34,29,.7)';g.beginPath();g.roundRect(an.x-tw2/2,an.y+s/2+20*k,tw2,46*k,12*k);g.fill();
       g.fillStyle='#fbf5e9';g.fillText(txt,an.x,an.y+s/2+28*k);g.restore()
     }
+    g.restore()
   }
   const WHEEL_COLORS=['#e8746a','#f2b84b','#8cc084','#6fa8dc','#b494d6','#f29ab3','#e0a46a','#7cc6c0'];
   function drawWheel(now,k){
@@ -9196,7 +9256,9 @@ const SERIF_MAX=100,LINE_MAX=300;
     const t=Math.min(1,(now-r.at)/r.dur),e=1-Math.pow(1-t,3.2),ang=r.from+(r.end-r.from)*e;
     if(t>=1&&!r.done){r.done=true;renderPlayOpts();bridgeEmit('wheel',{result:r.items[r.pick]});audEvent('ルーレットの結果：'+r.items[r.pick])}
     const R=Math.min(W,H)*(play.serif?.25:.3),an=playAnchor(R*2,k),n=r.items.length,seg=Math.PI*2/n;
-    g.save();g.translate(an.x,an.y);
+    g.save();
+    {const top=R+26*k,bot=R+90*k;playPlace('wheel',an.x,an.y+(bot-top)/2,R*2+16*k,top+bot)}
+    g.translate(an.x,an.y);
     g.fillStyle='rgba(0,0,0,.18)';g.beginPath();g.arc(4*k,6*k,R+8*k,0,Math.PI*2);g.fill();
     for(let i=0;i<n;i++){
       const a0=ang+i*seg-Math.PI/2,a1=a0+seg;
@@ -9228,6 +9290,22 @@ const SERIF_MAX=100,LINE_MAX=300;
       g.fillStyle='#fbf5e9';g.fillText(txt,0,R+57*k,tw-30*k)
     }
     g.restore()
+  }
+  // ---- スロット・ルーレット・サイコロの位置と大きさ（映像の向きごと）。state.playLay[向き][slot|wheel|dice]={x,y,s}
+  // x・y は画面に対する中心の位置（%）、s は大きさ（%）。決めていないときは、これまでの置き方のまま
+  const playBoxes={},playNatural={};
+  function playLayGet(kind){const a=state.playLay?.[state.aspect];return a&&a[kind]||null}
+  function playLaySet(kind,v){
+    if(!state.playLay||typeof state.playLay!=='object')state.playLay={};
+    const a=state.playLay[state.aspect]||(state.playLay[state.aspect]={});
+    if(v===null)delete a[kind];else a[kind]={x:Math.max(0,Math.min(100,Math.round(v.x))),y:Math.max(0,Math.min(100,Math.round(v.y))),s:Math.max(30,Math.min(200,Math.round(v.s)))}
+  }
+  // 縦横同じ倍率で、元の中心(nx,ny)を決めた中心へ移す。ドラッグで掴めるよう、画面上の範囲も覚える
+  function playPlace(kind,nx,ny,nw,nh){
+    playNatural[kind]={x:nx/W*100,y:ny/H*100,w:nw/W*100,h:nh/H*100};
+    const L=playLayGet(kind),s=L?L.s/100:1,tx=L?W*L.x/100:nx,ty=L?H*L.y/100:ny;
+    g.translate(tx,ty);g.scale(s,s);g.translate(-nx,-ny);
+    playBoxes[kind]={x:tx-nw*s/2,y:ty-nh*s/2,w:nw*s,h:nh*s}
   }
   function drawPlays(now){
     if(!play.serif&&!play.dice&&!play.wheel&&!play.slot)return;
@@ -9884,7 +9962,8 @@ const slotCfg=()=>state.slot||(state.slot={aName:'役柄',bName:'セリフ',dur:
   E('slotDur').onchange=e=>{slotCfg().dur=Math.max(0,Math.min(10,Number(e.target.value)||0));save()};
   E('slotSe').onchange=e=>{slotCfg().se=e.target.value;save()};
   E('slotLook').onchange=e=>{slotCfg().look=e.target.value==='bubble'?'bubble':'machine';save()};
-  E('slotPos').onchange=e=>{slotCfg().pos=['left','right'].includes(e.target.value)?e.target.value:'center';save()};
+  // ざっくりの置き方を選び直したら、細かく決めた位置（いまの向き）は外す
+  E('slotPos').onchange=e=>{slotCfg().pos=['left','right'].includes(e.target.value)?e.target.value:'center';playLaySet('slot',null);save();renderLay()};
   E('slotSize').oninput=e=>{slotCfg().size=Math.max(30,Math.min(90,Number(e.target.value)||62));E('slotSizeVal').textContent=slotCfg().size+'%';save()};
   E('slotColor').onchange=e=>{const c=slotCfg();c.color=['theme','custom'].includes(e.target.value)?e.target.value:'classic';
     // 「自分で選ぶ」にしたときは、いま見えている色から始める
@@ -10044,6 +10123,7 @@ const slotCfg=()=>state.slot||(state.slot={aName:'役柄',bName:'セリフ',dur:
     if(lines.length>7)lines=wrapLines('「'+lineTxt+'」',w-90*k,7);
     const lhB=fsB*1.55,hA=fsA*1.9,hB=Math.max(lhB*2.4,lines.length*lhB+30*k);
     const h=44*k+36*k+hA+14*k+hB+30*k;
+    playPlace('slot',x+w/2,y+h/2,w+12*k,h+12*k);
     // 筐体
     g.fillStyle='rgba(92,65,48,.16)';g.beginPath();g.roundRect(x+6*k,y+8*k,w,h,30*k);g.fill();
     g.fillStyle=P.frame;g.beginPath();g.roundRect(x,y,w,h,30*k);g.fill();
@@ -11715,9 +11795,10 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
     E('promptOut').hidden=false
   };
 
-// 設定を読み込むとき（このファイルより先に動く）にも使うので、定数は関数の中に置く
+// 設定を読み込むとき（このファイルより先に動く）にも使うので、定数は関数の中に置く。
+  // 立ち絵の範囲は、設定画面のつまみと同じ CHAR_RANGES（00-state.js）を使う
   function aspectPosClean(v,kind){
-    const keys=kind==='msc'?[['x',-100,100],['y',-100,100],['size',3,90],['tilt',-180,180]]:[['x',-100,100],['y',-100,100],['scale',10,500]];
+    const keys=kind==='msc'?[['x',-100,100],['y',-100,100],['size',3,90],['tilt',-180,180]]:['x','y','scale'].map(k=>[k,CHAR_RANGES[k][0],CHAR_RANGES[k][1]]);
     const out={};
     if(!v||typeof v!=='object')return out;
     for(const a of ['landscape','portrait','x34']){
@@ -13289,13 +13370,29 @@ const QT=[['studioThreshold','口が開く音量',' dB'],['studioMouthMode','口
     const r=canvas.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H),ox=(r.width-W*s)/2,oy=(r.height-H*s)/2;
     return {x:(e.clientX-r.left-ox)/s,y:(e.clientY-r.top-oy)/s}
   }
-  const dragOn=()=>E('quickTune').open;
-  const lockView=()=>canvas.classList.toggle('locked',!dragOn());
-  E('quickTune').addEventListener('toggle',lockView);lockView();
+  // 「✋ ドラッグで動かす」がオンのとき、または「その場で調整」を開いているときだけ動かせる（配信中にうっかり動かさないため）
+  let dragFree=false;
+  const dragOn=()=>dragFree||E('quickTune').open;
+  const lockView=()=>{
+    canvas.classList.toggle('locked',!dragOn());
+    const b=E('dragFree');b.setAttribute('aria-pressed',String(dragFree));b.textContent='✋ ドラッグで動かす：'+(dragFree?'オン':'オフ');b.classList.toggle('on',dragFree)
+  };
+  E('quickTune').addEventListener('toggle',lockView);
+  E('dragFree').onclick=()=>{dragFree=!dragFree;lockView();if(!dragFree)endDrag()};
+  lockView();
   canvas.addEventListener('pointerdown',e=>{
     if(e.button!==0||!dragOn())return;
     const p=stagePoint(e);
     let target=null;
+    // 手前に描くものから：スロット・ルーレット・サイコロ → マスコット → 立ち絵
+    for(const kind of ['slot','wheel','dice']){
+      const on=kind==='slot'?play.slot&&slotCfg().look!=='bubble':play[kind],b=playBoxes[kind];
+      if(on&&b&&p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h){
+        const L=playLayGet(kind)||{x:(b.x+b.w/2)/W*100,y:(b.y+b.h/2)/H*100,s:100};
+        drag={target:{play:kind},p0:p,ox:L.x,oy:L.y,s:L.s};
+        canvas.setPointerCapture(e.pointerId);canvas.classList.add('dragging');e.preventDefault();return
+      }
+    }
     for(const m of [...myMascots()].reverse())if(m._box&&p.x>=m._box.x&&p.x<=m._box.x+m._box.w&&p.y>=m._box.y&&p.y<=m._box.y+m._box.h){target=m;break}
     if(!target&&sceneAvatar()){const gg=avatarGeom();if(p.x>=gg.cx-gg.w/2&&p.x<=gg.cx+gg.w/2&&p.y>=gg.bottom-gg.h&&p.y<=gg.bottom)target='avatar'}
     if(!target)return;
@@ -13306,7 +13403,10 @@ const QT=[['studioThreshold','口が開く音量',' dB'],['studioMouthMode','口
   canvas.addEventListener('pointermove',e=>{
     if(!drag)return;
     const p=stagePoint(e),dx=p.x-drag.p0.x,dy=p.y-drag.p0.y;
-    if(drag.target==='avatar'){
+    if(drag.target.play){
+      playLaySet(drag.target.play,{x:drag.ox+dx/W*100,y:drag.oy+dy/H*100,s:drag.s});
+      if(E('layKind').value===drag.target.play)renderLay()
+    }else if(drag.target==='avatar'){
       state.x=Math.max(-300,Math.min(300,Math.round(drag.ox+dx/W*100)));
       state.y=Math.max(-200,Math.min(500,Math.round(drag.oy+dy/H*100)));
       E('studioX').value=state.x;E('studioY').value=state.y;E('yVal').textContent=Math.round(state.y)+'%'

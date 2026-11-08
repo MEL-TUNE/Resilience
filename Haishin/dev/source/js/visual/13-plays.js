@@ -102,6 +102,7 @@
   function renderPlayOpts(){
     E('diceN').value=String(state.diceN);E('diceF').value=String(state.diceF);
     E('wheelItems').value=state.wheelItems;E('playPos').value=state.playPos;
+    renderLay();
     E('playResult').textContent=play.dice&&play.dice.done?'サイコロ：'+play.dice.vals.join('・')+(play.dice.vals.length>1?'（合計 '+play.dice.vals.reduce((a,b)=>a+b,0)+'）':''):play.wheel&&play.wheel.done?'ルーレット：'+play.wheel.items[play.wheel.pick]:''
   }
   const playRnd=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n};
@@ -126,6 +127,26 @@
   E('diceF').onchange=e=>{state.diceF=[4,6,8,10,12,20,100].includes(Number(e.target.value))?Number(e.target.value):6;save()};
   E('wheelItems').oninput=e=>{state.wheelItems=e.target.value.slice(0,2000);save()};
   E('playPos').onchange=e=>{state.playPos=e.target.value;save()};
+  // 位置と大きさの欄
+  function layCur(){
+    const kind=E('layKind').value,L=playLayGet(kind),N=playNatural[kind];
+    const df={slot:{x:50,y:30},wheel:{x:50,y:42},dice:{x:50,y:42}}[kind];
+    return L||{x:N?N.x:df.x,y:N?N.y:df.y,s:100}
+  }
+  function renderLay(){
+    const v=layCur();
+    for(const [id,k,u] of [['layX','x','%'],['layY','y','%'],['layS','s','%']]){E(id).value=Math.round(v[k]);E(id+'Val').textContent=Math.round(v[k])+u}
+    E('layWhere').textContent='いまの映像の向き（'+({landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'}[state.aspect])+'）で'+(playLayGet(E('layKind').value)?'決めた位置です':'まだ決めていません（これまでの置き方）')
+  }
+  function layPut(ch){const kind=E('layKind').value,v={...layCur(),...ch};playLaySet(kind,v);save();renderLay()}
+  E('layKind').onchange=renderLay;
+  for(const [id,k] of [['layX','x'],['layY','y'],['layS','s']])E(id).oninput=e=>layPut({[k]:Number(e.target.value)});
+  const layEdge=side=>{const kind=E('layKind').value,N=playNatural[kind],v=layCur(),half=(N?N.w:40)*v.s/100/2,m=24/W*100;return side==='left'?half+m:100-half-m};
+  E('layLeft').onclick=()=>layPut({x:layEdge('left')});
+  E('layCenter').onclick=()=>layPut({x:50});
+  E('layRight').onclick=()=>layPut({x:layEdge('right')});
+  E('layReset').onclick=()=>{playLaySet(E('layKind').value,null);save();renderLay();toast('これまでの置き方に戻しました')};
+  E('layTry').onclick=()=>{const kind=E('layKind').value;if(kind==='slot')slotSpin('all');else if(kind==='wheel')E('wheelSpin').click();else E('diceRoll').click()};
 
   function wrapLines(text,maxW,max){
     const out=[];
@@ -189,6 +210,8 @@
     if(!d)return;
     const t=Math.min(1,(now-d.at)/d.dur),s=150*k,gap=34*k,n=d.vals.length,tw=n*s+(n-1)*gap,an=playAnchor(tw,k);
     if(t>=1&&!d.done){d.done=true;renderPlayOpts();const tot=d.vals.reduce((a,b)=>a+b,0);bridgeEmit('dice',{values:d.vals,total:tot});audEvent('サイコロの目：'+d.vals.join('・')+(d.vals.length>1?'（合計'+tot+'）':''))}
+    g.save();
+    {const extra=n>1?86*k:0;playPlace('dice',an.x,an.y+extra/2,tw+20*k,s+20*k+extra)}
     d.vals.forEach((v,i)=>{
       const shown=t<1?1+playRnd(d.f):v,
         rot=t<1?(1-t)*(1-t)*Math.sin(now/70+i*2)*.9:0,
@@ -201,6 +224,7 @@
       g.fillStyle='rgba(22,34,29,.7)';g.beginPath();g.roundRect(an.x-tw2/2,an.y+s/2+20*k,tw2,46*k,12*k);g.fill();
       g.fillStyle='#fbf5e9';g.fillText(txt,an.x,an.y+s/2+28*k);g.restore()
     }
+    g.restore()
   }
   const WHEEL_COLORS=['#e8746a','#f2b84b','#8cc084','#6fa8dc','#b494d6','#f29ab3','#e0a46a','#7cc6c0'];
   function drawWheel(now,k){
@@ -209,7 +233,9 @@
     const t=Math.min(1,(now-r.at)/r.dur),e=1-Math.pow(1-t,3.2),ang=r.from+(r.end-r.from)*e;
     if(t>=1&&!r.done){r.done=true;renderPlayOpts();bridgeEmit('wheel',{result:r.items[r.pick]});audEvent('ルーレットの結果：'+r.items[r.pick])}
     const R=Math.min(W,H)*(play.serif?.25:.3),an=playAnchor(R*2,k),n=r.items.length,seg=Math.PI*2/n;
-    g.save();g.translate(an.x,an.y);
+    g.save();
+    {const top=R+26*k,bot=R+90*k;playPlace('wheel',an.x,an.y+(bot-top)/2,R*2+16*k,top+bot)}
+    g.translate(an.x,an.y);
     g.fillStyle='rgba(0,0,0,.18)';g.beginPath();g.arc(4*k,6*k,R+8*k,0,Math.PI*2);g.fill();
     for(let i=0;i<n;i++){
       const a0=ang+i*seg-Math.PI/2,a1=a0+seg;
@@ -241,6 +267,22 @@
       g.fillStyle='#fbf5e9';g.fillText(txt,0,R+57*k,tw-30*k)
     }
     g.restore()
+  }
+  // ---- スロット・ルーレット・サイコロの位置と大きさ（映像の向きごと）。state.playLay[向き][slot|wheel|dice]={x,y,s}
+  // x・y は画面に対する中心の位置（%）、s は大きさ（%）。決めていないときは、これまでの置き方のまま
+  const playBoxes={},playNatural={};
+  function playLayGet(kind){const a=state.playLay?.[state.aspect];return a&&a[kind]||null}
+  function playLaySet(kind,v){
+    if(!state.playLay||typeof state.playLay!=='object')state.playLay={};
+    const a=state.playLay[state.aspect]||(state.playLay[state.aspect]={});
+    if(v===null)delete a[kind];else a[kind]={x:Math.max(0,Math.min(100,Math.round(v.x))),y:Math.max(0,Math.min(100,Math.round(v.y))),s:Math.max(30,Math.min(200,Math.round(v.s)))}
+  }
+  // 縦横同じ倍率で、元の中心(nx,ny)を決めた中心へ移す。ドラッグで掴めるよう、画面上の範囲も覚える
+  function playPlace(kind,nx,ny,nw,nh){
+    playNatural[kind]={x:nx/W*100,y:ny/H*100,w:nw/W*100,h:nh/H*100};
+    const L=playLayGet(kind),s=L?L.s/100:1,tx=L?W*L.x/100:nx,ty=L?H*L.y/100:ny;
+    g.translate(tx,ty);g.scale(s,s);g.translate(-nx,-ny);
+    playBoxes[kind]={x:tx-nw*s/2,y:ty-nh*s/2,w:nw*s,h:nh*s}
   }
   function drawPlays(now){
     if(!play.serif&&!play.dice&&!play.wheel&&!play.slot)return;
