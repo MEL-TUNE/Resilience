@@ -59,7 +59,6 @@
     for(const [id,k,df] of [['appCX','appCX',100],['appCY','appCY',100],['appCSize','appCSize',42]]){E(id).value=state[k]??df;E(id+'Val').textContent=(state[k]??df)+'%'}
     appMirrorPlace();
     E('appSizeVal').textContent=state.appSize+'%';
-    E('appPos').disabled=state.appLayout==='side'&&false;
     E('appBgNote').hidden=state.appLayout!=='overlay'||state.bg==='transparent';
     renderBridge();
     renderPon();
@@ -148,20 +147,30 @@
   function appCharLayer(){
     const pageMirror=!E('appStageWrap').hidden&&!appWinOpen();
     if(!appCharMode()||!(appWinOpen()&&appContext||pageMirror))return null;
-    if(!appLayerCtx){const c=document.createElement('canvas');appLayerCtx=c.getContext('2d')}
-    const c=appLayerCtx.canvas;
-    if(c.width!==W||c.height!==H){c.width=W;c.height=H}
-    appLayerEmpty=false;
+    if(!appLayerCtx){const c=document.createElement('canvas');c.width=APP_LW;c.height=APP_LH;appLayerCtx=c.getContext('2d')}
     return appLayerCtx
+  }
+  // レイヤーには、配信画面での位置・はみ出しに関係なく、全身を真ん中に描く（アプリ側で見切れないように）
+  const APP_LW=1000,APP_LH=1000;
+  let appLayerInfo=null;
+  function appLayerDraw(al,now,talking,blink,av){
+    const geo=av.geo,k=Math.min(APP_LH*.72/Math.max(1,geo.h),APP_LW*.36/Math.max(1,geo.w)),bottom=APP_LH*.95;
+    al.clearRect(0,0,APP_LW,APP_LH);
+    drawAvatar(now,talking,blink,al,{pose:av.pose,k,cx:APP_LW/2,bottom});
+    appLayerInfo={k,w:geo.w*k,h:geo.h*k,bottom};
+    appLayerEmpty=false
   }
   const appMscState={};
   // cx に cw×ch で描く。立ち絵は縦横同じ倍率で縮めるだけ（反転・変形はしない）
   function appCharDraw(cx,cw,ch,now){
     cx.clearRect(0,0,cw,ch);
     if(!appLayerCtx||appLayerEmpty)return;
-    const geo=avatarGeom(),t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
-    const hw=geo.w/2+W*.14,top=Math.max(0,geo.bottom-geo.h*1.1-H*.03),bot=Math.min(H,geo.bottom+2),
-      sx=Math.max(0,geo.cx-hw),ex=Math.min(W,geo.cx+hw),cropW=Math.max(1,ex-sx),cropH=Math.max(1,bot-top);
+    const L=appLayerInfo,t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
+    if(!L)return;
+    // 切り抜く範囲：全身＋動き（右往左往・跳ねる）の分。レイヤーの外には出ない
+    const move=W*.13*L.k*Math.max(1,(state.motionWander||0)/100)+18,
+      hw=Math.min(APP_LW/2,L.w/2+move),top=Math.max(0,L.bottom-L.h*1.08-40),
+      sx=APP_LW/2-hw,cropW=hw*2,cropH=APP_LH-top;
     const ms=state.appMsc!==false?myMascots().filter(m=>m.show&&images['msc-'+m.id]):[];
     const mx=ms.length?cw*.17:cw*.02,mt=ms.length?ch*.1:ch*.02;
     const s=Math.min((cw-2*mx)/cropW,(ch-mt)/cropH),dw=cropW*s,dh=cropH*s,dx=(cw-dw)/2,dy=ch-dh;

@@ -20,9 +20,16 @@
       toast('収録中は映像の向きを変えられません');
       return
     }
-    state.aspect=['portrait','x34'].includes(e.target.value)?e.target.value:'landscape';
+    const next=['portrait','x34'].includes(e.target.value)?e.target.value:'landscape';
+    if(next===state.aspect)return;
+    // いまの向きの立ち絵・マスコットの位置を残して、次の向きの位置に戻す
+    aspectStash(state.aspect);
+    state.aspect=next;
+    aspectRestore(next);
     save();
     applyAspect();
+    renderValues();
+    renderMascotUI();
     renderBgList();
     if(outputWindow&&!outputWindow.closed)try{
       outputWindow.resizeTo(W>H?1280:state.aspect==='x34'?630:450,W>H?760:840)

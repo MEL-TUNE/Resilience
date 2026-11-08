@@ -44,7 +44,6 @@
 body[data-studio-mode=plan] .recbar,body[data-studio-mode=plan] .studio{display:none}
 body[data-page=settings] .studio-extension{display:none}
 .studio-live-box{border:1px solid var(--a-p-45);border-radius:9px;padding:12px;white-space:pre-wrap;min-height:48px;margin-top:10px;font-size:13px}
-.stage-actions .recording{background:var(--rec);color:white}
 .kara-h{font-size:15px;margin:2px 0 6px}
 .kara-channels{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .kara-ch{display:flex;flex-direction:column;align-items:flex-start;gap:2px;max-width:100%;text-align:left;padding:7px 11px;border-radius:12px}
@@ -93,7 +92,6 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
   .studio-workspace{grid-template-columns:1fr}
   .studio-card{padding:12px}
   .studio-inline{grid-template-columns:1fr}
-  .stage-actions button{flex:1}
   .top h1{font-size:21px}
   .studio-state{width:100%;margin:0}
   .studio-tabs button{flex:1}
@@ -113,10 +111,7 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
   .studio-note{line-height:1.5}
   .studio-kicker{font-size:9px}
 }
-.scene-bar{flex-wrap:wrap;gap:6px}
-.scene-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 #studioMute[aria-pressed="true"]{background:var(--decor);color:var(--on-decor);border-color:var(--decor)}
-.scene-sep{width:1px;align-self:stretch;background:var(--a-p-45);margin:0 4px}
 .scene-details{margin:8px 0;border-top:1px solid var(--a-p-20);padding-top:8px}
 .scene-details summary{cursor:pointer;font-size:13px}
 .scene-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -124,10 +119,8 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
 .scene-set legend{font-size:12px;padding:0 4px}
 .scene-text{min-height:60px}
 #studioSinkSel{flex:1;min-width:160px;max-width:100%}
-body:not([data-studio-mode="live"]) .live-only{display:none}
 @media(max-width:780px){
   .scene-grid{grid-template-columns:1fr}
-  .scene-sep{display:none}
 }
 body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;height:min(72vh,820px)!important;max-height:none!important;width:auto;max-width:100%;margin:0 auto}
 .motion-bar{flex-wrap:wrap;gap:6px}
@@ -141,7 +134,7 @@ body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;heig
 .prompt-out{white-space:pre-wrap;font-size:11px;line-height:1.6;max-height:220px;overflow:auto;border:1px solid var(--a-p-45);border-radius:8px;padding:8px;background:var(--hi)}
 @media(max-width:780px){
   .motion-bar .studio-mini{width:100%}
-  .motion-bar button,.scene-bar button{flex:1 1 auto;white-space:nowrap;padding-left:8px;padding-right:8px;font-size:12px}
+  .motion-bar button{flex:1 1 auto;white-space:nowrap;padding-left:8px;padding-right:8px;font-size:12px}
   #studioMute{flex-basis:100%}
   .studio-tabs button{font-size:12px;white-space:nowrap;padding-left:4px;padding-right:4px}
   .fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -229,7 +222,7 @@ body{padding-top:var(--mini-h,0px)}
   .rec-opt select{flex:1 1 0;width:0;font-size:13px}
   .studio-take{flex-wrap:wrap}
   .studio-take .vname{flex-basis:100%}
-  .scene-bar button,.motion-bar button,.char-bar button,.expr-bar button,.speaker-bar button{padding:7px 9px;font-size:12px}
+  .motion-bar button,.char-bar button,.expr-bar button,.speaker-bar button{padding:7px 9px;font-size:12px}
 }
 .rec-note{font-size:11px;color:var(--muted);margin:6px 0 0}
 .scene-font-row{display:flex;flex-wrap:wrap;align-items:end;gap:10px 16px;margin-top:12px}
@@ -372,7 +365,7 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 .app-chips button.selected{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .app-url{flex:1 1 260px;margin:0}
 .app-stage{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;align-items:start;margin:10px 0}
-.app-frame-box{position:relative;border:1px solid var(--a-p-30);border-radius:12px;overflow:hidden;background:var(--hi);aspect-ratio:16/10;min-height:300px;resize:vertical}
+.app-frame-box{position:relative;border:1px solid var(--a-p-30);border-radius:12px;overflow:hidden;background:var(--hi);aspect-ratio:16/10;width:100%;min-width:0;min-height:220px;resize:vertical}
 .app-frame-box iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
 .app-away{position:absolute;inset:0;display:grid;place-items:center;margin:0;background:var(--paper);font-weight:700}
 .app-mirror-box{margin:0}

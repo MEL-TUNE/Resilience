@@ -328,13 +328,6 @@ function growSe(){
 
 const ensureEmojiSlots=config=>ensureSe(config,'emoji');
 
-function fixedSlots(config,type,min,cols){
-  let max=-1;
-  for(const s of config.sounds)if(s.type===type&&isRealSound(s)&&Number.isInteger(s.slotIndex))max=Math.max(max,s.slotIndex);
-  const used=config.sounds.filter(s=>s.type===type&&isRealSound(s)).length;
-  return Math.max(min,Math.ceil(Math.max(max+1,used)/cols)*cols)
-}
-
 const ensureTextSlots=config=>layoutVoices(ensureSe(ensureSe(config,'text'),'env'),null);
 
 // ボイスは「標準」＋名義ごとのタブ（owner＝'std' か名義のid）。各タブは最後の行まで埋まると1行増える
