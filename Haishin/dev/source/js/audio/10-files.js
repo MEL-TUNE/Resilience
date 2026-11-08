@@ -44,14 +44,24 @@ async function exportLive(){
     const {conf,assets,blobs,off:o}=await buildSoundPack();
     let off=o,images=0;
     const studio=st.collect();
+    if(st.extra)Object.assign(studio.assets,await st.extra());
     for(const[key,b]of Object.entries(studio.assets)){
       assets.push({key,kind:'studio',offset:off,size:b.size,type:b.type||''});
       blobs.push(b);
       off+=b.size;
       images++
     }
+    // 企画卓に登録したアプリ（ファイルから読み込んだもの）のHTMLも入れる
+    let apps=0;
+    for(const a of (studio.state.apps||[]))if(a&&a.kind==='file'&&/^[a-z0-9]{1,16}$/.test(a.id)){
+      const b=await getAsset('app:'+a.id);
+      if(!b)continue;
+      const bb=b instanceof Blob?new Blob([b],{type:'text/html'}):new Blob([String(b)],{type:'text/html'});
+      assets.push({key:'app-'+a.id,kind:'studio',offset:off,size:bb.size,type:'text/html'});
+      blobs.push(bb);off+=bb.size;apps++
+    }
     download(packBlob(LIVE_MAGIC,{format:LIVE_FORMAT,version:1,app:look.title,created:new Date().toISOString(),config:conf,look:lookForExport(),studio:studio.state,assets},blobs),packFileName());
-    toast(`すべての設定を書き出しました（.live・音源${assets.filter(a=>a.kind==='audio').length}件・画像${images}枚・${(off/1048576).toFixed(1)}MB）`,5000);
+    toast(`すべての設定を書き出しました（.live・音源${assets.filter(a=>a.kind==='audio').length}件・画像${images}枚・アプリ${apps}件・${(off/1048576).toFixed(1)}MB）`,5000);
   }catch(e){
     console.error(e);
     toast('書き出しに失敗しました（'+errText(e)+'）',6000)

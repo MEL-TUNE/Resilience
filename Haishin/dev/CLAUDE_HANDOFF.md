@@ -93,3 +93,12 @@
 - 1列表示（幅1099px以下）では、.studio-workspace の最初の div を display:contents にして、ステージ→音のお品書き→企画卓・歌枠ノート・AIキャラ の順に order で並べています（css/studio.css の末尾）。
 - 曲リストの曲は srcs（u:URL, n:音源名, by:提供者, k:キー, kind:種類, f:音源ファイルの保存場所）、sk（シートの「選択用」表記）、w（作品名）、useSrc（最後に▶で開いた音源）を持ちます。歌唱の記録は src（音源名かURL）を持ちます。URLは okeNorm() で整え、http(s) 以外は受け付けません。
 - 歌枠管理シートとの連携は js/visual/19-sheet.js。Apps Script のコードは dev/otonoha-sheet.gs で、19-sheet.js の SHEET_GAS に同じ内容を埋め込んでいます（変えるときは両方）。つなぎ先は localStorage の otonoha-sheet-link に置き、state には入れません。シートの列は見出しの始まりの文字で探します。
+
+---
+
+## 2026-11-08 追記（STUDIO 0.9.3）
+
+- 背景画像は js/visual/85-backgrounds.js。名義（profiles[].bgs[aspect] と bgSel[aspect]）に、{id, name, x, y, z} を持ちます。画像は IDB の visual-studio:bgi-<id> で、使うときに読み込みます（bgImage）。.live の書き出しでは、読み込んでいない背景画像も __otonohaStudio.extra（bgAllBlobs）で渡します。
+- 映像の向きは landscape / portrait / x34（960×1280）。縦横の比を前提にした固定の寸法を書かないでください（プレビューは W/H から計算）。
+- アプリ表示の「キャラクターだけ」：アプリの表示があるときだけ、立ち絵を透過のレイヤー（appLayerCtx）に描いてから配信画面へ写し、そのレイヤーを切り抜いてアプリ側に使います（drawAvatar の4つ目の引数が描く先）。マスコットはアプリ側だけ appCharDraw でキャラクターのまわりを楕円にめぐらせます。どちらも縦横同じ倍率で縮めるだけです。
+- .live の studio 資産に app-<id>（text/html）が入ります。読み込みでは IDB の app:<id> に戻します。

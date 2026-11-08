@@ -1,6 +1,6 @@
 /* 企画のポン出し：セリフ帳・スロット・ルーレット・サイコロ・登録アプリを、ステージから一押しで出す */
 
-  const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window'});
+  const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
   const ponBags={};
   // 並べるもの（シチュエーションは、セリフのあるものだけ）
   function ponItems(){
@@ -55,8 +55,10 @@
   }
   let ponSig='',ponNodes=[];
   function renderPon(){
-    const c=ponCfg(),all=ponItems(),shown=all.filter(it=>!c.hide.includes(it.id));
-    const sig=JSON.stringify([shown.map(it=>it.id+it.label),all.length,c.app]);
+    const c=ponCfg(),all=ponItems(),sv=c.serif||'all';
+    // シチュエーションは、ドロップダウンで選んだもの（すべて／1つ／使わない）。ほかはチェックボックス
+    const shown=all.filter(it=>it.kind==='serif'?(sv==='all'||sv==='s:'+it.s.id):!c.hide.includes(it.id));
+    const sig=JSON.stringify([shown.map(it=>it.id+it.label),all.map(it=>it.id+it.label),c.app,sv]);
     if(sig!==ponSig){
       ponSig=sig;
       ponNodes=shown.map(it=>{
@@ -68,7 +70,10 @@
       E('ponGrid').replaceChildren(...ponNodes.map(n=>n.b));
       E('ponEmpty').hidden=shown.length>0;
       // 並べるものの選択
-      E('ponPick').replaceChildren(...all.map(it=>{
+      const sel=E('ponSerif'),ser=all.filter(it=>it.kind==='serif');
+      sel.replaceChildren(...[['none','今回は使用しない'],['all','すべて並べる（'+ser.length+'個）'],...ser.map(it=>['s:'+it.s.id,it.label.replace(/^💬 /,'')])].map(([v,t])=>Object.assign(document.createElement('option'),{value:v,textContent:t})));
+      sel.value=sv==='all'||sv==='none'||ser.some(it=>'s:'+it.s.id===sv)?sv:'all';
+      E('ponPick').replaceChildren(...all.filter(it=>it.kind!=='serif').map(it=>{
         const l=document.createElement('label');l.className='pon-pick';
         const cb=document.createElement('input');cb.type='checkbox';cb.checked=!c.hide.includes(it.id);
         cb.onchange=()=>{c.hide=cb.checked?c.hide.filter(x=>x!==it.id):[...c.hide,it.id].slice(-300);save();renderPon()};
@@ -91,5 +96,6 @@
   E('ponSlotRb').onclick=()=>{slotSpin('b');ponState()};
   E('ponClear').onclick=()=>{play.serif=null;play.slot=null;play.dice=null;play.wheel=null;renderPlays();ponState()};
   E('ponApp').onchange=e=>{ponCfg().app=e.target.value==='page'?'page':'window';save();renderPon()};
-  E('ponAll').onclick=()=>{ponCfg().hide=[];save();renderPon()};
+  E('ponAll').onclick=()=>{ponCfg().hide=[];ponCfg().serif='all';save();renderPon()};
+  E('ponSerif').onchange=e=>{ponCfg().serif=e.target.value;save();renderPon()};
   setInterval(()=>{if(ponNodes.length||play.serif||play.slot)ponState()},400);

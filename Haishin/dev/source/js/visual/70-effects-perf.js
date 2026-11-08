@@ -172,8 +172,9 @@
       if(!c)continue;
       const r=c.getBoundingClientRect();
       if(!r.width||r.bottom<0||r.top>innerHeight)continue;
-      const pw=W>H?640:360,
-        ph=W>H?360:640;
+      // 縦横の比を崩さずに縮める
+      const pw=W>H?640:Math.round(640*W/H),
+        ph=W>H?Math.round(640*H/W):640;
       if(c.width!==pw||c.height!==ph){
         c.width=pw;
         c.height=ph
