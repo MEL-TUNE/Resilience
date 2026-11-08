@@ -1,7 +1,7 @@
 /* 歌枠ノート：曲リスト・セトリ・歌唱の記録 */
 
   const SB={
-    title:E('songTitle'),artist:E('songArtist'),memo:E('songMemo'),
+    title:E('songTitle'),artist:E('songArtist'),memo:E('songMemo'),oke:E('songOke'),okeBy:E('songOkeBy'),
     set:E('songList'),rep:E('repList'),repFilter:E('repFilter'),repCount:E('repCount'),
     log:E('singLog'),sessBtn:E('singSessBtn'),sessState:E('singSessState'),now:E('singNow'),undo:E('singUndo'),
     core:E('songbookCore'),home:E('songbookHome'),away:E('songbookAway')
@@ -10,17 +10,58 @@
   const sbId=()=>Math.random().toString(36).slice(2,10);
   function repList(){if(!Array.isArray(state.repertoire))state.repertoire=[];return state.repertoire}
   function logList(){if(!Array.isArray(state.singLog))state.singLog=[];return state.singLog}
-  function sbInput(){return {title:SB.title.value.trim(),artist:SB.artist.value.trim(),memo:SB.memo.value.trim()}}
-  function sbClear(){SB.title.value='';SB.artist.value='';SB.memo.value=''}
+  function sbInput(){return {title:SB.title.value.trim(),artist:SB.artist.value.trim(),memo:SB.memo.value.trim(),oke:SB.oke.value.trim(),okeBy:SB.okeBy.value.trim()}}
+  function sbClear(){SB.title.value='';SB.artist.value='';SB.memo.value='';SB.oke.value='';SB.okeBy.value=''}
+  // 探すときは、全角・半角や空白、英字の大小をそろえて比べる
+  const sbNorm=t=>String(t||'').normalize('NFKC').replace(/\s+/gu,'').toLowerCase();
+  // カラオケ音源のURL：共有ID（si=）などを外し、YouTubeの動画は watch?v= の形にそろえる。http(s) 以外は受け付けない
+  function okeNorm(raw){
+    const v=String(raw||'').trim();
+    if(!v)return '';
+    let u;try{u=new URL(/^[a-z][a-z0-9+.-]*:/i.test(v)?v:'https://'+v)}catch(_){return null}
+    if(!/^https?:$/.test(u.protocol))return null;
+    const id=ytId(u.href);
+    if(id&&/(^|\.)(youtube\.com|youtu\.be|youtube-nocookie\.com)$/i.test(u.hostname))return 'https://www.youtube.com/watch?v='+id;
+    for(const k of ['si','feature','pp','utm_source','utm_medium','utm_campaign','fbclid','igshid'])u.searchParams.delete(k);
+    return u.href.slice(0,500)
+  }
+  const srcLabel=x=>x.by||x.n||'音源';
+  function srcAdd(r,src){
+    if(!r||!src||(!src.u&&!src.n&&!src.by))return false;
+    if(!Array.isArray(r.srcs))r.srcs=[];
+    const same=r.srcs.find(x=>(src.u&&x.u===src.u)||(src.n&&x.n&&sbNorm(x.n)===sbNorm(src.n)));
+    if(same){for(const k of ['u','n','by','k','kind','f'])if(src[k]&&!same[k])same[k]=src[k];return false}
+    if(r.srcs.length>=8){toast('1曲に登録できる音源は8つまでです');return false}
+    r.srcs.push({u:src.u||'',n:(src.n||'').slice(0,200),by:(src.by||'').slice(0,120),k:(src.k||'').slice(0,20),kind:(src.kind||'').slice(0,30),f:src.f||''});
+    return true
+  }
+  // 音源を開く（カラオケ音源を探すときと同じ窓を使う）。開いた音源は、次の「♪ 歌い始め」の記録に残す
+  function okeOpen(r,x){
+    if(!x.u){toast('この音源にはURLがありません'+(x.f?'（音源ファイルの保存場所は「編集」から開けます）':''),4000);return}
+    r.useSrc=x.n||x.u;save();
+    karaGo(x.u)
+  }
+  function okeButtons(r){
+    const list=(r?.srcs||[]).filter(x=>x.u);
+    return list.map((x,i)=>rowBtn('▶ '+(x.by||'音源'+(list.length>1?i+1:'')),'sb-oke'+(r.useSrc&&(r.useSrc===x.n||r.useSrc===x.u)?' used':''),()=>{okeOpen(r,x);for(const b of document.querySelectorAll('.sb-oke'))b.classList.remove('used')},(x.n?x.n+'\n':'')+x.u))
+  }
   function repFind(t,a){const k=songKey(t,a);return repList().find(s=>songKey(s.title,s.artist)===k)}
-  function repAdd(t,a,memo){
+  function repAdd(t,a,memo,src){
     let s=repFind(t,a);
     if(!s){
       if(repList().length>=3000){toast('曲リストは3000曲までです');return null}
       s={id:sbId(),title:t.slice(0,200),artist:(a||'').slice(0,200),memo:(memo||'').slice(0,200),count:0,last:''};
       repList().push(s)
     }else if(memo)s.memo=memo.slice(0,200);
+    if(src)srcAdd(s,src);
     return s
+  }
+  // 入力欄の音源（URLが読めないときは null）
+  function formSrc(v){
+    if(!v.oke)return v.okeBy?{by:v.okeBy}:undefined;
+    const u=okeNorm(v.oke);
+    if(!u){toast('音源のURLが読めません（https:// から始まるURLを入れてください）',5000);return null}
+    return {u,by:v.okeBy}
   }
   const hms=sec=>{sec=Math.max(0,Math.floor(sec));const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=sec%60;return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')};
   // 「1:02:03」「12:34」「95」を秒に。読めなければ null
@@ -56,8 +97,9 @@
     const ss=state.singSess,now=new Date(),off=Math.round((now-new Date(ss.start))/1000);
     const x={id:sbId(),t:now.toISOString(),title:t,artist:a||'',sess:ss.id,start:ss.start,off,prof:ss.prof||curProfName()};
     state.setlistHide='';
-    logList().push(x);
     const r=repAdd(t,a);
+    {const ss2=(r?.srcs||[]),used=ss2.find(y=>r.useSrc&&(y.n===r.useSrc||y.u===r.useSrc))||(ss2.length===1?ss2[0]:null);if(used)x.src=used.n||used.u}
+    logList().push(x);
     if(r){r.count=(r.count||0)+1;r.last=x.t}
     sbLast=x;
     bridgeEmit('sing',{title:t,artist:a||''});audEvent('歌い始めた曲：'+t+(a?' / '+a:''));
@@ -94,20 +136,28 @@
     const v=sbInput();
     if(!v.title){toast('曲名を入力してください');return}
     if(state.songs.length>=300){toast('セトリは300曲までです');return}
+    const src=formSrc(v);if(src===null)return;
     state.songs.push({title:v.title,artist:v.artist});
-    const r=repAdd(v.title,v.artist,v.memo);
+    const r=repAdd(v.title,v.artist,v.memo,src);
     save();renderSet();if(r)repRowUpdate(r);sbClear()
   };
   E('repAdd').onclick=()=>{
     const v=sbInput();
     if(!v.title){toast('曲名を入力してください');return}
-    const had=!!repFind(v.title,v.artist),r=repAdd(v.title,v.artist,v.memo);
-    if(r){save();repRowUpdate(r);sbClear();toast(had?'登録済みの曲です（メモを更新しました）':'曲リストに登録しました')}
+    const src=formSrc(v);if(src===null)return;
+    const had=repFind(v.title,v.artist),n0=had?.srcs?.length||0,r=repAdd(v.title,v.artist,v.memo,src);
+    if(r){save();repRowUpdate(r,true);sbClear();toast(had?((r.srcs?.length||0)>n0?'登録済みの曲に音源を足しました':'登録済みの曲です'+(v.memo?'（メモを更新しました）':'')):'曲リストに登録しました')}
   };
   E('singNowBtn').onclick=()=>{
     const v=sbInput();
     if(!v.title){toast('曲名を入力するか、セトリ・曲リストの「♪ 歌い始め」を押してください',5000);return}
     sing(v.title,v.artist);sbClear()
+  };
+  E('songOkeFind').onclick=()=>{
+    const v=sbInput();
+    if(!v.title){toast('探す曲名を入力してください');return}
+    E('karaQuery').value=[v.title,v.artist].filter(Boolean).join(' ');
+    E('karaAll').click()
   };
   E('songSearch').onclick=()=>{
     const v=sbInput();
@@ -124,6 +174,7 @@
   E('songCopy').onclick=()=>copy(state.songs.map((s,i)=>`${i+1}. ${s.title}${s.artist?' / '+s.artist:''}`).join('\n'));
   E('songClear').onclick=e=>armed(e.currentTarget,'もう一度押すとセトリを空にする',()=>{state.songs=[];save();renderSet()});
   {let tm=0;SB.repFilter.oninput=()=>{clearTimeout(tm);tm=setTimeout(renderRep,180)}}
+  E('repSort').onchange=e=>{state.repSort=['name','count'].includes(e.target.value)?e.target.value:'recent';save();renderRep()};
 
   function rowBtn(label,cls,fn,title){const b=document.createElement('button');b.type='button';b.textContent=label;if(cls)b.className=cls;if(title)b.title=title;b.onclick=fn;return b}
   function songSpan(t,a,extra){const s=document.createElement('span');s.className='sb-name';s.textContent=t+(a?' / '+a:'');if(extra){const x=document.createElement('small');x.textContent=extra;s.append(x)}return s}
@@ -133,7 +184,7 @@
     SB.set.replaceChildren();
     state.songs.forEach((s,i)=>{
       const li=document.createElement('li');
-      li.append(rowBtn('♪ 歌い始め','sb-sing',()=>sing(s.title,s.artist),'この曲を歌い始めた時刻を記録します'),songSpan(s.title,s.artist));
+      li.append(rowBtn('♪ 歌い始め','sb-sing',()=>sing(s.title,s.artist),'この曲を歌い始めた時刻を記録します'),songSpan(s.title,s.artist),...okeButtons(repFind(s.title,s.artist)));
       li.append(rowBtn('↑','',()=>{if(i>0){[state.songs[i-1],state.songs[i]]=[state.songs[i],state.songs[i-1]];save();renderSet()}}),
         rowBtn('↓','',()=>{if(i<state.songs.length-1){[state.songs[i+1],state.songs[i]]=[state.songs[i],state.songs[i+1]];save();renderSet()}}),
         rowBtn('外す','',()=>{state.songs.splice(i,1);save();renderSet()}));
@@ -144,33 +195,83 @@
 
   // 曲リスト：行は曲のIDごとに持ち、歌った曲だけ書き換える
   const repRows=new Map();
-  const repInfo=s=>(s.count?'歌った回数 '+s.count+'回':'まだ記録なし')+(s.last?'・最後 '+s.last.slice(0,10):'')+(s.memo?'・'+s.memo:'');
-  const repMatch=(s,q)=>!q||(s.title+' '+s.artist+' '+(s.memo||'')).toLowerCase().includes(q);
+  const repInfo=s=>(s.count?'歌った回数 '+s.count+'回':'まだ記録なし')+(s.last?'・最後 '+s.last.slice(0,10):'')+(s.srcs?.length?'・音源 '+s.srcs.length:'')+(s.memo?'・'+s.memo:'');
+  const repHay=s=>sbNorm(s.title+' '+s.artist+' '+(s.memo||'')+' '+(s.w||'')+' '+(s.srcs||[]).map(x=>x.n+' '+x.by+' '+x.u).join(' '));
+  const repMatch=(s,q)=>!q||q.split(/\s+/).filter(Boolean).every(w=>repHay(s).includes(sbNorm(w)));
   function repRow(s){
     const li=document.createElement('li');
     li.dataset.rep=s.id;
-    li.append(rowBtn('♪ 歌い始め','sb-sing',()=>sing(s.title,s.artist)),songSpan(s.title,s.artist,repInfo(s)),
+    li.append(rowBtn('♪ 歌い始め','sb-sing',()=>sing(s.title,s.artist)),songSpan(s.title,s.artist,repInfo(s)),...okeButtons(s),
       rowBtn('セトリへ','',()=>{state.songs.push({title:s.title,artist:s.artist});save();renderSet();toast('セトリに追加しました')}),
+      rowBtn('編集','',()=>repEdit(s,li)),
       rowBtn('削除','',e=>armed(e.currentTarget,'もう一度押すと削除',()=>{state.repertoire=repList().filter(x=>x!==s);save();repRows.get(s.id)?.remove();repRows.delete(s.id);SB.repCount.textContent=repList().length+'曲'})));
     repRows.set(s.id,li);
     return li
   }
-  function repRowUpdate(s){
+  // 曲の編集：曲名・アーティスト・メモと、音源（名前・提供者・URL）
+  function repEdit(s,li){
+    if(li.nextElementSibling?.classList.contains('sb-edit')){li.nextElementSibling.remove();return}
+    const box=document.createElement('li');box.className='sb-edit';
+    const inp=(label,val,max,type)=>{const l=document.createElement('label');l.className='studio-field';const i=document.createElement('input');i.type=type||'text';i.maxLength=max;i.value=val||'';l.append(label,i);return [l,i]};
+    const [lt,it]=inp('曲名',s.title,200),[la,ia]=inp('アーティスト',s.artist,200),[lm,im]=inp('メモ',s.memo,200);
+    const srcBox=document.createElement('div');srcBox.className='sb-srcs';
+    const rows=[];
+    const addRow=x=>{
+      const r=document.createElement('div');r.className='sb-src-row';
+      const [ln,inn]=inp('音源の名前',x.n,200),[lb,ib]=inp('提供者',x.by,120),[lu,iu]=inp('URL',x.u,500,'url');
+      const parts=[ln,lb,lu];
+      if(x.f){const fb=rowBtn('📁 音源ファイルの場所を開く','',()=>window.open(x.f,'_blank','noopener'));parts.push(fb)}
+      const del=rowBtn('この音源を外す','',()=>{r.remove();rows.splice(rows.indexOf(o),1)});
+      r.append(...parts,del);srcBox.append(r);
+      const o={x,inn,ib,iu};rows.push(o)
+    };
+    (s.srcs||[]).forEach(addRow);
+    const row=document.createElement('div');row.className='studio-row';
+    row.append(rowBtn('＋ 音源を足す','',()=>{if(rows.length>=8){toast('1曲に登録できる音源は8つまでです');return}addRow({})}),
+      rowBtn('保存','accent',()=>{
+        const t=it.value.trim(),a=ia.value.trim();
+        if(!t){toast('曲名を入れてください');return}
+        const other=repFind(t,a);
+        if(other&&other!==s){toast('同じ曲名・アーティストの曲がすでにあります',4000);return}
+        const srcs=[];
+        for(const o of rows){
+          const raw=o.iu.value.trim(),u=raw?okeNorm(raw):'';
+          if(u===null){toast('音源のURLが読めません：'+raw.slice(0,40),5000);o.iu.focus();return}
+          if(!u&&!o.inn.value.trim()&&!o.ib.value.trim())continue;
+          srcs.push({...o.x,u,n:o.inn.value.trim().slice(0,200),by:o.ib.value.trim().slice(0,120)})
+        }
+        // 曲名を変えたら、これまでの記録とセトリも同じ曲として付け替える
+        const k0=songKey(s.title,s.artist),k1=songKey(t,a);
+        if(k0!==k1){for(const x of logList())if(songKey(x.title,x.artist)===k0){x.title=t;x.artist=a}for(const x of state.songs)if(songKey(x.title,x.artist)===k0){x.title=t;x.artist=a}}
+        s.title=t.slice(0,200);s.artist=a.slice(0,200);s.memo=im.value.trim().slice(0,200);s.srcs=srcs;
+        if(s.useSrc&&!srcs.some(x=>x.n===s.useSrc||x.u===s.useSrc))delete s.useSrc;
+        saveNow();box.remove();renderRep();renderSet();if(k0!==k1)renderLog();toast('保存しました',2000)
+      }),
+      rowBtn('閉じる','',()=>box.remove()));
+    box.append(Object.assign(document.createElement('div'),{className:'studio-inline'}),lm,srcBox,row);
+    box.firstChild.append(lt,la);
+    li.after(box);it.focus()
+  }
+  function repRowUpdate(s,rebuild){
     SB.repCount.textContent=repList().length+'曲';
-    const q=SB.repFilter.value.trim().toLowerCase(),li=repRows.get(s.id);
-    if(li){li.querySelector('.sb-name small').textContent=repInfo(s);if(!q&&s.last&&SB.rep.firstElementChild!==li)SB.rep.prepend(li);return}
+    const q=SB.repFilter.value.trim(),li=repRows.get(s.id);
+    if(li&&rebuild){const n=repRow(s);li.replaceWith(n);if(!q&&(state.repSort||'recent')==='recent'&&SB.rep.firstElementChild!==n)SB.rep.prepend(n);return}
+    if(li){li.querySelector('.sb-name small').textContent=repInfo(s);if(!q&&(state.repSort||'recent')==='recent'&&s.last&&SB.rep.firstElementChild!==li)SB.rep.prepend(li);return}
     if(!repMatch(s,q))return;
     SB.rep.querySelector('.sb-empty')?.remove();
     SB.rep.prepend(repRow(s))
   }
   function renderRep(){
-    const q=SB.repFilter.value.trim().toLowerCase(),all=repList();
-    const list=all.filter(s=>repMatch(s,q)).sort((a,b)=>(b.last||'').localeCompare(a.last||'')||a.title.localeCompare(b.title,'ja'));
-    SB.repCount.textContent=all.length+'曲';
+    const q=SB.repFilter.value.trim(),all=repList(),sort=state.repSort||'recent';
+    E('repSort').value=sort;
+    const byName=(a,b)=>a.title.localeCompare(b.title,'ja')||a.artist.localeCompare(b.artist,'ja');
+    const list=all.filter(s=>repMatch(s,q)).sort(sort==='name'?byName:sort==='count'?(a,b)=>(b.count||0)-(a.count||0)||byName(a,b):(a,b)=>(b.last||'').localeCompare(a.last||'')||byName(a,b));
+    SB.repCount.textContent=all.length+'曲'+(q?' のうち '+list.length+'曲':'');
     repRows.clear();
     SB.rep.replaceChildren(...list.slice(0,300).map(repRow));
-    if(list.length>300)SB.rep.append(sbEmpty('li','ほか'+(list.length-300)+'曲（絞り込みで探せます）'));
-    if(!all.length)SB.rep.append(sbEmpty('li','まだ曲が登録されていません。上で曲名・アーティストを入れて「曲リストに登録」を押すか、「♪ 歌い始め」で記録すると自動で登録されます'))
+    if(list.length>300)SB.rep.append(sbEmpty('li','ほか'+(list.length-300)+'曲（探す欄で絞り込めます）'));
+    if(!all.length)SB.rep.append(sbEmpty('li','まだ曲が登録されていません。「＋ 曲を登録する」から曲名・アーティスト・音源のURLを入れるか、「歌枠管理シートとつなぐ」で読み込めます'));
+    else if(!list.length)SB.rep.append(sbEmpty('li','見つかりませんでした'))
   }
 
   function sessions(){
@@ -205,7 +306,7 @@
   function logItemRow(x){
     const li=document.createElement('li');
     li.dataset.log=x.id;
-    const name=songSpan(hms(x.off)+'　'+x.title,x.artist,Number.isFinite(x.off0)&&x.off0!==x.off?'時刻を直しました（記録した時刻 '+hms(x.off0)+'）':'');
+    const name=songSpan(hms(x.off)+'　'+x.title,x.artist,[x.src?'音源：'+((()=>{const y=(repFind(x.title,x.artist)?.srcs||[]).find(y=>y.n===x.src||y.u===x.src);return y?(y.n||y.by||x.src):x.src})()):'',Number.isFinite(x.off0)&&x.off0!==x.off?'時刻を直しました（記録した時刻 '+hms(x.off0)+'）':''].filter(Boolean).join('　'));
     const edit=rowBtn('時刻','',()=>{
       const inp=document.createElement('input');
       inp.className='sb-time';inp.value=hms(x.off);inp.inputMode='numeric';inp.setAttribute('aria-label','経過時間（時:分:秒）');
@@ -289,10 +390,14 @@
     const desc=document.createElement('details');desc.className='sb-desc';
     const dsum=document.createElement('summary');dsum.textContent='概要欄を作る（アーカイブのURLと時刻を入れる）';
     const descBody=document.createElement('div');desc.append(dsum,descBody);
+    const sh=document.createElement('details');sh.className='sb-desc';
+    const shsum=document.createElement('summary');shsum.textContent='歌枠管理シートへ（配信ログに送る・コピー）';
+    const shBody=document.createElement('div');sh.append(shsum,shBody);
+    sh.ontoggle=()=>{if(sh.open){const c=sessOf(s.id);if(c)sheetBox(c,shBody)}};
     const rec={box,sum,ol,filled:false,desc,descBody};
     desc.ontoggle=()=>{if(desc.open){const c=sessOf(s.id);if(c)descBuild(c,rec)}};
     box.ontoggle=()=>{if(box.open&&!rec.filled){const c=sessOf(s.id);if(c)sessFill(c,rec)}};
-    box.append(sum,ol,row,desc);
+    box.append(sum,ol,row,desc,sh);
     sessBoxes.set(s.id,rec);
     return rec
   }
@@ -329,7 +434,7 @@
   }
   // 毎秒の更新は経過時間の表示だけ（記録の全件はたどらない）
   setInterval(()=>{if(state.singSess)SB.sessState.textContent='記録中 '+hms((Date.now()-new Date(state.singSess.start))/1000)+'（'+localTime(state.singSess.start)+'から）'},1000);
-  function renderSongs(){sbLast=sessLast();renderSess();renderSet();renderRep();renderLog();renderSongOpts()}
+  function renderSongs(){sbLast=sessLast();renderSess();renderSet();renderRep();renderLog();renderSongOpts();renderSheet()}
 
   // 概要欄の形・画面に出すセトリの設定
   function renderSongOpts(){

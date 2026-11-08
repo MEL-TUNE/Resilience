@@ -388,3 +388,48 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 .sb-undo-row{margin:0 0 6px}
 .save-state{font-size:11px}
 .save-state[data-s="failed"]{color:var(--rec);font-weight:700}
+
+/* 0.9.2 絵文字の効果音・文字の効果音・ボイスは同じ仲間：間の線を引かない */
+.section.sec-join{border-top:0;padding-top:0;margin-top:22px}
+/* 0.9.2 1列のときは、音のお品書きを企画卓・歌枠ノート・AIキャラより上に置く */
+@media(max-width:1099px){
+  .studio-workspace>div:first-child{display:contents}
+  .studio-workspace>div:first-child>.stage-card{order:1}
+  .studio-workspace>#boardShell{order:2}
+  .studio-workspace>div:first-child>.mode-section{order:3}
+}
+
+/* 0.9.2 企画のポン出し */
+.pon-bar{border:2px solid var(--accent);border-radius:14px;padding:12px;margin:0 0 10px;background:var(--hi)}
+.pon-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
+.pon-head strong{font-size:17px;letter-spacing:.06em}
+.pon-clear{border:2px solid var(--ink);border-radius:10px;padding:8px 12px;font-weight:700;background:var(--ink);color:var(--paper);cursor:pointer}
+.pon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.pon-btn{border:2px solid var(--accent);border-radius:12px;padding:12px 8px;font-size:15px;font-weight:700;background:var(--hi);color:var(--ink);cursor:pointer;text-align:center;line-height:1.35;overflow-wrap:anywhere}
+.pon-btn.on{background:var(--accent);color:var(--on-accent);box-shadow:0 3px 0 color-mix(in srgb,var(--accent) 55%,#000)}
+.pon-sub{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.pon-sub:not(:has(button:not([hidden]))){display:none}
+.pon-now{margin:8px 0 0;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.pon-opts{margin-top:8px;font-size:13px}
+.pon-picks{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0}
+.pon-pick{display:inline-flex;align-items:center;gap:4px}
+body[data-app="live"][data-kind="stream"] .pon-bar{order:1}
+body[data-app="live"][data-kind="stream"] .live-console{order:0}
+
+/* 0.9.2 歌枠ノート */
+.sb-flow{margin:4px 0 14px;padding:10px 12px 10px 30px;border-radius:12px;background:var(--a-p-6);font-size:13px;line-height:1.7}
+.sb-find{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+.sb-find .sb-filter{flex:1 1 240px;font-size:16px;padding:10px 12px}
+.sb-sort{flex:0 0 auto}
+.sb-add{margin:8px 0;border:1px dashed var(--a-p-45);border-radius:12px;padding:8px 10px}
+.sb-add>summary{cursor:pointer;font-weight:700}
+.sb-oke{border-color:var(--accent)!important;font-weight:700}
+.sb-oke.used{background:var(--a-p-20)!important}
+.sb-edit{display:block!important;border:1px solid var(--a-p-45);border-radius:12px;padding:10px;background:var(--hi)}
+.sb-src-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:6px;align-items:end;padding:8px 0;border-top:1px dashed var(--a-p-30)}
+.sb-h4{font-size:14px;margin:14px 0 4px}
+.sb-steps{padding-left:20px;line-height:1.7}
+.sb-steps code{background:var(--a-p-12);padding:0 4px;border-radius:4px}
+.studio-field input[type=url],.studio-field input[type=password],.studio-field input[type=search],.studio-field input:not([type]){width:100%;border:1px solid var(--a-p-45);background:var(--hi);border-radius:8px;padding:9px;font:inherit;color:var(--ink)}
+.sb-list li.sb-edit{display:block;padding:12px 14px;margin:4px 0 8px}
+.sb-edit .studio-field{display:block;margin:6px 0}
