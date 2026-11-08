@@ -464,3 +464,6 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .stage-group>.studio-row>.studio-mini:first-child{flex:0 0 100%;font-weight:700;color:var(--ink);opacity:.8;font-size:12px;letter-spacing:.05em}
 .stage-group>.studio-row button:not([aria-pressed="true"]):not(.selected){background:var(--hi)}
 .ghost-btn{border-style:dashed!important;background:transparent!important;font-size:12px}
+
+/* 0.9.5-gpt1（ChatGPT）：ドラッグで動かせないときは、プレビューの上でも指で画面をスクロールできる */
+#studioCanvas.locked{touch-action:pan-x pan-y;cursor:default}

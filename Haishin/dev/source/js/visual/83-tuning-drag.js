@@ -40,7 +40,10 @@
   E('dragFree').onclick=()=>{dragFree=!dragFree;lockView();if(!dragFree)endDrag()};
   lockView();
   canvas.addEventListener('pointerdown',e=>{
-    if(e.button!==0||!dragOn())return;
+    // 0.9.5-gpt1（ChatGPT）：始めたポインター（指）だけがドラッグを持つ。ほかの指では始めない
+    // 終わりの知らせを取りこぼして、つかんだままになっていたら外す
+    if(drag&&!canvas.hasPointerCapture(drag.pointerId))drag=null;
+    if(e.button!==0||!dragOn()||drag)return;
     const p=stagePoint(e);
     let target=null;
     // 手前に描くものから：スロット・ルーレット・サイコロ → マスコット → 立ち絵
@@ -48,19 +51,19 @@
       const on=kind==='slot'?play.slot&&slotCfg().look!=='bubble':play[kind],b=playBoxes[kind];
       if(on&&b&&p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h){
         const L=playLayGet(kind)||{x:(b.x+b.w/2)/W*100,y:(b.y+b.h/2)/H*100,s:100};
-        drag={target:{play:kind},p0:p,ox:L.x,oy:L.y,s:L.s};
+        drag={pointerId:e.pointerId,target:{play:kind},p0:p,ox:L.x,oy:L.y,s:L.s};
         canvas.setPointerCapture(e.pointerId);canvas.classList.add('dragging');e.preventDefault();return
       }
     }
     for(const m of [...myMascots()].reverse())if(m._box&&p.x>=m._box.x&&p.x<=m._box.x+m._box.w&&p.y>=m._box.y&&p.y<=m._box.y+m._box.h){target=m;break}
     if(!target&&sceneAvatar()){const gg=avatarGeom();if(p.x>=gg.cx-gg.w/2&&p.x<=gg.cx+gg.w/2&&p.y>=gg.bottom-gg.h&&p.y<=gg.bottom)target='avatar'}
     if(!target)return;
-    drag={target,p0:p,ox:target==='avatar'?state.x:target.x,oy:target==='avatar'?state.y:target.y};
+    drag={pointerId:e.pointerId,target,p0:p,ox:target==='avatar'?state.x:target.x,oy:target==='avatar'?state.y:target.y};
     if(target!=='avatar'){mscSel=target.id;renderMascotUI()}
     canvas.setPointerCapture(e.pointerId);canvas.classList.add('dragging');e.preventDefault()
   });
   canvas.addEventListener('pointermove',e=>{
-    if(!drag)return;
+    if(!drag||e.pointerId!==drag.pointerId)return;
     const p=stagePoint(e),dx=p.x-drag.p0.x,dy=p.y-drag.p0.y;
     if(drag.target.play){
       playLaySet(drag.target.play,{x:drag.ox+dx/W*100,y:drag.oy+dy/H*100,s:drag.s});
@@ -76,6 +79,7 @@
       E('mscX').value=drag.target.x;E('mscY').value=drag.target.y
     }
   });
-  const endDrag=()=>{if(!drag)return;drag=null;canvas.classList.remove('dragging');save()};
+  // 0.9.5-gpt1（ChatGPT）：ほかの指が離れても終わらない。ボタンなどで終えるとき（引数なし）も、つかみを放す
+  const endDrag=e=>{if(!drag||(e&&e.pointerId!==drag.pointerId))return;const id=drag.pointerId;drag=null;if(canvas.hasPointerCapture(id))canvas.releasePointerCapture(id);canvas.classList.remove('dragging');save()};
   canvas.addEventListener('pointerup',endDrag);canvas.addEventListener('pointercancel',endDrag);canvas.addEventListener('lostpointercapture',endDrag);
   E('quickTune').addEventListener('toggle',()=>{if(!E('quickTune').open)endDrag()});
