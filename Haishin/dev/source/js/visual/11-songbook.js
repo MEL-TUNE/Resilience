@@ -25,7 +25,6 @@
     for(const k of ['si','feature','pp','utm_source','utm_medium','utm_campaign','fbclid','igshid'])u.searchParams.delete(k);
     return u.href.slice(0,500)
   }
-  const srcLabel=x=>x.by||x.n||'音源';
   function srcAdd(r,src){
     if(!r||!src||(!src.u&&!src.n&&!src.by))return false;
     if(!Array.isArray(r.srcs))r.srcs=[];

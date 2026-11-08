@@ -161,8 +161,7 @@
     save()
   };
 
-  let pvCtx=null,
-    pvAt=0;
+  let pvAt=0;
   function previewMirror(now){
     if(document.body.dataset.page!=='settings')return;
     if(now-pvAt<(state.light?95:66))return;

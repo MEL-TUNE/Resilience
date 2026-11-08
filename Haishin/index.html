@@ -536,7 +536,6 @@ a{color:var(--accent)}
 body[data-studio-mode=plan] .recbar,body[data-studio-mode=plan] .studio{display:none}
 body[data-page=settings] .studio-extension{display:none}
 .studio-live-box{border:1px solid var(--a-p-45);border-radius:9px;padding:12px;white-space:pre-wrap;min-height:48px;margin-top:10px;font-size:13px}
-.stage-actions .recording{background:var(--rec);color:white}
 .kara-h{font-size:15px;margin:2px 0 6px}
 .kara-channels{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .kara-ch{display:flex;flex-direction:column;align-items:flex-start;gap:2px;max-width:100%;text-align:left;padding:7px 11px;border-radius:12px}
@@ -585,7 +584,6 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
   .studio-workspace{grid-template-columns:1fr}
   .studio-card{padding:12px}
   .studio-inline{grid-template-columns:1fr}
-  .stage-actions button{flex:1}
   .top h1{font-size:21px}
   .studio-state{width:100%;margin:0}
   .studio-tabs button{flex:1}
@@ -605,10 +603,7 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
   .studio-note{line-height:1.5}
   .studio-kicker{font-size:9px}
 }
-.scene-bar{flex-wrap:wrap;gap:6px}
-.scene-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 #studioMute[aria-pressed="true"]{background:var(--decor);color:var(--on-decor);border-color:var(--decor)}
-.scene-sep{width:1px;align-self:stretch;background:var(--a-p-45);margin:0 4px}
 .scene-details{margin:8px 0;border-top:1px solid var(--a-p-20);padding-top:8px}
 .scene-details summary{cursor:pointer;font-size:13px}
 .scene-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -616,10 +611,8 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
 .scene-set legend{font-size:12px;padding:0 4px}
 .scene-text{min-height:60px}
 #studioSinkSel{flex:1;min-width:160px;max-width:100%}
-body:not([data-studio-mode="live"]) .live-only{display:none}
 @media(max-width:780px){
   .scene-grid{grid-template-columns:1fr}
-  .scene-sep{display:none}
 }
 body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;height:min(72vh,820px)!important;max-height:none!important;width:auto;max-width:100%;margin:0 auto}
 .motion-bar{flex-wrap:wrap;gap:6px}
@@ -633,7 +626,7 @@ body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;heig
 .prompt-out{white-space:pre-wrap;font-size:11px;line-height:1.6;max-height:220px;overflow:auto;border:1px solid var(--a-p-45);border-radius:8px;padding:8px;background:var(--hi)}
 @media(max-width:780px){
   .motion-bar .studio-mini{width:100%}
-  .motion-bar button,.scene-bar button{flex:1 1 auto;white-space:nowrap;padding-left:8px;padding-right:8px;font-size:12px}
+  .motion-bar button{flex:1 1 auto;white-space:nowrap;padding-left:8px;padding-right:8px;font-size:12px}
   #studioMute{flex-basis:100%}
   .studio-tabs button{font-size:12px;white-space:nowrap;padding-left:4px;padding-right:4px}
   .fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -721,7 +714,7 @@ body{padding-top:var(--mini-h,0px)}
   .rec-opt select{flex:1 1 0;width:0;font-size:13px}
   .studio-take{flex-wrap:wrap}
   .studio-take .vname{flex-basis:100%}
-  .scene-bar button,.motion-bar button,.char-bar button,.expr-bar button,.speaker-bar button{padding:7px 9px;font-size:12px}
+  .motion-bar button,.char-bar button,.expr-bar button,.speaker-bar button{padding:7px 9px;font-size:12px}
 }
 .rec-note{font-size:11px;color:var(--muted);margin:6px 0 0}
 .scene-font-row{display:flex;flex-wrap:wrap;align-items:end;gap:10px 16px;margin-top:12px}
@@ -864,7 +857,7 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 .app-chips button.selected{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .app-url{flex:1 1 260px;margin:0}
 .app-stage{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;align-items:start;margin:10px 0}
-.app-frame-box{position:relative;border:1px solid var(--a-p-30);border-radius:12px;overflow:hidden;background:var(--hi);aspect-ratio:16/10;min-height:300px;resize:vertical}
+.app-frame-box{position:relative;border:1px solid var(--a-p-30);border-radius:12px;overflow:hidden;background:var(--hi);aspect-ratio:16/10;width:100%;min-width:0;min-height:220px;resize:vertical}
 .app-frame-box iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
 .app-away{position:absolute;inset:0;display:grid;place-items:center;margin:0;background:var(--paper);font-weight:700}
 .app-mirror-box{margin:0}
@@ -1047,7 +1040,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.3 / 背景画像（名義×向き）・3:4・アプリ表示はキャラクターだけ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.4 / 向きごとに立ち絵・マスコットの位置を記憶・コード整理</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button><button data-mode="aivoice">AIキャラ・声</button></nav>
@@ -1839,13 +1832,6 @@ function growSe(){
 }
 
 const ensureEmojiSlots=config=>ensureSe(config,'emoji');
-
-function fixedSlots(config,type,min,cols){
-  let max=-1;
-  for(const s of config.sounds)if(s.type===type&&isRealSound(s)&&Number.isInteger(s.slotIndex))max=Math.max(max,s.slotIndex);
-  const used=config.sounds.filter(s=>s.type===type&&isRealSound(s)).length;
-  return Math.max(min,Math.ceil(Math.max(max+1,used)/cols)*cols)
-}
 
 const ensureTextSlots=config=>layoutVoices(ensureSe(ensureSe(config,'text'),'env'),null);
 
@@ -7438,7 +7424,7 @@ fps:30,
   window.__otonohaSaveState=()=>saveSt;
   window.__otonohaSaveFlush=()=>saveTm?saveWrite():saveSt!=='failed';
 
-  function sanitize(v){
+function sanitize(v){
     v=v&&typeof v==='object'&&!Array.isArray(v)?v:{};
     const out={...defaults};
     for(const k of ['threshold','hold','scale','x','y','count','speed','fxSize','fxOpacity']){
@@ -7553,7 +7539,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     out.vidFormat=v.vidFormat==='webm'?'webm':'mp4';
     out.vidQuality=[4.5,8,16].includes(Number(v.vidQuality))?Number(v.vidQuality):8;
     {const MV=['float','sway','hop','run','shake','still','play','walk'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];
-     if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,600)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40),tilt:num(m.tilt,-180,180,0),kind:m.kind==='mini'?'mini':'mascot',owner:typeof m.owner==='string'&&/^[a-z0-9]{1,16}$/.test(m.owner)?m.owner:''})}
+     if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,600)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40),tilt:num(m.tilt,-180,180,0),pos:aspectPosClean(m.pos,'msc'),kind:m.kind==='mini'?'mini':'mascot',owner:typeof m.owner==='string'&&/^[a-z0-9]{1,16}$/.test(m.owner)?m.owner:''})}
      
      out.speaker=typeof v.speaker==='string'&&(v.speaker==='self'||out.mascots.some(m=>m.id===v.speaker))?v.speaker:'self';
      out.sceneBoost=num(v.sceneBoost,0,12,6)}
@@ -7584,7 +7570,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
 
   state=sanitize(state);
 
-  function assetName(id){
+function assetName(id){
     return ['png0','png1','png2','png3'].includes(id)?slotNames[+id.slice(-1)]:id.startsWith('particle')?'降らせる画像'+(id==='particle'?1:+id.slice(8)+1):id.startsWith('fxp-')?'降らせる画像'+(+id.slice(-1)+1):id.startsWith('scene-')?'画面の画像':id.startsWith('msc-')?'マスコットの画像':'背景画像'
   }
 
@@ -7717,7 +7703,7 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     save()
   });
 
-  const bindings={
+const bindings={
     studioThreshold:'threshold',
     studioHold:'hold',
     studioMouthMode:'mouthMode',
@@ -7834,8 +7820,6 @@ for(const [id,k]of Object.entries(bindings)){
   }
 
   E('planCopy').onclick=()=>copy(`企画：${state.title||'未設定'}\n進行：${state.cue||'未設定'}\n\n${state.prompt}\n\n【台本・ここまでの内容】\n${state.script}\n\nこれは配信・収録用の企画です。上の指定に沿って、次の応答・進行案を作成してください。`);
-
-
 
 function karaDefaults(){
     return [
@@ -8275,7 +8259,6 @@ const SB={
     for(const k of ['si','feature','pp','utm_source','utm_medium','utm_campaign','fbclid','igshid'])u.searchParams.delete(k);
     return u.href.slice(0,500)
   }
-  const srcLabel=x=>x.by||x.n||'音源';
   function srcAdd(r,src){
     if(!r||!src||(!src.u&&!src.n&&!src.by))return false;
     if(!Array.isArray(r.srcs))r.srcs=[];
@@ -8811,7 +8794,6 @@ const APP_MAX=12;
     for(const [id,k,df] of [['appCX','appCX',100],['appCY','appCY',100],['appCSize','appCSize',42]]){E(id).value=state[k]??df;E(id+'Val').textContent=(state[k]??df)+'%'}
     appMirrorPlace();
     E('appSizeVal').textContent=state.appSize+'%';
-    E('appPos').disabled=state.appLayout==='side'&&false;
     E('appBgNote').hidden=state.appLayout!=='overlay'||state.bg==='transparent';
     renderBridge();
     renderPon();
@@ -8900,20 +8882,30 @@ const APP_MAX=12;
   function appCharLayer(){
     const pageMirror=!E('appStageWrap').hidden&&!appWinOpen();
     if(!appCharMode()||!(appWinOpen()&&appContext||pageMirror))return null;
-    if(!appLayerCtx){const c=document.createElement('canvas');appLayerCtx=c.getContext('2d')}
-    const c=appLayerCtx.canvas;
-    if(c.width!==W||c.height!==H){c.width=W;c.height=H}
-    appLayerEmpty=false;
+    if(!appLayerCtx){const c=document.createElement('canvas');c.width=APP_LW;c.height=APP_LH;appLayerCtx=c.getContext('2d')}
     return appLayerCtx
+  }
+  // レイヤーには、配信画面での位置・はみ出しに関係なく、全身を真ん中に描く（アプリ側で見切れないように）
+  const APP_LW=1000,APP_LH=1000;
+  let appLayerInfo=null;
+  function appLayerDraw(al,now,talking,blink,av){
+    const geo=av.geo,k=Math.min(APP_LH*.72/Math.max(1,geo.h),APP_LW*.36/Math.max(1,geo.w)),bottom=APP_LH*.95;
+    al.clearRect(0,0,APP_LW,APP_LH);
+    drawAvatar(now,talking,blink,al,{pose:av.pose,k,cx:APP_LW/2,bottom});
+    appLayerInfo={k,w:geo.w*k,h:geo.h*k,bottom};
+    appLayerEmpty=false
   }
   const appMscState={};
   // cx に cw×ch で描く。立ち絵は縦横同じ倍率で縮めるだけ（反転・変形はしない）
   function appCharDraw(cx,cw,ch,now){
     cx.clearRect(0,0,cw,ch);
     if(!appLayerCtx||appLayerEmpty)return;
-    const geo=avatarGeom(),t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
-    const hw=geo.w/2+W*.14,top=Math.max(0,geo.bottom-geo.h*1.1-H*.03),bot=Math.min(H,geo.bottom+2),
-      sx=Math.max(0,geo.cx-hw),ex=Math.min(W,geo.cx+hw),cropW=Math.max(1,ex-sx),cropH=Math.max(1,bot-top);
+    const L=appLayerInfo,t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
+    if(!L)return;
+    // 切り抜く範囲：全身＋動き（右往左往・跳ねる）の分。レイヤーの外には出ない
+    const move=W*.13*L.k*Math.max(1,(state.motionWander||0)/100)+18,
+      hw=Math.min(APP_LW/2,L.w/2+move),top=Math.max(0,L.bottom-L.h*1.08-40),
+      sx=APP_LW/2-hw,cropW=hw*2,cropH=APP_LH-top;
     const ms=state.appMsc!==false?myMascots().filter(m=>m.show&&images['msc-'+m.id]):[];
     const mx=ms.length?cw*.17:cw*.02,mt=ms.length?ch*.1:ch*.02;
     const s=Math.min((cw-2*mx)/cropW,(ch-mt)/cropH),dw=cropW*s,dh=cropH*s,dx=(cw-dw)/2,dy=ch-dh;
@@ -10347,6 +10339,7 @@ function cleanChar(c){
       breath:c.breath===true,
       bgMode:['inherit','own','cafe','transparent','green','blue','black'].includes(c.bgMode)?c.bgMode:'inherit',
       trim:c.trim!==false,
+      pos:aspectPosClean(c.pos,'char'),
       exprs:Array.isArray(c.exprs)?c.exprs.filter(e=>e&&typeof e==='object'&&typeof e.id==='string'&&/^[a-z0-9]{1,8}$/.test(e.id)).slice(0,12).map(e=>({id:e.id,name:String(e.name||'表情').slice(0,20),motion:['none','shake','hop','sing'].includes(e.motion)?e.motion:'none'})):[]
     };
     for(const k of CHAR_KEYS){
@@ -10461,7 +10454,7 @@ function cleanChar(c){
   function syncChar(){
     if(!Array.isArray(CHAR_KEYS))return;
     const c=curChar();
-    if(c)Object.assign(c,pickValues());
+    if(c){Object.assign(c,pickValues());charPosKeep(c)}
     const p=curProfile();
     if(p){
       p.snap=profileSnap();
@@ -10502,6 +10495,7 @@ function cleanChar(c){
     state.charId=cid;
     const c=state.chars[cid];
     for(const k of CHAR_KEYS)state[k]=c[k];
+    charPosApply(c);
     const p=curProfile();
     if(p)p.cur=cid;
     applyCharImages();
@@ -10643,7 +10637,7 @@ for(const q of particles)q.beh='';
     E('profileDel').disabled=state.profiles.length<2
   }
 
-  async function storeCharImage(cid,slot,f){
+async function storeCharImage(cid,slot,f){
     if(!/^image\/(png|webp|jpeg)$/.test(f.type))throw Error('PNG・WebP・JPEGの画像を選んでください');
     if(f.size>25*1024*1024)throw Error('画像は1枚25MB以下にしてください');
     const im=await decode(f);
@@ -10955,8 +10949,7 @@ for(const q of particles)q.beh='';
       return mouth
     },charKey,activateChar,activateProfile};
 
-
-  function setMode(mode){
+function setMode(mode){
     document.body.dataset.studioMode=mode;
     studioLiveMode=mode==='live';
     applyMonitor();
@@ -11252,9 +11245,12 @@ let W=1280,
       w=Math.ceil(dw),
       h=Math.ceil(dh);
     if(w*h>4200000||w>4096||h>4096)return null;
-    const e=avCache.get(im);
-    if(e&&e.f===f&&e.rx===r.x&&e.ry===r.y&&e.rw===r.w&&e.rh===r.h)return e;
-    const c=e&&e.c.width===w&&e.c.height===h?e.c:document.createElement('canvas');
+    const list=avCache.get(im)||[];
+    const e=list.find(x=>x.f===f&&x.rx===r.x&&x.ry===r.y&&x.rw===r.w&&x.rh===r.h);
+    if(e){if(list[0]!==e){list.splice(list.indexOf(e),1);list.unshift(e)}return e}
+    // 1枚の画像につき2つまで（配信画面とアプリ表示）。古いほうの描き先を使い回す
+    const old=list.length>=2?list.pop():null;
+    const c=old&&old.c.width===w&&old.c.height===h?old.c:document.createElement('canvas');
     c.width=w;
     c.height=h;
     const cg=c.getContext('2d');
@@ -11263,27 +11259,32 @@ let W=1280,
     cg.imageSmoothingQuality='high';
     cg.drawImage(im,r.x,r.y,r.w,r.h,0,0,dw,dh);
     const n={c,f,rx:r.x,ry:r.y,rw:r.w,rh:r.h,dw,dh};
-    avCache.set(im,n);
+    list.unshift(n);avCache.set(im,list);
     return n
   }
 
   // cx：描く先（ふだんは配信画面。アプリ表示でキャラクターだけを使うときは、透過のレイヤー）
-  function drawAvatar(now,talking,blink,cx=g){
+  // cx：描く先。view を渡すと、同じ動き（pose）のまま、別の場所・倍率 k で描く（アプリ表示のキャラクターだけ用）。
+  // 倍率は縦横同じ。戻り値の pose を view に渡すと、動きの計算を1フレームに1回で済ませられる
+  function drawAvatar(now,talking,blink,cx=g,view=null){
     const __c=curChar(),
       __single=!!(__c&&__c.mode==='single'),
       idx=__single?0:(blink?2:0)+(talking?1:0),
       im=exprImage(talking)||(__single?images.png0:images['png'+idx]||images['png'+(talking?1:0)]||images.png0),
-      pose=avatarPose(now,talking),
-      geo=avatarGeom();
+      pose=view?view.pose:avatarPose(now,talking),
+      geo=avatarGeom(),
+      k=view?view.k:1,
+      ax=view?view.cx:geo.cx,
+      pivot=view?view.bottom-(geo.bottom-pose.pv)*k:pose.pv;
 
     cx.save();
     {
       const __a=switchAlpha(now);
       if(__a<1)cx.globalAlpha=__a
     }
-    cx.translate(geo.cx+pose.dx,pose.pv+pose.dy);
+    cx.translate(ax+pose.dx*k,pivot+pose.dy*k);
     cx.rotate(pose.rot);
-    cx.translate(0,geo.bottom-pose.pv);
+    cx.translate(0,(geo.bottom-pose.pv)*k);
     cx.imageSmoothingEnabled=true;
     cx.imageSmoothingQuality=state.light?'medium':'high';
 
@@ -11291,20 +11292,20 @@ let W=1280,
       const ref=images.png0||im;
       if(im.width===ref.width&&im.height===ref.height){
         const r=charRect(ref),
-          f=Math.min(W/r.w,H/r.h)*state.scale/100;
+          f=Math.min(W/r.w,H/r.h)*state.scale/100*k;
         const sp=avSprite(im,r,f);
         if(sp)cx.drawImage(sp.c,-sp.dw/2,-sp.dh);else cx.drawImage(im,r.x,r.y,r.w,r.h,-r.w*f/2,-r.h*f,r.w*f,r.h*f)
       }else{
-        const factor=Math.min(W/ref.width,H/ref.height)*state.scale/100;
+        const factor=Math.min(W/ref.width,H/ref.height)*state.scale/100*k;
         const w=im.width*factor,
           h=im.height*factor;
         cx.drawImage(im,-w/2,-h,w,h)
       }
       cx.restore();
-      return
+      return {pose,geo}
     }
 
-    const s=state.scale/85;
+    const s=state.scale/85*k;
     cx.scale(s,s);
     cx.translate(0,-243);
     cx.fillStyle='#6b8b79';
@@ -11340,7 +11341,8 @@ let W=1280,
     cx.fillStyle=state.bg==='green'||state.bg==='blue'?'#111':'#6b7a6d';
     cx.textAlign='center';
     cx.font='18px sans-serif';
-    cx.fillText('動作確認用 / 4枚のPNGを登録してください',W/2,H-40)
+    if(!view)cx.fillText('動作確認用 / 4枚のPNGを登録してください',W/2,H-40);
+    return {pose,geo}
   }
 
   const particles=Array.from({length:100},(_,i)=>({
@@ -11643,9 +11645,16 @@ function applyAspect(){
       toast('収録中は映像の向きを変えられません');
       return
     }
-    state.aspect=['portrait','x34'].includes(e.target.value)?e.target.value:'landscape';
+    const next=['portrait','x34'].includes(e.target.value)?e.target.value:'landscape';
+    if(next===state.aspect)return;
+    // いまの向きの立ち絵・マスコットの位置を残して、次の向きの位置に戻す
+    aspectStash(state.aspect);
+    state.aspect=next;
+    aspectRestore(next);
     save();
     applyAspect();
+    renderValues();
+    renderMascotUI();
     renderBgList();
     if(outputWindow&&!outputWindow.closed)try{
       outputWindow.resizeTo(W>H?1280:state.aspect==='x34'?630:450,W>H?760:840)
@@ -11705,6 +11714,33 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
     E('promptOut').textContent=imagePrompt();
     E('promptOut').hidden=false
   };
+
+// 設定を読み込むとき（このファイルより先に動く）にも使うので、定数は関数の中に置く
+  function aspectPosClean(v,kind){
+    const keys=kind==='msc'?[['x',-100,100],['y',-100,100],['size',3,90],['tilt',-180,180]]:[['x',-100,100],['y',-100,100],['scale',10,500]];
+    const out={};
+    if(!v||typeof v!=='object')return out;
+    for(const a of ['landscape','portrait','x34']){
+      const q=v[a];if(!q||typeof q!=='object')continue;
+      const o={};
+      for(const [k,lo,hi] of keys){const n=Number(q[k]);if(!Number.isFinite(n))break;o[k]=Math.max(lo,Math.min(hi,n))}
+      if(Object.keys(o).length===keys.length)out[a]=o
+    }
+    return out
+  }
+  function charPosKeep(c,asp=state.aspect){if(!c)return;if(!c.pos||typeof c.pos!=='object')c.pos={};c.pos[asp]={x:state.x,y:state.y,scale:state.scale}}
+  function charPosApply(c,asp=state.aspect){const q=c?.pos?.[asp];if(q){state.x=q.x;state.y=q.y;state.scale=q.scale;c.x=q.x;c.y=q.y;c.scale=q.scale}}
+  function aspectStash(asp){
+    syncChar();
+    charPosKeep(curChar(),asp);
+    for(const m of state.mascots||[]){if(!m.pos||typeof m.pos!=='object')m.pos={};m.pos[asp]={x:m.x,y:m.y,size:m.size,tilt:m.tilt||0}}
+  }
+  function aspectRestore(asp){
+    charPosApply(curChar(),asp);
+    for(const m of state.mascots||[]){const r=m.pos?.[asp];if(r){m.x=r.x;m.y=r.y;m.size=r.size;m.tilt=r.tilt}}
+    // 走る・お散歩の途中の位置は画面の寸法で持っているので、向きを変えたら決めた位置からやり直す
+    for(const o of [mscRun,mscWalk,mscPlay])for(const k of Object.keys(o))delete o[k]
+  }
 
 let scene='live',
     muteBefore=null,
@@ -12149,9 +12185,10 @@ let frameToken=0,
     if(sceneAvatar()){
       drawMascots(now);
       // アプリ表示で「キャラクターだけ」を使うときは、立ち絵を透過のレイヤーに描いてから配信画面へ写す（同じ動きをアプリ表示にも使う）
+      const av=drawAvatar(now,mouth&&selfSpeak(),blink);
+      // アプリ表示の「キャラクターだけ」：同じ動きのまま、全身が入る大きさで透過のレイヤーにも描く
       const al=appCharLayer();
-      if(al){al.clearRect(0,0,W,H);drawAvatar(now,mouth&&selfSpeak(),blink,al);g.drawImage(al.canvas,0,0)}
-      else drawAvatar(now,mouth&&selfSpeak(),blink)
+      if(al&&av)appLayerDraw(al,now,mouth&&selfSpeak(),blink,av)
     }else appLayerEmpty=true;
     drawSceneImage(now);
     effects(dt,now,'front');
@@ -12181,7 +12218,7 @@ let frameToken=0,
     scheduleFrame()
   }
 
-  function cleanupCapture(){
+function cleanupCapture(){
     if(micGain)updateGains();
     captureStarting=false;
     mediaRecorder=null;
@@ -12343,7 +12380,8 @@ let frameToken=0,
       toast('録り直しを始めました',2500)
     },350))
   };
-  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+
+const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   const VID_MAX=30,VMETA='vmeta:',VBLOB='video:';
   // 動画は設定（state）とは別に、IndexedDBの assets に「実体 video:ID」と「目録 vmeta:ID」を同じトランザクションで置く。
   const vids=[];
@@ -12567,7 +12605,7 @@ let frameToken=0,
   E('vidFormat').onchange=e=>{state.vidFormat=e.target.value==='webm'?'webm':'mp4';save()};
   E('vidQuality').onchange=e=>{state.vidQuality=Number(e.target.value)||8;save()};
 
-  function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg|[xy][a-z0-9]{1,8})$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)||/^scene-(?:standby|away|end)$/.test(id)||/^msc-[a-z0-9]{1,12}$/.test(id)||/^bgi-[a-z0-9]{1,16}$/.test(id)}
+function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg|[xy][a-z0-9]{1,8})$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)||/^scene-(?:standby|away|end)$/.test(id)||/^msc-[a-z0-9]{1,12}$/.test(id)||/^bgi-[a-z0-9]{1,16}$/.test(id)}
   async function studioValidate(decoded){
     for(const[id,b]of Object.entries(decoded)){
       if(/^app-[a-z0-9]{1,16}$/.test(id)){
@@ -12812,8 +12850,7 @@ const FXK=['count','speed','fxSize','fxOpacity','imageMotion'],
     save()
   };
 
-  let pvCtx=null,
-    pvAt=0;
+  let pvAt=0;
   function previewMirror(now){
     if(document.body.dataset.page!=='settings')return;
     if(now-pvAt<(state.light?95:66))return;

@@ -102,3 +102,13 @@
 - 映像の向きは landscape / portrait / x34（960×1280）。縦横の比を前提にした固定の寸法を書かないでください（プレビューは W/H から計算）。
 - アプリ表示の「キャラクターだけ」：アプリの表示があるときだけ、立ち絵を透過のレイヤー（appLayerCtx）に描いてから配信画面へ写し、そのレイヤーを切り抜いてアプリ側に使います（drawAvatar の4つ目の引数が描く先）。マスコットはアプリ側だけ appCharDraw でキャラクターのまわりを楕円にめぐらせます。どちらも縦横同じ倍率で縮めるだけです。
 - .live の studio 資産に app-<id>（text/html）が入ります。読み込みでは IDB の app:<id> に戻します。
+
+---
+
+## 2026-11-08 追記（STUDIO 0.9.4）
+
+- ファイルの地図と守ることは dev/STRUCTURE.md にまとめました。まずそちらを読んでください。
+- visual/00-basics.js は 00-state / 01-sanitize / 02-assets / 03-values に、20-characters.js は 20-characters / 21-character-ui / 22-stage-controls に、60-loop-capture-files.js は 60-frame / 61-capture / 62-videos / 63-studio-files に分けました（つなぐ順番は元のまま）。
+- 向きごとの位置は 41-aspect-memory.js。いまの値（state.x・y・scale、マスコットの x・y・size・tilt）は、いまの向きのもの。向きを変えるとき aspectStash（前の向きへ控える）→ aspectRestore（次の向きの控えに戻す）。syncChar が chars[id].pos[向き] を、activateChar が控えを使います。
+- drawAvatar(now, talking, blink, cx, view)：view={pose,k,cx,bottom} を渡すと、同じ動きのまま別の場所・倍率で描きます（アプリ表示の透過レイヤー用。1000×1000 に全身を描いてから切り抜く）。動きの計算は1フレームに1回です。
+- tests/checks.cjs の取り出す関数の一覧に aspectPosClean を加えました。

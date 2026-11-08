@@ -205,9 +205,12 @@
       w=Math.ceil(dw),
       h=Math.ceil(dh);
     if(w*h>4200000||w>4096||h>4096)return null;
-    const e=avCache.get(im);
-    if(e&&e.f===f&&e.rx===r.x&&e.ry===r.y&&e.rw===r.w&&e.rh===r.h)return e;
-    const c=e&&e.c.width===w&&e.c.height===h?e.c:document.createElement('canvas');
+    const list=avCache.get(im)||[];
+    const e=list.find(x=>x.f===f&&x.rx===r.x&&x.ry===r.y&&x.rw===r.w&&x.rh===r.h);
+    if(e){if(list[0]!==e){list.splice(list.indexOf(e),1);list.unshift(e)}return e}
+    // 1枚の画像につき2つまで（配信画面とアプリ表示）。古いほうの描き先を使い回す
+    const old=list.length>=2?list.pop():null;
+    const c=old&&old.c.width===w&&old.c.height===h?old.c:document.createElement('canvas');
     c.width=w;
     c.height=h;
     const cg=c.getContext('2d');
@@ -216,27 +219,32 @@
     cg.imageSmoothingQuality='high';
     cg.drawImage(im,r.x,r.y,r.w,r.h,0,0,dw,dh);
     const n={c,f,rx:r.x,ry:r.y,rw:r.w,rh:r.h,dw,dh};
-    avCache.set(im,n);
+    list.unshift(n);avCache.set(im,list);
     return n
   }
 
   // cx：描く先（ふだんは配信画面。アプリ表示でキャラクターだけを使うときは、透過のレイヤー）
-  function drawAvatar(now,talking,blink,cx=g){
+  // cx：描く先。view を渡すと、同じ動き（pose）のまま、別の場所・倍率 k で描く（アプリ表示のキャラクターだけ用）。
+  // 倍率は縦横同じ。戻り値の pose を view に渡すと、動きの計算を1フレームに1回で済ませられる
+  function drawAvatar(now,talking,blink,cx=g,view=null){
     const __c=curChar(),
       __single=!!(__c&&__c.mode==='single'),
       idx=__single?0:(blink?2:0)+(talking?1:0),
       im=exprImage(talking)||(__single?images.png0:images['png'+idx]||images['png'+(talking?1:0)]||images.png0),
-      pose=avatarPose(now,talking),
-      geo=avatarGeom();
+      pose=view?view.pose:avatarPose(now,talking),
+      geo=avatarGeom(),
+      k=view?view.k:1,
+      ax=view?view.cx:geo.cx,
+      pivot=view?view.bottom-(geo.bottom-pose.pv)*k:pose.pv;
 
     cx.save();
     {
       const __a=switchAlpha(now);
       if(__a<1)cx.globalAlpha=__a
     }
-    cx.translate(geo.cx+pose.dx,pose.pv+pose.dy);
+    cx.translate(ax+pose.dx*k,pivot+pose.dy*k);
     cx.rotate(pose.rot);
-    cx.translate(0,geo.bottom-pose.pv);
+    cx.translate(0,(geo.bottom-pose.pv)*k);
     cx.imageSmoothingEnabled=true;
     cx.imageSmoothingQuality=state.light?'medium':'high';
 
@@ -244,20 +252,20 @@
       const ref=images.png0||im;
       if(im.width===ref.width&&im.height===ref.height){
         const r=charRect(ref),
-          f=Math.min(W/r.w,H/r.h)*state.scale/100;
+          f=Math.min(W/r.w,H/r.h)*state.scale/100*k;
         const sp=avSprite(im,r,f);
         if(sp)cx.drawImage(sp.c,-sp.dw/2,-sp.dh);else cx.drawImage(im,r.x,r.y,r.w,r.h,-r.w*f/2,-r.h*f,r.w*f,r.h*f)
       }else{
-        const factor=Math.min(W/ref.width,H/ref.height)*state.scale/100;
+        const factor=Math.min(W/ref.width,H/ref.height)*state.scale/100*k;
         const w=im.width*factor,
           h=im.height*factor;
         cx.drawImage(im,-w/2,-h,w,h)
       }
       cx.restore();
-      return
+      return {pose,geo}
     }
 
-    const s=state.scale/85;
+    const s=state.scale/85*k;
     cx.scale(s,s);
     cx.translate(0,-243);
     cx.fillStyle='#6b8b79';
@@ -293,7 +301,8 @@
     cx.fillStyle=state.bg==='green'||state.bg==='blue'?'#111':'#6b7a6d';
     cx.textAlign='center';
     cx.font='18px sans-serif';
-    cx.fillText('動作確認用 / 4枚のPNGを登録してください',W/2,H-40)
+    if(!view)cx.fillText('動作確認用 / 4枚のPNGを登録してください',W/2,H-40);
+    return {pose,geo}
   }
 
   const particles=Array.from({length:100},(_,i)=>({
