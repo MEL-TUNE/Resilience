@@ -59,6 +59,7 @@
     E('appPos').disabled=state.appLayout==='side'&&false;
     E('appBgNote').hidden=state.appLayout!=='overlay'||state.bg==='transparent';
     renderBridge();
+    renderPon();
     E('appWinBtn').textContent=appWinOpen()?'アプリと立ち絵のウインドウを前に出す':'アプリと立ち絵を別ウインドウで開く（OBS用）'
   }
   E('appAddFile').onclick=()=>E('appFile').click();

@@ -30,7 +30,7 @@
     if(cur){E('serifTitle').value=cur.title;E('serifText').value=cur.lines.join('\n')}
     E('serifPos').value=state.serifPos;E('serifName').checked=state.serifName;
     E('serifNow').textContent=play.serif?'表示中：'+play.serif.text:'画面には出していません';
-    renderUndo();renderSlot()
+    renderUndo();renderSlot();renderPon()
   }
   function serifShow(s,text){
     play.serif={title:s.title,text,at:performance.now()};

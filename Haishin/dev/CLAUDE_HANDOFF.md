@@ -84,3 +84,12 @@
 - スロット（役柄×セリフ）は js/visual/17-slot.js。役柄はセリフ帳のシチュエーションそのもので、別の保存場所は持ちません（設定は state.slot）。筋肉室スロット単体版（kinniku-slot-* の保存キー）とはデータを共有せず、やり取りは version 3 のJSONです。
 - 取り込みは slotPlan()（見積もり・変更しない）→ slotApply() の順。重複の判定は 13-plays.js の serifNorm()（NFKC・空白除去・小文字）です。セリフ帳を変える操作の前には serifKeep() で取り消し用の控えを取ってください。
 - 単体版のキー操作（Space・A・B）は入れていません。オトノハは効果音ボタンに利用者が1文字のキーを割り当てられるため、ぶつかるからです。
+
+---
+
+## 2026-11-08 追記（STUDIO 0.9.2）
+
+- 企画のポン出しは js/visual/18-pon.js（設定は state.pon：hide と app）。ボタンは構成が変わったときだけ作り直し、点灯は0.4秒ごとに印だけ変えます。
+- 1列表示（幅1099px以下）では、.studio-workspace の最初の div を display:contents にして、ステージ→音のお品書き→企画卓・歌枠ノート・AIキャラ の順に order で並べています（css/studio.css の末尾）。
+- 曲リストの曲は srcs（u:URL, n:音源名, by:提供者, k:キー, kind:種類, f:音源ファイルの保存場所）、sk（シートの「選択用」表記）、w（作品名）、useSrc（最後に▶で開いた音源）を持ちます。歌唱の記録は src（音源名かURL）を持ちます。URLは okeNorm() で整え、http(s) 以外は受け付けません。
+- 歌枠管理シートとの連携は js/visual/19-sheet.js。Apps Script のコードは dev/otonoha-sheet.gs で、19-sheet.js の SHEET_GAS に同じ内容を埋め込んでいます（変えるときは両方）。つなぎ先は localStorage の otonoha-sheet-link に置き、state には入れません。シートの列は見出しの始まりの文字で探します。
