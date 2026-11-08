@@ -220,7 +220,8 @@
     return n
   }
 
-  function drawAvatar(now,talking,blink){
+  // cx：描く先（ふだんは配信画面。アプリ表示でキャラクターだけを使うときは、透過のレイヤー）
+  function drawAvatar(now,talking,blink,cx=g){
     const __c=curChar(),
       __single=!!(__c&&__c.mode==='single'),
       idx=__single?0:(blink?2:0)+(talking?1:0),
@@ -228,16 +229,16 @@
       pose=avatarPose(now,talking),
       geo=avatarGeom();
 
-    g.save();
+    cx.save();
     {
       const __a=switchAlpha(now);
-      if(__a<1)g.globalAlpha=__a
+      if(__a<1)cx.globalAlpha=__a
     }
-    g.translate(geo.cx+pose.dx,pose.pv+pose.dy);
-    g.rotate(pose.rot);
-    g.translate(0,geo.bottom-pose.pv);
-    g.imageSmoothingEnabled=true;
-    g.imageSmoothingQuality=state.light?'medium':'high';
+    cx.translate(geo.cx+pose.dx,pose.pv+pose.dy);
+    cx.rotate(pose.rot);
+    cx.translate(0,geo.bottom-pose.pv);
+    cx.imageSmoothingEnabled=true;
+    cx.imageSmoothingQuality=state.light?'medium':'high';
 
     if(im){
       const ref=images.png0||im;
@@ -245,54 +246,54 @@
         const r=charRect(ref),
           f=Math.min(W/r.w,H/r.h)*state.scale/100;
         const sp=avSprite(im,r,f);
-        if(sp)g.drawImage(sp.c,-sp.dw/2,-sp.dh);else g.drawImage(im,r.x,r.y,r.w,r.h,-r.w*f/2,-r.h*f,r.w*f,r.h*f)
+        if(sp)cx.drawImage(sp.c,-sp.dw/2,-sp.dh);else cx.drawImage(im,r.x,r.y,r.w,r.h,-r.w*f/2,-r.h*f,r.w*f,r.h*f)
       }else{
         const factor=Math.min(W/ref.width,H/ref.height)*state.scale/100;
         const w=im.width*factor,
           h=im.height*factor;
-        g.drawImage(im,-w/2,-h,w,h)
+        cx.drawImage(im,-w/2,-h,w,h)
       }
-      g.restore();
+      cx.restore();
       return
     }
 
     const s=state.scale/85;
-    g.scale(s,s);
-    g.translate(0,-243);
-    g.fillStyle='#6b8b79';
-    g.beginPath();
-    g.roundRect(-108,38,216,205,[60,60,18,18]);
-    g.fill();
-    g.fillStyle='#f9f1df';
-    g.beginPath();
-    g.ellipse(0,-43,91,103,0,0,Math.PI*2);
-    g.fill();
-    g.strokeStyle='#385748';
-    g.lineWidth=6;
+    cx.scale(s,s);
+    cx.translate(0,-243);
+    cx.fillStyle='#6b8b79';
+    cx.beginPath();
+    cx.roundRect(-108,38,216,205,[60,60,18,18]);
+    cx.fill();
+    cx.fillStyle='#f9f1df';
+    cx.beginPath();
+    cx.ellipse(0,-43,91,103,0,0,Math.PI*2);
+    cx.fill();
+    cx.strokeStyle='#385748';
+    cx.lineWidth=6;
     for(const ex of [-32,32]){
-      g.beginPath();
+      cx.beginPath();
       if(blink){
-        g.moveTo(ex-12,-55);
-        g.lineTo(ex+12,-55)
-      }else g.ellipse(ex,-55,5,10,0,0,Math.PI*2);
-      g.stroke()
+        cx.moveTo(ex-12,-55);
+        cx.lineTo(ex+12,-55)
+      }else cx.ellipse(ex,-55,5,10,0,0,Math.PI*2);
+      cx.stroke()
     }
-    g.beginPath();
+    cx.beginPath();
     if(talking){
-      g.ellipse(0,-5,14,20,0,0,Math.PI*2);
-      g.fillStyle='#c47977';
-      g.fill()
+      cx.ellipse(0,-5,14,20,0,0,Math.PI*2);
+      cx.fillStyle='#c47977';
+      cx.fill()
     }else{
-      g.moveTo(-14,-6);
-      g.quadraticCurveTo(0,5,14,-6);
-      g.stroke()
+      cx.moveTo(-14,-6);
+      cx.quadraticCurveTo(0,5,14,-6);
+      cx.stroke()
     }
-    g.restore();
+    cx.restore();
 
-    g.fillStyle=state.bg==='green'||state.bg==='blue'?'#111':'#6b7a6d';
-    g.textAlign='center';
-    g.font='18px sans-serif';
-    g.fillText('動作確認用 / 4枚のPNGを登録してください',W/2,H-40)
+    cx.fillStyle=state.bg==='green'||state.bg==='blue'?'#111':'#6b7a6d';
+    cx.textAlign='center';
+    cx.font='18px sans-serif';
+    cx.fillText('動作確認用 / 4枚のPNGを登録してください',W/2,H-40)
   }
 
   const particles=Array.from({length:100},(_,i)=>({
@@ -525,7 +526,11 @@
       });
       return
     }
-    if(bk==='image'&&images.background){
+    if(bk==='image'){
+      const b=bgCur(),im=b&&bgImage(b);
+      if(im){bgCached('bgi'+b.id+'_'+W+'x'+H+'_'+(b.x??50)+'_'+(b.y??50)+'_'+(b.z||100),cg=>coverImgAt(cg,im,b));return}
+    }
+    if(bk==='image'&&images.background&&!bgCur()){
       const im=images.background;
       bgCached('img'+imgId(im)+'_'+W+'x'+H,cg=>coverImg(cg,im));
       return

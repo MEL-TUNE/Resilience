@@ -926,6 +926,20 @@ body[data-app="live"][data-kind="stream"] .live-console{order:0}
 .sb-list li.sb-edit{display:block;padding:12px 14px;margin:4px 0 8px}
 .sb-edit .studio-field{display:block;margin:6px 0}
 
+/* 0.9.3 アプリ表示：キャラクターだけ（ページ内の枠の上に重ねる） */
+.app-stage.charmode{grid-template-columns:1fr}
+.app-stage.charmode .app-mirror-box{display:none}
+.app-frame-box>#appMirror{position:absolute;pointer-events:none;z-index:2;background:none;border-radius:0}
+
+/* 0.9.3 背景画像のリスト・3:4 */
+body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min(72vh,820px)!important;max-height:none!important;width:auto;max-width:100%;margin:0 auto}
+@media(min-width:1100px){body[data-studio-aspect="x34"] .studio-workspace{--stage-col:clamp(440px,calc(min(72vh,820px)*3/4 + 26px),760px)}}
+.bg-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:6px 0}
+.bg-item{display:flex;flex-direction:column;gap:4px;padding:4px;border:2px solid var(--a-p-30);border-radius:10px;background:var(--hi);color:var(--ink);cursor:pointer;font-size:12px;text-align:left}
+.bg-item img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:6px;background:var(--a-p-12)}
+.bg-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bg-item.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+
 </style>
 <script>
 'use strict';
@@ -1033,7 +1047,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.2 / 企画のポン出し・音源URLの曲リスト</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.3 / 背景画像（名義×向き）・3:4・アプリ表示はキャラクターだけ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button><button data-mode="aivoice">AIキャラ・声</button></nav>
@@ -1068,7 +1082,7 @@ lookPaint(look);
 <div class="pon-sub"><button type="button" id="ponSlotRe" hidden>🎰 役柄だけ引き直す</button><button type="button" id="ponSlotRb" hidden>🎰 セリフだけ引き直す</button></div>
 <p class="pon-now" id="ponNow" aria-live="polite"></p>
 <p class="studio-mini" id="ponEmpty" hidden>企画卓のセリフ帳・アプリを並べるに登録すると、ここに並びます。</p>
-<details class="pon-opts"><summary>並べるもの・アプリの開き方</summary><div class="pon-picks" id="ponPick"></div><div class="studio-row"><button type="button" id="ponAll">すべて並べる</button><label class="studio-field">アプリの開き方<select id="ponApp"><option value="window">アプリと立ち絵のウインドウ（OBS用）で開く</option><option value="page">企画卓の中で開く</option></select></label></div><p class="studio-mini">シチュエーションのボタンは、押すたびにそのシチュエーションのセリフを1つ出します。全部出し終えるまで同じセリフは出ません。セリフ・役柄は企画卓のセリフ帳で前もって登録します。</p></details>
+<details class="pon-opts"><summary>並べるもの・アプリの開き方</summary><label class="studio-field">セリフ帳のシチュエーション<select id="ponSerif"></select></label><div class="pon-picks" id="ponPick"></div><div class="studio-row"><button type="button" id="ponAll">すべて並べる</button><label class="studio-field">アプリの開き方<select id="ponApp"><option value="window">アプリと立ち絵のウインドウ（OBS用）で開く</option><option value="page">企画卓の中で開く</option></select></label></div><p class="studio-mini">シチュエーションのボタンは、押すたびにそのシチュエーションのセリフを1つ出します。全部出し終えるまで同じセリフは出ません。セリフ・役柄は企画卓のセリフ帳で前もって登録します。</p></details>
 </section>
 <div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">設定</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button><button data-motion="wander" aria-pressed="false">右往左往</button><button data-motion="iya" aria-pressed="false">いやいや</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
 <details class="scene-details" id="quickTune"><summary>見た目をその場で調整（開いているあいだだけ、プレビューの立ち絵・マスコットをドラッグで動かせます）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">この欄を閉じると位置はロックされ、プレビューに触れても動きません。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
@@ -1108,6 +1122,10 @@ lookPaint(look);
 <label class="studio-field">文字が切り替わる時間<select id="slotDur"><option value="0">すぐ表示</option><option value="0.5">0.5秒</option><option value="1">1秒</option><option value="1.5">1.5秒</option><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option></select></label>
 <label class="studio-field">結果が出たときの効果音<select id="slotSe"></select></label>
 <label class="studio-field">配信画面での見た目<select id="slotLook"><option value="machine">スロットの筐体</option><option value="bubble">セリフの吹き出し</option></select></label></div>
+<div class="studio-inline"><label class="studio-field">筐体の位置<select id="slotPos"><option value="center">中央</option><option value="left">左に寄せる</option><option value="right">右に寄せる</option></select></label>
+<label class="studio-field">筐体の大きさ（画面の幅に対して） <output id="slotSizeVal">62%</output><input id="slotSize" type="range" min="30" max="90" step="1"></label>
+<label class="studio-field">筐体の色<select id="slotColor"><option value="classic">筋肉室スロットの色</option><option value="theme">オトノハの着せ替えの色に合わせる</option><option value="custom">自分で選ぶ</option></select></label></div>
+<div class="studio-inline slot-colors" id="slotColors" hidden><label class="studio-field">外枠<input type="color" id="slotC0"></label><label class="studio-field">内側<input type="color" id="slotC1"></label><label class="studio-field">役柄の窓<input type="color" id="slotC2"></label><label class="studio-field">飾り（四隅・見出し）<input type="color" id="slotC3"></label><label class="studio-field">文字<input type="color" id="slotC4"></label></div>
 <div class="studio-mini">抽選の対象（押して選ぶ・もう一度押すと外す）</div>
 <label class="studio-field">名前やセリフで絞り込む<input id="slotFind" type="search" maxlength="40" placeholder="例：ツンデレ／プリン"></label>
 <div class="studio-row app-chips" id="slotUse"></div>
@@ -1144,10 +1162,16 @@ lookPaint(look);
 <label class="studio-field"><input type="checkbox" id="appBridgeMore"> 効果音を鳴らす・場面（配信中・準備中など）を切り替えることも許す</label></div>
 <div class="studio-row"><button type="button" id="appReload">アプリを読み込み直す</button><button type="button" id="appDel">このアプリの登録を外す</button></div></div>
 <div class="app-stage" id="appStageWrap" hidden><div class="app-frame-box"><iframe id="appFrame" title="登録したアプリ"></iframe><p class="app-away" id="appAway" hidden>アプリは別ウインドウで表示中です。</p></div><figure class="app-mirror-box"><canvas id="appMirror" aria-label="立ち絵（配信画面と同じ絵）"></canvas><figcaption class="studio-mini">立ち絵（配信画面と同じ絵）</figcaption></figure></div>
-<div class="studio-inline"><label class="studio-field">別ウインドウでの立ち絵の置き方<select id="appLayout"><option value="overlay">アプリの上に重ねる</option><option value="side">アプリの横に並べる</option></select></label>
+<div class="studio-inline"><label class="studio-field">アプリと並べる立ち絵<select id="appView"><option value="char">キャラクターだけ（背景・季節の演出なし・透過）</option><option value="stage">配信画面をそのまま（背景・演出ごと）</option></select></label>
+<label class="studio-field"><input type="checkbox" id="appMsc"> マスコットを出す（キャラクターのまわりを動きます）</label></div>
+<div class="studio-inline" id="appCharOpts"><label class="studio-field">横の位置（左 0 ←→ 右 100） <output id="appCXVal">100%</output><input id="appCX" type="range" min="0" max="100" step="1"></label>
+<label class="studio-field">縦の位置（上 0 ←→ 下 100） <output id="appCYVal">100%</output><input id="appCY" type="range" min="0" max="100" step="1"></label>
+<label class="studio-field">大きさ（ウインドウの高さに対して） <output id="appCSizeVal">42%</output><input id="appCSize" type="range" min="15" max="90" step="1"></label>
+<p class="studio-mini">ゲーム実況のように、アプリの上の端にキャラクターを小さく置く形です。マスコットは、キャラクターの枠の内側をめぐるので、端で切れません。下の小窓とアプリと立ち絵のウインドウに、同じ置き方で出ます。</p></div>
+<div id="appStageOpts"><div class="studio-inline"><label class="studio-field">別ウインドウでの立ち絵の置き方<select id="appLayout"><option value="overlay">アプリの上に重ねる</option><option value="side">アプリの横に並べる</option></select></label>
 <label class="studio-field">位置<select id="appPos"><option value="br">右下（横に並べるときは右）</option><option value="bl">左下（横に並べるときは左）</option><option value="tr">右上</option><option value="tl">左上</option></select></label>
 <label class="studio-field">立ち絵の大きさ（ウインドウの幅に対して） <output id="appSizeVal">35%</output><input id="appSize" type="range" min="15" max="70" step="1"></label></div>
-<p class="studio-mini" id="appBgNote" hidden>重ねるときは、設定の「背景」を「透過」にすると、立ち絵だけがアプリの上に重なります（いまの背景のままだと、背景ごと四角く重なります）。</p>
+<p class="studio-mini" id="appBgNote" hidden>重ねるときは、設定の「背景」を「透過」にすると、立ち絵だけがアプリの上に重なります（いまの背景のままだと、背景ごと四角く重なります）。</p></div>
 <div class="studio-row"><button type="button" id="appWinBtn" class="accent">アプリと立ち絵を別ウインドウで開く（OBS用）</button></div>
 <details class="bridge-dev"><summary>オトノハ連携（アプリを作る人向け）</summary>
 <p class="studio-note">企画卓に登録したアプリは、ブラウザ標準の postMessage で「オトノハ連携 1」の決まりに沿って伝言を送ると、配信画面にセリフ・サイコロ・ルーレット・コメントを出したり、歌い始め・場面の切り替え・配信者が話したことなどの出来事を受け取ったりできます。自分のアプリにも、ほかの人が作ったアプリにも、同じ決まりで対応できます。</p>
@@ -1315,7 +1339,7 @@ lookPaint(look);
  <section class="panel studio-settings grp-visual" data-modes="stream video" id="studioSettings" aria-label="表情と演出"><div class="ss-grid"><div class="ss-prev"><div class="ss-prev-box"><canvas id="settingsPreview" width="640" height="360" aria-label="映像のプレビュー"></canvas></div><p class="studio-note">配信画面と同じ映像です。右の設定を変えるとここに反映されます。</p></div>
 <aside class="studio-card">
 <p class="studio-kicker">AVATAR & SCENE</p><h2>表情と演出</h2>
-<div class="studio-inline"><label class="studio-field">映像のなめらかさ<select id="studioFps"><option value="30">30fps（なめらか）</option><option value="15">15fps</option><option value="10">10fps（軽い）</option></select></label><label class="studio-field perf-light"><input id="studioLight" type="checkbox"> 軽量モード（低スペックPC向け）</label></div><p class="studio-note">10fpsでは映像を描く回数が30fpsの3分の1になります。収録する動画もこのコマ数になります。軽量モードでは、降らせる演出を最大40個に抑え、画面の飾りのアニメーションと音量メーターの更新を間引きます。</p><label class="studio-field">映像の向き<select id="studioAspect"><option value="landscape">横 16:9（1280×720）</option><option value="portrait">縦 9:16（720×1280・縦型配信／ショート向け）</option></select></label>
+<div class="studio-inline"><label class="studio-field">映像のなめらかさ<select id="studioFps"><option value="30">30fps（なめらか）</option><option value="15">15fps</option><option value="10">10fps（軽い）</option></select></label><label class="studio-field perf-light"><input id="studioLight" type="checkbox"> 軽量モード（低スペックPC向け）</label></div><p class="studio-note">10fpsでは映像を描く回数が30fpsの3分の1になります。収録する動画もこのコマ数になります。軽量モードでは、降らせる演出を最大40個に抑え、画面の飾りのアニメーションと音量メーターの更新を間引きます。</p><label class="studio-field">映像の向き<select id="studioAspect"><option value="landscape">横 16:9（1280×720）</option><option value="portrait">縦 9:16（720×1280・縦型配信／ショート向け）</option><option value="x34">3:4（960×1280・Xに載せる動画向け）</option></select></label>
 <div class="char-panel">
 <div class="studio-header-line"><strong>名義とキャラクター</strong></div>
 <div class="studio-inline"><label class="studio-field">名義<select id="profileSel"></select></label><label class="studio-field">名義の名前<input id="profileName" type="text" maxlength="40"></label></div>
@@ -1350,7 +1374,18 @@ lookPaint(look);
 </details>
 <div class="studio-inline"><label class="studio-field">量<input id="studioCount" type="range" min="5" max="100" value="35"></label><label class="studio-field">速さ<input id="studioSpeed" type="range" min="10" max="150" value="40"></label></div>
 <div class="studio-inline"><label class="studio-field">演出の大きさ<input id="studioFxSize" type="range" min="35" max="200" value="100"></label><label class="studio-field">演出の濃さ<input id="studioFxOpacity" type="range" min="10" max="100" value="72"></label></div><p class="studio-note">透ける花弁・虹彩の泡・葉脈の紅葉・銀の結晶。人物の手前と奥で舞い方を変え、顔まわりは淡く描きます。</p><label class="studio-field">背景<select id="studioBg"><option value="cafe">喫茶のグラデーション</option><option value="transparent">透過（別窓の表示用）</option><option value="green">クロマキー / 緑</option><option value="blue">クロマキー / 青</option><option value="black">黒</option><option value="image">登録した背景画像</option></select></label>
-<div class="studio-field">背景画像（登録すると背景が「登録した背景画像」に切り替わります）<label class="bg-pick"><input type="file" id="studioBackground" accept="image/png,image/webp,image/jpeg" aria-label="背景画像"></label><span class="png-name" id="backgroundName">未登録</span><button type="button" id="backgroundRemove" class="fx-remove" hidden>背景画像を外す</button><small class="studio-note">横向き1920×1080、縦向き1080×1920程度が目安。比率が違う画像は中央を基準に切り抜いて敷きます。</small></div>
+<div class="studio-field bg-box"><strong>背景画像（名義ごと・映像の向きごとに10枚まで）</strong>
+<p class="studio-mini" id="bgWhere"></p>
+<div class="bg-list" id="bgList" role="group" aria-label="背景画像"></div>
+<div class="studio-row"><button type="button" id="bgAdd">＋ 背景画像を足す（いまの向き）</button><input type="file" id="bgFile" accept="image/png,image/webp,image/jpeg" multiple hidden></div>
+<p class="studio-mini" id="bgUseNote" hidden>いまの背景は「登録した背景画像」ではありません。画像を押すと切り替わります。</p>
+<div id="bgEdit" hidden><div class="studio-inline"><label class="studio-field">名前<input id="bgName" type="text" maxlength="40"></label>
+<label class="studio-field">見せる位置（横：左 0 ←→ 右 100） <output id="bgXVal">50%</output><input id="bgX" type="range" min="0" max="100" step="1"></label>
+<label class="studio-field">見せる位置（縦：上 0 ←→ 下 100） <output id="bgYVal">50%</output><input id="bgY" type="range" min="0" max="100" step="1"></label>
+<label class="studio-field">拡大 <output id="bgZVal">100%</output><input id="bgZ" type="range" min="100" max="300" step="1"></label></div>
+<div class="studio-row"><button type="button" id="bgDel">この背景画像を外す</button></div></div>
+<small class="studio-note">横 16:9・縦 9:16・3:4 で、別々に登録します。映像の向きを切り替えると、その向きの背景画像と、画像ごとの位置に切り替わります。画像は縦横同じ倍率で、画面いっぱいに敷きます（はみ出した部分は、見せる位置で選べます）。</small></div>
+<div class="studio-field" id="bgLegacy">以前の背景画像（共通・名義ごとの背景がないときに使います）<label class="bg-pick"><input type="file" id="studioBackground" accept="image/png,image/webp,image/jpeg" aria-label="背景画像"></label><span class="png-name" id="backgroundName">未登録</span><button type="button" id="backgroundRemove" class="fx-remove" hidden>背景画像を外す</button><small class="studio-note">横向き1920×1080、縦向き1080×1920程度が目安。比率が違う画像は中央を基準に切り抜いて敷きます。</small></div>
 <p class="studio-note">動画の透過保持は保証しません。背景を抜く収録・配信には緑／青を選んでください。</p>
 </aside>
 </div></section>
@@ -6587,14 +6622,24 @@ async function exportLive(){
     const {conf,assets,blobs,off:o}=await buildSoundPack();
     let off=o,images=0;
     const studio=st.collect();
+    if(st.extra)Object.assign(studio.assets,await st.extra());
     for(const[key,b]of Object.entries(studio.assets)){
       assets.push({key,kind:'studio',offset:off,size:b.size,type:b.type||''});
       blobs.push(b);
       off+=b.size;
       images++
     }
+    // 企画卓に登録したアプリ（ファイルから読み込んだもの）のHTMLも入れる
+    let apps=0;
+    for(const a of (studio.state.apps||[]))if(a&&a.kind==='file'&&/^[a-z0-9]{1,16}$/.test(a.id)){
+      const b=await getAsset('app:'+a.id);
+      if(!b)continue;
+      const bb=b instanceof Blob?new Blob([b],{type:'text/html'}):new Blob([String(b)],{type:'text/html'});
+      assets.push({key:'app-'+a.id,kind:'studio',offset:off,size:bb.size,type:'text/html'});
+      blobs.push(bb);off+=bb.size;apps++
+    }
     download(packBlob(LIVE_MAGIC,{format:LIVE_FORMAT,version:1,app:look.title,created:new Date().toISOString(),config:conf,look:lookForExport(),studio:studio.state,assets},blobs),packFileName());
-    toast(`すべての設定を書き出しました（.live・音源${assets.filter(a=>a.kind==='audio').length}件・画像${images}枚・${(off/1048576).toFixed(1)}MB）`,5000);
+    toast(`すべての設定を書き出しました（.live・音源${assets.filter(a=>a.kind==='audio').length}件・画像${images}枚・アプリ${apps}件・${(off/1048576).toFixed(1)}MB）`,5000);
   }catch(e){
     console.error(e);
     toast('書き出しに失敗しました（'+errText(e)+'）',6000)
@@ -7244,6 +7289,11 @@ $('#consoleAllStop').onclick=()=>stopAll();
     appLayout:'overlay',
     appPos:'br',
     appSize:35,
+    appView:'char',
+    appMsc:true,
+    appCX:100,
+    appCY:100,
+    appCSize:42,
     assetNames:{},
     scenes:{standby:{bgm:'keep',effect:'keep',avatar:true,text:''},away:{bgm:'keep',effect:'keep',avatar:false,text:''},end:{bgm:'keep',effect:'keep',avatar:false,text:'ご視聴ありがとうございました'}},
     mascots:[],
@@ -7418,7 +7468,7 @@ fps:30,
     for(const [k,lo,hi] of [['flapMin',40,400],['flapMax',40,600]])if(Number.isFinite(Number(v[k])))out[k]=Math.max(lo,Math.min(hi,Math.round(Number(v[k]))));
     if(out.flapMax<out.flapMin)out.flapMax=out.flapMin;
     if(typeof v.sinkId==='string')out.sinkId=v.sinkId.slice(0,300);
-    if(['landscape','portrait'].includes(v.aspect))out.aspect=v.aspect;
+    if(['landscape','portrait','x34'].includes(v.aspect))out.aspect=v.aspect;
     for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya']){
       const n=Number(v[k]);
       if(Number.isFinite(n))out[k]=Math.max(CHAR_RANGES[k][0],Math.min(CHAR_RANGES[k][1],n))
@@ -7446,8 +7496,8 @@ fps:30,
         recent:(Array.isArray(a.recent)?a.recent:[]).slice(0,8).map(r=>({event:S(r?.event,400),comments:(Array.isArray(r?.comments)?r.comments:[]).slice(0,5).map(c=>({name:S(c?.name,40),text:S(c?.text,140)}))})),
         cast:a.cast.filter(c=>c&&typeof c.id==='string'&&c.core&&typeof c.core==='object').slice(0,5).map(c=>({id:S(c.id,24),enabled:c.enabled!==false,core:Object.fromEntries(['name','role','firstPerson','secondPerson','voice','summary','boundaries'].map(k=>[k,S(c.core[k],500)])),display:{icon:S(c.display?.icon,4),color:/^#[0-9a-f]{6}$/i.test(c.display?.color)?c.display.color:'#f4e6d8'},tuning:Object.fromEntries(Object.entries(c.tuning||{}).filter(([k,x])=>/^[a-z]{2,20}$/.test(k)).map(([k,x])=>[k,Math.max(0,Math.min(100,Number(x)||0))])),lexicon:Object.fromEntries(Object.entries(c.lexicon||{}).filter(([k,x])=>/^[a-z]{2,20}$/.test(k)&&Array.isArray(x)).map(([k,x])=>[k,x.slice(0,20).map(s=>S(s,120))]))}))}
     }
-    if(v.slot&&typeof v.slot==='object'){const c=v.slot;out.slot={aName:S(c.aName,20)||'役柄',bName:S(c.bName,20)||'セリフ',dur:Math.max(0,Math.min(10,Number(c.dur)||0)),se:S(c.se,40),use:(Array.isArray(c.use)?c.use:[]).filter(x=>typeof x==='string'&&/^[a-z0-9]{1,16}$/.test(x)).slice(0,100),look:c.look==='bubble'?'bubble':'machine',aiNote:S(c.aiNote,2000)}}
-    if(v.pon&&typeof v.pon==='object'){const c=v.pon;out.pon={hide:(Array.isArray(c.hide)?c.hide:[]).filter(x=>typeof x==='string'&&/^(?:[sa]:[a-z0-9]{1,16}|slot|wheel|dice)$/.test(x)).slice(0,300),app:c.app==='page'?'page':'window'}}
+    if(v.slot&&typeof v.slot==='object'){const c=v.slot;out.slot={aName:S(c.aName,20)||'役柄',bName:S(c.bName,20)||'セリフ',dur:Math.max(0,Math.min(10,Number(c.dur)||0)),se:S(c.se,40),use:(Array.isArray(c.use)?c.use:[]).filter(x=>typeof x==='string'&&/^[a-z0-9]{1,16}$/.test(x)).slice(0,100),look:c.look==='bubble'?'bubble':'machine',aiNote:S(c.aiNote,2000),pos:['left','right'].includes(c.pos)?c.pos:'center',size:Math.max(30,Math.min(90,Math.round(Number(c.size)||62))),color:['theme','custom'].includes(c.color)?c.color:'classic',colors:(Array.isArray(c.colors)?c.colors:[]).slice(0,5).map(x=>/^#[0-9a-f]{6}$/i.test(x)?x.toLowerCase():'#000000')}}
+    if(v.pon&&typeof v.pon==='object'){const c=v.pon;out.pon={hide:(Array.isArray(c.hide)?c.hide:[]).filter(x=>typeof x==='string'&&/^(?:[sa]:[a-z0-9]{1,16}|slot|wheel|dice)$/.test(x)).slice(0,300),app:c.app==='page'?'page':'window',serif:typeof c.serif==='string'&&/^(?:none|all|s:[a-z0-9]{1,16})$/.test(c.serif)?c.serif:'all'}}
     if(v.vr&&typeof v.vr==='object'&&Array.isArray(v.vr.lines)){
       const r=v.vr;
       out.vr={speaker:S(r.speaker,30)||'speaker',trim:r.trim!==false,autoNext:r.autoNext!==false,lines:r.lines.filter(l=>l&&/^[a-z0-9]{1,16}$/.test(l.id)).slice(0,2000).map(l=>({id:l.id,text:S(l.text,300),...(l.done?{done:true,secs:Number(l.secs)||0,rate:Number(l.rate)||48000,notes:(Array.isArray(l.notes)?l.notes:[]).slice(0,4).map(n=>S(n,40))}:{})}))};
@@ -7456,6 +7506,9 @@ fps:30,
     if(['overlay','side'].includes(v.appLayout))out.appLayout=v.appLayout;
     if(['tl','tr','bl','br'].includes(v.appPos))out.appPos=v.appPos;
     out.appSize=Math.max(15,Math.min(70,Math.round(Number(v.appSize)||35)));
+    if(['char','stage'].includes(v.appView))out.appView=v.appView;
+    if(typeof v.appMsc==='boolean')out.appMsc=v.appMsc;
+    {const n=(x,lo,hi,df)=>{const k=Number(x);return Number.isFinite(k)?Math.max(lo,Math.min(hi,Math.round(k))):df};out.appCX=n(v.appCX,0,100,100);out.appCY=n(v.appCY,0,100,100);out.appCSize=n(v.appCSize,15,90,42)}
     if(Array.isArray(v.serifs))out.serifs=v.serifs.filter(s=>s&&/^[a-z0-9]{1,16}$/.test(s.id)).slice(0,100).map(s=>({id:s.id,title:S(s.title,80)||'シチュエーション',lines:(Array.isArray(s.lines)?s.lines:[]).slice(0,300).map(x=>S(x,300)),...(Number.isInteger(s.pos)?{pos:s.pos}:{})}));
     out.serifSel=out.serifs.some(s=>s.id===v.serifSel)?v.serifSel:'';
     if(['bottom','top','left','right'].includes(v.serifPos))out.serifPos=v.serifPos;
@@ -7510,7 +7563,12 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
       chars:Array.isArray(p.chars)?p.chars.filter(c=>typeof c==='string'&&/^[a-z0-9]{1,24}$/.test(c)).slice(0,60):[],
       cur:typeof p.cur==='string'?p.cur:'',
       snap:p.snap&&typeof p.snap==='object'?p.snap:{},
-      mscShow:Array.isArray(p.mscShow)?p.mscShow.filter(x=>typeof x==='string'&&/^[a-z0-9]{1,12}$/.test(x)).slice(0,4):null
+      mscShow:Array.isArray(p.mscShow)?p.mscShow.filter(x=>typeof x==='string'&&/^[a-z0-9]{1,12}$/.test(x)).slice(0,4):null,
+      ...(()=>{const n=(x,lo,hi,df)=>{const k=Number(x);return Number.isFinite(k)?Math.max(lo,Math.min(hi,Math.round(k))):df},bgs={},bgSel={};
+        for(const a of ['landscape','portrait','x34']){
+          bgs[a]=(Array.isArray(p.bgs?.[a])?p.bgs[a]:[]).filter(b=>b&&typeof b.id==='string'&&/^[a-z0-9]{1,16}$/.test(b.id)).slice(0,10).map(b=>({id:b.id,name:String(b.name||'背景').slice(0,40),x:n(b.x,0,100,50),y:n(b.y,0,100,50),z:n(b.z,100,300,100)}));
+          const s=p.bgSel?.[a];bgSel[a]=typeof s==='string'&&bgs[a].some(b=>b.id===s)?s:''}
+        return {bgs,bgSel}})()
     }));
     if(v.chars&&typeof v.chars==='object'){
       out.chars={};
@@ -7632,7 +7690,8 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     });
     for(const k of ['standby','away','end']){const n=E('scene_'+k+'_imgName');if(!n)continue;const id='scene-'+k;n.textContent=assetBlobs[id]?(state.assetNames[id]||'画像'):'未登録';E('scene_'+k+'_imgDel').hidden=!assetBlobs[id]}
     E('backgroundName').textContent=assetBlobs.background?(state.assetNames.background||'背景画像'):'未登録';
-    E('backgroundRemove').hidden=!assetBlobs.background
+    E('backgroundRemove').hidden=!assetBlobs.background;
+    {const lg=E('bgLegacy');if(lg)lg.hidden=!assetBlobs.background}
   }
 
   async function removeAsset(id){
@@ -7710,6 +7769,7 @@ for(const [id,k]of Object.entries(bindings)){
     renderPlays();
     renderSlot();
     renderPon();
+    renderBgList();
     renderAud();
     renderVoiceRec();
     renderKara();
@@ -8747,6 +8807,9 @@ const APP_MAX=12;
       E('appWhere').textContent=a.kind==='url'?a.url:'ファイル：'+(a.file||'')
     }
     E('appLayout').value=state.appLayout;E('appPos').value=state.appPos;E('appSize').value=state.appSize;
+    E('appView').value=appCharMode()?'char':'stage';E('appMsc').checked=state.appMsc!==false;
+    for(const [id,k,df] of [['appCX','appCX',100],['appCY','appCY',100],['appCSize','appCSize',42]]){E(id).value=state[k]??df;E(id+'Val').textContent=(state[k]??df)+'%'}
+    appMirrorPlace();
     E('appSizeVal').textContent=state.appSize+'%';
     E('appPos').disabled=state.appLayout==='side'&&false;
     E('appBgNote').hidden=state.appLayout!=='overlay'||state.bg==='transparent';
@@ -8790,6 +8853,9 @@ const APP_MAX=12;
     appShow()
   });
   for(const [id,key] of [['appLayout','appLayout'],['appPos','appPos']])E(id).onchange=e=>{state[key]=e.target.value;save();renderApps();appLayoutWin()};
+  E('appView').onchange=e=>{state.appView=e.target.value==='stage'?'stage':'char';save();renderApps();appLayoutWin()};
+  E('appMsc').onchange=e=>{state.appMsc=e.target.checked;save()};
+  for(const [id,k,lo,hi] of [['appCX','appCX',0,100],['appCY','appCY',0,100],['appCSize','appCSize',15,90]])E(id).oninput=e=>{state[k]=Math.max(lo,Math.min(hi,Math.round(Number(e.target.value))));E(id+'Val').textContent=state[k]+'%';save()};
   E('appSize').oninput=e=>{state.appSize=Math.max(15,Math.min(70,Number(e.target.value)||35));E('appSizeVal').textContent=state.appSize+'%';save();appLayoutWin()};
 
   // 別ウインドウ：アプリを全面に、立ち絵の映像（背景を含む配信画面と同じ絵）を重ねるか横に並べる
@@ -8797,8 +8863,10 @@ const APP_MAX=12;
     if(!appWinOpen())return;
     const d=appWindow.document,c=d.getElementById('pt'),f=d.getElementById('app');
     if(!c||!f)return;
+    if(appCharMode()){d.body.className='overlay char';c.style.aspectRatio='';return}
     const s=state.appSize,side=state.appLayout==='side',p=state.appPos;
     d.body.className=side?'side '+(p.endsWith('l')?'left':'right'):'overlay';
+    c.style.top=c.style.left=c.style.width=c.style.height='';
     c.style.width=s+'%';c.style.aspectRatio=W+' / '+H;
     c.style.left=c.style.right=c.style.top=c.style.bottom='';
     if(!side){c.style[p.endsWith('l')?'left':'right']='0';c.style[p.startsWith('t')?'top':'bottom']='0'}
@@ -8826,23 +8894,105 @@ const APP_MAX=12;
   };
   setInterval(()=>{if(appWindow&&appWindow.closed){appWindow=null;appContext=null;appShow()}},1000);
 
+  // ---- キャラクターだけ（透過）：立ち絵のレイヤーを切り抜き、マスコットはその周りを回る
+  let appLayerCtx=null,appLayerEmpty=true;
+  const appCharMode=()=>state.appView!=='stage';
+  function appCharLayer(){
+    const pageMirror=!E('appStageWrap').hidden&&!appWinOpen();
+    if(!appCharMode()||!(appWinOpen()&&appContext||pageMirror))return null;
+    if(!appLayerCtx){const c=document.createElement('canvas');appLayerCtx=c.getContext('2d')}
+    const c=appLayerCtx.canvas;
+    if(c.width!==W||c.height!==H){c.width=W;c.height=H}
+    appLayerEmpty=false;
+    return appLayerCtx
+  }
+  const appMscState={};
+  // cx に cw×ch で描く。立ち絵は縦横同じ倍率で縮めるだけ（反転・変形はしない）
+  function appCharDraw(cx,cw,ch,now){
+    cx.clearRect(0,0,cw,ch);
+    if(!appLayerCtx||appLayerEmpty)return;
+    const geo=avatarGeom(),t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
+    const hw=geo.w/2+W*.14,top=Math.max(0,geo.bottom-geo.h*1.1-H*.03),bot=Math.min(H,geo.bottom+2),
+      sx=Math.max(0,geo.cx-hw),ex=Math.min(W,geo.cx+hw),cropW=Math.max(1,ex-sx),cropH=Math.max(1,bot-top);
+    const ms=state.appMsc!==false?myMascots().filter(m=>m.show&&images['msc-'+m.id]):[];
+    const mx=ms.length?cw*.17:cw*.02,mt=ms.length?ch*.1:ch*.02;
+    const s=Math.min((cw-2*mx)/cropW,(ch-mt)/cropH),dw=cropW*s,dh=cropH*s,dx=(cw-dw)/2,dy=ch-dh;
+    // マスコット：立ち絵のまわりを楕円にめぐり、跳ねる。画面の端で切れないよう、枠の内側に収める
+    const items=ms.map((m,i)=>{
+      const im=images['msc-'+m.id],sp=m.speed/100,a=m.amp/100,seed=(m.id.charCodeAt(0)+m.id.charCodeAt(m.id.length-1))*.173;
+      const st=appMscState[m.id]||(appMscState[m.id]={th:i/Math.max(1,ms.length)*TAU+.4,dir:i%2?-1:1,last:now});
+      const dtp=Math.min(.1,Math.max(0,(now-st.last)/1000));st.last=now;
+      st.th+=st.dir*dtp*(.42+.18*vnoise(t*.35,seed))*sp;
+      const depth=Math.sin(st.th),k=.86+.14*(depth*.5+.5);
+      const mh=Math.max(ch*.1,Math.min(ch*.3,ch*.2*m.size/22))*k,f=mh/im.height,mw=im.width*f;
+      const rx=Math.max(0,cw/2-mw/2-2),ry=dh*.16;
+      let x=cw/2+Math.cos(st.th)*Math.min(rx,dw*.42+cw*.12),y=dy+dh*.52+depth*ry;
+      const hop=Math.abs(Math.sin(t*TAU*.9*sp+seed))*ch*.03*a;
+      y-=hop;
+      x=Math.max(mw/2+1,Math.min(cw-mw/2-1,x));y=Math.max(mh/2+1,Math.min(ch-mh/2-1,y));
+      const rot=(m.tilt||0)*deg+Math.sin(t*TAU*.6*sp+seed)*4*deg*a;
+      return {im,x,y,mw,mh,rot,depth}
+    });
+    const put=it=>{cx.save();cx.translate(it.x,it.y);cx.rotate(it.rot);cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality='high';cx.drawImage(it.im,-it.mw/2,-it.mh/2,it.mw,it.mh);cx.restore()};
+    items.filter(it=>it.depth<0).forEach(put);
+    cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality='high';
+    cx.drawImage(appLayerCtx.canvas,sx,top,cropW,cropH,dx,dy,dw,dh);
+    items.filter(it=>it.depth>=0).forEach(put)
+  }
+  // 置き場所（ウインドウ・ページ内の枠に対する％）
+  function appCharRect(boxW,boxH){
+    const ch=boxH*Math.max(15,Math.min(90,state.appCSize||42))/100,cw=Math.min(boxW,ch*1.15);
+    return {w:cw,h:ch,x:(boxW-cw)*(state.appCX??100)/100,y:(boxH-ch)*(state.appCY??100)/100}
+  }
+
   // 毎フレーム：別ウインドウへは配信画面と同じ絵を、ページ内の小窓へは約8fpsで写す
   function appCopy(now){
     if(appContext&&appWinOpen()){
       try{
         const c=appContext.canvas;
-        if(c.width!==W||c.height!==H){c.width=W;c.height=H}
-        appContext.clearRect(0,0,W,H);appContext.drawImage(canvas,0,0)
+        if(appCharMode()){
+          const win=appWindow,dpr=Math.min(2,win.devicePixelRatio||1),r=appCharRect(win.innerWidth,win.innerHeight);
+          const pw=Math.max(1,Math.round(r.w*dpr)),ph=Math.max(1,Math.round(r.h*dpr));
+          if(c.width!==pw||c.height!==ph){c.width=pw;c.height=ph}
+          Object.assign(c.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',right:'',bottom:'',aspectRatio:''});
+          appCharDraw(appContext,pw,ph,now)
+        }else{
+          if(c.width!==W||c.height!==H){c.width=W;c.height=H}
+          appContext.clearRect(0,0,W,H);appContext.drawImage(canvas,0,0)
+        }
       }catch(_){appContext=null}
     }
     const m=E('appMirror');
-    if(!m||E('appStageWrap').hidden||now-appMirrorAt<120)return;
+    if(!m||E('appStageWrap').hidden)return;
+    const charM=appCharMode()&&!appWinOpen();
+    if(now-appMirrorAt<(charM?33:120))return;
     const r=m.getBoundingClientRect();
     if(!r.width||r.bottom<0||r.top>innerHeight)return;
     appMirrorAt=now;
-    const pw=W>H?480:270,ph=W>H?270:480;
+    if(charM){
+      // ページ内：アプリの枠の上に、ウインドウと同じ置き方で重ねる
+      const box=m.parentElement.getBoundingClientRect(),q=appCharRect(box.width,box.height),dpr=Math.min(2,devicePixelRatio||1);
+      const pw=Math.max(1,Math.round(q.w*dpr)),ph=Math.max(1,Math.round(q.h*dpr));
+      if(m.width!==pw||m.height!==ph){m.width=pw;m.height=ph}
+      Object.assign(m.style,{left:q.x+'px',top:q.y+'px',width:q.w+'px',height:q.h+'px'});
+      appCharDraw(m.getContext('2d'),pw,ph,now);
+      return
+    }
+    // 配信画面をそのまま：縦横の比をそのままに縮める
+    const pw=W>H?480:Math.round(480*W/H),ph=Math.round(pw*H/W);
     if(m.width!==pw||m.height!==ph){m.width=pw;m.height=ph}
+    m.style.left=m.style.top=m.style.width=m.style.height='';
     const cx=m.getContext('2d');cx.clearRect(0,0,pw,ph);cx.drawImage(canvas,0,0,pw,ph)
+  }
+  // 「キャラクターだけ」のときは、ページ内の小窓をアプリの枠の上に移す
+  function appMirrorPlace(){
+    const m=E('appMirror'),frame=document.querySelector('#appStageWrap .app-frame-box'),fig=document.querySelector('#appStageWrap .app-mirror-box');
+    if(!m||!frame||!fig)return;
+    const on=appCharMode();
+    E('appStageWrap').classList.toggle('charmode',on);
+    if(on&&m.parentElement!==frame)frame.append(m);
+    if(!on&&m.parentElement!==fig)fig.prepend(m);
+    E('appCharOpts').hidden=!on;E('appStageOpts').hidden=on
   }
 
 const SERIF_MAX=100,LINE_MAX=300;
@@ -9714,6 +9864,8 @@ const slotCfg=()=>state.slot||(state.slot={aName:'役柄',bName:'セリフ',dur:
   function renderSlot(){
     const c=slotCfg(),s=play.slot;
     E('slotAName').value=c.aName;E('slotBName').value=c.bName;E('slotDur').value=String(c.dur);E('slotLook').value=c.look;
+    E('slotPos').value=c.pos||'center';E('slotSize').value=c.size||62;E('slotSizeVal').textContent=(c.size||62)+'%';E('slotColor').value=c.color||'classic';
+    {const cs=slotBase();E('slotColors').hidden=(c.color||'classic')!=='custom';for(let i=0;i<5;i++)E('slotC'+i).value=cs[i]}
     E('slotSpin').textContent='🎰 抽選開始（'+c.aName+'×'+c.bName+'）';E('slotRe').textContent=c.aName+'だけ引き直す';E('slotRb').textContent=c.bName+'だけ引き直す';
     const ses=(typeof cfg!=='undefined'?cfg.sounds:[]).filter(x=>x.assetId&&(x.type==='emoji'||x.type==='text'));
     E('slotSe').replaceChildren(new Option('鳴らさない',''),...ses.map(x=>new Option((x.label||x.fileName||'効果音').slice(0,30),x.id)));
@@ -9740,6 +9892,34 @@ const slotCfg=()=>state.slot||(state.slot={aName:'役柄',bName:'セリフ',dur:
   E('slotDur').onchange=e=>{slotCfg().dur=Math.max(0,Math.min(10,Number(e.target.value)||0));save()};
   E('slotSe').onchange=e=>{slotCfg().se=e.target.value;save()};
   E('slotLook').onchange=e=>{slotCfg().look=e.target.value==='bubble'?'bubble':'machine';save()};
+  E('slotPos').onchange=e=>{slotCfg().pos=['left','right'].includes(e.target.value)?e.target.value:'center';save()};
+  E('slotSize').oninput=e=>{slotCfg().size=Math.max(30,Math.min(90,Number(e.target.value)||62));E('slotSizeVal').textContent=slotCfg().size+'%';save()};
+  E('slotColor').onchange=e=>{const c=slotCfg();c.color=['theme','custom'].includes(e.target.value)?e.target.value:'classic';
+    // 「自分で選ぶ」にしたときは、いま見えている色から始める
+    if(c.color==='custom'&&!(Array.isArray(c.colors)&&c.colors.length===5))c.colors=SLOT_CLASSIC.slice();
+    save();renderSlot()};
+  for(let i=0;i<5;i++)E('slotC'+i).oninput=e=>{const c=slotCfg();if(!Array.isArray(c.colors)||c.colors.length!==5)c.colors=SLOT_CLASSIC.slice();c.colors[i]=e.target.value;save()};
+  // 筐体の色：外枠・内側・役柄の窓・飾り・文字の5色から、窓や見出しの色を作る
+  const SLOT_CLASSIC=['#e8c984','#fffdf7','#dfb4c3','#a9cfa7','#5e4a43'];
+  function slotHex(h){h=String(h||'').replace('#','');if(!/^[0-9a-f]{6}$/i.test(h))return [0,0,0];return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16))}
+  function slotMix(a,b,t){const x=slotHex(a),y=slotHex(b);return '#'+x.map((v,i)=>Math.round(v+(y[i]-v)*t).toString(16).padStart(2,'0')).join('')}
+  function slotLum(h){const [r,g2,b]=slotHex(h).map(v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4});return .2126*r+.7152*g2+.0722*b}
+  function slotBase(){
+    const c=slotCfg();
+    if(c.color==='custom'&&Array.isArray(c.colors)&&c.colors.length===5)return c.colors;
+    if(c.color==='theme'&&typeof look!=='undefined'){
+      const inner=look.paper||'#fffdf7',frame=look.accent||'#234c40',deco=look.decor||'#a47c42';
+      // 文字は内側の色に対して読める色（明るい内側には濃い文字、暗い内側には明るい文字）
+      const text=slotLum(inner)>.35?slotMix(frame,'#000000',.35):slotMix(look.accent||'#ffffff','#ffffff',.6);
+      return [frame,inner,slotMix(frame,inner,.35),deco,text]
+    }
+    return SLOT_CLASSIC
+  }
+  function slotPal(){
+    const c=slotCfg(),[frame,inner,acc,deco,text]=slotBase();
+    if((c.color||'classic')==='classic')return {frame:'#e8c984',in0:'#fffdf7',in1:'#fff8e9',stud:'#a9cfa7',studL:'#7faa80',badge:'#e3f2df',badgeL:'#acd0aa',badgeT:'#52694f',role:'#fff7f9',roleL:'#dfb4c3',line:'#fffaf0',lineL:'#e4cfa5',text:'#5e4a43'};
+    return {frame,in0:inner,in1:slotMix(inner,frame,.07),stud:deco,studL:slotMix(deco,'#000000',.2),badge:slotMix(deco,inner,.78),badgeL:slotMix(deco,inner,.35),badgeT:text,role:slotMix(acc,inner,.9),roleL:acc,line:slotMix(frame,inner,.9),lineL:slotMix(frame,inner,.55),text}
+  }
   // 筋肉室スロットの設定JSON（version 3：{config, roles:[{name, lines}]}）を、セリフ帳のシチュエーションとして読み込む
   E('slotImport').onclick=()=>E('slotFile').click();
   E('slotFile').onchange=async e=>{
@@ -9864,44 +10044,44 @@ const slotCfg=()=>state.slot||(state.slot={aName:'役柄',bName:'セリフ',dur:
       if(s.done&&!s.bub){s.bub=true;play.serif={title:s.role,text:s.line,at:performance.now(),who:s.role};renderSerifs()}
       return
     }
-    const w=Math.min(W*.62,820*k),x=state.playPos==='left'?40*k:state.playPos==='right'?W-40*k-w:(W-w)/2,y=36*k;
-    const fsA=40*k;
+    const P=slotPal(),pos=c.pos||'center',w=Math.min(W*(c.size||62)/100,W-48*k),x=pos==='left'?24*k:pos==='right'?W-24*k-w:(W-w)/2,y=36*k;
+    const sc=Math.max(.6,Math.min(1.2,w/(793*k))),fsA=40*k*sc;
     g.save();
-    let fsB=26*k,lines;
-    for(;;){g.font=sceneFontCss(fsB,lineTxt);lines=wrapLines('「'+lineTxt+'」',w-90*k,99);if(lines.length<=4||fsB<=16*k)break;fsB-=2*k}
+    let fsB=26*k*sc,lines;
+    for(;;){g.font=sceneFontCss(fsB,lineTxt);lines=wrapLines('「'+lineTxt+'」',w-90*k,99);if(lines.length<=4||fsB<=16*k*sc)break;fsB-=2*k*sc}
     if(lines.length>7)lines=wrapLines('「'+lineTxt+'」',w-90*k,7);
     const lhB=fsB*1.55,hA=fsA*1.9,hB=Math.max(lhB*2.4,lines.length*lhB+30*k);
     const h=44*k+36*k+hA+14*k+hB+30*k;
     // 筐体
     g.fillStyle='rgba(92,65,48,.16)';g.beginPath();g.roundRect(x+6*k,y+8*k,w,h,30*k);g.fill();
-    g.fillStyle='#e8c984';g.beginPath();g.roundRect(x,y,w,h,30*k);g.fill();
+    g.fillStyle=P.frame;g.beginPath();g.roundRect(x,y,w,h,30*k);g.fill();
     const ix=x+9*k,iy=y+9*k,iw=w-18*k,ih=h-18*k;
-    const grd=g.createLinearGradient(0,iy,0,iy+ih);grd.addColorStop(0,'#fffdf7');grd.addColorStop(1,'#fff8e9');
+    const grd=g.createLinearGradient(0,iy,0,iy+ih);grd.addColorStop(0,P.in0);grd.addColorStop(1,P.in1);
     g.fillStyle=grd;g.beginPath();g.roundRect(ix,iy,iw,ih,22*k);g.fill();
     for(const [cx,cy] of [[ix+18*k,iy+18*k],[ix+iw-18*k,iy+18*k],[ix+18*k,iy+ih-18*k],[ix+iw-18*k,iy+ih-18*k]]){
-      g.fillStyle='#a9cfa7';g.strokeStyle='#7faa80';g.lineWidth=2*k;g.beginPath();g.arc(cx,cy,10*k,0,Math.PI*2);g.fill();g.stroke();
+      g.fillStyle=P.stud;g.strokeStyle=P.studL;g.lineWidth=2*k;g.beginPath();g.arc(cx,cy,10*k,0,Math.PI*2);g.fill();g.stroke();
       g.fillStyle='rgba(255,255,255,.7)';g.beginPath();g.arc(cx-3*k,cy-3*k,3.2*k,0,Math.PI*2);g.fill()
     }
     // 見出し「役柄 × セリフ」
     g.textAlign='center';g.textBaseline='middle';
     const badge=c.aName+'  ×  '+c.bName;g.font=sceneFontCss(17*k,badge);
     const bw=g.measureText(badge).width+40*k,by=iy+22*k;
-    g.fillStyle='#e3f2df';g.strokeStyle='#acd0aa';g.lineWidth=2*k;g.beginPath();g.roundRect(x+(w-bw)/2,by,bw,32*k,16*k);g.fill();g.stroke();
-    g.fillStyle='#52694f';g.fillText(badge,x+w/2,by+16*k);
+    g.fillStyle=P.badge;g.strokeStyle=P.badgeL;g.lineWidth=2*k;g.beginPath();g.roundRect(x+(w-bw)/2,by,bw,32*k,16*k);g.fill();g.stroke();
+    g.fillStyle=P.badgeT;g.fillText(badge,x+w/2,by+16*k);
     // 役柄の窓
     const ay=by+46*k,aw=iw-52*k,ax=x+(w-aw)/2;
-    g.fillStyle='#fff7f9';g.strokeStyle='#dfb4c3';g.lineWidth=4*k;g.beginPath();g.roundRect(ax,ay,aw,hA,22*k);g.fill();g.stroke();
-    g.font=sceneFontCss(fsA,roleTxt);g.fillStyle='#5e4a43';g.fillText(roleTxt,x+w/2,ay+hA/2,aw-30*k);
+    g.fillStyle=P.role;g.strokeStyle=P.roleL;g.lineWidth=4*k;g.beginPath();g.roundRect(ax,ay,aw,hA,22*k);g.fill();g.stroke();
+    g.font=sceneFontCss(fsA,roleTxt);g.fillStyle=P.text;g.fillText(roleTxt,x+w/2,ay+hA/2,aw-30*k);
     // セリフの窓
     const byy=ay+hA+14*k;
-    g.fillStyle='#fffaf0';g.strokeStyle='#e4cfa5';g.lineWidth=3*k;g.beginPath();g.roundRect(ax,byy,aw,hB,20*k);g.fill();g.stroke();
-    g.font=sceneFontCss(fsB,lineTxt);g.fillStyle='#5e4a43';
+    g.fillStyle=P.line;g.strokeStyle=P.lineL;g.lineWidth=3*k;g.beginPath();g.roundRect(ax,byy,aw,hB,20*k);g.fill();g.stroke();
+    g.font=sceneFontCss(fsB,lineTxt);g.fillStyle=P.text;
     const top=byy+(hB-lines.length*lhB)/2;
     lines.forEach((l,i)=>g.fillText(l,x+w/2,top+i*lhB+lhB/2,aw-30*k));
     g.restore()
   }
 
-const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window'});
+const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
   const ponBags={};
   // 並べるもの（シチュエーションは、セリフのあるものだけ）
   function ponItems(){
@@ -9956,8 +10136,10 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window'});
   }
   let ponSig='',ponNodes=[];
   function renderPon(){
-    const c=ponCfg(),all=ponItems(),shown=all.filter(it=>!c.hide.includes(it.id));
-    const sig=JSON.stringify([shown.map(it=>it.id+it.label),all.length,c.app]);
+    const c=ponCfg(),all=ponItems(),sv=c.serif||'all';
+    // シチュエーションは、ドロップダウンで選んだもの（すべて／1つ／使わない）。ほかはチェックボックス
+    const shown=all.filter(it=>it.kind==='serif'?(sv==='all'||sv==='s:'+it.s.id):!c.hide.includes(it.id));
+    const sig=JSON.stringify([shown.map(it=>it.id+it.label),all.map(it=>it.id+it.label),c.app,sv]);
     if(sig!==ponSig){
       ponSig=sig;
       ponNodes=shown.map(it=>{
@@ -9969,7 +10151,10 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window'});
       E('ponGrid').replaceChildren(...ponNodes.map(n=>n.b));
       E('ponEmpty').hidden=shown.length>0;
       // 並べるものの選択
-      E('ponPick').replaceChildren(...all.map(it=>{
+      const sel=E('ponSerif'),ser=all.filter(it=>it.kind==='serif');
+      sel.replaceChildren(...[['none','今回は使用しない'],['all','すべて並べる（'+ser.length+'個）'],...ser.map(it=>['s:'+it.s.id,it.label.replace(/^💬 /,'')])].map(([v,t])=>Object.assign(document.createElement('option'),{value:v,textContent:t})));
+      sel.value=sv==='all'||sv==='none'||ser.some(it=>'s:'+it.s.id===sv)?sv:'all';
+      E('ponPick').replaceChildren(...all.filter(it=>it.kind!=='serif').map(it=>{
         const l=document.createElement('label');l.className='pon-pick';
         const cb=document.createElement('input');cb.type='checkbox';cb.checked=!c.hide.includes(it.id);
         cb.onchange=()=>{c.hide=cb.checked?c.hide.filter(x=>x!==it.id):[...c.hide,it.id].slice(-300);save();renderPon()};
@@ -9992,7 +10177,8 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window'});
   E('ponSlotRb').onclick=()=>{slotSpin('b');ponState()};
   E('ponClear').onclick=()=>{play.serif=null;play.slot=null;play.dice=null;play.wheel=null;renderPlays();ponState()};
   E('ponApp').onchange=e=>{ponCfg().app=e.target.value==='page'?'page':'window';save();renderPon()};
-  E('ponAll').onclick=()=>{ponCfg().hide=[];save();renderPon()};
+  E('ponAll').onclick=()=>{ponCfg().hide=[];ponCfg().serif='all';save();renderPon()};
+  E('ponSerif').onchange=e=>{ponCfg().serif=e.target.value;save();renderPon()};
   setInterval(()=>{if(ponNodes.length||play.serif||play.slot)ponState()},400);
 
 const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版1）\n * 1. 下の OTONOHA_KEY を、自分だけの合言葉に書き換えます（英数字で12文字以上がおすすめ）。\n * 2. デプロイ → 新しいデプロイ → 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」。\n * 3. 出てきたウェブアプリのURLと合言葉を、オトノハの「歌枠管理シートとつなぐ」に入れます。\n * このスクリプトが書き込むのは、手で入力する列（「曲」A・C・E列、「音源」A〜E・G列、「配信一覧」A〜C・F列、「配信ログ」A〜F列）だけです。自動の列には書きません。\n */\nconst OTONOHA_KEY = 'ここに合言葉';\n\nfunction doGet(e) { return out_(handle_((e && e.parameter) || {})); }\nfunction doPost(e) {\n  let body = {};\n  try { body = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return out_({ ok: false, error: '送られた内容が読めません' }); }\n  return out_(handle_(body));\n}\nfunction out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }\n\nfunction handle_(p) {\n  if (!OTONOHA_KEY || OTONOHA_KEY === 'ここに合言葉') return { ok: false, error: 'Apps Script の OTONOHA_KEY に合言葉を書いて、デプロイし直してください' };\n  if (String(p.key || '') !== OTONOHA_KEY) return { ok: false, error: '合言葉が違います' };\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  try {\n    if (p.op === 'ping') return { ok: true, version: 1, name: ss.getName() };\n    if (p.op === 'read') return read_(ss);\n    if (p.op === 'log') {\n      const lock = LockService.getDocumentLock();\n      lock.waitLock(20000);\n      try { return log_(ss, p); } finally { lock.releaseLock(); }\n    }\n    return { ok: false, error: '知らない操作です：' + String(p.op || '') };\n  } catch (err) {\n    return { ok: false, error: String((err && err.message) || err) };\n  }\n}\n\n// 見出しの「始まりの文字」で列を探す（見出しを少し書き足しても動くように）\nfunction tab_(ss, name) {\n  const sh = ss.getSheetByName(name);\n  if (!sh) throw new Error('「' + name + '」タブが見つかりません');\n  const v = sh.getDataRange().getDisplayValues();\n  const head = v[0] || [];\n  const col = function (prefix) { for (let i = 0; i < head.length; i++) if (String(head[i]).indexOf(prefix) === 0) return i; return -1; };\n  return { sh: sh, head: head, body: v.slice(1), col: col };\n}\nfunction cell_(row, i) { return i < 0 ? '' : String(row[i] == null ? '' : row[i]).trim(); }\n// 列の中で、最後に値が入っている行（1始まり）。数式の空文字は値として数えない\nfunction lastRow_(sh, col) {\n  const n = sh.getMaxRows();\n  if (n < 2) return 1;\n  const v = sh.getRange(2, col, n - 1, 1).getDisplayValues();\n  for (let i = v.length - 1; i >= 0; i--) if (String(v[i][0]).trim() !== '') return i + 2;\n  return 1;\n}\n\nfunction read_(ss) {\n  const S = tab_(ss, '曲'), R = tab_(ss, '音源'), P = tab_(ss, '提供者');\n  const sT = S.col('表示用曲名'), sW = S.col('作品名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用');\n  const songs = S.body.filter(function (r) { return cell_(r, sT); }).map(function (r) {\n    return { t: cell_(r, sT), a: cell_(r, sA), w: cell_(r, sW), k: cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA)) };\n  });\n  const rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rKey = R.col('キー'), rU2 = R.col('URL（共有IDなし'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）'), rF = R.col('音源ファイルの保存場所');\n  const srcs = R.body.filter(function (r) { return cell_(r, rN); }).map(function (r) {\n    return { s: cell_(r, rS), n: cell_(r, rN), kind: cell_(r, rKind), key: cell_(r, rKey), u: cell_(r, rU2) || cell_(r, rU), by: cell_(r, rBy), f: cell_(r, rF) };\n  });\n  const pN = P.col('提供者名');\n  const providers = P.body.map(function (r) { return cell_(r, pN); }).filter(String);\n  let accounts = [];\n  try {\n    const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n    accounts = A.body.filter(function (r) { return cell_(r, aI); }).map(function (r) { return { id: cell_(r, aI), name: cell_(r, aN) }; });\n  } catch (err) { }\n  return { ok: true, version: 1, songs: songs, srcs: srcs, providers: providers, accounts: accounts };\n}\n\n// p.stream = {id, date, prof, title, addStream}\n// p.rows = [{n, ts, t, a, k, src:{n, u, by, kind}}]\nfunction log_(ss, p) {\n  const st = p.stream || {}, rows = Array.isArray(p.rows) ? p.rows.slice(0, 300) : [];\n  const id = String(st.id || '').trim().slice(0, 60);\n  if (!id) return { ok: false, error: '配信IDがありません' };\n  if (!rows.length) return { ok: false, error: '送る曲がありません' };\n  const L = tab_(ss, '配信ログ'), lId = L.col('配信ID');\n  if (L.body.some(function (r) { return cell_(r, lId) === id; })) return { ok: false, exists: true, error: '配信ログに、配信ID「' + id + '」の行がもうあります' };\n  const added = { songs: 0, srcs: 0, rows: 0, stream: 0 };\n\n  // 配信一覧：まだない配信IDなら1行足す（配信先・収益化は空欄。シートで選んでください）\n  if (st.addStream) {\n    const T = tab_(ss, '配信一覧'), tId = T.col('配信ID');\n    if (!T.body.some(function (r) { return cell_(r, tId) === id; })) {\n      let acc = '';\n      try {\n        const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n        A.body.forEach(function (r) { if (!acc && st.prof && cell_(r, aN) === String(st.prof)) acc = cell_(r, aI); });\n      } catch (err) { }\n      const r = lastRow_(T.sh, 1) + 1;\n      T.sh.getRange(r, 2).setNumberFormat('@');\n      T.sh.getRange(r, 1, 1, 3).setValues([[id, String(st.date || ''), acc]]);\n      if (st.title) T.sh.getRange(r, 6).setValue(String(st.title).slice(0, 300));\n      added.stream = 1;\n    }\n  }\n\n  // 曲：シートにない曲は「曲」タブに下書きとして足す（曲名・アーティスト・表記の状態）\n  const S = tab_(ss, '曲'), sT = S.col('表示用曲名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用'), sState = S.col('表記の状態');\n  const songKeys = {};\n  S.body.forEach(function (r) { if (cell_(r, sT)) songKeys[cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA))] = 1; });\n  let sNext = lastRow_(S.sh, sT + 1) + 1;\n  rows.forEach(function (x) {\n    const k = String(x.k || (String(x.t || '') + '／' + String(x.a || ''))).slice(0, 420);\n    x.k = k;\n    if (songKeys[k] || !x.t) return;\n    S.sh.getRange(sNext, sT + 1).setValue(String(x.t).slice(0, 200));\n    if (sA >= 0) S.sh.getRange(sNext, sA + 1).setValue(String(x.a || '').slice(0, 200));\n    if (sState >= 0) S.sh.getRange(sNext, sState + 1).setValue('下書き・要確認');\n    songKeys[k] = 1; sNext++; added.songs++;\n  });\n\n  // 音源：シートにない音源は「音源」タブに足す（提供者は、提供者タブにある名前のときだけ入れる）\n  const R = tab_(ss, '音源'), rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）');\n  const P = tab_(ss, '提供者'), pN = P.col('提供者名');\n  const providers = {};\n  P.body.forEach(function (r) { if (cell_(r, pN)) providers[cell_(r, pN)] = 1; });\n  const srcNames = {};\n  R.body.forEach(function (r) { if (cell_(r, rN)) srcNames[cell_(r, rN)] = 1; });\n  let rNext = lastRow_(R.sh, rN + 1) + 1;\n  rows.forEach(function (x) {\n    const s = x.src;\n    if (!s || !s.n) return;\n    s.n = String(s.n).slice(0, 200);\n    if (srcNames[s.n]) return;\n    if (rS >= 0) R.sh.getRange(rNext, rS + 1).setValue(x.k);\n    R.sh.getRange(rNext, rN + 1).setValue(s.n);\n    if (rKind >= 0) R.sh.getRange(rNext, rKind + 1).setValue(/youtube\\.com|youtu\\.be/.test(String(s.u || '')) ? 'YouTube動画' : 'その他');\n    if (rU >= 0 && s.u) R.sh.getRange(rNext, rU + 1).setValue(String(s.u).slice(0, 500));\n    if (rBy >= 0 && s.by && providers[s.by]) R.sh.getRange(rNext, rBy + 1).setValue(s.by);\n    srcNames[s.n] = 1; rNext++; added.srcs++;\n  });\n\n  // 配信ログ：配信ID・順番・タイムスタンプ（文字）・区分「曲」・曲・音源\n  const values = rows.map(function (x, i) {\n    return [id, Number(x.n) || (i + 1), String(x.ts || ''), '曲', x.k, x.src && x.src.n ? x.src.n : ''];\n  });\n  const start = lastRow_(L.sh, 1) + 1;\n  L.sh.getRange(start, 3, values.length, 1).setNumberFormat('@');\n  L.sh.getRange(start, 1, values.length, 6).setValues(values);\n  added.rows = values.length;\n  return { ok: true, added: added, firstRow: start };\n}\n";
@@ -10341,6 +10527,7 @@ for(const q of particles)q.beh='';
     renderSceneForm();
     renderMascotUI();
     syncBgmProfiles(true);
+    renderBgList();
     toast('名義「'+p.name+'」に切り替えました')
   }
 
@@ -11080,7 +11267,8 @@ let W=1280,
     return n
   }
 
-  function drawAvatar(now,talking,blink){
+  // cx：描く先（ふだんは配信画面。アプリ表示でキャラクターだけを使うときは、透過のレイヤー）
+  function drawAvatar(now,talking,blink,cx=g){
     const __c=curChar(),
       __single=!!(__c&&__c.mode==='single'),
       idx=__single?0:(blink?2:0)+(talking?1:0),
@@ -11088,16 +11276,16 @@ let W=1280,
       pose=avatarPose(now,talking),
       geo=avatarGeom();
 
-    g.save();
+    cx.save();
     {
       const __a=switchAlpha(now);
-      if(__a<1)g.globalAlpha=__a
+      if(__a<1)cx.globalAlpha=__a
     }
-    g.translate(geo.cx+pose.dx,pose.pv+pose.dy);
-    g.rotate(pose.rot);
-    g.translate(0,geo.bottom-pose.pv);
-    g.imageSmoothingEnabled=true;
-    g.imageSmoothingQuality=state.light?'medium':'high';
+    cx.translate(geo.cx+pose.dx,pose.pv+pose.dy);
+    cx.rotate(pose.rot);
+    cx.translate(0,geo.bottom-pose.pv);
+    cx.imageSmoothingEnabled=true;
+    cx.imageSmoothingQuality=state.light?'medium':'high';
 
     if(im){
       const ref=images.png0||im;
@@ -11105,54 +11293,54 @@ let W=1280,
         const r=charRect(ref),
           f=Math.min(W/r.w,H/r.h)*state.scale/100;
         const sp=avSprite(im,r,f);
-        if(sp)g.drawImage(sp.c,-sp.dw/2,-sp.dh);else g.drawImage(im,r.x,r.y,r.w,r.h,-r.w*f/2,-r.h*f,r.w*f,r.h*f)
+        if(sp)cx.drawImage(sp.c,-sp.dw/2,-sp.dh);else cx.drawImage(im,r.x,r.y,r.w,r.h,-r.w*f/2,-r.h*f,r.w*f,r.h*f)
       }else{
         const factor=Math.min(W/ref.width,H/ref.height)*state.scale/100;
         const w=im.width*factor,
           h=im.height*factor;
-        g.drawImage(im,-w/2,-h,w,h)
+        cx.drawImage(im,-w/2,-h,w,h)
       }
-      g.restore();
+      cx.restore();
       return
     }
 
     const s=state.scale/85;
-    g.scale(s,s);
-    g.translate(0,-243);
-    g.fillStyle='#6b8b79';
-    g.beginPath();
-    g.roundRect(-108,38,216,205,[60,60,18,18]);
-    g.fill();
-    g.fillStyle='#f9f1df';
-    g.beginPath();
-    g.ellipse(0,-43,91,103,0,0,Math.PI*2);
-    g.fill();
-    g.strokeStyle='#385748';
-    g.lineWidth=6;
+    cx.scale(s,s);
+    cx.translate(0,-243);
+    cx.fillStyle='#6b8b79';
+    cx.beginPath();
+    cx.roundRect(-108,38,216,205,[60,60,18,18]);
+    cx.fill();
+    cx.fillStyle='#f9f1df';
+    cx.beginPath();
+    cx.ellipse(0,-43,91,103,0,0,Math.PI*2);
+    cx.fill();
+    cx.strokeStyle='#385748';
+    cx.lineWidth=6;
     for(const ex of [-32,32]){
-      g.beginPath();
+      cx.beginPath();
       if(blink){
-        g.moveTo(ex-12,-55);
-        g.lineTo(ex+12,-55)
-      }else g.ellipse(ex,-55,5,10,0,0,Math.PI*2);
-      g.stroke()
+        cx.moveTo(ex-12,-55);
+        cx.lineTo(ex+12,-55)
+      }else cx.ellipse(ex,-55,5,10,0,0,Math.PI*2);
+      cx.stroke()
     }
-    g.beginPath();
+    cx.beginPath();
     if(talking){
-      g.ellipse(0,-5,14,20,0,0,Math.PI*2);
-      g.fillStyle='#c47977';
-      g.fill()
+      cx.ellipse(0,-5,14,20,0,0,Math.PI*2);
+      cx.fillStyle='#c47977';
+      cx.fill()
     }else{
-      g.moveTo(-14,-6);
-      g.quadraticCurveTo(0,5,14,-6);
-      g.stroke()
+      cx.moveTo(-14,-6);
+      cx.quadraticCurveTo(0,5,14,-6);
+      cx.stroke()
     }
-    g.restore();
+    cx.restore();
 
-    g.fillStyle=state.bg==='green'||state.bg==='blue'?'#111':'#6b7a6d';
-    g.textAlign='center';
-    g.font='18px sans-serif';
-    g.fillText('動作確認用 / 4枚のPNGを登録してください',W/2,H-40)
+    cx.fillStyle=state.bg==='green'||state.bg==='blue'?'#111':'#6b7a6d';
+    cx.textAlign='center';
+    cx.font='18px sans-serif';
+    cx.fillText('動作確認用 / 4枚のPNGを登録してください',W/2,H-40)
   }
 
   const particles=Array.from({length:100},(_,i)=>({
@@ -11385,7 +11573,11 @@ let W=1280,
       });
       return
     }
-    if(bk==='image'&&images.background){
+    if(bk==='image'){
+      const b=bgCur(),im=b&&bgImage(b);
+      if(im){bgCached('bgi'+b.id+'_'+W+'x'+H+'_'+(b.x??50)+'_'+(b.y??50)+'_'+(b.z||100),cg=>coverImgAt(cg,im,b));return}
+    }
+    if(bk==='image'&&images.background&&!bgCur()){
       const im=images.background;
       bgCached('img'+imgId(im)+'_'+W+'x'+H,cg=>coverImg(cg,im));
       return
@@ -11432,9 +11624,9 @@ let W=1280,
   }
 
 function applyAspect(){
-    const v=state.aspect==='portrait';
-    W=v?720:1280;
-    H=v?1280:720;
+    const a=state.aspect;
+    W=a==='portrait'?720:a==='x34'?960:1280;
+    H=a==='landscape'?720:1280;
     if(canvas.width!==W||canvas.height!==H){
       canvas.width=W;
       canvas.height=H;
@@ -11451,13 +11643,14 @@ function applyAspect(){
       toast('収録中は映像の向きを変えられません');
       return
     }
-    state.aspect=e.target.value==='portrait'?'portrait':'landscape';
+    state.aspect=['portrait','x34'].includes(e.target.value)?e.target.value:'landscape';
     save();
     applyAspect();
+    renderBgList();
     if(outputWindow&&!outputWindow.closed)try{
-      outputWindow.resizeTo(W>H?1280:450,W>H?760:840)
+      outputWindow.resizeTo(W>H?1280:state.aspect==='x34'?630:450,W>H?760:840)
     }catch(_){}
-    toast(W>H?'横向き（1280×720）にしました':'縦向き（720×1280）にしました')
+    toast(W>H?'横向き（1280×720）にしました':state.aspect==='x34'?'3:4（960×1280）にしました':'縦向き（720×1280）にしました')
   };
 
   function setMotion(m){
@@ -11955,8 +12148,11 @@ let frameToken=0,
     effects(dt,now,'back');
     if(sceneAvatar()){
       drawMascots(now);
-      drawAvatar(now,mouth&&selfSpeak(),blink)
-    }
+      // アプリ表示で「キャラクターだけ」を使うときは、立ち絵を透過のレイヤーに描いてから配信画面へ写す（同じ動きをアプリ表示にも使う）
+      const al=appCharLayer();
+      if(al){al.clearRect(0,0,W,H);drawAvatar(now,mouth&&selfSpeak(),blink,al);g.drawImage(al.canvas,0,0)}
+      else drawAvatar(now,mouth&&selfSpeak(),blink)
+    }else appLayerEmpty=true;
     drawSceneImage(now);
     effects(dt,now,'front');
     if(scene==='live'){caption();drawPlays(now);drawSetlist()}else sceneCaption();
@@ -12371,9 +12567,14 @@ let frameToken=0,
   E('vidFormat').onchange=e=>{state.vidFormat=e.target.value==='webm'?'webm':'mp4';save()};
   E('vidQuality').onchange=e=>{state.vidQuality=Number(e.target.value)||8;save()};
 
-  function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg|[xy][a-z0-9]{1,8})$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)||/^scene-(?:standby|away|end)$/.test(id)||/^msc-[a-z0-9]{1,12}$/.test(id)}
+  function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'background'].includes(id)||/^ch-[a-z0-9]{1,24}-(?:[0-3]|bg|[xy][a-z0-9]{1,8})$/.test(id)||/^fxp-[a-z0-9]{1,24}-[0-5]$/.test(id)||/^scene-(?:standby|away|end)$/.test(id)||/^msc-[a-z0-9]{1,12}$/.test(id)||/^bgi-[a-z0-9]{1,16}$/.test(id)}
   async function studioValidate(decoded){
     for(const[id,b]of Object.entries(decoded)){
+      if(/^app-[a-z0-9]{1,16}$/.test(id)){
+        if(b.type!=='text/html')throw Error('アプリのファイルの形式が正しくありません');
+        if(b.size>40*1024*1024)throw Error('アプリのファイルは1つ40MB以下です');
+        continue
+      }
       if(!studioAssetId(id))throw Error('未対応の画像データです');
       if(!/^image\/(png|webp|jpeg)$/.test(b.type))throw Error('未対応の画像形式です');
       if(b.size>25*1024*1024)throw Error('画像は1枚25MB以下です');
@@ -12384,6 +12585,15 @@ let frameToken=0,
   async function studioApply(rawState,decoded){
       const clean=sanitize(rawState);
       clean.legacyVideos=state.legacyVideos||[];
+      // アプリのファイル：今のものを外し、読み込むファイルに置き換える
+      {const appIds=Object.keys(decoded).filter(id=>id.startsWith('app-'));
+       for(const a of (state.apps||[]))if(a.kind==='file')await deleteAsset('app:'+a.id);
+       for(const id of appIds){await putAsset('app:'+id.slice(4),decoded[id]);delete decoded[id]}
+       if(appBlobUrl)URL.revokeObjectURL(appBlobUrl);appBlobUrl='';appBlobFor='';
+       if(appWinOpen())appWindow.close()}
+      // 背景画像（読み込んでいないものも）を、読み込む内容に置き換える
+      for(const p of state.profiles||[])for(const a of ['landscape','portrait','x34'])for(const b of (p.bgs?.[a]||[]))if(!decoded['bgi-'+b.id])try{await deleteAsset(ASSET+'bgi-'+b.id)}catch(_){}
+      for(const u of bgThumbs.values())URL.revokeObjectURL(u);bgThumbs.clear();
       const tx=db.transaction('assets','readwrite');
       for(const id of new Set(['png0','png1','png2','png3',...PARTICLE_IDS,'background',...Object.keys(assetBlobs),...Object.keys(charBlobs),...Object.keys(decoded)])){
         const s=tx.objectStore('assets');
@@ -12411,7 +12621,7 @@ let frameToken=0,
       seasonLoad();
       renderEffectOptions();
       for(const[id,b]of Object.entries(decoded)){
-        if(/^png[0-3]$|^ch-/.test(id))continue;
+        if(/^png[0-3]$|^ch-|^bgi-/.test(id))continue;
         await installAsset(id,b,state.assetNames[id],false)
       }
       ensureProfiles();
@@ -12425,7 +12635,7 @@ let frameToken=0,
   }
   function studioCollect(){syncChar();const assets={};for(const[id,b]of Object.entries(assetBlobs))if(!/^png[0-3]$/.test(id))assets[id]=b;for(const[id,b]of Object.entries(charBlobs))assets[id]=b;const out=JSON.parse(JSON.stringify(state));delete out.legacyVideos;delete out.videos;return {state:out,assets}}
   window.__otonohaVideoRec=()=>studioCapturing||captureStarting;
-  window.__otonohaStudio={collect:studioCollect,validate:studioValidate,apply:async(s,d)=>{await studioApply(s,d);toast('立ち絵・映像設定も読み込みました')},busy:()=>studioCapturing||captureStarting};
+  window.__otonohaStudio={collect:studioCollect,extra:bgAllBlobs,validate:studioValidate,apply:async(s,d)=>{await studioApply(s,d);toast('立ち絵・映像設定も読み込みました')},busy:()=>studioCapturing||captureStarting};
 
   window.addEventListener('beforeunload',e=>{
     if(studioCapturing||captureStarting){
@@ -12613,8 +12823,9 @@ const FXK=['count','speed','fxSize','fxOpacity','imageMotion'],
       if(!c)continue;
       const r=c.getBoundingClientRect();
       if(!r.width||r.bottom<0||r.top>innerHeight)continue;
-      const pw=W>H?640:360,
-        ph=W>H?360:640;
+      // 縦横の比を崩さずに縮める
+      const pw=W>H?640:Math.round(640*W/H),
+        ph=W>H?Math.round(640*H/W):640;
       if(c.width!==pw||c.height!==ph){
         c.width=pw;
         c.height=ph
@@ -13083,6 +13294,95 @@ E('gotoFilm').onclick=()=>{E('navSettings').click();setTimeout(()=>E('filmTitle'
   };
 
   E('pvToggle').onclick=()=>{const on=!document.body.hasAttribute('data-pv-on');document.body.toggleAttribute('data-pv-on',on);E('pvToggle').textContent=on?'プレビューを隠す':'プレビューも表示する'};
+
+const BG_MAX=10,BG_ASPECTS={landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'};
+  const bgLoading=new Set(),bgThumbs=new Map();
+  function bgProf(){const p=curProfile();if(!p)return null;if(!p.bgs||typeof p.bgs!=='object')p.bgs={};if(!p.bgSel||typeof p.bgSel!=='object')p.bgSel={};return p}
+  function bgList(p=bgProf(),asp=state.aspect){if(!p)return [];if(!Array.isArray(p.bgs[asp]))p.bgs[asp]=[];return p.bgs[asp]}
+  function bgCur(){const p=bgProf();if(!p)return null;const l=bgList(p);return l.find(b=>b.id===p.bgSel[state.aspect])||l[0]||null}
+  // 画像は使うときに読み込む（全名義・全部の向きを最初に読み込むと重くなるため）
+  function bgImage(b){
+    const id='bgi-'+b.id;
+    if(images[id])return images[id];
+    if(!bgLoading.has(id)){
+      bgLoading.add(id);
+      getAsset(ASSET+id).then(async blob=>{if(blob){images[id]=await decode(blob);assetBlobs[id]=blob}}).catch(()=>{}).finally(()=>bgLoading.delete(id))
+    }
+    return null
+  }
+  // 縦横同じ倍率で、枠いっぱいに敷く（はみ出した分は、位置の指定で見せる場所を選ぶ）
+  function coverImgAt(cg,im,b){
+    const z=Math.max(100,Math.min(300,b.z||100))/100,s=Math.max(W/im.width,H/im.height)*z,dw=im.width*s,dh=im.height*s;
+    cg.drawImage(im,(W-dw)*(b.x??50)/100,(H-dh)*(b.y??50)/100,dw,dh)
+  }
+  async function bgThumb(b){
+    if(bgThumbs.has(b.id))return bgThumbs.get(b.id);
+    const blob=assetBlobs['bgi-'+b.id]||await getAsset(ASSET+'bgi-'+b.id);
+    if(!blob)return '';
+    const u=URL.createObjectURL(blob);bgThumbs.set(b.id,u);return u
+  }
+  function renderBgList(){
+    const p=bgProf();
+    if(!p||!E('bgList'))return;
+    const l=bgList(p),cur=bgCur();
+    E('bgWhere').textContent='名義「'+p.name+'」・'+BG_ASPECTS[state.aspect]+'の背景（'+l.length+'/'+BG_MAX+'枚）';
+    E('bgList').replaceChildren(...l.map(b=>{
+      const btn=document.createElement('button');btn.type='button';btn.className='bg-item'+(cur&&b.id===cur.id?' selected':'');
+      btn.setAttribute('aria-pressed',String(!!cur&&b.id===cur.id));btn.title=b.name;
+      const im=document.createElement('img');im.alt='';bgThumb(b).then(u=>{if(u)im.src=u});
+      const sp=document.createElement('span');sp.textContent=b.name;
+      btn.append(im,sp);
+      btn.onclick=()=>{p.bgSel[state.aspect]=b.id;state.bg='image';E('studioBg').value='image';syncChar();save();renderBgList()};
+      return btn
+    }));
+    if(!l.length)E('bgList').append(Object.assign(document.createElement('span'),{className:'studio-mini',textContent:'まだ登録がありません'}));
+    E('bgAdd').disabled=l.length>=BG_MAX;
+    E('bgEdit').hidden=!cur;
+    if(cur){
+      for(const [id,k,df] of [['bgX','x',50],['bgY','y',50],['bgZ','z',100]]){E(id).value=cur[k]??df;E(id+'Val').textContent=(cur[k]??df)+'%'}
+      E('bgName').value=cur.name
+    }
+    E('bgUseNote').hidden=state.bg==='image'||!l.length
+  }
+  E('bgAdd').onclick=()=>E('bgFile').click();
+  E('bgFile').onchange=async e=>{
+    const files=[...e.target.files];e.target.value='';
+    const p=bgProf();if(!p||!files.length)return;
+    const l=bgList(p);let n=0;
+    for(const f of files){
+      if(l.length>=BG_MAX){toast('1つの向きに登録できる背景画像は'+BG_MAX+'枚までです',4000);break}
+      const id=Math.random().toString(36).slice(2,12);
+      try{
+        if(!ready)throw Error('保存領域の準備中です。少し待ってください');
+        await installAsset('bgi-'+id,f,f.name);
+        l.push({id,name:f.name.replace(/\.(png|webp|jpe?g)$/i,'').slice(0,40)||'背景',x:50,y:50,z:100});
+        p.bgSel[state.aspect]=id;n++
+      }catch(err){toast(err.message,5000)}
+    }
+    if(n){state.bg='image';E('studioBg').value='image';syncChar();save();renderBgList();toast(BG_ASPECTS[state.aspect]+'の背景画像を'+n+'枚登録しました',3000)}
+  };
+  for(const [id,k,lo,hi] of [['bgX','x',0,100],['bgY','y',0,100],['bgZ','z',100,300]])E(id).oninput=e=>{
+    const b=bgCur();if(!b)return;b[k]=Math.max(lo,Math.min(hi,Math.round(Number(e.target.value))));E(id+'Val').textContent=b[k]+'%';save()
+  };
+  E('bgName').oninput=e=>{const b=bgCur();if(!b)return;b.name=e.target.value.slice(0,40)||'背景';save();clearTimeout(E('bgName')._t);E('bgName')._t=setTimeout(renderBgList,500)};
+  E('bgDel').onclick=e=>armed(e.currentTarget,'もう一度押すと外す',async()=>{
+    const p=bgProf(),b=bgCur();if(!p||!b)return;
+    try{await deleteAsset(ASSET+'bgi-'+b.id)}catch(_){}
+    delete images['bgi-'+b.id];delete assetBlobs['bgi-'+b.id];delete state.assetNames['bgi-'+b.id];
+    if(bgThumbs.has(b.id)){URL.revokeObjectURL(bgThumbs.get(b.id));bgThumbs.delete(b.id)}
+    p.bgs[state.aspect]=bgList(p).filter(x=>x!==b);
+    p.bgSel[state.aspect]=p.bgs[state.aspect][0]?.id||'';
+    save();renderBgList();toast('背景画像を外しました')
+  });
+  // .live 書き出し用：まだ読み込んでいない背景画像も渡す
+  async function bgAllBlobs(){
+    const out={};
+    for(const p of state.profiles||[])for(const a of Object.keys(BG_ASPECTS))for(const b of (p.bgs?.[a]||[])){
+      const id='bgi-'+b.id;if(assetBlobs[id])continue;
+      try{const blob=await getAsset(ASSET+id);if(blob)out[id]=blob}catch(_){}
+    }
+    return out
+  }
 
 applyPerf();
   renderMotionOut();

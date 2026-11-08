@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.2 / 企画のポン出し・音源URLの曲リスト</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.3 / 背景画像（名義×向き）・3:4・アプリ表示はキャラクターだけ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button><button data-mode="aivoice">AIキャラ・声</button></nav>
@@ -46,7 +46,7 @@
 <div class="pon-sub"><button type="button" id="ponSlotRe" hidden>🎰 役柄だけ引き直す</button><button type="button" id="ponSlotRb" hidden>🎰 セリフだけ引き直す</button></div>
 <p class="pon-now" id="ponNow" aria-live="polite"></p>
 <p class="studio-mini" id="ponEmpty" hidden>企画卓のセリフ帳・アプリを並べるに登録すると、ここに並びます。</p>
-<details class="pon-opts"><summary>並べるもの・アプリの開き方</summary><div class="pon-picks" id="ponPick"></div><div class="studio-row"><button type="button" id="ponAll">すべて並べる</button><label class="studio-field">アプリの開き方<select id="ponApp"><option value="window">アプリと立ち絵のウインドウ（OBS用）で開く</option><option value="page">企画卓の中で開く</option></select></label></div><p class="studio-mini">シチュエーションのボタンは、押すたびにそのシチュエーションのセリフを1つ出します。全部出し終えるまで同じセリフは出ません。セリフ・役柄は企画卓のセリフ帳で前もって登録します。</p></details>
+<details class="pon-opts"><summary>並べるもの・アプリの開き方</summary><label class="studio-field">セリフ帳のシチュエーション<select id="ponSerif"></select></label><div class="pon-picks" id="ponPick"></div><div class="studio-row"><button type="button" id="ponAll">すべて並べる</button><label class="studio-field">アプリの開き方<select id="ponApp"><option value="window">アプリと立ち絵のウインドウ（OBS用）で開く</option><option value="page">企画卓の中で開く</option></select></label></div><p class="studio-mini">シチュエーションのボタンは、押すたびにそのシチュエーションのセリフを1つ出します。全部出し終えるまで同じセリフは出ません。セリフ・役柄は企画卓のセリフ帳で前もって登録します。</p></details>
 </section>
 <div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook">設定</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button><button data-motion="wander" aria-pressed="false">右往左往</button><button data-motion="iya" aria-pressed="false">いやいや</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
 <details class="scene-details" id="quickTune"><summary>見た目をその場で調整（開いているあいだだけ、プレビューの立ち絵・マスコットをドラッグで動かせます）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">この欄を閉じると位置はロックされ、プレビューに触れても動きません。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
@@ -86,6 +86,10 @@
 <label class="studio-field">文字が切り替わる時間<select id="slotDur"><option value="0">すぐ表示</option><option value="0.5">0.5秒</option><option value="1">1秒</option><option value="1.5">1.5秒</option><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option></select></label>
 <label class="studio-field">結果が出たときの効果音<select id="slotSe"></select></label>
 <label class="studio-field">配信画面での見た目<select id="slotLook"><option value="machine">スロットの筐体</option><option value="bubble">セリフの吹き出し</option></select></label></div>
+<div class="studio-inline"><label class="studio-field">筐体の位置<select id="slotPos"><option value="center">中央</option><option value="left">左に寄せる</option><option value="right">右に寄せる</option></select></label>
+<label class="studio-field">筐体の大きさ（画面の幅に対して） <output id="slotSizeVal">62%</output><input id="slotSize" type="range" min="30" max="90" step="1"></label>
+<label class="studio-field">筐体の色<select id="slotColor"><option value="classic">筋肉室スロットの色</option><option value="theme">オトノハの着せ替えの色に合わせる</option><option value="custom">自分で選ぶ</option></select></label></div>
+<div class="studio-inline slot-colors" id="slotColors" hidden><label class="studio-field">外枠<input type="color" id="slotC0"></label><label class="studio-field">内側<input type="color" id="slotC1"></label><label class="studio-field">役柄の窓<input type="color" id="slotC2"></label><label class="studio-field">飾り（四隅・見出し）<input type="color" id="slotC3"></label><label class="studio-field">文字<input type="color" id="slotC4"></label></div>
 <div class="studio-mini">抽選の対象（押して選ぶ・もう一度押すと外す）</div>
 <label class="studio-field">名前やセリフで絞り込む<input id="slotFind" type="search" maxlength="40" placeholder="例：ツンデレ／プリン"></label>
 <div class="studio-row app-chips" id="slotUse"></div>
@@ -122,10 +126,16 @@
 <label class="studio-field"><input type="checkbox" id="appBridgeMore"> 効果音を鳴らす・場面（配信中・準備中など）を切り替えることも許す</label></div>
 <div class="studio-row"><button type="button" id="appReload">アプリを読み込み直す</button><button type="button" id="appDel">このアプリの登録を外す</button></div></div>
 <div class="app-stage" id="appStageWrap" hidden><div class="app-frame-box"><iframe id="appFrame" title="登録したアプリ"></iframe><p class="app-away" id="appAway" hidden>アプリは別ウインドウで表示中です。</p></div><figure class="app-mirror-box"><canvas id="appMirror" aria-label="立ち絵（配信画面と同じ絵）"></canvas><figcaption class="studio-mini">立ち絵（配信画面と同じ絵）</figcaption></figure></div>
-<div class="studio-inline"><label class="studio-field">別ウインドウでの立ち絵の置き方<select id="appLayout"><option value="overlay">アプリの上に重ねる</option><option value="side">アプリの横に並べる</option></select></label>
+<div class="studio-inline"><label class="studio-field">アプリと並べる立ち絵<select id="appView"><option value="char">キャラクターだけ（背景・季節の演出なし・透過）</option><option value="stage">配信画面をそのまま（背景・演出ごと）</option></select></label>
+<label class="studio-field"><input type="checkbox" id="appMsc"> マスコットを出す（キャラクターのまわりを動きます）</label></div>
+<div class="studio-inline" id="appCharOpts"><label class="studio-field">横の位置（左 0 ←→ 右 100） <output id="appCXVal">100%</output><input id="appCX" type="range" min="0" max="100" step="1"></label>
+<label class="studio-field">縦の位置（上 0 ←→ 下 100） <output id="appCYVal">100%</output><input id="appCY" type="range" min="0" max="100" step="1"></label>
+<label class="studio-field">大きさ（ウインドウの高さに対して） <output id="appCSizeVal">42%</output><input id="appCSize" type="range" min="15" max="90" step="1"></label>
+<p class="studio-mini">ゲーム実況のように、アプリの上の端にキャラクターを小さく置く形です。マスコットは、キャラクターの枠の内側をめぐるので、端で切れません。下の小窓とアプリと立ち絵のウインドウに、同じ置き方で出ます。</p></div>
+<div id="appStageOpts"><div class="studio-inline"><label class="studio-field">別ウインドウでの立ち絵の置き方<select id="appLayout"><option value="overlay">アプリの上に重ねる</option><option value="side">アプリの横に並べる</option></select></label>
 <label class="studio-field">位置<select id="appPos"><option value="br">右下（横に並べるときは右）</option><option value="bl">左下（横に並べるときは左）</option><option value="tr">右上</option><option value="tl">左上</option></select></label>
 <label class="studio-field">立ち絵の大きさ（ウインドウの幅に対して） <output id="appSizeVal">35%</output><input id="appSize" type="range" min="15" max="70" step="1"></label></div>
-<p class="studio-mini" id="appBgNote" hidden>重ねるときは、設定の「背景」を「透過」にすると、立ち絵だけがアプリの上に重なります（いまの背景のままだと、背景ごと四角く重なります）。</p>
+<p class="studio-mini" id="appBgNote" hidden>重ねるときは、設定の「背景」を「透過」にすると、立ち絵だけがアプリの上に重なります（いまの背景のままだと、背景ごと四角く重なります）。</p></div>
 <div class="studio-row"><button type="button" id="appWinBtn" class="accent">アプリと立ち絵を別ウインドウで開く（OBS用）</button></div>
 <details class="bridge-dev"><summary>オトノハ連携（アプリを作る人向け）</summary>
 <p class="studio-note">企画卓に登録したアプリは、ブラウザ標準の postMessage で「オトノハ連携 1」の決まりに沿って伝言を送ると、配信画面にセリフ・サイコロ・ルーレット・コメントを出したり、歌い始め・場面の切り替え・配信者が話したことなどの出来事を受け取ったりできます。自分のアプリにも、ほかの人が作ったアプリにも、同じ決まりで対応できます。</p>
@@ -293,7 +303,7 @@
  <section class="panel studio-settings grp-visual" data-modes="stream video" id="studioSettings" aria-label="表情と演出"><div class="ss-grid"><div class="ss-prev"><div class="ss-prev-box"><canvas id="settingsPreview" width="640" height="360" aria-label="映像のプレビュー"></canvas></div><p class="studio-note">配信画面と同じ映像です。右の設定を変えるとここに反映されます。</p></div>
 <aside class="studio-card">
 <p class="studio-kicker">AVATAR & SCENE</p><h2>表情と演出</h2>
-<div class="studio-inline"><label class="studio-field">映像のなめらかさ<select id="studioFps"><option value="30">30fps（なめらか）</option><option value="15">15fps</option><option value="10">10fps（軽い）</option></select></label><label class="studio-field perf-light"><input id="studioLight" type="checkbox"> 軽量モード（低スペックPC向け）</label></div><p class="studio-note">10fpsでは映像を描く回数が30fpsの3分の1になります。収録する動画もこのコマ数になります。軽量モードでは、降らせる演出を最大40個に抑え、画面の飾りのアニメーションと音量メーターの更新を間引きます。</p><label class="studio-field">映像の向き<select id="studioAspect"><option value="landscape">横 16:9（1280×720）</option><option value="portrait">縦 9:16（720×1280・縦型配信／ショート向け）</option></select></label>
+<div class="studio-inline"><label class="studio-field">映像のなめらかさ<select id="studioFps"><option value="30">30fps（なめらか）</option><option value="15">15fps</option><option value="10">10fps（軽い）</option></select></label><label class="studio-field perf-light"><input id="studioLight" type="checkbox"> 軽量モード（低スペックPC向け）</label></div><p class="studio-note">10fpsでは映像を描く回数が30fpsの3分の1になります。収録する動画もこのコマ数になります。軽量モードでは、降らせる演出を最大40個に抑え、画面の飾りのアニメーションと音量メーターの更新を間引きます。</p><label class="studio-field">映像の向き<select id="studioAspect"><option value="landscape">横 16:9（1280×720）</option><option value="portrait">縦 9:16（720×1280・縦型配信／ショート向け）</option><option value="x34">3:4（960×1280・Xに載せる動画向け）</option></select></label>
 <div class="char-panel">
 <div class="studio-header-line"><strong>名義とキャラクター</strong></div>
 <div class="studio-inline"><label class="studio-field">名義<select id="profileSel"></select></label><label class="studio-field">名義の名前<input id="profileName" type="text" maxlength="40"></label></div>
@@ -328,7 +338,18 @@
 </details>
 <div class="studio-inline"><label class="studio-field">量<input id="studioCount" type="range" min="5" max="100" value="35"></label><label class="studio-field">速さ<input id="studioSpeed" type="range" min="10" max="150" value="40"></label></div>
 <div class="studio-inline"><label class="studio-field">演出の大きさ<input id="studioFxSize" type="range" min="35" max="200" value="100"></label><label class="studio-field">演出の濃さ<input id="studioFxOpacity" type="range" min="10" max="100" value="72"></label></div><p class="studio-note">透ける花弁・虹彩の泡・葉脈の紅葉・銀の結晶。人物の手前と奥で舞い方を変え、顔まわりは淡く描きます。</p><label class="studio-field">背景<select id="studioBg"><option value="cafe">喫茶のグラデーション</option><option value="transparent">透過（別窓の表示用）</option><option value="green">クロマキー / 緑</option><option value="blue">クロマキー / 青</option><option value="black">黒</option><option value="image">登録した背景画像</option></select></label>
-<div class="studio-field">背景画像（登録すると背景が「登録した背景画像」に切り替わります）<label class="bg-pick"><input type="file" id="studioBackground" accept="image/png,image/webp,image/jpeg" aria-label="背景画像"></label><span class="png-name" id="backgroundName">未登録</span><button type="button" id="backgroundRemove" class="fx-remove" hidden>背景画像を外す</button><small class="studio-note">横向き1920×1080、縦向き1080×1920程度が目安。比率が違う画像は中央を基準に切り抜いて敷きます。</small></div>
+<div class="studio-field bg-box"><strong>背景画像（名義ごと・映像の向きごとに10枚まで）</strong>
+<p class="studio-mini" id="bgWhere"></p>
+<div class="bg-list" id="bgList" role="group" aria-label="背景画像"></div>
+<div class="studio-row"><button type="button" id="bgAdd">＋ 背景画像を足す（いまの向き）</button><input type="file" id="bgFile" accept="image/png,image/webp,image/jpeg" multiple hidden></div>
+<p class="studio-mini" id="bgUseNote" hidden>いまの背景は「登録した背景画像」ではありません。画像を押すと切り替わります。</p>
+<div id="bgEdit" hidden><div class="studio-inline"><label class="studio-field">名前<input id="bgName" type="text" maxlength="40"></label>
+<label class="studio-field">見せる位置（横：左 0 ←→ 右 100） <output id="bgXVal">50%</output><input id="bgX" type="range" min="0" max="100" step="1"></label>
+<label class="studio-field">見せる位置（縦：上 0 ←→ 下 100） <output id="bgYVal">50%</output><input id="bgY" type="range" min="0" max="100" step="1"></label>
+<label class="studio-field">拡大 <output id="bgZVal">100%</output><input id="bgZ" type="range" min="100" max="300" step="1"></label></div>
+<div class="studio-row"><button type="button" id="bgDel">この背景画像を外す</button></div></div>
+<small class="studio-note">横 16:9・縦 9:16・3:4 で、別々に登録します。映像の向きを切り替えると、その向きの背景画像と、画像ごとの位置に切り替わります。画像は縦横同じ倍率で、画面いっぱいに敷きます（はみ出した部分は、見せる位置で選べます）。</small></div>
+<div class="studio-field" id="bgLegacy">以前の背景画像（共通・名義ごとの背景がないときに使います）<label class="bg-pick"><input type="file" id="studioBackground" accept="image/png,image/webp,image/jpeg" aria-label="背景画像"></label><span class="png-name" id="backgroundName">未登録</span><button type="button" id="backgroundRemove" class="fx-remove" hidden>背景画像を外す</button><small class="studio-note">横向き1920×1080、縦向き1080×1920程度が目安。比率が違う画像は中央を基準に切り抜いて敷きます。</small></div>
 <p class="studio-note">動画の透過保持は保証しません。背景を抜く収録・配信には緑／青を選んでください。</p>
 </aside>
 </div></section>

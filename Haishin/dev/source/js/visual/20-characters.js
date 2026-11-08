@@ -188,6 +188,7 @@ for(const q of particles)q.beh='';
     renderSceneForm();
     renderMascotUI();
     syncBgmProfiles(true);
+    renderBgList();
     toast('名義「'+p.name+'」に切り替えました')
   }
 

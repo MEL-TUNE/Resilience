@@ -49,6 +49,8 @@
   function renderSlot(){
     const c=slotCfg(),s=play.slot;
     E('slotAName').value=c.aName;E('slotBName').value=c.bName;E('slotDur').value=String(c.dur);E('slotLook').value=c.look;
+    E('slotPos').value=c.pos||'center';E('slotSize').value=c.size||62;E('slotSizeVal').textContent=(c.size||62)+'%';E('slotColor').value=c.color||'classic';
+    {const cs=slotBase();E('slotColors').hidden=(c.color||'classic')!=='custom';for(let i=0;i<5;i++)E('slotC'+i).value=cs[i]}
     E('slotSpin').textContent='🎰 抽選開始（'+c.aName+'×'+c.bName+'）';E('slotRe').textContent=c.aName+'だけ引き直す';E('slotRb').textContent=c.bName+'だけ引き直す';
     const ses=(typeof cfg!=='undefined'?cfg.sounds:[]).filter(x=>x.assetId&&(x.type==='emoji'||x.type==='text'));
     E('slotSe').replaceChildren(new Option('鳴らさない',''),...ses.map(x=>new Option((x.label||x.fileName||'効果音').slice(0,30),x.id)));
@@ -75,6 +77,34 @@
   E('slotDur').onchange=e=>{slotCfg().dur=Math.max(0,Math.min(10,Number(e.target.value)||0));save()};
   E('slotSe').onchange=e=>{slotCfg().se=e.target.value;save()};
   E('slotLook').onchange=e=>{slotCfg().look=e.target.value==='bubble'?'bubble':'machine';save()};
+  E('slotPos').onchange=e=>{slotCfg().pos=['left','right'].includes(e.target.value)?e.target.value:'center';save()};
+  E('slotSize').oninput=e=>{slotCfg().size=Math.max(30,Math.min(90,Number(e.target.value)||62));E('slotSizeVal').textContent=slotCfg().size+'%';save()};
+  E('slotColor').onchange=e=>{const c=slotCfg();c.color=['theme','custom'].includes(e.target.value)?e.target.value:'classic';
+    // 「自分で選ぶ」にしたときは、いま見えている色から始める
+    if(c.color==='custom'&&!(Array.isArray(c.colors)&&c.colors.length===5))c.colors=SLOT_CLASSIC.slice();
+    save();renderSlot()};
+  for(let i=0;i<5;i++)E('slotC'+i).oninput=e=>{const c=slotCfg();if(!Array.isArray(c.colors)||c.colors.length!==5)c.colors=SLOT_CLASSIC.slice();c.colors[i]=e.target.value;save()};
+  // 筐体の色：外枠・内側・役柄の窓・飾り・文字の5色から、窓や見出しの色を作る
+  const SLOT_CLASSIC=['#e8c984','#fffdf7','#dfb4c3','#a9cfa7','#5e4a43'];
+  function slotHex(h){h=String(h||'').replace('#','');if(!/^[0-9a-f]{6}$/i.test(h))return [0,0,0];return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16))}
+  function slotMix(a,b,t){const x=slotHex(a),y=slotHex(b);return '#'+x.map((v,i)=>Math.round(v+(y[i]-v)*t).toString(16).padStart(2,'0')).join('')}
+  function slotLum(h){const [r,g2,b]=slotHex(h).map(v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4});return .2126*r+.7152*g2+.0722*b}
+  function slotBase(){
+    const c=slotCfg();
+    if(c.color==='custom'&&Array.isArray(c.colors)&&c.colors.length===5)return c.colors;
+    if(c.color==='theme'&&typeof look!=='undefined'){
+      const inner=look.paper||'#fffdf7',frame=look.accent||'#234c40',deco=look.decor||'#a47c42';
+      // 文字は内側の色に対して読める色（明るい内側には濃い文字、暗い内側には明るい文字）
+      const text=slotLum(inner)>.35?slotMix(frame,'#000000',.35):slotMix(look.accent||'#ffffff','#ffffff',.6);
+      return [frame,inner,slotMix(frame,inner,.35),deco,text]
+    }
+    return SLOT_CLASSIC
+  }
+  function slotPal(){
+    const c=slotCfg(),[frame,inner,acc,deco,text]=slotBase();
+    if((c.color||'classic')==='classic')return {frame:'#e8c984',in0:'#fffdf7',in1:'#fff8e9',stud:'#a9cfa7',studL:'#7faa80',badge:'#e3f2df',badgeL:'#acd0aa',badgeT:'#52694f',role:'#fff7f9',roleL:'#dfb4c3',line:'#fffaf0',lineL:'#e4cfa5',text:'#5e4a43'};
+    return {frame,in0:inner,in1:slotMix(inner,frame,.07),stud:deco,studL:slotMix(deco,'#000000',.2),badge:slotMix(deco,inner,.78),badgeL:slotMix(deco,inner,.35),badgeT:text,role:slotMix(acc,inner,.9),roleL:acc,line:slotMix(frame,inner,.9),lineL:slotMix(frame,inner,.55),text}
+  }
   // 筋肉室スロットの設定JSON（version 3：{config, roles:[{name, lines}]}）を、セリフ帳のシチュエーションとして読み込む
   E('slotImport').onclick=()=>E('slotFile').click();
   E('slotFile').onchange=async e=>{
@@ -199,38 +229,38 @@
       if(s.done&&!s.bub){s.bub=true;play.serif={title:s.role,text:s.line,at:performance.now(),who:s.role};renderSerifs()}
       return
     }
-    const w=Math.min(W*.62,820*k),x=state.playPos==='left'?40*k:state.playPos==='right'?W-40*k-w:(W-w)/2,y=36*k;
-    const fsA=40*k;
+    const P=slotPal(),pos=c.pos||'center',w=Math.min(W*(c.size||62)/100,W-48*k),x=pos==='left'?24*k:pos==='right'?W-24*k-w:(W-w)/2,y=36*k;
+    const sc=Math.max(.6,Math.min(1.2,w/(793*k))),fsA=40*k*sc;
     g.save();
-    let fsB=26*k,lines;
-    for(;;){g.font=sceneFontCss(fsB,lineTxt);lines=wrapLines('「'+lineTxt+'」',w-90*k,99);if(lines.length<=4||fsB<=16*k)break;fsB-=2*k}
+    let fsB=26*k*sc,lines;
+    for(;;){g.font=sceneFontCss(fsB,lineTxt);lines=wrapLines('「'+lineTxt+'」',w-90*k,99);if(lines.length<=4||fsB<=16*k*sc)break;fsB-=2*k*sc}
     if(lines.length>7)lines=wrapLines('「'+lineTxt+'」',w-90*k,7);
     const lhB=fsB*1.55,hA=fsA*1.9,hB=Math.max(lhB*2.4,lines.length*lhB+30*k);
     const h=44*k+36*k+hA+14*k+hB+30*k;
     // 筐体
     g.fillStyle='rgba(92,65,48,.16)';g.beginPath();g.roundRect(x+6*k,y+8*k,w,h,30*k);g.fill();
-    g.fillStyle='#e8c984';g.beginPath();g.roundRect(x,y,w,h,30*k);g.fill();
+    g.fillStyle=P.frame;g.beginPath();g.roundRect(x,y,w,h,30*k);g.fill();
     const ix=x+9*k,iy=y+9*k,iw=w-18*k,ih=h-18*k;
-    const grd=g.createLinearGradient(0,iy,0,iy+ih);grd.addColorStop(0,'#fffdf7');grd.addColorStop(1,'#fff8e9');
+    const grd=g.createLinearGradient(0,iy,0,iy+ih);grd.addColorStop(0,P.in0);grd.addColorStop(1,P.in1);
     g.fillStyle=grd;g.beginPath();g.roundRect(ix,iy,iw,ih,22*k);g.fill();
     for(const [cx,cy] of [[ix+18*k,iy+18*k],[ix+iw-18*k,iy+18*k],[ix+18*k,iy+ih-18*k],[ix+iw-18*k,iy+ih-18*k]]){
-      g.fillStyle='#a9cfa7';g.strokeStyle='#7faa80';g.lineWidth=2*k;g.beginPath();g.arc(cx,cy,10*k,0,Math.PI*2);g.fill();g.stroke();
+      g.fillStyle=P.stud;g.strokeStyle=P.studL;g.lineWidth=2*k;g.beginPath();g.arc(cx,cy,10*k,0,Math.PI*2);g.fill();g.stroke();
       g.fillStyle='rgba(255,255,255,.7)';g.beginPath();g.arc(cx-3*k,cy-3*k,3.2*k,0,Math.PI*2);g.fill()
     }
     // 見出し「役柄 × セリフ」
     g.textAlign='center';g.textBaseline='middle';
     const badge=c.aName+'  ×  '+c.bName;g.font=sceneFontCss(17*k,badge);
     const bw=g.measureText(badge).width+40*k,by=iy+22*k;
-    g.fillStyle='#e3f2df';g.strokeStyle='#acd0aa';g.lineWidth=2*k;g.beginPath();g.roundRect(x+(w-bw)/2,by,bw,32*k,16*k);g.fill();g.stroke();
-    g.fillStyle='#52694f';g.fillText(badge,x+w/2,by+16*k);
+    g.fillStyle=P.badge;g.strokeStyle=P.badgeL;g.lineWidth=2*k;g.beginPath();g.roundRect(x+(w-bw)/2,by,bw,32*k,16*k);g.fill();g.stroke();
+    g.fillStyle=P.badgeT;g.fillText(badge,x+w/2,by+16*k);
     // 役柄の窓
     const ay=by+46*k,aw=iw-52*k,ax=x+(w-aw)/2;
-    g.fillStyle='#fff7f9';g.strokeStyle='#dfb4c3';g.lineWidth=4*k;g.beginPath();g.roundRect(ax,ay,aw,hA,22*k);g.fill();g.stroke();
-    g.font=sceneFontCss(fsA,roleTxt);g.fillStyle='#5e4a43';g.fillText(roleTxt,x+w/2,ay+hA/2,aw-30*k);
+    g.fillStyle=P.role;g.strokeStyle=P.roleL;g.lineWidth=4*k;g.beginPath();g.roundRect(ax,ay,aw,hA,22*k);g.fill();g.stroke();
+    g.font=sceneFontCss(fsA,roleTxt);g.fillStyle=P.text;g.fillText(roleTxt,x+w/2,ay+hA/2,aw-30*k);
     // セリフの窓
     const byy=ay+hA+14*k;
-    g.fillStyle='#fffaf0';g.strokeStyle='#e4cfa5';g.lineWidth=3*k;g.beginPath();g.roundRect(ax,byy,aw,hB,20*k);g.fill();g.stroke();
-    g.font=sceneFontCss(fsB,lineTxt);g.fillStyle='#5e4a43';
+    g.fillStyle=P.line;g.strokeStyle=P.lineL;g.lineWidth=3*k;g.beginPath();g.roundRect(ax,byy,aw,hB,20*k);g.fill();g.stroke();
+    g.font=sceneFontCss(fsB,lineTxt);g.fillStyle=P.text;
     const top=byy+(hB-lines.length*lhB)/2;
     lines.forEach((l,i)=>g.fillText(l,x+w/2,top+i*lhB+lhB/2,aw-30*k));
     g.restore()

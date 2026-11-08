@@ -1,9 +1,9 @@
 /* 映像の向き・立ち絵の動きボタン・画像生成AI用のプロンプト */
 
   function applyAspect(){
-    const v=state.aspect==='portrait';
-    W=v?720:1280;
-    H=v?1280:720;
+    const a=state.aspect;
+    W=a==='portrait'?720:a==='x34'?960:1280;
+    H=a==='landscape'?720:1280;
     if(canvas.width!==W||canvas.height!==H){
       canvas.width=W;
       canvas.height=H;
@@ -20,13 +20,14 @@
       toast('収録中は映像の向きを変えられません');
       return
     }
-    state.aspect=e.target.value==='portrait'?'portrait':'landscape';
+    state.aspect=['portrait','x34'].includes(e.target.value)?e.target.value:'landscape';
     save();
     applyAspect();
+    renderBgList();
     if(outputWindow&&!outputWindow.closed)try{
-      outputWindow.resizeTo(W>H?1280:450,W>H?760:840)
+      outputWindow.resizeTo(W>H?1280:state.aspect==='x34'?630:450,W>H?760:840)
     }catch(_){}
-    toast(W>H?'横向き（1280×720）にしました':'縦向き（720×1280）にしました')
+    toast(W>H?'横向き（1280×720）にしました':state.aspect==='x34'?'3:4（960×1280）にしました':'縦向き（720×1280）にしました')
   };
 
   function setMotion(m){

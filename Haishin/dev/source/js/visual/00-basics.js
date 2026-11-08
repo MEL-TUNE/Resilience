@@ -67,6 +67,11 @@
     appLayout:'overlay',
     appPos:'br',
     appSize:35,
+    appView:'char',
+    appMsc:true,
+    appCX:100,
+    appCY:100,
+    appCSize:42,
     assetNames:{},
     scenes:{standby:{bgm:'keep',effect:'keep',avatar:true,text:''},away:{bgm:'keep',effect:'keep',avatar:false,text:''},end:{bgm:'keep',effect:'keep',avatar:false,text:'ご視聴ありがとうございました'}},
     mascots:[],
@@ -241,7 +246,7 @@ fps:30,
     for(const [k,lo,hi] of [['flapMin',40,400],['flapMax',40,600]])if(Number.isFinite(Number(v[k])))out[k]=Math.max(lo,Math.min(hi,Math.round(Number(v[k]))));
     if(out.flapMax<out.flapMin)out.flapMax=out.flapMin;
     if(typeof v.sinkId==='string')out.sinkId=v.sinkId.slice(0,300);
-    if(['landscape','portrait'].includes(v.aspect))out.aspect=v.aspect;
+    if(['landscape','portrait','x34'].includes(v.aspect))out.aspect=v.aspect;
     for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya']){
       const n=Number(v[k]);
       if(Number.isFinite(n))out[k]=Math.max(CHAR_RANGES[k][0],Math.min(CHAR_RANGES[k][1],n))
@@ -269,8 +274,8 @@ fps:30,
         recent:(Array.isArray(a.recent)?a.recent:[]).slice(0,8).map(r=>({event:S(r?.event,400),comments:(Array.isArray(r?.comments)?r.comments:[]).slice(0,5).map(c=>({name:S(c?.name,40),text:S(c?.text,140)}))})),
         cast:a.cast.filter(c=>c&&typeof c.id==='string'&&c.core&&typeof c.core==='object').slice(0,5).map(c=>({id:S(c.id,24),enabled:c.enabled!==false,core:Object.fromEntries(['name','role','firstPerson','secondPerson','voice','summary','boundaries'].map(k=>[k,S(c.core[k],500)])),display:{icon:S(c.display?.icon,4),color:/^#[0-9a-f]{6}$/i.test(c.display?.color)?c.display.color:'#f4e6d8'},tuning:Object.fromEntries(Object.entries(c.tuning||{}).filter(([k,x])=>/^[a-z]{2,20}$/.test(k)).map(([k,x])=>[k,Math.max(0,Math.min(100,Number(x)||0))])),lexicon:Object.fromEntries(Object.entries(c.lexicon||{}).filter(([k,x])=>/^[a-z]{2,20}$/.test(k)&&Array.isArray(x)).map(([k,x])=>[k,x.slice(0,20).map(s=>S(s,120))]))}))}
     }
-    if(v.slot&&typeof v.slot==='object'){const c=v.slot;out.slot={aName:S(c.aName,20)||'役柄',bName:S(c.bName,20)||'セリフ',dur:Math.max(0,Math.min(10,Number(c.dur)||0)),se:S(c.se,40),use:(Array.isArray(c.use)?c.use:[]).filter(x=>typeof x==='string'&&/^[a-z0-9]{1,16}$/.test(x)).slice(0,100),look:c.look==='bubble'?'bubble':'machine',aiNote:S(c.aiNote,2000)}}
-    if(v.pon&&typeof v.pon==='object'){const c=v.pon;out.pon={hide:(Array.isArray(c.hide)?c.hide:[]).filter(x=>typeof x==='string'&&/^(?:[sa]:[a-z0-9]{1,16}|slot|wheel|dice)$/.test(x)).slice(0,300),app:c.app==='page'?'page':'window'}}
+    if(v.slot&&typeof v.slot==='object'){const c=v.slot;out.slot={aName:S(c.aName,20)||'役柄',bName:S(c.bName,20)||'セリフ',dur:Math.max(0,Math.min(10,Number(c.dur)||0)),se:S(c.se,40),use:(Array.isArray(c.use)?c.use:[]).filter(x=>typeof x==='string'&&/^[a-z0-9]{1,16}$/.test(x)).slice(0,100),look:c.look==='bubble'?'bubble':'machine',aiNote:S(c.aiNote,2000),pos:['left','right'].includes(c.pos)?c.pos:'center',size:Math.max(30,Math.min(90,Math.round(Number(c.size)||62))),color:['theme','custom'].includes(c.color)?c.color:'classic',colors:(Array.isArray(c.colors)?c.colors:[]).slice(0,5).map(x=>/^#[0-9a-f]{6}$/i.test(x)?x.toLowerCase():'#000000')}}
+    if(v.pon&&typeof v.pon==='object'){const c=v.pon;out.pon={hide:(Array.isArray(c.hide)?c.hide:[]).filter(x=>typeof x==='string'&&/^(?:[sa]:[a-z0-9]{1,16}|slot|wheel|dice)$/.test(x)).slice(0,300),app:c.app==='page'?'page':'window',serif:typeof c.serif==='string'&&/^(?:none|all|s:[a-z0-9]{1,16})$/.test(c.serif)?c.serif:'all'}}
     if(v.vr&&typeof v.vr==='object'&&Array.isArray(v.vr.lines)){
       const r=v.vr;
       out.vr={speaker:S(r.speaker,30)||'speaker',trim:r.trim!==false,autoNext:r.autoNext!==false,lines:r.lines.filter(l=>l&&/^[a-z0-9]{1,16}$/.test(l.id)).slice(0,2000).map(l=>({id:l.id,text:S(l.text,300),...(l.done?{done:true,secs:Number(l.secs)||0,rate:Number(l.rate)||48000,notes:(Array.isArray(l.notes)?l.notes:[]).slice(0,4).map(n=>S(n,40))}:{})}))};
@@ -279,6 +284,9 @@ fps:30,
     if(['overlay','side'].includes(v.appLayout))out.appLayout=v.appLayout;
     if(['tl','tr','bl','br'].includes(v.appPos))out.appPos=v.appPos;
     out.appSize=Math.max(15,Math.min(70,Math.round(Number(v.appSize)||35)));
+    if(['char','stage'].includes(v.appView))out.appView=v.appView;
+    if(typeof v.appMsc==='boolean')out.appMsc=v.appMsc;
+    {const n=(x,lo,hi,df)=>{const k=Number(x);return Number.isFinite(k)?Math.max(lo,Math.min(hi,Math.round(k))):df};out.appCX=n(v.appCX,0,100,100);out.appCY=n(v.appCY,0,100,100);out.appCSize=n(v.appCSize,15,90,42)}
     if(Array.isArray(v.serifs))out.serifs=v.serifs.filter(s=>s&&/^[a-z0-9]{1,16}$/.test(s.id)).slice(0,100).map(s=>({id:s.id,title:S(s.title,80)||'シチュエーション',lines:(Array.isArray(s.lines)?s.lines:[]).slice(0,300).map(x=>S(x,300)),...(Number.isInteger(s.pos)?{pos:s.pos}:{})}));
     out.serifSel=out.serifs.some(s=>s.id===v.serifSel)?v.serifSel:'';
     if(['bottom','top','left','right'].includes(v.serifPos))out.serifPos=v.serifPos;
@@ -333,7 +341,12 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
       chars:Array.isArray(p.chars)?p.chars.filter(c=>typeof c==='string'&&/^[a-z0-9]{1,24}$/.test(c)).slice(0,60):[],
       cur:typeof p.cur==='string'?p.cur:'',
       snap:p.snap&&typeof p.snap==='object'?p.snap:{},
-      mscShow:Array.isArray(p.mscShow)?p.mscShow.filter(x=>typeof x==='string'&&/^[a-z0-9]{1,12}$/.test(x)).slice(0,4):null
+      mscShow:Array.isArray(p.mscShow)?p.mscShow.filter(x=>typeof x==='string'&&/^[a-z0-9]{1,12}$/.test(x)).slice(0,4):null,
+      ...(()=>{const n=(x,lo,hi,df)=>{const k=Number(x);return Number.isFinite(k)?Math.max(lo,Math.min(hi,Math.round(k))):df},bgs={},bgSel={};
+        for(const a of ['landscape','portrait','x34']){
+          bgs[a]=(Array.isArray(p.bgs?.[a])?p.bgs[a]:[]).filter(b=>b&&typeof b.id==='string'&&/^[a-z0-9]{1,16}$/.test(b.id)).slice(0,10).map(b=>({id:b.id,name:String(b.name||'背景').slice(0,40),x:n(b.x,0,100,50),y:n(b.y,0,100,50),z:n(b.z,100,300,100)}));
+          const s=p.bgSel?.[a];bgSel[a]=typeof s==='string'&&bgs[a].some(b=>b.id===s)?s:''}
+        return {bgs,bgSel}})()
     }));
     if(v.chars&&typeof v.chars==='object'){
       out.chars={};
@@ -455,7 +468,8 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     });
     for(const k of ['standby','away','end']){const n=E('scene_'+k+'_imgName');if(!n)continue;const id='scene-'+k;n.textContent=assetBlobs[id]?(state.assetNames[id]||'画像'):'未登録';E('scene_'+k+'_imgDel').hidden=!assetBlobs[id]}
     E('backgroundName').textContent=assetBlobs.background?(state.assetNames.background||'背景画像'):'未登録';
-    E('backgroundRemove').hidden=!assetBlobs.background
+    E('backgroundRemove').hidden=!assetBlobs.background;
+    {const lg=E('bgLegacy');if(lg)lg.hidden=!assetBlobs.background}
   }
 
   async function removeAsset(id){
@@ -533,6 +547,7 @@ for(const [id,k]of Object.entries(bindings)){
     renderPlays();
     renderSlot();
     renderPon();
+    renderBgList();
     renderAud();
     renderVoiceRec();
     renderKara();

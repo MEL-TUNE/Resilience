@@ -433,3 +433,17 @@ body[data-app="live"][data-kind="stream"] .live-console{order:0}
 .studio-field input[type=url],.studio-field input[type=password],.studio-field input[type=search],.studio-field input:not([type]){width:100%;border:1px solid var(--a-p-45);background:var(--hi);border-radius:8px;padding:9px;font:inherit;color:var(--ink)}
 .sb-list li.sb-edit{display:block;padding:12px 14px;margin:4px 0 8px}
 .sb-edit .studio-field{display:block;margin:6px 0}
+
+/* 0.9.3 アプリ表示：キャラクターだけ（ページ内の枠の上に重ねる） */
+.app-stage.charmode{grid-template-columns:1fr}
+.app-stage.charmode .app-mirror-box{display:none}
+.app-frame-box>#appMirror{position:absolute;pointer-events:none;z-index:2;background:none;border-radius:0}
+
+/* 0.9.3 背景画像のリスト・3:4 */
+body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min(72vh,820px)!important;max-height:none!important;width:auto;max-width:100%;margin:0 auto}
+@media(min-width:1100px){body[data-studio-aspect="x34"] .studio-workspace{--stage-col:clamp(440px,calc(min(72vh,820px)*3/4 + 26px),760px)}}
+.bg-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:6px 0}
+.bg-item{display:flex;flex-direction:column;gap:4px;padding:4px;border:2px solid var(--a-p-30);border-radius:10px;background:var(--hi);color:var(--ink);cursor:pointer;font-size:12px;text-align:left}
+.bg-item img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:6px;background:var(--a-p-12)}
+.bg-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bg-item.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
