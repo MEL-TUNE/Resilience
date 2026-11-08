@@ -78,7 +78,8 @@
     out.diceN=[1,2,3].includes(v.diceN)?v.diceN:1;
     out.diceF=[4,6,8,10,12,20,100].includes(v.diceF)?v.diceF:6;
     if(typeof v.wheelItems==='string')out.wheelItems=v.wheelItems.slice(0,2000);
-    if(['center','left','right'].includes(v.playPos))out.playPos=v.playPos;}
+    if(['center','left','right'].includes(v.playPos))out.playPos=v.playPos;
+    if(v.playLay&&typeof v.playLay==='object'){out.playLay={};for(const a of ['landscape','portrait','x34']){const o=v.playLay[a];if(!o||typeof o!=='object')continue;const r={};for(const k of ['slot','wheel','dice']){const q=o[k];if(!q)continue;const x=Number(q.x),y=Number(q.y),s=Number(q.s);if([x,y,s].every(Number.isFinite))r[k]={x:Math.max(0,Math.min(100,x)),y:Math.max(0,Math.min(100,y)),s:Math.max(30,Math.min(200,s))}}out.playLay[a]=r}}}
     {
       const n=Number(v.karaVol);
       if(Number.isFinite(n))out.karaVol=Math.max(0,Math.min(150,n))

@@ -77,7 +77,8 @@
   E('slotDur').onchange=e=>{slotCfg().dur=Math.max(0,Math.min(10,Number(e.target.value)||0));save()};
   E('slotSe').onchange=e=>{slotCfg().se=e.target.value;save()};
   E('slotLook').onchange=e=>{slotCfg().look=e.target.value==='bubble'?'bubble':'machine';save()};
-  E('slotPos').onchange=e=>{slotCfg().pos=['left','right'].includes(e.target.value)?e.target.value:'center';save()};
+  // ざっくりの置き方を選び直したら、細かく決めた位置（いまの向き）は外す
+  E('slotPos').onchange=e=>{slotCfg().pos=['left','right'].includes(e.target.value)?e.target.value:'center';playLaySet('slot',null);save();renderLay()};
   E('slotSize').oninput=e=>{slotCfg().size=Math.max(30,Math.min(90,Number(e.target.value)||62));E('slotSizeVal').textContent=slotCfg().size+'%';save()};
   E('slotColor').onchange=e=>{const c=slotCfg();c.color=['theme','custom'].includes(e.target.value)?e.target.value:'classic';
     // 「自分で選ぶ」にしたときは、いま見えている色から始める
@@ -237,6 +238,7 @@
     if(lines.length>7)lines=wrapLines('「'+lineTxt+'」',w-90*k,7);
     const lhB=fsB*1.55,hA=fsA*1.9,hB=Math.max(lhB*2.4,lines.length*lhB+30*k);
     const h=44*k+36*k+hA+14*k+hB+30*k;
+    playPlace('slot',x+w/2,y+h/2,w+12*k,h+12*k);
     // 筐体
     g.fillStyle='rgba(92,65,48,.16)';g.beginPath();g.roundRect(x+6*k,y+8*k,w,h,30*k);g.fill();
     g.fillStyle=P.frame;g.beginPath();g.roundRect(x,y,w,h,30*k);g.fill();

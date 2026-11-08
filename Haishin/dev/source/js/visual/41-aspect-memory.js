@@ -2,9 +2,10 @@
    いま使っている値（state.x・y・scale、マスコットの x・y・size・tilt）は、いまの向きのもの。
    向きを変えるときに、いまの値を前の向きの控え（pos[向き]）に残し、次の向きの控えがあればそれに戻す。 */
 
-  // 設定を読み込むとき（このファイルより先に動く）にも使うので、定数は関数の中に置く
+  // 設定を読み込むとき（このファイルより先に動く）にも使うので、定数は関数の中に置く。
+  // 立ち絵の範囲は、設定画面のつまみと同じ CHAR_RANGES（00-state.js）を使う
   function aspectPosClean(v,kind){
-    const keys=kind==='msc'?[['x',-100,100],['y',-100,100],['size',3,90],['tilt',-180,180]]:[['x',-100,100],['y',-100,100],['scale',10,500]];
+    const keys=kind==='msc'?[['x',-100,100],['y',-100,100],['size',3,90],['tilt',-180,180]]:['x','y','scale'].map(k=>[k,CHAR_RANGES[k][0],CHAR_RANGES[k][1]]);
     const out={};
     if(!v||typeof v!=='object')return out;
     for(const a of ['landscape','portrait','x34']){

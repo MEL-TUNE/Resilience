@@ -29,13 +29,29 @@
     const r=canvas.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H),ox=(r.width-W*s)/2,oy=(r.height-H*s)/2;
     return {x:(e.clientX-r.left-ox)/s,y:(e.clientY-r.top-oy)/s}
   }
-  const dragOn=()=>E('quickTune').open;
-  const lockView=()=>canvas.classList.toggle('locked',!dragOn());
-  E('quickTune').addEventListener('toggle',lockView);lockView();
+  // 「✋ ドラッグで動かす」がオンのとき、または「その場で調整」を開いているときだけ動かせる（配信中にうっかり動かさないため）
+  let dragFree=false;
+  const dragOn=()=>dragFree||E('quickTune').open;
+  const lockView=()=>{
+    canvas.classList.toggle('locked',!dragOn());
+    const b=E('dragFree');b.setAttribute('aria-pressed',String(dragFree));b.textContent='✋ ドラッグで動かす：'+(dragFree?'オン':'オフ');b.classList.toggle('on',dragFree)
+  };
+  E('quickTune').addEventListener('toggle',lockView);
+  E('dragFree').onclick=()=>{dragFree=!dragFree;lockView();if(!dragFree)endDrag()};
+  lockView();
   canvas.addEventListener('pointerdown',e=>{
     if(e.button!==0||!dragOn())return;
     const p=stagePoint(e);
     let target=null;
+    // 手前に描くものから：スロット・ルーレット・サイコロ → マスコット → 立ち絵
+    for(const kind of ['slot','wheel','dice']){
+      const on=kind==='slot'?play.slot&&slotCfg().look!=='bubble':play[kind],b=playBoxes[kind];
+      if(on&&b&&p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h){
+        const L=playLayGet(kind)||{x:(b.x+b.w/2)/W*100,y:(b.y+b.h/2)/H*100,s:100};
+        drag={target:{play:kind},p0:p,ox:L.x,oy:L.y,s:L.s};
+        canvas.setPointerCapture(e.pointerId);canvas.classList.add('dragging');e.preventDefault();return
+      }
+    }
     for(const m of [...myMascots()].reverse())if(m._box&&p.x>=m._box.x&&p.x<=m._box.x+m._box.w&&p.y>=m._box.y&&p.y<=m._box.y+m._box.h){target=m;break}
     if(!target&&sceneAvatar()){const gg=avatarGeom();if(p.x>=gg.cx-gg.w/2&&p.x<=gg.cx+gg.w/2&&p.y>=gg.bottom-gg.h&&p.y<=gg.bottom)target='avatar'}
     if(!target)return;
@@ -46,7 +62,10 @@
   canvas.addEventListener('pointermove',e=>{
     if(!drag)return;
     const p=stagePoint(e),dx=p.x-drag.p0.x,dy=p.y-drag.p0.y;
-    if(drag.target==='avatar'){
+    if(drag.target.play){
+      playLaySet(drag.target.play,{x:drag.ox+dx/W*100,y:drag.oy+dy/H*100,s:drag.s});
+      if(E('layKind').value===drag.target.play)renderLay()
+    }else if(drag.target==='avatar'){
       state.x=Math.max(-300,Math.min(300,Math.round(drag.ox+dx/W*100)));
       state.y=Math.max(-200,Math.min(500,Math.round(drag.oy+dy/H*100)));
       E('studioX').value=state.x;E('studioY').value=state.y;E('yVal').textContent=Math.round(state.y)+'%'
