@@ -121,3 +121,10 @@
 - スロット・ルーレット・サイコロの位置と大きさは state.playLay[向き][slot|wheel|dice]={x,y,s}。描くときに playPlace() が縦横同じ倍率で移し、ドラッグ用の範囲 playBoxes を覚える。
 - ドラッグは「✋ ドラッグで動かす」（dragFree）か、その場で調整が開いているとき。
 - 作者はこのあと ChatGPT で修正・チェックし、修正後の index.html を次のチャットに持ってくる予定。dev/HANDOFF_TO_CHATGPT.md を渡している。戻ってきたら、0.9.5 の index.html と比べて差分を source/ に取り込むこと（ChatGPT には、整形し直さない・変えたところに /* GPT: … */ の印・版の表示を 0.9.5-gpt1 などにする・変更点の一覧、をお願いしている）。
+
+---
+
+## 2026-11-08 追記（STUDIO 0.9.6）
+
+- ChatGPT の 0.9.5-gpt1（83-tuning-drag.js の pointerdown・pointermove・endDrag、#studioCanvas.locked の touch-action）を source に取り込んだ。差分は3か所だけで、ほかは 0.9.5 と同じだった。
+- 取り込み後のテスト：t096（CDP のタッチで、1本指のドラッグ、2本目の指に横取りされないこと、ロック中の touch-action）。0.9.5 では横取りが起きることも確かめた。
