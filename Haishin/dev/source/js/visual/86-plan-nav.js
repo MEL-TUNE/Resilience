@@ -63,8 +63,8 @@
     const mode=document.body.dataset.studioMode||'live';
     jumpTargets.length=0;
     const add=(label,el,cls)=>{if(el)jumpTargets.push({label,el,cls:cls||''})};
-    add('🎬 ステージ',document.querySelector('.stage-card'),'j-stage');
-    add('⚡ ポン出し',E('ponBar'),'j-stage');
+    add('🎬 映像',document.querySelector('.stage-card'),'j-stage');
+    add('🎲 企画',E('ponBar'),'j-stage');
     add('🔊 音のお品書き',E('boardShell'),'j-board');
     const bgm=[...document.querySelectorAll('#boardShell h2')].find(h=>/^BGM/.test(h.textContent.trim()));
     add('♪ BGM',bgm&&bgm.closest('section'),'j-board');
@@ -83,7 +83,10 @@
     const x=b&&jumpTargets[+b.dataset.jump];
     if(!x)return;
     // scrollIntoView は横にも動かすことがあるので、縦だけ動かす（目次の高さぶん下げる）
-    const off=jump.getBoundingClientRect().height+12;
+    // 0.9.10：プレビューが上に残っているときは、その下に出るようにする（隠れないように）
+    const pv=E('stagePreview');
+    const pinned=pv&&x.el!==pv&&!pv.contains(x.el)&&getComputedStyle(pv).position==='sticky'&&pv.compareDocumentPosition(x.el)&Node.DOCUMENT_POSITION_FOLLOWING&&pv.closest('.stage-card').contains(x.el);
+    const off=jump.getBoundingClientRect().height+(pinned?pv.getBoundingClientRect().height:0)+12;
     window.scrollTo({top:Math.max(0,x.el.getBoundingClientRect().top+scrollY-off),behavior:'smooth'})
   };
   document.querySelectorAll('.studio-tabs [data-mode]').forEach(b=>b.addEventListener('click',()=>setTimeout(renderJump,0)));
