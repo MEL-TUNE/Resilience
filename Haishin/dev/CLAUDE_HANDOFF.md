@@ -136,3 +136,12 @@
 - お題帳は js/visual/24-topics.js。state.topics={decks:[{id,name,instr,theme,count,fields[],head,body,who,mode:'card'|'comment',label,autoUse,items:[{id,f:{項目名:値},st,at}],cur}],sel}。点検は topicSanitize（01-sanitize から呼ぶので、外の const を使わない）。
 - 貼り出しは play.topic → drawTopic（13-plays の drawPlays から）。位置は playLay の 'topic'。コメントの形は audShow に force:true を付けて出す（AI観客席の表示がオフでも出る）。
 - AITuber の設計は作者の判断待ちで止めている。再開するときは dev/AITUBER_RESUME.md を読む。
+
+## 2026-11-09 追記（STUDIO 0.9.8）
+
+- 作者の指摘「番組設定どこ……勝手に削除していますよね？」：0.9.6→0.9.7 で消した要素はない。ただし 0.5.0 から `body[data-app="live"] .recbar{display:none}` で番組のボタン（#progChips・#progEdit）が配信・動画で見えず、BGM欄の「番組ボタンを長押し」という案内だけが残っていた。
+- 新しいファイル `js/visual/86-plan-nav.js`：
+  - `progPlace(app)`：配信・動画では `.prog-row` をステージの `#liveProgSlot` へ要素ごと移し、#progEdit を見せる。ラジオでは元の録音バーへ戻して隠す（ラジオの見た目は変えていない）。
+  - 企画卓（#studioPlan）を `.plan-group` に分ける（DOM を移すだけ。ID・働きはそのまま）。
+  - 目次 `#jumpBar`（.studio-tabs の直後、sticky）。`window.__otonohaAppChanged` を包み、モードのボタンでも作り直す。移動は scrollIntoView ではなく window.scrollTo（scrollIntoView は横にも動かすため）。
+- 注意：目次や番組の行が狭い画面で幅を押し広げると、スマホ全体が縮小表示になる（scrollWidth の検査では見つからない）。t098 は `max(scrollWidth, innerWidth) - screen.width` で確かめる。

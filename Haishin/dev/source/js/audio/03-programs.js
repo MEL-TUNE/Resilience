@@ -35,7 +35,7 @@ function renderPrograms(){
     box=$('#progBgm');
 
   box.innerHTML=pb?`<p class="prog-bgm-label">「${esc(curProgram().name)}」の初期BGM</p><div class="bgm-card ${bgmPlaying?.trackId===pb.id||bgmLoadingId===pb.id?'active':''}"><div class="bgm-row" style="grid-template-columns:minmax(0,1fr)"><button class="bgm-play" data-play-bgm="${esc(pb.id)}"><span class="bgm-icon">${bgmPlaying?.trackId===pb.id?'■':bgmLoadingId===pb.id?'…':'▶'}</span><span class="bgm-name">${esc(pb.name)}</span></button></div></div>`
-  :isFree()?`<div class="empty">フリー収録中です。初期BGMと番組の画像は使いません。BGMを流すときは下の一覧から選べます。</div>`:`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。番組ボタンを長押し（パソコンでは右クリック）すると選べます。</div>`;
+  :isFree()?`<div class="empty">フリー収録中です。初期BGMと番組の画像は使いません。BGMを流すときは下の一覧から選べます。</div>`:`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。「番組の設定」で選べます（番組ボタンの長押し・パソコンでは右クリックでも開きます）。</div>`;
 
   renderBgmNow();
 }
