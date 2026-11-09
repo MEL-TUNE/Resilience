@@ -503,3 +503,31 @@ body[data-app="radio"] .jump-bar{display:none!important}
 #studioPlan.plan-grouped .play-dock{border-top:0;padding-top:0;margin-top:0}
 #studioPlan.plan-grouped .plan-group details.sb-opts>summary{font-weight:700}
 @media (max-width:420px){#studioPlan.plan-grouped .plan-group{padding:10px 10px 12px}.live-prog{flex-wrap:wrap}.live-prog-label{flex:0 0 100%}}
+/* 0.9.9：ステージは「見ながらポン出し」の並び（プレビュー → ポン出し → 手元カード → 収録 → 配信の状態 → 表情など → マイクは最後） */
+body[data-app="live"][data-kind] .stage-card{display:flex;flex-direction:column}
+body[data-app="live"][data-kind] .stage-card>.stage-preview{order:1}
+body[data-app="live"][data-kind] .stage-card>.pon-bar{order:2;margin-top:10px}
+body[data-app="live"][data-kind] .stage-card>.topic-hand{order:3}
+body[data-app="live"][data-kind] .stage-card>.rec-panel{order:4}
+body[data-app="live"][data-kind] .stage-card>.live-console{order:5;margin-top:0}
+body[data-app="live"][data-kind] .stage-card>.stage-group{order:6}
+body[data-app="live"][data-kind] .stage-card>.drag-row{order:7}
+body[data-app="live"][data-kind] .stage-card>#quickTune{order:8}
+body[data-app="live"][data-kind] .stage-card>.stage-tools{order:9;margin:12px 0 4px}
+body[data-app="live"][data-kind] .stage-card>.studio-meter{order:10}
+body[data-app="live"][data-kind="stream"] .stage-card>.stage-preview{align-self:center;margin-top:0}
+body[data-app="live"][data-kind] .stage-tools button{font-size:11px;padding:6px 6px}
+/* 配信の状態の欄：BGMは「いま流れている曲・止める・すべて止める」だけ（選ぶのは音のお品書き） */
+body[data-app="live"] .console-bgm-pick{display:none}
+/* 番組の行（音のお品書きの BGM 欄） */
+#boardShell .live-prog{margin:0 0 8px}
+/* プレビューを上に固定（ステージの画面のとき） */
+.pv-pin{border:1px solid var(--a-p-45);border-radius:999px;padding:4px 10px;background:var(--hi);color:var(--ink);font-size:11px;cursor:pointer;white-space:nowrap}
+.pv-pin[aria-pressed="false"]{opacity:.7}
+.stage-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-card>.stage-preview{position:sticky;top:var(--jump-h,56px);z-index:6;background:var(--paper);padding:4px 0 6px;box-shadow:0 8px 10px -8px color-mix(in srgb,var(--shade) 25%,transparent)}
+body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-preview .stage-wrap{width:min(100%,calc(26vh*16/9));margin:0 auto}
+body[data-app="live"][data-studio-mode="live"][data-pv-pin][data-studio-aspect="portrait"] .stage-preview .stage-wrap{height:26vh!important;width:auto}
+body[data-app="live"][data-studio-mode="live"][data-pv-pin][data-studio-aspect="x34"] .stage-preview .stage-wrap{height:26vh!important;width:auto}
+@media (max-width:520px){.pon-grid{grid-template-columns:1fr 1fr;gap:6px}.pon-btn{padding:10px 6px;font-size:14px}}
+body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-preview .stream-only{display:none}

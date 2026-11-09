@@ -995,6 +995,34 @@ body[data-app="radio"] .jump-bar{display:none!important}
 #studioPlan.plan-grouped .play-dock{border-top:0;padding-top:0;margin-top:0}
 #studioPlan.plan-grouped .plan-group details.sb-opts>summary{font-weight:700}
 @media (max-width:420px){#studioPlan.plan-grouped .plan-group{padding:10px 10px 12px}.live-prog{flex-wrap:wrap}.live-prog-label{flex:0 0 100%}}
+/* 0.9.9：ステージは「見ながらポン出し」の並び（プレビュー → ポン出し → 手元カード → 収録 → 配信の状態 → 表情など → マイクは最後） */
+body[data-app="live"][data-kind] .stage-card{display:flex;flex-direction:column}
+body[data-app="live"][data-kind] .stage-card>.stage-preview{order:1}
+body[data-app="live"][data-kind] .stage-card>.pon-bar{order:2;margin-top:10px}
+body[data-app="live"][data-kind] .stage-card>.topic-hand{order:3}
+body[data-app="live"][data-kind] .stage-card>.rec-panel{order:4}
+body[data-app="live"][data-kind] .stage-card>.live-console{order:5;margin-top:0}
+body[data-app="live"][data-kind] .stage-card>.stage-group{order:6}
+body[data-app="live"][data-kind] .stage-card>.drag-row{order:7}
+body[data-app="live"][data-kind] .stage-card>#quickTune{order:8}
+body[data-app="live"][data-kind] .stage-card>.stage-tools{order:9;margin:12px 0 4px}
+body[data-app="live"][data-kind] .stage-card>.studio-meter{order:10}
+body[data-app="live"][data-kind="stream"] .stage-card>.stage-preview{align-self:center;margin-top:0}
+body[data-app="live"][data-kind] .stage-tools button{font-size:11px;padding:6px 6px}
+/* 配信の状態の欄：BGMは「いま流れている曲・止める・すべて止める」だけ（選ぶのは音のお品書き） */
+body[data-app="live"] .console-bgm-pick{display:none}
+/* 番組の行（音のお品書きの BGM 欄） */
+#boardShell .live-prog{margin:0 0 8px}
+/* プレビューを上に固定（ステージの画面のとき） */
+.pv-pin{border:1px solid var(--a-p-45);border-radius:999px;padding:4px 10px;background:var(--hi);color:var(--ink);font-size:11px;cursor:pointer;white-space:nowrap}
+.pv-pin[aria-pressed="false"]{opacity:.7}
+.stage-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-card>.stage-preview{position:sticky;top:var(--jump-h,56px);z-index:6;background:var(--paper);padding:4px 0 6px;box-shadow:0 8px 10px -8px color-mix(in srgb,var(--shade) 25%,transparent)}
+body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-preview .stage-wrap{width:min(100%,calc(26vh*16/9));margin:0 auto}
+body[data-app="live"][data-studio-mode="live"][data-pv-pin][data-studio-aspect="portrait"] .stage-preview .stage-wrap{height:26vh!important;width:auto}
+body[data-app="live"][data-studio-mode="live"][data-pv-pin][data-studio-aspect="x34"] .stage-preview .stage-wrap{height:26vh!important;width:auto}
+@media (max-width:520px){.pon-grid{grid-template-columns:1fr 1fr;gap:6px}.pon-btn{padding:10px 6px;font-size:14px}}
+body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-preview .stream-only{display:none}
 
 </style>
 <script>
@@ -1103,7 +1131,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.8 / 番組の設定をステージに戻す・目次で移動・企画卓を見やすく</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.9 / ステージを「見ながらポン出し」の並びに・番組はBGM欄の1か所に</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button><button data-mode="aivoice">AIキャラ・声</button></nav>
@@ -1129,10 +1157,10 @@ lookPaint(look);
 <section class="studio-card stage-card">
 <div class="studio-row stage-tools"><button id="studioMic" class="accent">マイクを接続</button><button id="studioMute" aria-pressed="false">マイク：オン</button><button id="studioTest">口パクを試す</button><button id="studioOutput">映像だけ別窓</button><button id="studioFullscreen">全画面</button><span id="studioState" class="studio-state">マイク未接続</span></div>
 <div class="studio-meter" aria-label="マイク音量"><i id="studioMeter"></i></div>
-<div class="stage-preview" id="stagePreview"><div class="stage-head"><small class="stream-only">プレビュー（OBSには「配信用の映像ウインドウ」を取り込みます）</small><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
+<div class="stage-preview" id="stagePreview"><div class="stage-head"><small class="stream-only">プレビュー（OBSには「配信用の映像ウインドウ」を取り込みます）</small><button type="button" id="pvPin" class="pv-pin" aria-pressed="true">📌 上に固定：オン</button><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
 <p class="outwin-note">配信用の映像ウインドウを表示中のため、ここのプレビューは止めています。<button type="button" id="pvToggle">プレビューも表示する</button></p><div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas></div></div>
 <div class="rec-panel" aria-label="映像の収録"><div class="rec-main"><button id="studioRec" class="rec-big rec-start" type="button">● 収録開始</button><button id="studioStop" class="rec-big rec-stop" type="button" disabled>■ 停止して保存</button></div><div class="rec-extra"><button id="studioRetake" type="button" disabled title="今の収録を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button><button id="studioDiscard" class="discard" type="button" disabled title="収録を止めて、保存せずに捨てます">✕ 停止して破棄</button></div><div class="rec-sub"><span id="studioRecTime" role="status" class="rec-time">未収録</span><label class="rec-opt">番組<select id="vidProg" aria-label="番組（初期BGM）"></select></label><label class="rec-opt">形式<select id="vidFormat"><option value="mp4">MP4（写真アプリ向け）</option><option value="webm">WebM</option></select></label><label class="rec-opt">画質<select id="vidQuality"><option value="8">高画質</option><option value="16">最高画質（容量大）</option><option value="4.5">標準</option></select></label></div><p class="rec-note" id="vidProgNote"></p><p class="rec-note" id="studioVideoInfo"></p><div id="studioVideos" class="studio-tray" aria-label="収録した動画"></div></div>
-<div class="live-console" id="liveConsole"><div class="onair-head"><span class="onair-lamp" aria-hidden="true"></span><strong id="studioSceneState" role="status">配信中</strong></div><div class="scene-switch" role="group" aria-label="配信の状態"><button type="button" data-scene="live" class="selected" aria-pressed="true">配信中</button><button type="button" data-scene="standby" aria-pressed="false">準備中</button><button type="button" data-scene="away" aria-pressed="false">離席中</button><button type="button" data-scene="end" aria-pressed="false">配信終了</button></div><div class="live-prog" id="liveProgSlot" aria-label="番組"><span class="live-prog-label">番組</span></div><div class="sound-stop"><div class="sound-now"><span aria-hidden="true">♪</span><span id="consoleBgmName">BGM：なし</span></div><label class="console-bgm-pick">流すBGM<select id="consoleBgmSel"></select></label><button type="button" class="stop-btn" id="consoleBgmStop" disabled>▶ BGMを流す</button><button type="button" class="stop-btn stop-all" id="consoleAllStop">■ 効果音とBGMをすべて止める</button></div></div>
+<div class="live-console" id="liveConsole"><div class="onair-head"><span class="onair-lamp" aria-hidden="true"></span><strong id="studioSceneState" role="status">配信中</strong></div><div class="scene-switch" role="group" aria-label="配信の状態"><button type="button" data-scene="live" class="selected" aria-pressed="true">配信中</button><button type="button" data-scene="standby" aria-pressed="false">準備中</button><button type="button" data-scene="away" aria-pressed="false">離席中</button><button type="button" data-scene="end" aria-pressed="false">配信終了</button></div><div class="sound-stop"><div class="sound-now"><span aria-hidden="true">♪</span><span id="consoleBgmName">BGM：なし</span></div><label class="console-bgm-pick">流すBGM<select id="consoleBgmSel"></select></label><button type="button" class="stop-btn" id="consoleBgmStop" disabled>▶ 初期BGM</button><button type="button" class="stop-btn stop-all" id="consoleAllStop">■ 効果音とBGMをすべて止める</button></div></div>
 <section class="pon-bar" id="ponBar" aria-label="企画のポン出し"><div class="pon-head"><strong>企画のポン出し</strong><button type="button" class="pon-clear" id="ponClear">画面から消す</button></div>
 <div class="pon-grid" id="ponGrid" role="group" aria-label="企画"></div>
 <div class="pon-sub"><button type="button" id="ponSlotRe" hidden>🎰 役柄だけ引き直す</button><button type="button" id="ponSlotRb" hidden>🎰 セリフだけ引き直す</button></div>
@@ -1395,7 +1423,7 @@ lookPaint(look);
 <section class="section sec-join"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
 <section class="section sec-join"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="bgm-tabs voice-tabs" id="voiceTabs" role="tablist" aria-label="ボイスの名義" hidden></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
 <section class="section"><div class="section-title"><h2>環境音 <span>04 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
-<section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは「標準」と名義ごとのタブです。名義専用のタブを開いているときに名義を切り替えると、その名義のタブに移ります。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
+<section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="live-prog" id="liveProgSlot" aria-label="番組"><span class="live-prog-label">番組</span></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは「標準」と名義ごとのタブです。名義専用のタブを開いているときに名義を切り替えると、その名義のタブに移ります。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
 </div></main>
 </div>
 <details class="studio-card studio-help"><summary>使い方</summary><p data-modes="stream"><strong>配信モード（PC＋OBS）</strong>：このアプリは映像と、効果音・BGM・環境音だけを作ります。マイクの声は口パクの判定にだけ使い、アプリからは出しません。OBSでは「配信用の映像ウインドウ」をウィンドウキャプチャで取り込み、音はブラウザの音（効果音・BGM）とマイク（AG03など）を別々に取り込みます。録画はOBS側で行ってください。</p><p data-modes="video"><strong>動画モード（スマホ・タブレット向け）</strong>：立ち絵とBGM・効果音つきの動画を、この画面で収録して保存します。マイクの声も動画に入ります。収録した動画はこのブラウザ内に最大30本まで残り、あとから保存・共有・削除できます。各動画の横には「ブラウザ内に保存」「一時保持のみ」などの状態が出ます。30本を超えた分は古い動画を自動では消さず一時保持になるので、古い動画を削除してから「ブラウザ内に保存を再試行」を押してください。ブラウザ内の動画は「すべてを書き出す（.live）」には入りません。</p><p data-modes="radio"><strong>音声モード</strong>：ラジオのように声とBGM・効果音を録音します。</p><p>準備：「設定」の「表情と演出」で立ち絵を登録（4枚の表情差分か1枚）→ マイクをつなぐ → 声を出して「口が開く音量」を調整 → 効果音・BGMを登録。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別のブラウザや別のURLへは自動で引き継がないので、「設定」の「すべてを書き出す（.live）」で書き出してから移してください。</p></details>
@@ -7261,6 +7289,8 @@ let consoleBgmSig='';
 function consoleBgm(){
   let id='';
   try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
+  // 0.9.9：ステージの「流すBGM」の選択欄は出さない（BGMは音のお品書きから流す）。▶ は番組の初期BGMだけ
+  if(document.getElementById('consoleBgmSel')?.offsetParent===null)return progBgm()||null;
   return (id&&cfg.bgms.find(b=>b.id===id&&b.assetId))||progBgm()||null
 }
 function renderConsoleBgm(){
@@ -7280,7 +7310,7 @@ function syncConsole(){
   renderConsoleBgm();
   const nm=$('#bgmNowName').textContent,c=$('#consoleBgmName');
   if(c.textContent!==nm)c.textContent=nm;
-  const btn=$('#consoleBgmStop'),on=!!(bgmPlaying||bgmLoadingId),txt=on?'■ BGMを止める':'▶ BGMを流す';
+  const btn=$('#consoleBgmStop'),on=!!(bgmPlaying||bgmLoadingId),txt=on?'■ BGMを止める':'▶ 初期BGM';
   if(btn.textContent!==txt)btn.textContent=txt;
   btn.classList.toggle('playing',on);
   btn.disabled=!on&&!consoleBgm()
@@ -10236,9 +10266,9 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
   function ponItems(){
     const out=[];
     for(const s of serifList())if(serifLines(s).length)out.push({id:'s:'+s.id,kind:'serif',label:'💬 '+s.title,s});
-    if(serifList().some(s=>serifLines(s).length))out.push({id:'slot',kind:'slot',label:'🎰 スロット'});
-    out.push({id:'wheel',kind:'wheel',label:'🎡 ルーレット'},{id:'dice',kind:'dice',label:'🎲 サイコロ'});
-    {const d=topicDeck();if(d&&d.items.length)out.push({id:'topic',kind:'topic',label:'📌 '+d.name+'：次へ',d})}
+    // 0.9.9：スロット・ルーレット・サイコロは常に並べる。お題帳は、中身のある冊をすべて並べる（コメントの冊は「1件流す」）
+    out.push({id:'slot',kind:'slot',label:'🎰 スロット'},{id:'wheel',kind:'wheel',label:'🎡 ルーレット'},{id:'dice',kind:'dice',label:'🎲 サイコロ'});
+    for(const d of topicCfg().decks)if(d.items.some(it=>it.st!=='rej'))out.push({id:'topic:'+d.id,kind:'topic',label:(d.mode==='comment'?'💬 '+d.name+'：1件流す':'📌 '+d.name+'：次へ'),d});
     for(const a of appList())out.push({id:'a:'+a.id,kind:'app',label:(a.kind==='url'?'🔗 ':'📄 ')+a.name,a});
     return out
   }
@@ -10269,18 +10299,18 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
   }
   function ponRun(it){
     if(it.kind==='serif')ponSerif(it.s);
-    else if(it.kind==='slot')slotSpin('all');
+    else if(it.kind==='slot'){if(!serifList().some(x=>serifLines(x).length)){toast('スロットの役柄とセリフがまだありません（企画卓の「セリフ帳」「スロット」で作れます）',4500);return}slotSpin('all')}
     else if(it.kind==='wheel')E('wheelSpin').click();
     else if(it.kind==='dice')E('diceRoll').click();
     else if(it.kind==='app')ponApp(it.a);
-    else if(it.kind==='topic')topicNext(topicDeck(),1,true);
+    else if(it.kind==='topic')topicNext(it.d,1,true);
     ponState()
   }
   // 画面に出ているもの・開いているアプリのボタンを点灯させる（作り直さずに、印だけ変える）
   function ponOn(it){
     if(it.kind==='serif')return !!play.serif&&play.serif.title===it.s.title&&!play.slot;
     if(it.kind==='slot')return !!play.slot;
-    if(it.kind==='topic')return !!play.topic;
+    if(it.kind==='topic')return !!play.topic&&play.topic.deck===it.d.id;
     if(it.kind==='wheel')return !!play.wheel;
     if(it.kind==='dice')return !!play.dice;
     if(it.kind==='app')return state.appSel===it.a.id&&(appWinOpen()||!!E('appFrame').getAttribute('src'));
@@ -13045,7 +13075,7 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform===
     sel.replaceChildren(new Option('フリー（初期BGMなし）','-1'),...cfg.programs.map((p,i)=>new Option(p.name,String(i))));
     sel.value=String(cfg.currentProgram);
     sel.disabled=studioCapturing||captureStarting||rec.state!=='idle';
-    E('vidProgNote').textContent=!pr?'番組は「ラジオ」の番組ボタン（長押し・右クリックで編集）と共通です。':pb?(pr.autoBgm?'収録開始と同時に「'+pb.name+'」を頭から流します。':'初期BGM「'+pb.name+'」は、番組の設定で「録音開始と同時に初期BGMを頭から流す」をオンにすると収録開始と同時に流れます。'):'この番組には初期BGMが設定されていません（ラジオの番組ボタンを長押し・右クリックで設定）。'
+    E('vidProgNote').textContent=!pr?'番組は、音のお品書きの BGM 欄で切り替え・設定できます。':pb?(pr.autoBgm?'収録開始と同時に「'+pb.name+'」を頭から流します。':'初期BGM「'+pb.name+'」は、番組の設定で「録音開始と同時に初期BGMを頭から流す」をオンにすると収録開始と同時に流れます。'):'この番組の初期BGMは未設定です（音のお品書きの BGM 欄の「番組の設定」で選べます）。'
   }
   E('vidProg').onchange=e=>{
     if(rec.state!=='idle'||studioCapturing)return;
@@ -13896,7 +13926,7 @@ const BG_MAX=10,BG_ASPECTS={landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'};
     return out
   }
 
-// ---- ① 番組の行（#progChips・#progEdit）を、配信・動画ではステージの操作盤へ移す。要素ごと動かすので、ボタンの働きはそのまま
+// ---- ① 番組の行（#progChips・#progEdit）を、配信・動画では BGM 欄（#liveProgSlot）へ移す。要素ごと動かすので、ボタンの働きはそのまま
   const progRow=document.querySelector('.recbar .prog-row'),progHome=progRow&&progRow.parentNode,progAfter=progRow&&progRow.nextElementSibling;
   function progPlace(app){
     const slot=E('liveProgSlot');
@@ -13959,6 +13989,7 @@ const BG_MAX=10,BG_ASPECTS={landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'};
     jumpTargets.length=0;
     const add=(label,el,cls)=>{if(el)jumpTargets.push({label,el,cls:cls||''})};
     add('🎬 ステージ',document.querySelector('.stage-card'),'j-stage');
+    add('⚡ ポン出し',E('ponBar'),'j-stage');
     add('🔊 音のお品書き',E('boardShell'),'j-board');
     const bgm=[...document.querySelectorAll('#boardShell h2')].find(h=>/^BGM/.test(h.textContent.trim()));
     add('♪ BGM',bgm&&bgm.closest('section'),'j-board');
@@ -13982,12 +14013,24 @@ const BG_MAX=10,BG_ASPECTS={landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'};
   };
   document.querySelectorAll('.studio-tabs [data-mode]').forEach(b=>b.addEventListener('click',()=>setTimeout(renderJump,0)));
 
+  // ---- 0.9.9：プレビューを上に固定（ステージの画面のとき）。手元の便利さだけなので、このブラウザに覚える
+  const PV_PIN_KEY='otonoha-pv-pin';
+  function pvPinSet(on){
+    document.body.toggleAttribute('data-pv-pin',on);
+    const b=E('pvPin');if(b){b.setAttribute('aria-pressed',on);b.textContent=on?'📌 上に固定：オン':'📌 上に固定：オフ'}
+  }
+  {let on=true;try{on=localStorage.getItem(PV_PIN_KEY)!=='0'}catch(_){}pvPinSet(on)}
+  E('pvPin').onclick=()=>{const on=!document.body.hasAttribute('data-pv-pin');pvPinSet(on);try{localStorage.setItem(PV_PIN_KEY,on?'1':'0')}catch(_){}};
+  const jumpH=()=>document.body.style.setProperty('--jump-h',(jump.offsetHeight||48)+'px');
+  window.addEventListener('resize',jumpH);
+
   {
     const prev=window.__otonohaAppChanged;
     window.__otonohaAppChanged=app=>{
       prev(app);
       progPlace(app);
-      renderJump()
+      renderJump();
+      jumpH()
     }
   }
 

@@ -145,3 +145,12 @@
   - 企画卓（#studioPlan）を `.plan-group` に分ける（DOM を移すだけ。ID・働きはそのまま）。
   - 目次 `#jumpBar`（.studio-tabs の直後、sticky）。`window.__otonohaAppChanged` を包み、モードのボタンでも作り直す。移動は scrollIntoView ではなく window.scrollTo（scrollIntoView は横にも動かすため）。
 - 注意：目次や番組の行が狭い画面で幅を押し広げると、スマホ全体が縮小表示になる（scrollWidth の検査では見つからない）。t098 は `max(scrollWidth, innerWidth) - screen.width` で確かめる。
+
+## 2026-11-09 追記（STUDIO 0.9.9）
+
+- 作者の指摘：「マイクを再接続」がステージの上に大きくあって邪魔。画面を見ながらすぐポン出ししたい（スロット・ルーレット・サイコロ・コメントノックもポン出しの対象）。番組・BGMの設定がたくさんの場所にあって見づらい。
+- ステージ（.stage-card）は配信・動画とも flex の縦並びにし、CSS の order で並べる（studio.css 末尾の 0.9.9 の節。旧来の stream 用 order より詳細度を上げるため `body[data-app="live"][data-kind]` で書く）。
+- プレビューの固定：body[data-pv-pin]（localStorage `otonoha-pv-pin`、'0' でオフ）。ステージの画面（data-studio-mode="live"）のときだけ sticky。top は目次の高さ（--jump-h、86-plan-nav.js の jumpH()）。枠の高さは 26vh、canvas は object-fit:contain のままなので歪まない（t099 で3つの向きの枠の比を確かめる）。
+- 18-pon.js：スロット・ルーレット・サイコロは常に。お題帳は中身のある冊ごとに id 'topic:'+冊id（旧 'topic' は隠す一覧に残っても害はない）。
+- 番組の行：#liveProgSlot は BGM 欄（#progBgm の直前）へ移した。ラジオでは録音バーへ戻す（86-plan-nav.js progPlace）。
+- 13-minibar.js consoleBgm()：選択欄が見えないときは番組の初期BGMだけを使う（以前に選んで保存した曲は使わない）。

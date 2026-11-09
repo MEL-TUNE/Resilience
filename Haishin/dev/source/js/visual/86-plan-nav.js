@@ -1,7 +1,7 @@
-/* 0.9.8：①番組の切り替えと「番組の設定」を、配信・動画のステージにも出す（0.5.0 から録音バーごと隠れていた）
+/* 0.9.8：①番組の切り替えと「番組の設定」を、配信・動画でも出す（0.5.0 から録音バーごと隠れていた）。0.9.9 から置き場所は音のお品書きの BGM 欄の1か所
    ②企画卓を見出しごとの色付きのまとまりに分ける ③上に固定の目次（移動ボタン）を付ける */
 
-  // ---- ① 番組の行（#progChips・#progEdit）を、配信・動画ではステージの操作盤へ移す。要素ごと動かすので、ボタンの働きはそのまま
+  // ---- ① 番組の行（#progChips・#progEdit）を、配信・動画では BGM 欄（#liveProgSlot）へ移す。要素ごと動かすので、ボタンの働きはそのまま
   const progRow=document.querySelector('.recbar .prog-row'),progHome=progRow&&progRow.parentNode,progAfter=progRow&&progRow.nextElementSibling;
   function progPlace(app){
     const slot=E('liveProgSlot');
@@ -64,6 +64,7 @@
     jumpTargets.length=0;
     const add=(label,el,cls)=>{if(el)jumpTargets.push({label,el,cls:cls||''})};
     add('🎬 ステージ',document.querySelector('.stage-card'),'j-stage');
+    add('⚡ ポン出し',E('ponBar'),'j-stage');
     add('🔊 音のお品書き',E('boardShell'),'j-board');
     const bgm=[...document.querySelectorAll('#boardShell h2')].find(h=>/^BGM/.test(h.textContent.trim()));
     add('♪ BGM',bgm&&bgm.closest('section'),'j-board');
@@ -87,11 +88,23 @@
   };
   document.querySelectorAll('.studio-tabs [data-mode]').forEach(b=>b.addEventListener('click',()=>setTimeout(renderJump,0)));
 
+  // ---- 0.9.9：プレビューを上に固定（ステージの画面のとき）。手元の便利さだけなので、このブラウザに覚える
+  const PV_PIN_KEY='otonoha-pv-pin';
+  function pvPinSet(on){
+    document.body.toggleAttribute('data-pv-pin',on);
+    const b=E('pvPin');if(b){b.setAttribute('aria-pressed',on);b.textContent=on?'📌 上に固定：オン':'📌 上に固定：オフ'}
+  }
+  {let on=true;try{on=localStorage.getItem(PV_PIN_KEY)!=='0'}catch(_){}pvPinSet(on)}
+  E('pvPin').onclick=()=>{const on=!document.body.hasAttribute('data-pv-pin');pvPinSet(on);try{localStorage.setItem(PV_PIN_KEY,on?'1':'0')}catch(_){}};
+  const jumpH=()=>document.body.style.setProperty('--jump-h',(jump.offsetHeight||48)+'px');
+  window.addEventListener('resize',jumpH);
+
   {
     const prev=window.__otonohaAppChanged;
     window.__otonohaAppChanged=app=>{
       prev(app);
       progPlace(app);
-      renderJump()
+      renderJump();
+      jumpH()
     }
   }

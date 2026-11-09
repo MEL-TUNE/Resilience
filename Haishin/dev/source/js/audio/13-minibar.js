@@ -164,6 +164,8 @@ let consoleBgmSig='';
 function consoleBgm(){
   let id='';
   try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
+  // 0.9.9：ステージの「流すBGM」の選択欄は出さない（BGMは音のお品書きから流す）。▶ は番組の初期BGMだけ
+  if(document.getElementById('consoleBgmSel')?.offsetParent===null)return progBgm()||null;
   return (id&&cfg.bgms.find(b=>b.id===id&&b.assetId))||progBgm()||null
 }
 function renderConsoleBgm(){
@@ -183,7 +185,7 @@ function syncConsole(){
   renderConsoleBgm();
   const nm=$('#bgmNowName').textContent,c=$('#consoleBgmName');
   if(c.textContent!==nm)c.textContent=nm;
-  const btn=$('#consoleBgmStop'),on=!!(bgmPlaying||bgmLoadingId),txt=on?'■ BGMを止める':'▶ BGMを流す';
+  const btn=$('#consoleBgmStop'),on=!!(bgmPlaying||bgmLoadingId),txt=on?'■ BGMを止める':'▶ 初期BGM';
   if(btn.textContent!==txt)btn.textContent=txt;
   btn.classList.toggle('playing',on);
   btn.disabled=!on&&!consoleBgm()
