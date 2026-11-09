@@ -6,9 +6,9 @@
   function ponItems(){
     const out=[];
     for(const s of serifList())if(serifLines(s).length)out.push({id:'s:'+s.id,kind:'serif',label:'💬 '+s.title,s});
-    if(serifList().some(s=>serifLines(s).length))out.push({id:'slot',kind:'slot',label:'🎰 スロット'});
-    out.push({id:'wheel',kind:'wheel',label:'🎡 ルーレット'},{id:'dice',kind:'dice',label:'🎲 サイコロ'});
-    {const d=topicDeck();if(d&&d.items.length)out.push({id:'topic',kind:'topic',label:'📌 '+d.name+'：次へ',d})}
+    // 0.9.9：スロット・ルーレット・サイコロは常に並べる。お題帳は、中身のある冊をすべて並べる（コメントの冊は「1件流す」）
+    out.push({id:'slot',kind:'slot',label:'🎰 スロット'},{id:'wheel',kind:'wheel',label:'🎡 ルーレット'},{id:'dice',kind:'dice',label:'🎲 サイコロ'});
+    for(const d of topicCfg().decks)if(d.items.some(it=>it.st!=='rej'))out.push({id:'topic:'+d.id,kind:'topic',label:(d.mode==='comment'?'💬 '+d.name+'：1件流す':'📌 '+d.name+'：次へ'),d});
     for(const a of appList())out.push({id:'a:'+a.id,kind:'app',label:(a.kind==='url'?'🔗 ':'📄 ')+a.name,a});
     return out
   }
@@ -39,18 +39,18 @@
   }
   function ponRun(it){
     if(it.kind==='serif')ponSerif(it.s);
-    else if(it.kind==='slot')slotSpin('all');
+    else if(it.kind==='slot'){if(!serifList().some(x=>serifLines(x).length)){toast('スロットの役柄とセリフがまだありません（企画卓の「セリフ帳」「スロット」で作れます）',4500);return}slotSpin('all')}
     else if(it.kind==='wheel')E('wheelSpin').click();
     else if(it.kind==='dice')E('diceRoll').click();
     else if(it.kind==='app')ponApp(it.a);
-    else if(it.kind==='topic')topicNext(topicDeck(),1,true);
+    else if(it.kind==='topic')topicNext(it.d,1,true);
     ponState()
   }
   // 画面に出ているもの・開いているアプリのボタンを点灯させる（作り直さずに、印だけ変える）
   function ponOn(it){
     if(it.kind==='serif')return !!play.serif&&play.serif.title===it.s.title&&!play.slot;
     if(it.kind==='slot')return !!play.slot;
-    if(it.kind==='topic')return !!play.topic;
+    if(it.kind==='topic')return !!play.topic&&play.topic.deck===it.d.id;
     if(it.kind==='wheel')return !!play.wheel;
     if(it.kind==='dice')return !!play.dice;
     if(it.kind==='app')return state.appSel===it.a.id&&(appWinOpen()||!!E('appFrame').getAttribute('src'));

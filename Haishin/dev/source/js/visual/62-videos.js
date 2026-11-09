@@ -212,7 +212,7 @@
     sel.replaceChildren(new Option('フリー（初期BGMなし）','-1'),...cfg.programs.map((p,i)=>new Option(p.name,String(i))));
     sel.value=String(cfg.currentProgram);
     sel.disabled=studioCapturing||captureStarting||rec.state!=='idle';
-    E('vidProgNote').textContent=!pr?'番組は「ラジオ」の番組ボタン（長押し・右クリックで編集）と共通です。':pb?(pr.autoBgm?'収録開始と同時に「'+pb.name+'」を頭から流します。':'初期BGM「'+pb.name+'」は、番組の設定で「録音開始と同時に初期BGMを頭から流す」をオンにすると収録開始と同時に流れます。'):'この番組には初期BGMが設定されていません（ラジオの番組ボタンを長押し・右クリックで設定）。'
+    E('vidProgNote').textContent=!pr?'番組は、音のお品書きの BGM 欄で切り替え・設定できます。':pb?(pr.autoBgm?'収録開始と同時に「'+pb.name+'」を頭から流します。':'初期BGM「'+pb.name+'」は、番組の設定で「録音開始と同時に初期BGMを頭から流す」をオンにすると収録開始と同時に流れます。'):'この番組の初期BGMは未設定です（音のお品書きの BGM 欄の「番組の設定」で選べます）。'
   }
   E('vidProg').onchange=e=>{
     if(rec.state!=='idle'||studioCapturing)return;
