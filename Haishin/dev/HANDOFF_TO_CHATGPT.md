@@ -1,6 +1,6 @@
 # 配信処オトノハ 引き継ぎ（ChatGPTでの修正・チェック用）
 
-- 対象：配信処オトノハ STUDIO 0.9.6（2026-11-08 時点。0.9.5-gpt1 の修正を取り込み済み）
+- 対象：配信処オトノハ STUDIO 0.9.7（2026-11-09 時点）
 - 公開先：https://mel-tune.github.io/Resilience/Haishin/
 - 渡すファイル：`index.html`（アプリ本体。CSS と JavaScript を埋め込んだ1枚のHTML）と、この引き継ぎ
 - 作者：コウサカチヅル（個人サークル MEL-TUNE）。これまでの開発は Claude が担当し、元のソースは GitHub（MEL-TUNE/Resilience の `Haishin/dev/`）にあります
@@ -38,7 +38,7 @@
 
 - **ファイル全体を整形し直さない。** 字下げ、改行、引用符の種類、圧縮などは変えないでください。差分を比べて元のソースに戻すためです。
 - **変えたところに印を付ける。** 変えたところの近くに `/* GPT: 何をしたか */` のような短い注記を入れてください。
-- **版の表示を変える。** HTML の中の `STUDIO 0.9.6 / …` の文字列を、`STUDIO 0.9.6-gpt1 / （変えた内容の要約）` のように書き換えてください。
+- **版の表示を変える。** HTML の中の `STUDIO 0.9.7 / …` の文字列を、`STUDIO 0.9.7-gpt1 / （変えた内容の要約）` のように書き換えてください。
 - **変更点の一覧を付ける。** 修正が終わったら、次の4点を箇条書きで出してください。作者がそのまま Claude に渡します。
   - 何を、なぜ変えたか
   - どの関数・どの CSS を変えたか
@@ -75,6 +75,7 @@
 | スロット・ルーレット・サイコロの位置と大きさ | `playPlace()`, `playLayGet()`, `playLaySet()` |
 | スロット | `slotSpin()`, `drawSlot()`, `slotPal()`（色）, `slotPlan()`・`slotApply()`（JSON の取り込み） |
 | 企画のポン出し | `renderPon()`, `ponRun()` |
+| お題帳 | `state.topics`、`topicPrompt()`, `topicParse()`, `topicShow()`, `topicNext()`, `drawTopic()`, `renderTopicHand()`, `topicSanitize()` |
 | 外部アプリ | `appShow()`, `appWinBtn`, `appCharDraw()`, `appLayerDraw()`（キャラクターだけの透過表示） |
 | 連携 | `bridgeEmit()` と、`message` の受け口 |
 | 歌枠ノート | `sing()`, `renderRep()`, `okeNorm()`（URL を整える）, `sheetCall()`, `sheetImport()` |

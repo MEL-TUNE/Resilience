@@ -467,3 +467,20 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 
 /* 0.9.5-gpt1（ChatGPT）：ドラッグで動かせないときは、プレビューの上でも指で画面をスクロールできる */
 #studioCanvas.locked{touch-action:pan-x pan-y;cursor:default}
+
+/* 0.9.7 お題帳 */
+.topic-list li.topic-row{display:block;padding:8px 10px}
+.topic-list li.topic-row.cur{box-shadow:inset 4px 0 0 var(--accent)}
+.topic-row summary{cursor:pointer;font-weight:700;line-height:1.5}
+.topic-fields p,.topic-hand-body p{margin:4px 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.6}
+.topic-row .studio-row{margin-top:6px}
+.topic-row select{max-width:11em}
+.topic-edit{margin-top:8px;border-top:1px dashed var(--a-p-30);padding-top:8px}
+.topic-hand{border:2px dashed var(--accent);border-radius:14px;padding:12px;margin:0 0 10px;background:var(--hi)}
+.topic-hand-body{max-height:260px;overflow:auto;padding:4px 2px}
+.topic-st{flex:0 0 auto}
+body[data-app="live"][data-kind="stream"] .topic-hand{order:1}
+.topic-hand .pon-head{flex-wrap:wrap;align-items:baseline}
+.topic-hand .pon-head strong{font-size:15px}
+.topic-hand .pon-head strong::before{content:'📌 '}
+.topic-row select{border:1px solid var(--a-p-45);background:var(--hi);border-radius:8px;padding:7px 8px;font:inherit;color:var(--ink)}

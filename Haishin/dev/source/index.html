@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.6 / タッチのドラッグの修正（ChatGPTの修正を取り込み）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.7 / お題帳（議題・お悩み相談・ラブレター・コメント100本ノック）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button><button data-mode="aivoice">AIキャラ・声</button></nav>
@@ -47,6 +47,10 @@
 <p class="pon-now" id="ponNow" aria-live="polite"></p>
 <p class="studio-mini" id="ponEmpty" hidden>企画卓のセリフ帳・アプリを並べるに登録すると、ここに並びます。</p>
 <details class="pon-opts"><summary>並べるもの・アプリの開き方</summary><label class="studio-field">セリフ帳のシチュエーション<select id="ponSerif"></select></label><div class="pon-picks" id="ponPick"></div><div class="studio-row"><button type="button" id="ponAll">すべて並べる</button><label class="studio-field">アプリの開き方<select id="ponApp"><option value="window">アプリと立ち絵のウインドウ（OBS用）で開く</option><option value="page">企画卓の中で開く</option></select></label></div><p class="studio-mini">シチュエーションのボタンは、押すたびにそのシチュエーションのセリフを1つ出します。全部出し終えるまで同じセリフは出ません。セリフ・役柄は企画卓のセリフ帳で前もって登録します。</p></details>
+</section>
+<section class="topic-hand" id="topicHand" hidden aria-label="お題の手元カード"><div class="pon-head"><strong id="topicHandTitle">お題</strong><span class="studio-mini">手元だけに表示（配信画面には出ません）</span></div>
+<div class="topic-hand-body" id="topicHandBody"></div>
+<div class="studio-row"><button type="button" id="topicHandPrev">◀ 前</button><button type="button" id="topicHandNext">次へ ▶</button><button type="button" id="topicHandShow" class="accent">📌 配信画面に貼り出す</button><button type="button" id="topicHandHide">下げる</button><label class="studio-field topic-st">状態<select id="topicHandSt"><option value="cand">候補</option><option value="adopt">採用・準備中</option><option value="rec">収録済み・未公開</option><option value="pub">公開済み</option><option value="hold">保留</option><option value="rej">不採用</option><option value="used">使った</option></select></label></div>
 </section>
 <div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook" class="ghost-btn">⚙ キャラの設定へ</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button><button data-motion="wander" aria-pressed="false">右往左往</button><button data-motion="iya" aria-pressed="false">いやいや</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
 <div class="studio-row drag-row"><button type="button" id="dragFree" class="drag-btn" aria-pressed="false">✋ ドラッグで動かす：オフ</button><span class="studio-mini" id="dragHint">オンにすると、プレビューの立ち絵・マスコット・スロット・ルーレット・サイコロを指やマウスで動かせます</span></div>
@@ -109,12 +113,41 @@
 <p class="studio-mini" id="slotBulkInfo" aria-live="polite"></p>
 <ul class="sb-list aud-log" id="slotBulkPrev" aria-label="足す内容"></ul>
 </details>
+<h3>お題帳（議題・お悩み相談・ラブレター・コメント100本ノック）</h3>
+<p class="studio-note">AIに企画のお題を作ってもらい、一覧（台帳）にためて、配信画面に貼り出します。台帳にある題は、次に頼むときに「既出」として依頼文に添えるので、重なりを避けられます。お題帳は企画ごとに作れます（30冊まで・1冊2000件まで）。架空の相談・手紙・コメントは、架空とわかる見出しで出します。</p>
+<div class="studio-inline"><label class="studio-field">使うお題帳<select id="topicDeck"></select></label>
+<label class="studio-field">新しく作る<select id="topicPreset"><option value="talk">番組の議題</option><option value="consult">架空のお悩み相談</option><option value="letter">ヤンデレラブレター</option><option value="gachi">架空コメント100本ノック（ガチ恋）</option><option value="chuuni">架空コメント100本ノック（厨二病）</option><option value="free">自由なお題</option></select></label></div>
+<div class="studio-row"><button type="button" id="topicAdd">＋ この形で新しいお題帳を作る</button></div>
+<div id="topicBody" hidden>
+<details class="sb-opts"><summary>このお題帳の設定（名前・AIへの指示・項目・配信画面での出し方）</summary>
+<div class="studio-inline"><label class="studio-field">名前<input id="topicName" maxlength="40"></label><label class="studio-field">1回に作ってもらう数<input id="topicCount" type="number" min="1" max="100"></label></div>
+<label class="studio-field">AIへの指示（番組の企画書や議題生成のプロンプトを、そのまま貼り付けて使えます）<textarea id="topicInstr" class="studio-textarea" rows="6" maxlength="20000"></textarea></label>
+<label class="studio-field">テーマ・方向（今回だけの注文。例：相談・Help型を多めに／秋の話題）<textarea id="topicTheme" class="studio-textarea" rows="2" maxlength="4000"></textarea></label>
+<label class="studio-field">項目（「、」で区切る。AIはこの名前で返します）<input id="topicFields" maxlength="400"></label>
+<div class="studio-inline"><label class="studio-field">見出しにする項目<select id="topicHead"></select></label><label class="studio-field">貼り出すときの本文<select id="topicBodyF"></select></label><label class="studio-field">名前・差出人の項目<select id="topicWho"></select></label></div>
+<div class="studio-inline"><label class="studio-field">配信画面での出し方<select id="topicMode"><option value="card">お題カード（画面に貼り出す）</option><option value="comment">コメント欄に流す（1件ずつ）</option></select></label><label class="studio-field">カードの見出しラベル<input id="topicLabel" maxlength="40"></label><label class="studio-field"><input type="checkbox" id="topicAutoUse"> 出したら「使った」にする</label></div>
+<div class="studio-row"><button type="button" id="topicDup">設定だけ写して、新しいお題帳にする</button><button type="button" id="topicDel">このお題帳を削除</button></div>
+</details>
+<div class="studio-row"><button type="button" id="topicPromptCopy" class="accent">AIに頼む文をコピー（既出を添えます）</button></div>
+<label class="studio-field">AIの返答（JSON）を貼り付け<textarea id="topicPaste" class="studio-textarea" rows="3" placeholder='{"items":[{"タイトル":"…"}]}'></textarea></label>
+<div class="studio-row"><button type="button" id="topicPasteCheck">中身を確かめる</button><button type="button" id="topicPasteGo" class="accent" disabled>候補として足す</button><button type="button" id="topicUndo" disabled>↶ 元に戻す</button></div>
+<p class="studio-mini" id="topicPasteInfo" aria-live="polite"></p>
+<details class="sb-opts"><summary>これまでの題を貼り付けて登録する（台帳の取り込み）</summary>
+<label class="studio-field">1行に1題<textarea id="topicPast" class="studio-textarea" rows="4"></textarea></label>
+<div class="studio-inline"><label class="studio-field">状態<select id="topicPastSt"><option value="pub">公開済み</option><option value="rec">収録済み・未公開</option><option value="adopt">採用・準備中</option><option value="cand">候補</option><option value="hold">保留</option><option value="rej">不採用</option><option value="used">使った</option></select></label></div>
+<div class="studio-row"><button type="button" id="topicPastGo">登録する</button></div>
+</details>
+<div class="studio-inline"><label class="studio-field">絞り込み<select id="topicFilter"><option value="all">すべて</option><option value="open">まだ使っていない（候補・採用）</option><option value="cand">候補</option><option value="adopt">採用・準備中</option><option value="rec">収録済み・未公開</option><option value="pub">公開済み</option><option value="hold">保留</option><option value="rej">不採用</option><option value="used">使った</option></select></label><label class="studio-field">探す<input id="topicFind" type="search" maxlength="40"></label></div>
+<p class="studio-mini" id="topicCountInfo"></p>
+<ul class="sb-list topic-list" id="topicList"></ul>
+<div class="studio-row"><button type="button" id="topicCopyList">一覧をコピー（Markdown）</button><button type="button" id="topicExport">このお題帳を書き出す（JSON）</button><button type="button" id="topicImport">お題帳を読み込む</button><input type="file" id="topicFile" accept=".json,application/json" hidden></div>
+</div>
 <h3>ルーレット・サイコロ</h3>
 <div class="studio-inline"><label class="studio-field">サイコロの数<select id="diceN"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option></select></label><label class="studio-field">目の数<select id="diceF"><option value="6">6面（ふつうのサイコロ）</option><option value="4">4面</option><option value="8">8面</option><option value="10">10面</option><option value="12">12面</option><option value="20">20面</option><option value="100">1〜100</option></select></label><label class="studio-field">画面の位置<select id="playPos"><option value="center">中央</option><option value="left">左</option><option value="right">右</option></select></label></div>
 <label class="studio-field">ルーレットの項目（1行に1つ・2〜24個）<textarea id="wheelItems" class="studio-textarea" rows="4" placeholder="例：&#10;歌う&#10;セリフを言う&#10;罰ゲーム&#10;もう一回"></textarea></label>
-<details class="sb-opts" id="layBox"><summary>スロット・ルーレット・サイコロの位置と大きさ</summary>
+<details class="sb-opts" id="layBox"><summary>お題カード・スロット・ルーレット・サイコロの位置と大きさ</summary>
 <p class="studio-mini" id="layWhere"></p>
-<div class="studio-inline"><label class="studio-field">動かすもの<select id="layKind"><option value="slot">🎰 スロット</option><option value="wheel">🎡 ルーレット</option><option value="dice">🎲 サイコロ</option></select></label></div>
+<div class="studio-inline"><label class="studio-field">動かすもの<select id="layKind"><option value="slot">🎰 スロット</option><option value="wheel">🎡 ルーレット</option><option value="dice">🎲 サイコロ</option><option value="topic">📌 お題カード</option></select></label></div>
 <div class="studio-inline"><label class="studio-field">横（左 0 ←→ 右 100） <output id="layXVal"></output><input id="layX" type="range" min="0" max="100" step="1"></label>
 <label class="studio-field">縦（上 0 ←→ 下 100） <output id="layYVal"></output><input id="layY" type="range" min="0" max="100" step="1"></label>
 <label class="studio-field">大きさ <output id="laySVal"></output><input id="layS" type="range" min="30" max="200" step="1"></label></div>

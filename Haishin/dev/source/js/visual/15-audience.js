@@ -105,7 +105,8 @@ eventsには配信の出来事（歌い始めた曲、ルーレットの結果�
   }
   function drawAudience(now){
     const a=state.aud;
-    if(!a||!a.show||!audOn.length)return;
+    // お題帳の架空コメントは、AI観客席の表示を切っていても出す
+    if(!a||!audOn.length||(!a.show&&!audOn.some(m=>m.force)))return;
     const life=(a.life||14)*1000,k=Math.min(W,H)/720;
     for(let i=audOn.length-1;i>=0;i--)if(now-audOn[i].at>life)audOn.splice(i,1);
     if(!audOn.length)return;

@@ -128,3 +128,11 @@
 
 - ChatGPT の 0.9.5-gpt1（83-tuning-drag.js の pointerdown・pointermove・endDrag、#studioCanvas.locked の touch-action）を source に取り込んだ。差分は3か所だけで、ほかは 0.9.5 と同じだった。
 - 取り込み後のテスト：t096（CDP のタッチで、1本指のドラッグ、2本目の指に横取りされないこと、ロック中の touch-action）。0.9.5 では横取りが起きることも確かめた。
+
+---
+
+## 2026-11-09 追記（STUDIO 0.9.7）
+
+- お題帳は js/visual/24-topics.js。state.topics={decks:[{id,name,instr,theme,count,fields[],head,body,who,mode:'card'|'comment',label,autoUse,items:[{id,f:{項目名:値},st,at}],cur}],sel}。点検は topicSanitize（01-sanitize から呼ぶので、外の const を使わない）。
+- 貼り出しは play.topic → drawTopic（13-plays の drawPlays から）。位置は playLay の 'topic'。コメントの形は audShow に force:true を付けて出す（AI観客席の表示がオフでも出る）。
+- AITuber の設計は作者の判断待ちで止めている。再開するときは dev/AITUBER_RESUME.md を読む。
