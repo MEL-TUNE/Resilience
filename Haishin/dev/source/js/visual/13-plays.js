@@ -130,7 +130,7 @@
   // 位置と大きさの欄
   function layCur(){
     const kind=E('layKind').value,L=playLayGet(kind),N=playNatural[kind];
-    const df={slot:{x:50,y:30},wheel:{x:50,y:42},dice:{x:50,y:42}}[kind];
+    const df={topic:{x:50,y:28},slot:{x:50,y:30},wheel:{x:50,y:42},dice:{x:50,y:42}}[kind];
     return L||{x:N?N.x:df.x,y:N?N.y:df.y,s:100}
   }
   function renderLay(){
@@ -146,7 +146,7 @@
   E('layCenter').onclick=()=>layPut({x:50});
   E('layRight').onclick=()=>layPut({x:layEdge('right')});
   E('layReset').onclick=()=>{playLaySet(E('layKind').value,null);save();renderLay();toast('これまでの置き方に戻しました')};
-  E('layTry').onclick=()=>{const kind=E('layKind').value;if(kind==='slot')slotSpin('all');else if(kind==='wheel')E('wheelSpin').click();else E('diceRoll').click()};
+  E('layTry').onclick=()=>{const kind=E('layKind').value;if(kind==='topic'){const d=topicDeck();if(d&&d.items.length){const it=topicCur(d)||d.items[0];if(d.mode==='comment')toast('このお題帳は「コメント欄に流す」形です。カードの位置は、カードで出すお題帳で試せます',5000);else{play.topic={deck:d.id,item:it.id,at:performance.now()}}}else toast('お題帳にお題がまだありません')}else if(kind==='slot')slotSpin('all');else if(kind==='wheel')E('wheelSpin').click();else E('diceRoll').click()};
 
   function wrapLines(text,maxW,max){
     const out=[];
@@ -285,8 +285,9 @@
     playBoxes[kind]={x:tx-nw*s/2,y:ty-nh*s/2,w:nw*s,h:nh*s}
   }
   function drawPlays(now){
-    if(!play.serif&&!play.dice&&!play.wheel&&!play.slot)return;
+    if(!play.serif&&!play.dice&&!play.wheel&&!play.slot&&!play.topic)return;
     const k=Math.min(W,H)/720;
+    if(play.topic){g.save();drawTopic(k);g.restore()}
     drawWheel(now,k);drawDice(now,k);drawSlot(now,k);drawSerif(k)
   }
   function renderPlays(){renderSerifs();renderPlayOpts()}

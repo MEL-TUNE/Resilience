@@ -47,7 +47,7 @@
     const p=stagePoint(e);
     let target=null;
     // 手前に描くものから：スロット・ルーレット・サイコロ → マスコット → 立ち絵
-    for(const kind of ['slot','wheel','dice']){
+    for(const kind of ['topic','slot','wheel','dice']){
       const on=kind==='slot'?play.slot&&slotCfg().look!=='bubble':play[kind],b=playBoxes[kind];
       if(on&&b&&p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h){
         const L=playLayGet(kind)||{x:(b.x+b.w/2)/W*100,y:(b.y+b.h/2)/H*100,s:100};

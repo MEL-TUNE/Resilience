@@ -8,6 +8,7 @@
     for(const s of serifList())if(serifLines(s).length)out.push({id:'s:'+s.id,kind:'serif',label:'💬 '+s.title,s});
     if(serifList().some(s=>serifLines(s).length))out.push({id:'slot',kind:'slot',label:'🎰 スロット'});
     out.push({id:'wheel',kind:'wheel',label:'🎡 ルーレット'},{id:'dice',kind:'dice',label:'🎲 サイコロ'});
+    {const d=topicDeck();if(d&&d.items.length)out.push({id:'topic',kind:'topic',label:'📌 '+d.name+'：次へ',d})}
     for(const a of appList())out.push({id:'a:'+a.id,kind:'app',label:(a.kind==='url'?'🔗 ':'📄 ')+a.name,a});
     return out
   }
@@ -42,12 +43,14 @@
     else if(it.kind==='wheel')E('wheelSpin').click();
     else if(it.kind==='dice')E('diceRoll').click();
     else if(it.kind==='app')ponApp(it.a);
+    else if(it.kind==='topic')topicNext(topicDeck(),1,true);
     ponState()
   }
   // 画面に出ているもの・開いているアプリのボタンを点灯させる（作り直さずに、印だけ変える）
   function ponOn(it){
     if(it.kind==='serif')return !!play.serif&&play.serif.title===it.s.title&&!play.slot;
     if(it.kind==='slot')return !!play.slot;
+    if(it.kind==='topic')return !!play.topic;
     if(it.kind==='wheel')return !!play.wheel;
     if(it.kind==='dice')return !!play.dice;
     if(it.kind==='app')return state.appSel===it.a.id&&(appWinOpen()||!!E('appFrame').getAttribute('src'));
@@ -88,13 +91,15 @@
     const sl=play.slot;
     E('ponSlotRe').hidden=E('ponSlotRb').hidden=!(sl&&sl.done);
     const now=sl?(sl.done?'スロット：'+sl.role+'「'+sl.line+'」':'スロット：抽選中…'):play.serif?'セリフ：'+play.serif.text:'';
+    const tp=play.topic&&topicCfg().decks.find(d=>d.id===play.topic.deck),ti=tp&&tp.items.find(x=>x.id===play.topic.item);
+    const tpt=ti?'お題：'+tHead(tp,ti):'';
     const extra=[play.dice?.done?'サイコロ：'+play.dice.vals.join('・'):'',play.wheel?.done?'ルーレット：'+play.wheel.items[play.wheel.pick]:''].filter(Boolean).join('　');
-    const t=[now,extra].filter(Boolean).join('　')||'画面には何も出していません';
+    const t=[tpt,now,extra].filter(Boolean).join('　')||'画面には何も出していません';
     if(E('ponNow').textContent!==t)E('ponNow').textContent=t
   }
   E('ponSlotRe').onclick=()=>{slotSpin('a');ponState()};
   E('ponSlotRb').onclick=()=>{slotSpin('b');ponState()};
-  E('ponClear').onclick=()=>{play.serif=null;play.slot=null;play.dice=null;play.wheel=null;renderPlays();ponState()};
+  E('ponClear').onclick=()=>{play.serif=null;play.slot=null;play.dice=null;play.wheel=null;play.topic=null;renderPlays();ponState()};
   E('ponApp').onchange=e=>{ponCfg().app=e.target.value==='page'?'page':'window';save();renderPon()};
   E('ponAll').onclick=()=>{ponCfg().hide=[];ponCfg().serif='all';save();renderPon()};
   E('ponSerif').onchange=e=>{ponCfg().serif=e.target.value;save();renderPon()};

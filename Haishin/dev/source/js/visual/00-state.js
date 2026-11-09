@@ -64,6 +64,7 @@
     wheelItems:'',
     playPos:'center',
     playLay:{},
+    topics:null,
     appSel:'',
     appLayout:'overlay',
     appPos:'br',

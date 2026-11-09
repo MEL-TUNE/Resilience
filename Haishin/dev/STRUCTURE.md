@@ -54,6 +54,7 @@
 | 17-slot.js | スロット（役柄×セリフ） |
 | 18-pon.js | 企画のポン出し |
 | 19-sheet.js | 歌枠管理シートとつなぐ（Apps Script のコードは `dev/otonoha-sheet.gs` と同じ内容） |
+| 24-topics.js | お題帳（AIに作ってもらったお題の台帳・貼り出し・手元カード） |
 | 20-characters.js | 名義とキャラクターのデータ、切り替え |
 | 21-character-ui.js | キャラクター・名義の編集画面 |
 | 22-stage-controls.js | 表示モード・マイク・全画面・配信用ウインドウ |

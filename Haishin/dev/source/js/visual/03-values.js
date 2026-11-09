@@ -51,6 +51,7 @@ for(const [id,k]of Object.entries(bindings)){
     renderSongs();
     renderPlays();
     renderSlot();
+    renderTopics();
     renderPon();
     renderBgList();
     renderAud();
