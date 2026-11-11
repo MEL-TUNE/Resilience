@@ -34,7 +34,9 @@ let recbarSeen=false;
 function setMini(on){
   const audio=rec.state!=='idle',
     video=!!window.__otonohaVideoRec?.();
-  on=(audio&&!(recbarSeen&&document.body.dataset.page!=='settings'&&document.body.dataset.app==='radio'))||video;
+  // 映像の収録中の小さな欄は、収録のボタンが上に残っていないときだけ出す（設定の画面・準備の画面・映像を上に残していないとき）
+  const stripUp=document.body.dataset.page!=='settings'&&!!window.__otonohaDeck?.sideSticky();
+  on=(audio&&!(recbarSeen&&document.body.dataset.page!=='settings'&&document.body.dataset.app==='radio'))||(video&&!stripUp);
   if(miniOn!==on){
     miniOn=on;
     $('#miniBar').hidden=!on
@@ -65,6 +67,8 @@ function gotoBgm(){
   }
 
   const sec=$('#bgmTabs').closest('.section');
+  // 配信・動画では、BGM のタブを開いてから動かす
+  if(document.body.dataset.app==='live'&&window.__otonohaDeck){window.__otonohaDeck.show('bgm',sec);return}
   const y=sec.getBoundingClientRect().top+scrollY;
 
   requestAnimationFrame(()=>{
@@ -159,43 +163,21 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
   navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
 })();
 
-const CONSOLE_BGM_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_console_bgm';
-let consoleBgmSig='';
-function consoleBgm(){
-  let id='';
-  try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
-  // 0.9.9：ステージの「流すBGM」の選択欄は出さない（BGMは音のお品書きから流す）。▶ は番組の初期BGMだけ
-  if(document.getElementById('consoleBgmSel')?.offsetParent===null)return progBgm()||null;
-  return (id&&cfg.bgms.find(b=>b.id===id&&b.assetId))||progBgm()||null
-}
-function renderConsoleBgm(){
-  if(!cfg)return;
-  const sel=$('#consoleBgmSel'),pb=progBgm(),rank=b=>b.tabIndex===0?0:b.tabIndex===bgmCurTab?1:2,
-    list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>rank(a)-rank(b)||a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
-  let id='';
-  try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
-  const sig=JSON.stringify([id,pb?.id,bgmCurTab,cfg.bgmTabs,list.map(b=>[b.id,b.name,b.tabIndex])]);
-  if(sig===consoleBgmSig)return;
-  consoleBgmSig=sig;
-  sel.replaceChildren(new Option(pb?'番組の初期BGM（'+pb.name+'）':'番組の初期BGM（未設定）',''),...list.map(b=>new Option((cfg.bgmTabs.length>1?cfg.bgmTabs[b.tabIndex]+'｜':'')+b.name,b.id)));
-  sel.value=list.some(b=>b.id===id)?id:''
-}
+// 配信・動画の BGM 欄の上の行：いま流れている曲と、番組の初期BGMを流す・止めるボタン
+const consoleBgm=()=>progBgm()||null;
 function syncConsole(){
   if(!cfg)return;
-  renderConsoleBgm();
   const nm=$('#bgmNowName').textContent,c=$('#consoleBgmName');
   if(c.textContent!==nm)c.textContent=nm;
   const btn=$('#consoleBgmStop'),on=!!(bgmPlaying||bgmLoadingId),txt=on?'■ BGMを止める':'▶ 初期BGM';
   if(btn.textContent!==txt)btn.textContent=txt;
   btn.classList.toggle('playing',on);
-  btn.disabled=!on&&!consoleBgm()
+  btn.disabled=!on&&!consoleBgm();
+  // BGM が流れているあいだ、BGM のタブに印を付ける
+  const tab=document.querySelector('#deckNav [data-deck="bgm"]');
+  if(tab&&tab.classList.contains('playing')!==on)tab.classList.toggle('playing',on)
 }
 setInterval(syncConsole,300);
-$('#consoleBgmSel').onchange=e=>{
-  try{localStorage.setItem(CONSOLE_BGM_KEY,e.target.value)}catch(_){}
-  consoleBgmSig='';
-  syncConsole()
-};
 $('#consoleBgmStop').onclick=()=>{
   if(bgmLoadingId){
     bgmSerial++;

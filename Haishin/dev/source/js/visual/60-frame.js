@@ -150,5 +150,26 @@
       E('studioMic').textContent=ready&&micLive()?'マイクを再接続':'マイクを接続';
       if(mediaRecorder&&mediaRecorder.state==='recording'&&!mediaRecorder.__ending)E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
     }
+    perfWatch(performance.now()-now);
     scheduleFrame()
   }
+
+  // 描くのが追いつかない状態が数秒つづいたら、軽くする方法を一度だけ知らせる（勝手には変えない）
+  let slowN=0,slowTold=false;
+  function perfWatch(cost){
+    if(slowTold||(state.light&&(state.fps||30)<=15))return;
+    const fps=state.fps||30;
+    slowN=cost>800/fps?slowN+1:Math.max(0,slowN-2);
+    if(slowN<fps*6)return;
+    slowTold=true;
+    E('perfHint').hidden=false
+  }
+  E('perfHintNo').onclick=()=>{E('perfHint').hidden=true};
+  E('perfHintGo').onclick=()=>{
+    E('perfHint').hidden=true;
+    state.light=true;
+    // 収録中は、なめらかさ（fps）を変えない
+    if(!studioCapturing&&!captureStarting&&(state.fps||30)>15)state.fps=15;
+    applyPerf();save();
+    toast('軽量モードにしました'+(state.fps===15?'（映像は15fps）':'')+'。「設定」の「映像のなめらかさ」「軽量モード」で戻せます',6000)
+  };

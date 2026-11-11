@@ -2,16 +2,14 @@
 .top h1{font-size:25px}
 .top .ver{font-size:11px}
 .pagenav{gap:8px}
-.studio-workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;margin-bottom:18px}
 .studio-card{border:1px solid var(--a-p-45);border-radius:18px;background:var(--paper);padding:16px;box-shadow:var(--shadow);min-width:0}
 .studio-card h2{margin:0 0 12px;font:700 17px var(--title-font)}
 .studio-kicker{font-size:10px;letter-spacing:.18em;color:var(--muted);margin:0 0 5px}
 .stage-wrap{background:repeating-conic-gradient(#e2e8df 0% 25%,#f5f7f1 0% 50%) 50% / 24px 24px;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
 .stage-wrap canvas{width:100%;height:100%;object-fit:contain;display:block}
 .studio-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0}
-.studio-row button,.studio-tabs button{border:1px solid var(--a-p-45);border-radius:9px;padding:9px 12px;background:var(--hi);font-size:12px;cursor:pointer}
-.studio-row .accent,.studio-tabs .selected{background:var(--accent);color:var(--on-accent)}
-.studio-tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.studio-row button{border:1px solid var(--a-p-45);border-radius:9px;padding:9px 12px;background:var(--hi);font-size:12px;cursor:pointer}
+.studio-row .accent{background:var(--accent);color:var(--on-accent)}
 .studio-note{font-size:11px;line-height:1.8;color:var(--muted);margin:8px 0}
 .studio-field{display:block;font-size:12px;margin:12px 0}
 .studio-field input[type=range]{display:block;width:100%;margin-top:7px}
@@ -41,7 +39,6 @@
 .studio-header-line small{font-size:10px;color:var(--muted)}
 .mode-section{display:none}
 .mode-section.on{display:block}
-body[data-studio-mode=plan] .recbar,body[data-studio-mode=plan] .studio{display:none}
 body[data-page=settings] .studio-extension{display:none}
 .studio-live-box{border:1px solid var(--a-p-45);border-radius:9px;padding:12px;white-space:pre-wrap;min-height:48px;margin-top:10px;font-size:13px}
 .kara-h{font-size:15px;margin:2px 0 6px}
@@ -89,12 +86,10 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
   .shell{border-width:4px}
 }
 @media(max-width:780px){
-  .studio-workspace{grid-template-columns:1fr}
   .studio-card{padding:12px}
   .studio-inline{grid-template-columns:1fr}
   .top h1{font-size:21px}
   .studio-state{width:100%;margin:0}
-  .studio-tabs button{flex:1}
 }
 @media(min-width:1100px){
   .app{padding-top:8px}
@@ -104,8 +99,6 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
   .top .shop-eyebrow{display:none}
   .top .pagenav{margin:5px 0 0!important}
   .top .pagenav button{padding:5px 12px!important}
-  .studio-tabs{margin:8px 0}
-  .studio-workspace>div>.studio-card:first-child{padding:12px}
   .studio-card h2{margin-bottom:8px}
   .studio-row{margin:7px 0}
   .studio-note{line-height:1.5}
@@ -136,18 +129,9 @@ body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;heig
   .motion-bar .studio-mini{width:100%}
   .motion-bar button{flex:1 1 auto;white-space:nowrap;padding-left:8px;padding-right:8px;font-size:12px}
   #studioMute{flex-basis:100%}
-  .studio-tabs button{font-size:12px;white-space:nowrap;padding-left:4px;padding-right:4px}
   .fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 .app{width:min(100%,1840px)}
-@media(min-width:1100px){
-  .studio-workspace{--stage-col:clamp(520px,calc(50vh*16/9 + 26px),1306px);grid-template-columns:var(--stage-col) minmax(0,1fr)!important;align-items:start}
-  body[data-studio-aspect="portrait"] .studio-workspace{--stage-col:clamp(400px,calc(min(72vh,820px)*9/16 + 26px),720px)}
-  .stage-wrap{max-height:none!important}
-}
-@media(max-width:1099px){
-  .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
-}
 #boardShell.in-workspace{margin:0;min-width:0}
 #gotoLook{font-size:12px;padding:4px 10px}
 .motion-set{margin:10px 0}
@@ -168,9 +152,6 @@ body[data-light] *{backdrop-filter:none!important;-webkit-backdrop-filter:none!i
 body:not([data-fxp]) .fxp-only{display:none!important}
 .fx-preset{margin:6px 0 4px}
 body[data-app="live"] .recbar,body[data-app="live"] #takesShell{display:none!important}
-body[data-app="radio"] .studio-workspace>div:first-child,body[data-app="radio"] .studio-tabs,body[data-app="radio"] .studio-help{display:none!important}
-body[data-app="radio"] .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
-.stage-head{justify-content:flex-end;margin:0 0 4px}
 #studioCanvas{cursor:grab;touch-action:none}
 #studioCanvas.dragging{cursor:grabbing}
 .expr-bar,.speaker-bar{flex-wrap:wrap;gap:6px}
@@ -190,22 +171,16 @@ body{padding-top:var(--mini-h,0px)}
 .mascot-bar{flex-wrap:wrap;gap:6px}
 .mascot-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 #studioCanvas.locked{cursor:default}
-.stage-card .stage-tools{margin:0 0 6px}
-.stage-card .stage-head{display:flex;justify-content:flex-end;margin:6px 0 4px}
-.rec-panel{border:2px solid var(--accent);border-radius:12px;padding:10px;margin:10px 0;background:var(--hi)}
-.rec-main{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .rec-big{border:1px solid var(--a-p-45);border-radius:10px;padding:14px 10px;font-size:15px;font-weight:700;cursor:pointer;background:var(--paper);color:var(--ink)}
 .rec-start{background:var(--rec,#c8463c);border-color:var(--rec,#c8463c);color:#fff}
 .rec-start.recording{opacity:.55}
 .rec-stop:not(:disabled){background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .rec-big:disabled{opacity:.45;cursor:default}
 .rec-sub{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;font-size:12px}
-.rec-time{font-weight:700;min-width:7em}
 .rec-opt select{margin-left:4px;font-size:12px;padding:3px 6px;border-radius:6px;border:1px solid var(--a-p-45);background:var(--paper);color:var(--ink)}
 .rec-panel .studio-tray{margin-top:6px}
 .studio-take .vbtn{border:1px solid var(--a-p-45);border-radius:8px;padding:6px 10px;background:var(--paper);font-size:12px;cursor:pointer;color:var(--ink);text-decoration:none}
 .studio-take .vbtn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
-.stage-group{border-top:1px solid var(--a-p-20);padding-top:4px;margin-top:4px}
 .msc-pick{border:1px solid var(--a-p-30);border-radius:10px;padding:8px;margin:8px 0}
 #boardShell .text-grid{min-height:0}
 .rec-opt{display:flex;align-items:center;gap:4px;max-width:100%}
@@ -227,7 +202,6 @@ body{padding-top:var(--mini-h,0px)}
 .rec-note{font-size:11px;color:var(--muted);margin:6px 0 0}
 .scene-font-row{display:flex;flex-wrap:wrap;align-items:end;gap:10px 16px;margin-top:12px}
 .scene-font-row .studio-field{margin:0}
-.live-console{border:2px solid var(--scene-c,#d64545);border-radius:14px;padding:12px;margin:10px 0;background:var(--hi)}
 body{--scene-c:#d64545}
 body[data-cur-scene="standby"]{--scene-c:#a96c0c}
 body[data-cur-scene="away"]{--scene-c:#2f78c4}
@@ -250,7 +224,6 @@ body[data-cur-scene="end"]{--scene-c:#7b5ea7}
 :root[data-tone="dark"] .scene-switch button[data-scene="away"]{--c:#73b3ff}
 :root[data-tone="dark"] .scene-switch button[data-scene="end"]{--c:#bca2f2}
 :root[data-tone="dark"] .scene-switch button[aria-pressed="true"]{color:#1d1411}
-.sound-stop{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--a-p-20)}
 .sound-now{display:flex;gap:6px;align-items:center;min-width:0;font-size:13px}
 .sound-now span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .stop-btn{border:2px solid var(--ink);border-radius:12px;padding:12px 14px;font-size:15px;font-weight:700;background:var(--hi);color:var(--ink);cursor:pointer;white-space:nowrap}
@@ -258,37 +231,11 @@ body[data-cur-scene="end"]{--scene-c:#7b5ea7}
 .stop-btn:disabled{opacity:.4;cursor:default}
 .stream-only{display:none}
 body[data-app="live"][data-kind="stream"] .stream-only{display:inline}
-body[data-app="live"][data-kind="stream"] .stage-card{display:flex;flex-direction:column}
-body[data-app="live"][data-kind="stream"] .live-console{order:1;margin-top:0}
-body[data-app="live"][data-kind="stream"] .stage-tools{order:2}
-body[data-app="live"][data-kind="stream"] .studio-meter{order:3}
-body[data-app="live"][data-kind="stream"] .stage-card>.stage-group{order:4}
-body[data-app="live"][data-kind="stream"] #quickTune{order:5}
-body[data-app="live"][data-kind="stream"] .stage-preview{order:6;width:min(100%,420px);align-self:flex-end;margin-top:12px}
-body[data-app="live"][data-kind="stream"] .stage-preview .stage-head{justify-content:space-between;gap:8px;font-size:11px}
 body[data-app="live"][data-kind="stream"] .rec-panel,body[data-app="live"][data-kind="stream"] .kara-sound,body[data-app="live"][data-kind="stream"] #studioFullscreen{display:none!important}
 body[data-app="live"][data-kind="stream"] #studioOutput{background:var(--accent);color:var(--on-accent);font-weight:700}
-@media(max-width:520px){
-  .scene-switch{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .sound-stop{grid-template-columns:1fr 1fr}
-  .sound-now{grid-column:1/-1}
-  .stop-btn{white-space:normal;font-size:13px;padding:10px 8px}
-}
-@media(min-width:1100px){
-  body[data-app="live"][data-kind="stream"] .studio-workspace{grid-template-columns:minmax(0,1fr) minmax(0,2fr)!important}
-  body[data-app="live"][data-kind="stream"] .scene-switch{grid-template-columns:repeat(2,minmax(0,1fr))}
-  body[data-app="live"][data-kind="stream"] .sound-stop{grid-template-columns:minmax(0,1fr)}
-  body[data-app="live"][data-kind="stream"] .stop-btn{white-space:normal}
-  body[data-app="live"][data-kind="stream"] .stage-preview{width:100%;align-self:stretch}
-}
 body[data-view="stream"] [data-modes]:not([data-modes~="stream"]),body[data-view="video"] [data-modes]:not([data-modes~="video"]),body[data-view="radio"] [data-modes]:not([data-modes~="radio"]){display:none!important}
 .set-mode-note{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:var(--a-p-12);font-size:13px}
-.console-bgm-pick{display:flex;flex-direction:column;gap:3px;font-size:11px;min-width:0}
-.console-bgm-pick select{max-width:100%;font-size:13px;padding:6px}
 .stop-btn.playing{border-color:var(--rec);color:var(--rec)}
-.sound-stop{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.sound-now{grid-column:1/-1}
-.console-bgm-pick{grid-column:1/-1}
 .rec-extra{display:flex;gap:8px;margin-top:8px}
 .rec-extra button{flex:1;border:1px solid var(--a-p-45);border-radius:10px;padding:9px 8px;background:var(--hi);font-size:13px;cursor:pointer}
 .rec-extra button:disabled{opacity:.45;cursor:default}
@@ -384,16 +331,8 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 
 /* 0.9.2 絵文字の効果音・文字の効果音・ボイスは同じ仲間：間の線を引かない */
 .section.sec-join{border-top:0;padding-top:0;margin-top:22px}
-/* 0.9.2 1列のときは、音のお品書きを企画卓・歌枠ノート・AIキャラより上に置く */
-@media(max-width:1099px){
-  .studio-workspace>div:first-child{display:contents}
-  .studio-workspace>div:first-child>.stage-card{order:1}
-  .studio-workspace>#boardShell{order:2}
-  .studio-workspace>div:first-child>.mode-section{order:3}
-}
 
 /* 0.9.2 企画のポン出し */
-.pon-bar{border:2px solid var(--accent);border-radius:14px;padding:12px;margin:0 0 10px;background:var(--hi)}
 .pon-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
 .pon-head strong{font-size:17px;letter-spacing:.06em}
 .pon-clear{border:2px solid var(--ink);border-radius:10px;padding:8px 12px;font-weight:700;background:var(--ink);color:var(--paper);cursor:pointer}
@@ -406,8 +345,6 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 .pon-opts{margin-top:8px;font-size:13px}
 .pon-picks{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0}
 .pon-pick{display:inline-flex;align-items:center;gap:4px}
-body[data-app="live"][data-kind="stream"] .pon-bar{order:1}
-body[data-app="live"][data-kind="stream"] .live-console{order:0}
 
 /* 0.9.2 歌枠ノート */
 .sb-flow{margin:4px 0 14px;padding:10px 12px 10px 30px;border-radius:12px;background:var(--a-p-6);font-size:13px;line-height:1.7}
@@ -434,7 +371,6 @@ body[data-app="live"][data-kind="stream"] .live-console{order:0}
 
 /* 0.9.3 背景画像のリスト・3:4 */
 body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min(72vh,820px)!important;max-height:none!important;width:auto;max-width:100%;margin:0 auto}
-@media(min-width:1100px){body[data-studio-aspect="x34"] .studio-workspace{--stage-col:clamp(440px,calc(min(72vh,820px)*3/4 + 26px),760px)}}
 .bg-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:6px 0}
 .bg-item{display:flex;flex-direction:column;gap:4px;padding:4px;border:2px solid var(--a-p-30);border-radius:10px;background:var(--hi);color:var(--ink);cursor:pointer;font-size:12px;text-align:left}
 .bg-item img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:6px;background:var(--a-p-12)}
@@ -454,7 +390,6 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .expr-imgs input[type=file]{max-width:100%}
 
 /* 0.9.5 ステージの見分けやすさ：ポン出しは「押すと画面に出るもの」、下の欄は「いまの状態を選ぶもの」 */
-.pon-bar{background:var(--a-p-6);border-color:var(--accent)}
 .pon-head strong::before{content:'▶ ';color:var(--accent)}
 .pon-btn{background:var(--hi);border-width:2px;border-color:var(--a-p-45);box-shadow:0 3px 0 var(--a-p-30);text-align:left;padding:12px 14px}
 .pon-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--a-p-30)}
@@ -479,55 +414,7 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .topic-hand{border:2px dashed var(--accent);border-radius:14px;padding:12px;margin:0 0 10px;background:var(--hi)}
 .topic-hand-body{max-height:260px;overflow:auto;padding:4px 2px}
 .topic-st{flex:0 0 auto}
-body[data-app="live"][data-kind="stream"] .topic-hand{order:1}
 .topic-hand .pon-head{flex-wrap:wrap;align-items:baseline}
 .topic-hand .pon-head strong{font-size:15px}
 .topic-hand .pon-head strong::before{content:'📌 '}
 .topic-row select{border:1px solid var(--a-p-45);background:var(--hi);border-radius:8px;padding:7px 8px;font:inherit;color:var(--ink)}
-/* 0.9.8：番組の行をステージへ・目次・企画卓のまとまり */
-.live-prog{display:flex;align-items:center;gap:8px;margin-top:12px;padding:8px 10px;border-radius:12px;background:var(--a-p-6);min-width:0}
-.live-prog-label{flex:none;font-size:12px;font-weight:700;opacity:.8}
-.live-prog .prog-row{flex:1;min-width:0;flex-wrap:wrap}
-.live-prog .prog-chips{flex:1 1 160px;min-width:0}
-.live-prog #progEdit{flex:none;white-space:nowrap}
-.jump-bar{min-width:0;max-width:100%;box-sizing:border-box;position:sticky;top:0;z-index:7;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:6px 4px;margin:0 0 10px;background:var(--paper);border:1px solid var(--a-p-30);border-radius:12px;box-shadow:0 4px 12px color-mix(in srgb,var(--shade) 10%,transparent);scrollbar-width:none}
-.jump-bar::-webkit-scrollbar{display:none}
-.jump-bar:empty{display:none}
-.jump-bar button{flex:none;white-space:nowrap;border:1px solid var(--a-p-45);border-radius:999px;padding:7px 12px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer}
-.jump-bar button.j-stage,.jump-bar button.j-board{background:var(--a-p-12);font-weight:700}
-body[data-app="radio"] .jump-bar{display:none!important}
-.stage-card,#boardShell,#boardShell .section,.plan-group,.mode-section h3{scroll-margin-top:64px}
-#studioPlan.plan-grouped .plan-group{background:var(--a-p-6);border:1px solid var(--a-p-20);border-radius:14px;padding:12px 14px 14px;margin:14px 0 0}
-#studioPlan.plan-grouped .plan-group>h3:first-child{margin:0 0 8px;padding:0 0 8px;border-bottom:2px solid var(--a-p-30)}
-#studioPlan.plan-grouped .app-dock.plan-group{border-top:1px solid var(--a-p-20)}
-#studioPlan.plan-grouped .play-dock{border-top:0;padding-top:0;margin-top:0}
-#studioPlan.plan-grouped .plan-group details.sb-opts>summary{font-weight:700}
-@media (max-width:420px){#studioPlan.plan-grouped .plan-group{padding:10px 10px 12px}.live-prog{flex-wrap:wrap}.live-prog-label{flex:0 0 100%}}
-/* 0.9.9：ステージは「見ながらポン出し」の並び（プレビュー → ポン出し → 手元カード → 収録 → 配信の状態 → 表情など → マイクは最後） */
-body[data-app="live"][data-kind] .stage-card{display:flex;flex-direction:column}
-body[data-app="live"][data-kind] .stage-card>.stage-preview{order:1}
-body[data-app="live"][data-kind] .stage-card>.pon-bar{order:2;margin-top:10px}
-body[data-app="live"][data-kind] .stage-card>.topic-hand{order:3}
-body[data-app="live"][data-kind] .stage-card>.rec-panel{order:4}
-body[data-app="live"][data-kind] .stage-card>.live-console{order:5;margin-top:0}
-body[data-app="live"][data-kind] .stage-card>.stage-group{order:6}
-body[data-app="live"][data-kind] .stage-card>.drag-row{order:7}
-body[data-app="live"][data-kind] .stage-card>#quickTune{order:8}
-body[data-app="live"][data-kind] .stage-card>.stage-tools{order:9;margin:12px 0 4px}
-body[data-app="live"][data-kind] .stage-card>.studio-meter{order:10}
-body[data-app="live"][data-kind="stream"] .stage-card>.stage-preview{align-self:center;margin-top:0}
-body[data-app="live"][data-kind] .stage-tools button{font-size:11px;padding:6px 6px}
-/* 配信の状態の欄：BGMは「いま流れている曲・止める・すべて止める」だけ（選ぶのは音のお品書き） */
-body[data-app="live"] .console-bgm-pick{display:none}
-/* 番組の行（音のお品書きの BGM 欄） */
-#boardShell .live-prog{margin:0 0 8px}
-/* プレビューを上に固定（ステージの画面のとき） */
-.pv-pin{border:1px solid var(--a-p-45);border-radius:999px;padding:4px 10px;background:var(--hi);color:var(--ink);font-size:11px;cursor:pointer;white-space:nowrap}
-.pv-pin[aria-pressed="false"]{opacity:.7}
-.stage-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
-body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-card>.stage-preview{position:sticky;top:var(--jump-h,56px);z-index:6;background:var(--paper);padding:4px 0 6px;box-shadow:0 8px 10px -8px color-mix(in srgb,var(--shade) 25%,transparent)}
-body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-preview .stage-wrap{width:min(100%,calc(26vh*16/9));margin:0 auto}
-body[data-app="live"][data-studio-mode="live"][data-pv-pin][data-studio-aspect="portrait"] .stage-preview .stage-wrap{height:26vh!important;width:auto}
-body[data-app="live"][data-studio-mode="live"][data-pv-pin][data-studio-aspect="x34"] .stage-preview .stage-wrap{height:26vh!important;width:auto}
-@media (max-width:520px){.pon-grid{grid-template-columns:1fr 1fr;gap:6px}.pon-btn{padding:10px 6px;font-size:14px}}
-body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-preview .stream-only{display:none}

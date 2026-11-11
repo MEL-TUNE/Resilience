@@ -1,0 +1,162 @@
+/* 操作盤（デッキ）：配信・動画の画面の並べ方。見せる・隠すは、body の data-level（本番／準備）と data-deck（開いているタブ）で決める。
+   値を変えるのは js/visual/86-deck.js。画面の種類は data-app（live／radio）と data-view（stream／video／radio）。 */
+
+/* ---- 1. 骨組み */
+.deck{margin-bottom:18px;min-width:0}
+.deck-main,.deck-side{min-width:0}
+.deck-side{margin-bottom:8px}
+.deck-panels{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-width:0}
+.deck-panels>*{min-width:0;margin:0}
+
+/* ---- 2. 本番・準備の切り替え */
+.deck-level{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}
+.deck-level button{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;border:2px solid var(--a-p-45);border-radius:12px;padding:7px 6px;background:var(--hi);color:var(--ink);font:inherit;cursor:pointer}
+.deck-level b{font-size:15px;letter-spacing:.04em}
+.deck-level small{font-size:10.5px;opacity:.8}
+.deck-level .selected{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+/* ---- 3. タブ（映像と帯のすぐ下に残る） */
+.deck-nav{position:sticky;top:calc(var(--mini-h,0px) + var(--side-h,0px));z-index:6;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:0 0 10px;padding:5px;background:var(--paper);border:1px solid var(--a-p-30);border-radius:14px;box-shadow:0 4px 10px color-mix(in srgb,var(--shade) 10%,transparent)}
+body[data-level="prep"] .deck-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
+.deck-nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;min-height:46px;border:1px solid transparent;border-radius:10px;padding:4px 2px;background:transparent;color:var(--ink);font-size:11.5px;font-weight:700;line-height:1.2;white-space:nowrap;cursor:pointer}
+.deck-nav button i{font-style:normal;font-size:19px;line-height:1.1}
+.deck-nav button.selected{background:var(--accent);color:var(--on-accent)}
+body[data-level="prep"] .deck-nav [data-level-of="live"],body:not([data-level="prep"]) .deck-nav [data-level-of="prep"]{display:none}
+/* 印：BGM が流れている／見てほしいものがある */
+.deck-nav button.playing::after,.deck-nav button.marked::after{content:'';position:absolute;top:3px;left:calc(50% + 10px);width:9px;height:9px;border-radius:50%;background:var(--rec);box-shadow:0 0 0 2px var(--paper)}
+
+/* ---- 4. 見せる・隠す（配信・動画）。準備の3枚は .mode-section.on（setMode）が決める */
+body[data-app="live"] .deck-panel[data-panel="kikaku"],body[data-app="live"] .deck-panel[data-panel="chara"],body[data-app="live"] .deck-panel[data-panel="tools"],body[data-app="live"] #boardShell{display:none}
+body[data-app="live"][data-deck="kikaku"] .deck-panel[data-panel="kikaku"],body[data-app="live"][data-deck="chara"] .deck-panel[data-panel="chara"],body[data-app="live"][data-deck="tools"] .deck-panel[data-panel="tools"],body[data-app="live"][data-deck="all"] .deck-panel[data-panel="kikaku"],body[data-app="live"][data-deck="all"] .deck-panel[data-panel="chara"],body[data-app="live"][data-deck="all"] .deck-panel[data-panel="tools"]{display:block}
+body[data-app="live"][data-deck="se"] #boardShell,body[data-app="live"][data-deck="bgm"] #boardShell,body[data-app="live"][data-deck="all"] #boardShell{display:block}
+body[data-app="live"][data-deck="se"] #boardShell [data-panel="bgm"],body[data-app="live"][data-deck="bgm"] #boardShell [data-panel="se"]{display:none}
+/* BGM のタブでは、BGM を環境音より先に見せる */
+body[data-app="live"][data-deck="bgm"] #boardShell>.content{display:flex;flex-direction:column}
+body[data-app="live"][data-deck="bgm"] #boardShell .menu-heading{order:-2}
+body[data-app="live"][data-deck="bgm"] #boardShell [data-panel="bgm"]:last-of-type{order:-1;border-top:0;padding-top:0;margin-top:0}
+/* 音声（ラジオ）：操作盤は使わず、録音バーと音のお品書きだけ */
+body[data-app="radio"] .deck-side,body[data-app="radio"] .deck-nav,body[data-app="radio"] .deck-level,body[data-app="radio"] .deck-panel,body[data-app="radio"] .studio-help{display:none!important}
+
+/* ---- 5. 映像と、いつも使う操作の帯 */
+.deck-side .stage-preview{position:relative;width:min(100%,var(--pv-w,100%));margin:0 auto}
+body[data-app] .deck-side .stage-wrap{width:100%!important;height:auto!important;max-width:none;margin:0}
+body[data-app] .deck-side .stage-wrap:fullscreen{width:100vw!important;height:100vh!important;aspect-ratio:auto!important;border-radius:0}
+body[data-studio-aspect="portrait"] .deck-side{--pv-w:calc(56vh*9/16)}
+body[data-studio-aspect="x34"] .deck-side{--pv-w:calc(56vh*3/4)}
+.deck-side .stage-head{position:absolute;right:6px;bottom:6px;z-index:2;margin:0;display:block;pointer-events:none}
+.deck-side .stage-head small{font-size:10px;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--shade) 60%,transparent);color:#fff}
+.deck-side .stage-head .stream-only{display:none!important}
+.deck-side .rec-time{position:absolute;left:6px;top:6px;z-index:2;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--shade) 60%,transparent);color:#fff;pointer-events:none}
+body[data-capturing] .deck-side .rec-time{background:var(--rec)}
+body[data-outwin]:not([data-pv-on]) .deck-side .stage-head,body[data-outwin]:not([data-pv-on]) .deck-side .rec-time{position:static;display:inline-block}
+.deck-strip{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;margin-top:6px;align-items:stretch}
+body[data-view="video"] .deck-strip{grid-template-columns:minmax(0,1.2fr) minmax(0,1.7fr) minmax(0,1fr) minmax(0,1fr)}
+.deck-strip>button{min-width:0;min-height:44px;margin:0;border-radius:10px;padding:6px 4px;font-size:13px;line-height:1.2;white-space:normal}
+.deck-strip .rec-big{font-size:13px;padding:6px 2px}
+.deck-strip #studioMute{border:1px solid var(--a-p-45);background:var(--hi);color:var(--ink);font-weight:700;font-size:12px;cursor:pointer}
+.deck-strip .stop-all{font-size:12.5px;padding:6px 10px}
+.strip-scene{min-width:0}
+.strip-scene:empty{display:none}
+.deck-strip .scene-switch{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;height:100%}
+.deck-strip .scene-switch button{min-width:0;min-height:44px;border-radius:10px;padding:6px 2px;font-size:13px;white-space:nowrap}
+
+/* 狭い画面の「本番」：映像と帯を上に残す（「映像を上に残す」がオンのとき） */
+@media(max-width:1099px){
+  body[data-app="live"][data-level="live"][data-pv-pin] .deck-side{position:sticky;top:var(--mini-h,0px);z-index:7;margin:0;padding:6px 0;background:var(--bg)}
+  body[data-app="live"][data-level="live"][data-pv-pin] .deck-side{--pv-w:calc(24vh*16/9)}
+  body[data-app="live"][data-level="live"][data-pv-pin][data-studio-aspect="portrait"] .deck-side{--pv-w:calc(30vh*9/16)}
+  body[data-app="live"][data-level="live"][data-pv-pin][data-studio-aspect="x34"] .deck-side{--pv-w:calc(30vh*3/4)}
+  /* 準備の画面では、映像は小さめにして流す（入力のじゃまにならないように） */
+  body[data-level="prep"] .deck-side{--pv-w:calc(26vh*16/9)}
+  body[data-level="prep"][data-studio-aspect="portrait"] .deck-side{--pv-w:calc(30vh*9/16)}
+  body[data-level="prep"][data-studio-aspect="x34"] .deck-side{--pv-w:calc(30vh*3/4)}
+}
+@media(max-width:780px){
+  body[data-app="live"] .top{padding:10px 10px 12px}
+  body[data-app="live"] .top h1{font-size:19px;margin:0 0 2px;line-height:1.4}
+  body[data-app="live"] .top .shop-eyebrow{display:none}
+  body[data-app="live"] .top p{margin:0 0 8px}
+}
+
+/* 広い画面：左に映像と帯、右にタブと中身。「全部」では右を2列にして、音のお品書きを並べる */
+@media(min-width:1100px){
+  body[data-app="live"] .deck{display:grid;grid-template-columns:var(--stage-col,clamp(340px,32vw,520px)) minmax(0,1fr);gap:18px;align-items:start}
+  body[data-app="live"][data-studio-aspect="portrait"] .deck{--stage-col:clamp(280px,calc(min(72vh,820px)*9/16),480px)}
+  body[data-app="live"][data-studio-aspect="x34"] .deck{--stage-col:clamp(300px,calc(min(72vh,820px)*3/4),560px)}
+  body[data-app="live"] .deck-side{position:sticky;top:calc(var(--mini-h,0px) + 8px);margin:0;--pv-w:100%}
+  body[data-app="live"][data-deck="all"] .deck-panels{grid-template-columns:minmax(260px,2fr) minmax(0,3fr);grid-template-rows:auto auto 1fr;align-items:start}
+  body[data-app="live"][data-deck="all"] #boardShell{grid-column:2;grid-row:1/span 3}
+  body[data-app="live"][data-deck="all"] .deck-panel{grid-column:1}
+  .deck-level{max-width:520px}
+}
+
+/* ---- 6. 本番の各タブの中身 */
+.pon-bar{margin:0;padding:0;border:0;background:none}
+.deck-panel .stage-group{margin-top:0}
+.deck-panel .stage-group>.studio-row[hidden]{display:none}
+/* 音のお品書きの見出しは、タブの中では小さくする */
+body[data-app="live"] #boardShell .menu-heading{padding-bottom:8px;margin-bottom:12px}
+body[data-app="live"] #boardShell .menu-heading span{font-size:15px}
+.pon-hidden{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:var(--a-p-6);font-size:12px;line-height:1.7}
+.pon-hidden button{margin-left:6px;border:1px solid var(--a-p-45);border-radius:8px;padding:5px 10px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer}
+.topic-hand{margin:12px 0 0}
+@media(max-width:520px){.pon-grid{grid-template-columns:1fr 1fr;gap:6px}.pon-btn{padding:10px 6px;font-size:14px}}
+.deck-panel[data-panel="tools"] h3{margin:0 0 8px;font:700 15px var(--title-font)}
+.deck-panel[data-panel="tools"]>*+*{margin-top:16px;padding-top:14px;border-top:1px solid var(--a-p-20)}
+.deck-panel[data-panel="tools"] .rec-panel .vid-h{margin-top:18px}
+.deck-panel[data-panel="tools"] .studio-tray{max-height:300px}
+/* 配信では、場面のボタンは上の帯にあるので、ここには「いまの場面」の1行だけを出す */
+body[data-view="stream"] .deck-panel[data-panel="tools"]>.live-console{margin-top:0;padding-top:0;border-top:0}
+body[data-view="stream"] .live-console h3{display:none}
+.live-console .onair-head{margin:0 0 10px}
+.tools-box .studio-row{margin:8px 0}
+.tools-box .studio-meter{margin:6px 0}
+@media(max-width:520px){.deck-panel[data-panel="tools"] .scene-switch{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pv-pin{border:1px solid var(--a-p-45);border-radius:999px;padding:7px 12px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer;white-space:nowrap}
+.pv-pin[aria-pressed="false"]{opacity:.75}
+/* BGM の欄：いま流れている曲と、番組 */
+.bgm-now-row{display:flex;align-items:center;gap:8px;margin:0 0 8px;min-width:0}
+.bgm-now-row .sound-now{flex:1}
+.bgm-now-row .stop-btn{padding:8px 12px;font-size:13px}
+body[data-app="radio"] .bgm-now-row,body[data-app="radio"] .live-prog{display:none}
+.live-prog{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:8px 10px;border-radius:12px;background:var(--a-p-6);min-width:0}
+.live-prog-label{flex:none;font-size:12px;font-weight:700;opacity:.8}
+.live-prog .prog-row{flex:1;min-width:0;flex-wrap:wrap}
+.live-prog .prog-chips{flex:1 1 160px;min-width:0}
+.live-prog #progEdit{flex:none;white-space:nowrap}
+@media(max-width:420px){.live-prog{flex-wrap:wrap}.live-prog-label{flex:0 0 100%}}
+
+/* ---- 7. 準備：企画の準備は、見出しを押して開く */
+.plan-lead{margin:0 0 4px}
+#studioPlan .play-dock{margin:0;padding:0;border:0}
+#studioPlan .plan-group{margin:10px 0 0;padding:0;border:1px solid var(--a-p-20);border-radius:14px;background:var(--a-p-6)}
+#studioPlan .plan-group>summary{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;padding:13px 14px;list-style:none;cursor:pointer}
+#studioPlan .plan-group>summary::-webkit-details-marker{display:none}
+#studioPlan .plan-group>summary::before{content:'＋';flex:none;width:1.3em;font-weight:700;color:var(--accent)}
+#studioPlan .plan-group[open]>summary::before{content:'－'}
+#studioPlan .plan-group>summary h3{margin:0;font-size:16px}
+#studioPlan .plan-group>summary small{font-size:11.5px;color:var(--muted)}
+#studioPlan .plan-group[open]{padding-bottom:14px}
+#studioPlan .plan-group[open]>summary{margin-bottom:10px;border-bottom:2px solid var(--a-p-30)}
+#studioPlan .plan-group>:not(summary){margin-left:14px;margin-right:14px}
+@media(max-width:420px){#studioPlan .plan-group>:not(summary){margin-left:10px;margin-right:10px}#studioPlan .plan-group>summary{padding:12px 10px}}
+.perf-hint{margin:6px 0 0;padding:8px 10px;border-radius:10px;background:var(--w-p-12);font-size:12px;line-height:1.6}
+.perf-hint button{margin-left:6px;border:1px solid var(--a-p-45);border-radius:8px;padding:5px 10px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer}
+
+/* ---- 8. 狭い画面で幅を押し広げないための手当て */
+.panel{grid-template-columns:minmax(0,1fr)}
+.panel>*{min-width:0}
+.qt-grid{grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr))}
+.qt-grid label,.qt-grid select,.qt-grid output{min-width:0;max-width:100%}
+@media(max-width:360px){
+  .deck-strip .scene-switch{gap:3px}
+  .deck-strip .scene-switch button{font-size:11.5px;padding:6px 0;letter-spacing:-.03em}
+  .deck-strip .stop-all{font-size:11.5px;padding:6px 6px}
+  .deck-strip .rec-big{font-size:12px}
+}
+#settingsShell select{max-width:100%;min-width:0}
+.deck-strip>button,.deck-strip .scene-switch button{word-break:keep-all;overflow-wrap:normal}
+
+/* ---- 9. 使い方 */
+.studio-help h3{margin:12px 0 6px;font:700 15px var(--title-font)}
+.studio-help .help-list{margin:0 0 10px;padding-left:1.2em;display:grid;gap:6px;font-size:13px;line-height:1.7}
