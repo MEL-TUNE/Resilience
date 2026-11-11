@@ -1,15 +1,22 @@
-/* 収録した動画の一覧：ブラウザ内への保存（実体と目録）、ダウンロード、整理 */
+/* 収録した動画の一覧：ブラウザ内への保存（実体と目録）、ダウンロード、整理
+   置き場所（IndexedDB の assets）：
+     vmeta:ID      目録（名前・大きさ・種類・日時。parts があれば「分けて保存した動画」）
+     vpart:ID:連番  収録中に書き足した動画のかけら（途中保存）。止めたあとも、このまま実体として使う
+     vrec:ID       収録中の印（種類と開始時刻）。目録を書いたら消す。残っていれば「途中で終わった収録」
+     video:ID      1本にまとめた実体（0.9 までの動画と、途中保存できなかったときの動画） */
 
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-  const VID_MAX=30,VMETA='vmeta:',VBLOB='video:';
+  const VID_MAX=30,VMETA='vmeta:',VBLOB='video:',VPART='vpart:',VREC='vrec:';
+  const partKey=(id,seq)=>VPART+id+':'+String(seq).padStart(6,'0');
+  const partRange=id=>IDBKeyRange.bound(VPART+id+':',VPART+id+':\uffff');
   // 動画は設定（state）とは別に、IndexedDBの assets に「実体 video:ID」と「目録 vmeta:ID」を同じトランザクションで置く。
   const vids=[];
   let vidQ=Promise.resolve();
   function vidQueue(fn){const run=vidQ.then(()=>fn());vidQ=run.catch(()=>{});return run}
-  const vidRange=p=>IDBKeyRange.bound(p,p+'￿');
+  const vidRange=p=>IDBKeyRange.bound(p,p+'\uffff');
   const vidPersistent=()=>!!(ready&&db&&!db.memory);
-  const vidMetaOf=m=>({id:m.id,name:String(m.name||'otonoha.mp4').slice(0,120),size:Math.max(0,Number(m.size)||0),type:String(m.type||'').slice(0,40),at:m.at||new Date().toISOString(),v:1});
-  const VST={saving:'保存処理中…',stored:'ブラウザ内に保存',temp:'一時保持のみ（この画面を閉じると消えます）',failed:'保存失敗・一時保持（この画面を閉じると消えます）',missing:'実体なし（この端末に動画データがありません）',orphan:'一覧から外れていた動画データ',unknown:'保存状態を確認できません'};
+  const vidMetaOf=m=>({id:m.id,name:String(m.name||'otonoha.mp4').slice(0,120),size:Math.max(0,Number(m.size)||0),type:String(m.type||'').slice(0,40),at:m.at||new Date().toISOString(),v:1,...(m.parts?{parts:Math.max(1,m.parts|0)}:{}),...(m.rec?{rec:true}:{})});
+  const VST={saving:'保存処理中…',stored:'ブラウザ内に保存',recovered:'途中で終わった収録を取り戻しました（終わりの数秒が欠けていることがあります）',temp:'一時保持のみ（この画面を閉じると消えます）',failed:'保存失敗・一時保持（この画面を閉じると消えます）',missing:'実体なし（この端末に動画データがありません）',orphan:'一覧から外れていた動画データ',unknown:'保存状態を確認できません'};
   function vidTx(work,mode='readwrite'){
     return new Promise((resolve,reject)=>{
       let t;
@@ -34,20 +41,33 @@
       }
     }))
   }
-  function vidDelete(id){return vidQueue(()=>vidTx(s=>{s.delete(VBLOB+id);s.delete(VMETA+id)}))}
+  function vidDelete(id){return vidQueue(()=>vidTx(s=>{s.delete(VBLOB+id);s.delete(VMETA+id);s.delete(VREC+id);s.delete(partRange(id))}))}
+  // 途中保存のかけらだけを消す（破棄・録り直し、1本にまとめ直したあと）
+  function vidDropParts(id){
+    if(!id||!vidPersistent())return Promise.resolve();
+    return vidQueue(()=>vidTx(s=>{s.delete(VREC+id);s.delete(partRange(id))})).catch(()=>{})
+  }
+  // 分けて保存した動画の目録を書く（実体はもうブラウザ内にあるので、本数の上限では断らない）
+  function vidRegister(m){return vidQueue(()=>vidTx(s=>{s.put(vidMetaOf(m),VMETA+m.id);s.delete(VREC+m.id)}))}
+  function vidParts(id){return vidTx((s,t,out)=>{const r=s.getAll(partRange(id));r.onsuccess=()=>{out.list=r.result||[]}},'readonly').then(o=>o.list||[])}
   function vidCatalog(){
     return vidTx((s,t,out)=>{
-      const a=s.getAll(vidRange(VMETA)),k=s.getAllKeys(vidRange(VBLOB));
+      const a=s.getAll(vidRange(VMETA)),k=s.getAllKeys(vidRange(VBLOB)),p=s.getAllKeys(vidRange(VPART)),r=s.getAll(vidRange(VREC));
       a.onsuccess=()=>{out.metas=(a.result||[]).filter(x=>x&&typeof x.id==='string')};
-      k.onsuccess=()=>{out.blobs=new Set(k.result||[])}
+      k.onsuccess=()=>{out.blobs=new Set(k.result||[])};
+      // かけらの数を、動画のIDごとに数える
+      p.onsuccess=()=>{out.parts=new Map();for(const key of p.result||[]){const id=String(key).slice(VPART.length).split(':')[0];out.parts.set(id,(out.parts.get(id)||0)+1)}};
+      r.onsuccess=()=>{out.recs=new Map((r.result||[]).filter(x=>x&&typeof x.id==='string').map(x=>[x.id,x]))}
     },'readonly')
   }
   async function videoBlob(v){
     if(v.mem)return v.mem;
     if(!vidPersistent())throw Error('この動画のデータが見つかりません');
     const b=await getAsset(VBLOB+v.m.id);
-    if(!b)throw Error('この動画のデータが見つかりません');
-    return b
+    if(b)return b;
+    const list=await vidParts(v.m.id);
+    if(!list.length)throw Error('この動画のデータが見つかりません');
+    return new Blob(list,{type:v.m.type||list[0].type||'video/mp4'})
   }
   function vidDownload(v){
     return videoBlob(v).then(b=>{
@@ -71,7 +91,7 @@
     if(v.m.at)name.title=new Date(v.m.at).toLocaleString('ja-JP');
     const st=document.createElement('span');
     st.className='vstate';
-    st.textContent=VST[v.status]||'';
+    st.textContent=(v.status==='stored'&&v.m.rec?VST.recovered:VST[v.status])||'';
     const kids=[name,st];
     const has=v.mem||v.status==='stored'||v.status==='orphan';
     if(has){
@@ -142,12 +162,22 @@
     if(!el)return;
     const n=vids.filter(v=>v.status==='stored').length,t=vids.filter(v=>v.mem).length,miss=vids.filter(v=>v.status==='missing'||v.status==='orphan').length;
     const parts=[];
-    if(n)parts.push('ブラウザ内に保存した動画 '+n+'／'+VID_MAX+'本');
+    if(n)parts.push('ブラウザ内に保存した動画 '+n+'本'+(n>=VID_MAX?'（'+VID_MAX+'本を超えると保存の場所が足りなくなりやすいので、書き出してから削除するのがおすすめです）':''));
     if(t)parts.push('一時保持 '+t+'本（画面を閉じると消えます）');
     if(miss)parts.push('要確認 '+miss+'件');
     if(parts.length&&vidPersistent())try{const s=await navigator.storage?.estimate?.();if(s&&s.quota)parts.push('このサイトの保存容量 '+(s.usage/1048576).toFixed(0)+' MB／上限の目安 '+(s.quota/1073741824).toFixed(1)+' GB')}catch(_){}
     el.textContent=parts.length?parts.join('・')+'。ブラウザ内の保存は、サイトデータの削除などで消えることがあります。残したい動画はファイルに書き出してください':''
   }
+  // 収録が終わったあとの知らせ。保存できたことを、一覧の行と文の両方で伝える
+  function vidAnnounce(res,dl){
+    window.__otonohaDeck?.show('tools',E('studioVideos'));
+    const tail=isIOS?'「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります':dl?'ファイルのダウンロードを開始しました（完了はブラウザの表示でご確認ください）':'「ファイルに保存」で書き出せます';
+    if(res==='stored')toast('収録できました。ブラウザ内に保存し、'+tail,7000);
+    else if(res==='full')toast('ブラウザ内の動画が'+VID_MAX+'本あるため、今回の動画は一時保持です（古い動画は自動では消しません）。古い動画を削除すると「ブラウザ内に保存を再試行」で保存できます。'+tail,11000);
+    else if(res==='temp')toast('この画面ではブラウザ内に保存できないため、一時保持です。'+tail,9000);
+    else toast('ブラウザ内に保存できませんでした（空き容量をご確認ください）。一時保持のまま残しています。'+tail,10000)
+  }
+  // 1本にまとまった動画（途中保存を使えなかったとき）
   async function addVideoRow(blob,name){
     const v={m:{id:Math.random().toString(36).slice(2,10),name,size:blob.size,type:blob.type,at:new Date().toISOString()},mem:blob,status:'saving'};
     vids.unshift(v);
@@ -155,11 +185,26 @@
     let dl=false;
     if(!isIOS)try{dl=await vidDownload(v)}catch(_){}
     const res=await vidCommit(v,false);
-    const tail=isIOS?'「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります':dl?'ファイルのダウンロードを開始しました（完了はブラウザの表示でご確認ください）':'「ファイルに保存」で書き出せます';
-    if(res==='stored')toast('収録できました。ブラウザ内に保存し、'+tail,7000);
-    else if(res==='full')toast('ブラウザ内の動画が'+VID_MAX+'本あるため、今回の動画は一時保持です（古い動画は自動では消しません）。古い動画を削除すると「ブラウザ内に保存を再試行」で保存できます。'+tail,11000);
-    else if(res==='temp')toast('この画面ではブラウザ内に保存できないため、一時保持です。'+tail,9000);
-    else toast('ブラウザ内に保存できませんでした（空き容量をご確認ください）。一時保持のまま残しています。'+tail,10000)
+    vidAnnounce(res,dl);
+    return res
+  }
+  // 途中保存がすべて済んでいる動画：目録を書くだけで保存が終わる
+  async function addVideoParts(m){
+    const v={m,mem:null,status:'saving'};
+    vids.unshift(v);
+    E('studioVideos').prepend(vidPaint(v));
+    let res='stored';
+    try{await vidRegister(m);v.status='stored'}
+    catch(_){
+      // 目録を書けなかった：かけらを手元でまとめて、一時保持にする（かけらは消さないので、次の起動でも取り戻せる）
+      try{v.mem=new Blob(await vidParts(m.id),{type:m.type})}catch(_){}
+      v.status='failed';res='failed'
+    }
+    vidPaint(v);renderVideoInfo();
+    let dl=false;
+    if(!isIOS)try{dl=await vidDownload(v)}catch(_){}
+    vidAnnounce(res,dl);
+    return res
   }
   // 起動時：目録を読み、0.6.8までの設定内の動画一覧（legacyVideos）を実体と照合して移す。実体のないものは「実体なし」として残し、勝手に消さない。
   async function renderStoredVideos(){
@@ -186,8 +231,30 @@
       if(keep.length!==legacy.length||keep.some((m,i)=>m.missing!==legacy[i].missing)){state.legacyVideos=keep;save()}
       try{cat=await vidCatalog()}catch(_){}
     }
+    // 途中で終わった収録（かけらはあるのに目録がない）を、動画として取り戻す
+    {
+      const have=new Set(cat.metas.map(x=>x.id));let n=0;
+      for(const [id,count] of cat.parts||[]){
+        if(have.has(id)||id===cap.id)continue;
+        try{
+          const parts=await vidParts(id);
+          if(!parts.length)continue;
+          const r=cat.recs?.get(id);
+          let type=r?.type||parts[0].type||'';
+          if(!type)try{const h=new Uint8Array(await parts[0].slice(0,12).arrayBuffer());type=h[0]===0x1a&&h[1]===0x45?'video/webm':'video/mp4'}catch(_){type='video/mp4'}
+          const at=r?.at||new Date().toISOString();
+          await vidRegister({id,name:'otonoha_'+String(at).replace(/[:.]/g,'-')+'_recovered.'+(type==='video/webm'?'webm':'mp4'),size:parts.reduce((a,b)=>a+b.size,0),type,at,parts:count,rec:true});
+          n++
+        }catch(_){}
+      }
+      if(n){
+        try{cat=await vidCatalog()}catch(_){}
+        toast('前回、途中で終わった収録を'+n+'本、取り戻しました。「収録・接続」の動画の一覧にあります（終わりの数秒が欠けていることがあります）',11000);
+        window.__otonohaDeck?.mark('tools',true)
+      }
+    }
     const metaIds=new Set(cat.metas.map(x=>x.id)),list=[];
-    for(const m of cat.metas.sort((a,b)=>String(b.at).localeCompare(String(a.at))))list.push(cat.blobs.has(VBLOB+m.id)?{m,mem:null,status:'stored'}:{m,mem:null,status:'missing',cat:true});
+    for(const m of cat.metas.sort((a,b)=>String(b.at).localeCompare(String(a.at))))list.push(cat.blobs.has(VBLOB+m.id)||cat.parts?.has(m.id)?{m,mem:null,status:'stored'}:{m,mem:null,status:'missing',cat:true});
     for(const m of state.legacyVideos||[])if(!metaIds.has(m.id))list.push({m,mem:null,status:m.missing?'missing':'unknown'});
     for(const k of cat.blobs){
       const id=String(k).slice(VBLOB.length);

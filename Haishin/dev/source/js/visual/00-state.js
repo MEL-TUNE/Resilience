@@ -133,7 +133,6 @@ fps:30,
     videoStream=null,
     videoDest=null,
     recordStart=0,
-    recordChunks=[],
     videoUrls=[],
     closing=false,
     captureStarting=false;

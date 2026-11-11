@@ -29,14 +29,15 @@
     const r=canvas.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H),ox=(r.width-W*s)/2,oy=(r.height-H*s)/2;
     return {x:(e.clientX-r.left-ox)/s,y:(e.clientY-r.top-oy)/s}
   }
-  // 「✋ ドラッグで動かす」がオンのとき、または「その場で調整」を開いているときだけ動かせる（配信中にうっかり動かさないため）
+  // 「✋ ドラッグで動かす」がオンのとき、「その場で調整」か、企画の準備の「位置と大きさ」を開いているときだけ動かせる（配信中にうっかり動かさないため）
   let dragFree=false;
-  const dragOn=()=>dragFree||E('quickTune').open;
+  const dragOn=()=>dragFree||E('quickTune').open||(E('layBox').open&&!!E('layBox').offsetParent);
   const lockView=()=>{
     canvas.classList.toggle('locked',!dragOn());
     const b=E('dragFree');b.setAttribute('aria-pressed',String(dragFree));b.textContent='✋ ドラッグで動かす：'+(dragFree?'オン':'オフ');b.classList.toggle('on',dragFree)
   };
   E('quickTune').addEventListener('toggle',lockView);
+  E('layBox').addEventListener('toggle',lockView);
   E('dragFree').onclick=()=>{dragFree=!dragFree;lockView();if(!dragFree)endDrag()};
   lockView();
   canvas.addEventListener('pointerdown',e=>{

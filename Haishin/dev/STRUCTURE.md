@@ -8,6 +8,30 @@
 - 映像の向きは `landscape`（1280×720）／`portrait`（720×1280）／`x34`（960×1280）。寸法を決め打ちせず、`W`・`H` から計算してください。
 - 保存キーの名前（`kissa` を含むもの）は変えません。
 
+## 画面の並べ方（0.10.0 から）
+
+配信・動画の画面は「操作盤（デッキ）」です。見た目の決まりは `source/css/deck.css`、切り替えは `js/visual/86-deck.js` にまとめてあります。
+
+- `body` の属性で、見せる・隠すを決めます。JS は値を変えるだけで、要素は作りません。
+  - `data-app`（live／radio）、`data-view`（stream／video／radio）
+  - `data-level`（live＝本番／prep＝準備）
+  - `data-deck`（開いているタブ：kikaku／se／bgm／chara／tools／all、準備は plan／songs／aivoice）
+- 上に残るもの（`#deckSide`）：映像（`#stagePreview`）と、いつも使う操作の帯（`#deckStrip`）。その下にタブ（`#deckNav`）。
+- 帯の中身：動画は「収録開始・停止して保存・マイク・全音停止」、配信は「配信中・準備中・離席中・配信終了・全音停止」。場面のボタン（`.scene-switch`）と番組の行（`.prog-row`）だけは、画面の種類で置き場所を移します（`deckPlace`）。
+- このブラウザだけに覚えるもの（localStorage）：`otonoha-deck`（開いていたタブ）、`otonoha-pv-pin`（映像を上に残すか）、`otonoha-plan-open`（企画の準備で開いていた見出し）。.live には入れません。
+- CSS は3枚です。`base.css`（音声側と共通の土台）、`studio.css`（部品ごとの見た目）、`deck.css`（配信・動画の並べ方）。
+
+## 収録した動画の置き場所（IndexedDB の assets）
+
+| キー | 中身 |
+| --- | --- |
+| `vrec:ID` | 収録中の印。目録を書いたら消す。残っていれば「途中で終わった収録」 |
+| `vpart:ID:連番` | 収録中に2秒ごとに書き足す動画のかけら。止めたあとも、そのまま実体として使う |
+| `vmeta:ID` | 目録（名前・大きさ・種類・日時） |
+| `video:ID` | 1本にまとめた実体（0.9 までの動画と、途中保存できなかったときの動画） |
+
+起動のとき、かけらはあるのに目録がない収録を、動画として取り戻します（`62-videos.js` の `renderStoredVideos`）。
+
 ## 読み込む順番
 
 `source/index.html` の `<script src="js/audio/">` と `<script src="js/visual/" data-wrap="iife">` は、フォルダの中の `.js` をファイル名の順につなげます。
@@ -61,11 +85,11 @@
 | 29-autumn-art.js | 秋・冬の演出の絵 |
 | 30-drawing.js | 立ち絵の位置と動き（avatarGeom／avatarPose／drawAvatar）、降らせる演出、背景 |
 | 40-motion-prompt.js | 映像の向きの切り替え、動きのボタン、画像生成 AI 用のプロンプト |
-| 41-aspect-memory.js | 向きごとの、立ち絵とマスコットの位置・大きさ・傾き |
+| 41-aspect-memory.js | 向きごとの、立ち絵とマスコットの位置・大きさ・傾き、場面の画像の大きさ・位置 |
 | 50-scenes.js | 準備中・離席中・配信終了の画面、ミュート、音の出力先 |
-| 60-frame.js | 毎フレームの描画の順番 |
-| 61-capture.js | 動画の収録 |
-| 62-videos.js | 収録した動画の一覧と保存 |
+| 60-frame.js | 毎フレームの描画の順番、重いときの知らせ |
+| 61-capture.js | 動画の収録（収録中のデータを数秒ごとにブラウザ内へ書き足す途中保存） |
+| 62-videos.js | 収録した動画の一覧と保存、途中で終わった収録の取り戻し |
 | 63-studio-files.js | .live の映像側（立ち絵・背景・アプリの HTML など）の受け渡し |
 | 70-effects-perf.js | 季節の演出・画像のプリセット、なめらかさ・軽量モード、プレビュー |
 | 80-expressions.js | 表情差分 |
@@ -74,7 +98,7 @@
 | 83-tuning-drag.js | その場で調整、プレビュー上のドラッグ |
 | 84-app-mode.js | 配信・録画／ラジオの切り替え |
 | 85-backgrounds.js | 背景画像（名義×向き） |
-| 86-plan-nav.js | 番組の行をステージへ移す（配信・動画）、企画卓の見出しごとのまとまり、上に残る目次 |
+| 86-deck.js | 操作盤（本番／準備の切り替え、タブ、映像を上に残す、企画の準備の見出しの開け閉め、番組の行と場面のボタンの置き場所） |
 | 90-startup.js | 起動処理 |
 
 ## 毎フレームの描画の順番（60-frame.js）

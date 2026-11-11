@@ -1,4 +1,5 @@
-/* 映像の向き（横 16:9／縦 9:16／3:4）ごとに、立ち絵の位置・大きさと、マスコットの位置・大きさ・傾きを覚える。
+/* 映像の向き（横 16:9／縦 9:16／3:4）ごとに、立ち絵の位置・大きさ、マスコットの位置・大きさ・傾き、
+   準備中・離席中・配信終了の画像の大きさ・位置を覚える。
    いま使っている値（state.x・y・scale、マスコットの x・y・size・tilt）は、いまの向きのもの。
    向きを変えるときに、いまの値を前の向きの控え（pos[向き]）に残し、次の向きの控えがあればそれに戻す。 */
 
@@ -22,10 +23,13 @@
     syncChar();
     charPosKeep(curChar(),asp);
     for(const m of state.mascots||[]){if(!m.pos||typeof m.pos!=='object')m.pos={};m.pos[asp]={x:m.x,y:m.y,size:m.size,tilt:m.tilt||0}}
+    for(const k of ['standby','away','end']){const c=state.scenes[k];if(!c.pos||typeof c.pos!=='object')c.pos={};c.pos[asp]={imgSize:c.imgSize,imgX:c.imgX,imgY:c.imgY}}
   }
   function aspectRestore(asp){
     charPosApply(curChar(),asp);
     for(const m of state.mascots||[]){const r=m.pos?.[asp];if(r){m.x=r.x;m.y=r.y;m.size=r.size;m.tilt=r.tilt}}
+    for(const k of ['standby','away','end']){const c=state.scenes[k],r=c.pos?.[asp];if(r){c.imgSize=r.imgSize;c.imgX=r.imgX;c.imgY=r.imgY}}
+    renderSceneForm();
     // 走る・お散歩の途中の位置は画面の寸法で持っているので、向きを変えたら決めた位置からやり直す
     for(const o of [mscRun,mscWalk,mscPlay])for(const k of Object.keys(o))delete o[k]
   }

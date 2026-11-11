@@ -76,7 +76,16 @@
       imgAmp:num(x.imgAmp,0,200,100),
       imgSize:num(x.imgSize,10,150,60),
       imgX:num(x.imgX,-100,100,0),
-      imgY:num(x.imgY,-100,100,0)
+      imgY:num(x.imgY,-100,100,0),
+      // 映像の向きごとの、画像の大きさと位置の控え（41-aspect-memory.js）
+      pos:(()=>{
+        const out={};
+        for(const asp of ['landscape','portrait','x34']){
+          const q=x.pos&&typeof x.pos==='object'?x.pos[asp]:null;
+          if(q&&typeof q==='object'&&['imgSize','imgX','imgY'].every(f=>Number.isFinite(Number(q[f]))))out[asp]={imgSize:num(q.imgSize,10,150,60),imgX:num(q.imgX,-100,100,0),imgY:num(q.imgY,-100,100,0)}
+        }
+        return out
+      })()
     }
   }
 

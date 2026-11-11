@@ -1,12 +1,53 @@
-/* 動画の収録（MediaRecorder）の開始・終了・後片付け */
+/* 動画の収録（MediaRecorder）の開始・終了・後片付け
+   収録中のデータは、届くたびにブラウザ内（IndexedDB）へ書き足す（途中保存）。止めるときは目録を書くだけなので、
+   長い収録でもメモリにためこまず、画面が閉じても途中までを次の起動で取り戻せる。置き場所の決まりは 62-videos.js */
+
+  // ---- 途中保存：1回の収録ぶんの控え
+  const cap={id:'',seq:0,parts:[],q:Promise.resolve(),warned:false,lock:null};
+  function capBegin(mime){
+    cap.id=Math.random().toString(36).slice(2,10);
+    cap.seq=0;cap.parts=[];cap.warned=false;
+    cap.q=vidPersistent()?putAsset(VREC+cap.id,{id:cap.id,type:mime,at:new Date().toISOString(),v:1}).catch(()=>{}):Promise.resolve()
+  }
+  function capChunk(blob){
+    const part={mem:blob,key:'',size:blob.size};
+    cap.parts.push(part);
+    if(!vidPersistent())return;
+    const key=partKey(cap.id,cap.seq++);
+    cap.q=cap.q.then(()=>putAsset(key,blob)).then(()=>{part.key=key;part.mem=null},()=>{
+      if(cap.warned)return;
+      cap.warned=true;
+      toast('ブラウザ内への途中保存ができませんでした（空き容量をご確認ください）。収録は続けています。止めたあと「ファイルに保存」で書き出してください',9000)
+    })
+  }
+  // 収録中は画面が消えないようにする（対応しているブラウザだけ）
+  async function capWake(on){
+    try{
+      if(on){if(!cap.lock&&navigator.wakeLock)cap.lock=await navigator.wakeLock.request('screen')}
+      else if(cap.lock){const l=cap.lock;cap.lock=null;await l.release()}
+    }catch(_){cap.lock=null}
+  }
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&studioCapturing&&cap.lock?.released!==false){cap.lock=null;capWake(true)}});
+  // 収録の前に、保存先の空きを見て、少ないときだけ知らせる（止めはしない）
+  async function capSpaceCheck(){
+    if(!vidPersistent())return;
+    try{navigator.storage?.persist?.()}catch(_){}
+    try{
+      const s=await navigator.storage?.estimate?.();
+      if(s&&s.quota&&s.quota-s.usage<300*1048576)toast('ブラウザ内の空きが少なくなっています（残り約'+Math.max(0,Math.round((s.quota-s.usage)/1048576))+' MB）。長い収録の前に、「収録・接続」の一覧で古い動画を書き出して削除しておくと安心です',9000)
+    }catch(_){}
+  }
 
   function cleanupCapture(){
     if(micGain)updateGains();
     captureStarting=false;
     mediaRecorder=null;
+    cap.id='';
     E('studioAspect').disabled=false;
     E('studioFps').disabled=false;
     E('vidFormat').disabled=false;E('vidQuality').disabled=false;
+    document.body.removeAttribute('data-capturing');
+    capWake(false);
     if(studioCapturing){
       studioCapturing=false;
       applyMonitor();
@@ -49,10 +90,11 @@
       videoDest.stream.getAudioTracks().forEach(t=>videoStream.addTrack(t));
       mediaRecorder=new MediaRecorder(videoStream,{mimeType:type,videoBitsPerSecond:Math.round((state.vidQuality||8)*1e6),audioBitsPerSecond:192000});
       const rec=mediaRecorder;
-      recordChunks=[];
+      capBegin(type.split(';')[0]);
+      capSpaceCheck();
       let failed=false,finished=false;
       rec.ondataavailable=e=>{
-        if(e.data&&e.data.size)recordChunks.push(e.data)
+        if(e.data&&e.data.size)capChunk(e.data)
       };
       rec.onerror=e=>{
         failed=true;
@@ -60,34 +102,48 @@
         try{if(rec.state!=='inactive')rec.stop()}catch(_){finish()}
       };
 
-      const finish=()=>{
+      const finish=async()=>{
         if(finished)return;
         finished=true;
         clearTimeout(stopWatch);
+        const id=cap.id,parts=cap.parts;
+        // 書き足しが終わるのを待つ（長くても20秒）
+        await Promise.race([cap.q,new Promise(r=>setTimeout(r,20000))]);
         if(rec.__discard){
-          recordChunks=[];
           cleanupCapture();
+          vidDropParts(id);
           rec.__after?.();
           return
         }
         const mime=(rec.mimeType||type).split(';')[0],
-          blob=new Blob(recordChunks,{type:mime});
-        recordChunks=[];
-        const ext=mime==='video/mp4'?'mp4':'webm',
+          size=parts.reduce((n,p)=>n+p.size,0),
+          ext=mime==='video/mp4'?'mp4':'webm',
           name='otonoha_'+new Date().toISOString().replace(/[:.]/g,'-')+(failed?'_partial':'')+'.'+ext;
         cleanupCapture();
-        if(blob.size)addVideoRow(blob,name);else toast('動画データを取得できませんでした',5000)
+        if(!size){toast('動画データを取得できませんでした',5000);vidDropParts(id);return}
+        try{
+          if(vidPersistent()&&parts.every(p=>p.key))await addVideoParts({id,name,size,type:mime,parts:parts.length,at:new Date().toISOString()});
+          else{
+            // 途中保存できなかった分がある：手元の分と合わせて1本にまとめる
+            const list=[];
+            for(const p of parts){const b=p.mem||await getAsset(p.key).catch(()=>null);if(b)list.push(b)}
+            const res=await addVideoRow(new Blob(list,{type:mime}),name);
+            if(res==='stored')vidDropParts(id)
+          }
+        }catch(e){toast('動画の保存処理でエラーが起きました：'+(e?.message||'不明')+'。「収録・接続」の一覧をご確認ください',9000)}
       };
       let stopWatch=0;
       rec.onstop=finish;
       rec.__finishSoon=()=>{stopWatch=setTimeout(finish,6000)};
-      mediaRecorder.start(1000);
+      mediaRecorder.start(2000);
       captureStarting=false;
       {const pb=progBgm();if(curProgram()?.autoBgm&&pb&&!bgmPlaying&&!bgmLoadingId)playBgm(pb,{restart:true})}
       E('studioAspect').disabled=true;
       E('studioFps').disabled=true;
       E('vidFormat').disabled=true;E('vidQuality').disabled=true;
       studioCapturing=true;
+      document.body.setAttribute('data-capturing','');
+      capWake(true);
       boostHold=true;
       applyMonitor();
       if(monitorMuted()&&!monitorManualOff)toast('収録中はモニター音を自動で消しています（設定「録音中のモニター音」で変更できます）。動画には効果音・BGMも入ります',6000);
@@ -99,7 +155,9 @@
       E('studioRec').classList.add('recording');
       E('studioRecTime').textContent='● 収録中 0:00'
     }catch(err){
+      const dead=cap.id;
       cleanupCapture();
+      if(dead)vidDropParts(dead);
       toast(err.message||'動画収録を開始できませんでした',6000)
     }
   };

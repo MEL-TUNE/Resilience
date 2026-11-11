@@ -1,4 +1,4 @@
-/* 企画のポン出し：セリフ帳・スロット・ルーレット・サイコロ・登録アプリを、ステージから一押しで出す */
+/* 本番の「🎲 企画」のボタン：セリフ帳・スロット・ルーレット・サイコロ・お題帳・登録アプリを、一押しで出す */
 
   const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
   const ponBags={};
@@ -23,9 +23,8 @@
   async function ponApp(a){
     state.appSel=a.id;save();
     if(ponCfg().app==='page'){
-      document.querySelector('.studio-tabs [data-mode="plan"]')?.click();
       await appShow();
-      E('appStageWrap')?.scrollIntoView({block:'start',behavior:'smooth'});
+      deckShow('plan',E('appStageWrap'));
       return
     }
     if(appWinOpen()){
@@ -39,7 +38,7 @@
   }
   function ponRun(it){
     if(it.kind==='serif')ponSerif(it.s);
-    else if(it.kind==='slot'){if(!serifList().some(x=>serifLines(x).length)){toast('スロットの役柄とセリフがまだありません（企画卓の「セリフ帳」「スロット」で作れます）',4500);return}slotSpin('all')}
+    else if(it.kind==='slot'){if(!serifList().some(x=>serifLines(x).length)){toast('スロットの役柄とセリフがまだありません（「🛠 準備」→「企画の準備」の「セリフ帳」「スロット」で作れます）',4500);return}slotSpin('all')}
     else if(it.kind==='wheel')E('wheelSpin').click();
     else if(it.kind==='dice')E('diceRoll').click();
     else if(it.kind==='app')ponApp(it.a);
@@ -66,12 +65,21 @@
       ponSig=sig;
       ponNodes=shown.map(it=>{
         const b=document.createElement('button');b.type='button';b.className='pon-btn pon-'+it.kind;b.textContent=it.label;
-        b.title=it.kind==='serif'?'押すたびに、このシチュエーションのセリフを1つ出します（全部出し終えるまで同じセリフは出ません）':it.kind==='app'?(c.app==='page'?'企画卓の中で開きます':'アプリと立ち絵のウインドウで開きます'):'';
+        b.title=it.kind==='serif'?'押すたびに、このシチュエーションのセリフを1つ出します（全部出し終えるまで同じセリフは出ません）':it.kind==='app'?(c.app==='page'?'「企画の準備」の中で開きます':'アプリと立ち絵のウインドウで開きます'):'';
         b.onclick=()=>ponRun(it);
         return {it,b}
       });
       E('ponGrid').replaceChildren(...ponNodes.map(n=>n.b));
       E('ponEmpty').hidden=shown.length>0;
+      // 並べていない企画があるときは、何が外れているかを見せて、その場で戻せるようにする
+      {
+        const off=all.filter(it=>!shown.includes(it)),ph=E('ponHidden');
+        ph.hidden=!off.length;
+        if(off.length){
+          const b=document.createElement('button');b.type='button';b.textContent='すべて並べる';b.onclick=()=>E('ponAll').click();
+          ph.replaceChildren('いま並べていない企画：'+off.slice(0,8).map(it=>it.label).join('、')+(off.length>8?' ほか'+(off.length-8)+'個':'')+' ',b)
+        }
+      }
       // 並べるものの選択
       const sel=E('ponSerif'),ser=all.filter(it=>it.kind==='serif');
       sel.replaceChildren(...[['none','今回は使用しない'],['all','すべて並べる（'+ser.length+'個）'],...ser.map(it=>['s:'+it.s.id,it.label.replace(/^💬 /,'')])].map(([v,t])=>Object.assign(document.createElement('option'),{value:v,textContent:t})));

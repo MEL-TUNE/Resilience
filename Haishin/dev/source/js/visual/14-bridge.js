@@ -82,14 +82,14 @@
         return ok({count:list.length})
       }
       case 'se':{
-        if(!app.bridgeMore)return ng('効果音を鳴らす許可がありません（企画卓の「アプリを並べる」で許可できます）');
+        if(!app.bridgeMore)return ng('効果音を鳴らす許可がありません（「企画の準備」の「アプリを並べる」で許可できます）');
         const label=S_(m.label,60).trim();
         const s=(typeof cfg!=='undefined'?cfg.sounds:[]).find(x=>x.assetId&&x.label===label);
         if(!s)return ng('その名前の効果音が見つかりません：'+label);
         playSound(s);return ok()
       }
       case 'scene':{
-        if(!app.bridgeMore)return ng('場面を切り替える許可がありません（企画卓の「アプリを並べる」で許可できます）');
+        if(!app.bridgeMore)return ng('場面を切り替える許可がありません（「企画の準備」の「アプリを並べる」で許可できます）');
         if(!['live','standby','away','end'].includes(m.scene))return ng('scene は live / standby / away / end のどれかです');
         enterScene(m.scene);return ok()
       }
@@ -100,7 +100,7 @@
   // 開発者向けの説明と、そのまま動く見本アプリ
   const BRIDGE_DOC=`# オトノハ連携（Otonoha Bridge 1）
 
-配信処オトノハの企画卓「アプリを並べる」に登録したHTMLアプリは、ブラウザ標準の window.postMessage で、オトノハと伝言を交わせます。
+配信処オトノハの「企画の準備」の「アプリを並べる」に登録したHTMLアプリは、ブラウザ標準の window.postMessage で、オトノハと伝言を交わせます。
 
 ## つなぐ
 アプリの中で、親のページ（オトノハ）へ hello を送ります。

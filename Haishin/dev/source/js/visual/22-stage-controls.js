@@ -4,14 +4,10 @@
     document.body.dataset.studioMode=mode;
     studioLiveMode=mode==='live';
     applyMonitor();
-    document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('selected',b.dataset.mode===mode));
     E('studioPlan').classList.toggle('on',mode==='plan');
     E('studioSongs').classList.toggle('on',mode==='songs');
     E('studioAiVoice').classList.toggle('on',mode==='aivoice');
-    if(E('studioModeHelp'))E('studioModeHelp').textContent=mode==='plan'?'企画文をAIへ渡し、返答を台本欄に貼り付けて進行できます。AIと自動通信する機能はありません。':'配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。'
   }
-
-  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
 
   E('studioMic').onclick=async()=>{
     if(!ready){

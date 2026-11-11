@@ -494,16 +494,14 @@ a{color:var(--accent)}
 .top h1{font-size:25px}
 .top .ver{font-size:11px}
 .pagenav{gap:8px}
-.studio-workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;margin-bottom:18px}
 .studio-card{border:1px solid var(--a-p-45);border-radius:18px;background:var(--paper);padding:16px;box-shadow:var(--shadow);min-width:0}
 .studio-card h2{margin:0 0 12px;font:700 17px var(--title-font)}
 .studio-kicker{font-size:10px;letter-spacing:.18em;color:var(--muted);margin:0 0 5px}
 .stage-wrap{background:repeating-conic-gradient(#e2e8df 0% 25%,#f5f7f1 0% 50%) 50% / 24px 24px;border-radius:12px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
 .stage-wrap canvas{width:100%;height:100%;object-fit:contain;display:block}
 .studio-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0}
-.studio-row button,.studio-tabs button{border:1px solid var(--a-p-45);border-radius:9px;padding:9px 12px;background:var(--hi);font-size:12px;cursor:pointer}
-.studio-row .accent,.studio-tabs .selected{background:var(--accent);color:var(--on-accent)}
-.studio-tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.studio-row button{border:1px solid var(--a-p-45);border-radius:9px;padding:9px 12px;background:var(--hi);font-size:12px;cursor:pointer}
+.studio-row .accent{background:var(--accent);color:var(--on-accent)}
 .studio-note{font-size:11px;line-height:1.8;color:var(--muted);margin:8px 0}
 .studio-field{display:block;font-size:12px;margin:12px 0}
 .studio-field input[type=range]{display:block;width:100%;margin-top:7px}
@@ -533,7 +531,6 @@ a{color:var(--accent)}
 .studio-header-line small{font-size:10px;color:var(--muted)}
 .mode-section{display:none}
 .mode-section.on{display:block}
-body[data-studio-mode=plan] .recbar,body[data-studio-mode=plan] .studio{display:none}
 body[data-page=settings] .studio-extension{display:none}
 .studio-live-box{border:1px solid var(--a-p-45);border-radius:9px;padding:12px;white-space:pre-wrap;min-height:48px;margin-top:10px;font-size:13px}
 .kara-h{font-size:15px;margin:2px 0 6px}
@@ -581,12 +578,10 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
   .shell{border-width:4px}
 }
 @media(max-width:780px){
-  .studio-workspace{grid-template-columns:1fr}
   .studio-card{padding:12px}
   .studio-inline{grid-template-columns:1fr}
   .top h1{font-size:21px}
   .studio-state{width:100%;margin:0}
-  .studio-tabs button{flex:1}
 }
 @media(min-width:1100px){
   .app{padding-top:8px}
@@ -596,8 +591,6 @@ body[data-pad="l"]{--pad-e:84px;--pad-t:140px;--pad-v:128px}
   .top .shop-eyebrow{display:none}
   .top .pagenav{margin:5px 0 0!important}
   .top .pagenav button{padding:5px 12px!important}
-  .studio-tabs{margin:8px 0}
-  .studio-workspace>div>.studio-card:first-child{padding:12px}
   .studio-card h2{margin-bottom:8px}
   .studio-row{margin:7px 0}
   .studio-note{line-height:1.5}
@@ -628,18 +621,9 @@ body[data-studio-aspect="portrait"] .stage-wrap{aspect-ratio:9/16!important;heig
   .motion-bar .studio-mini{width:100%}
   .motion-bar button{flex:1 1 auto;white-space:nowrap;padding-left:8px;padding-right:8px;font-size:12px}
   #studioMute{flex-basis:100%}
-  .studio-tabs button{font-size:12px;white-space:nowrap;padding-left:4px;padding-right:4px}
   .fx-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 .app{width:min(100%,1840px)}
-@media(min-width:1100px){
-  .studio-workspace{--stage-col:clamp(520px,calc(50vh*16/9 + 26px),1306px);grid-template-columns:var(--stage-col) minmax(0,1fr)!important;align-items:start}
-  body[data-studio-aspect="portrait"] .studio-workspace{--stage-col:clamp(400px,calc(min(72vh,820px)*9/16 + 26px),720px)}
-  .stage-wrap{max-height:none!important}
-}
-@media(max-width:1099px){
-  .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
-}
 #boardShell.in-workspace{margin:0;min-width:0}
 #gotoLook{font-size:12px;padding:4px 10px}
 .motion-set{margin:10px 0}
@@ -660,9 +644,6 @@ body[data-light] *{backdrop-filter:none!important;-webkit-backdrop-filter:none!i
 body:not([data-fxp]) .fxp-only{display:none!important}
 .fx-preset{margin:6px 0 4px}
 body[data-app="live"] .recbar,body[data-app="live"] #takesShell{display:none!important}
-body[data-app="radio"] .studio-workspace>div:first-child,body[data-app="radio"] .studio-tabs,body[data-app="radio"] .studio-help{display:none!important}
-body[data-app="radio"] .studio-workspace{grid-template-columns:minmax(0,1fr)!important}
-.stage-head{justify-content:flex-end;margin:0 0 4px}
 #studioCanvas{cursor:grab;touch-action:none}
 #studioCanvas.dragging{cursor:grabbing}
 .expr-bar,.speaker-bar{flex-wrap:wrap;gap:6px}
@@ -682,22 +663,16 @@ body{padding-top:var(--mini-h,0px)}
 .mascot-bar{flex-wrap:wrap;gap:6px}
 .mascot-bar button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 #studioCanvas.locked{cursor:default}
-.stage-card .stage-tools{margin:0 0 6px}
-.stage-card .stage-head{display:flex;justify-content:flex-end;margin:6px 0 4px}
-.rec-panel{border:2px solid var(--accent);border-radius:12px;padding:10px;margin:10px 0;background:var(--hi)}
-.rec-main{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .rec-big{border:1px solid var(--a-p-45);border-radius:10px;padding:14px 10px;font-size:15px;font-weight:700;cursor:pointer;background:var(--paper);color:var(--ink)}
 .rec-start{background:var(--rec,#c8463c);border-color:var(--rec,#c8463c);color:#fff}
 .rec-start.recording{opacity:.55}
 .rec-stop:not(:disabled){background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .rec-big:disabled{opacity:.45;cursor:default}
 .rec-sub{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;font-size:12px}
-.rec-time{font-weight:700;min-width:7em}
 .rec-opt select{margin-left:4px;font-size:12px;padding:3px 6px;border-radius:6px;border:1px solid var(--a-p-45);background:var(--paper);color:var(--ink)}
 .rec-panel .studio-tray{margin-top:6px}
 .studio-take .vbtn{border:1px solid var(--a-p-45);border-radius:8px;padding:6px 10px;background:var(--paper);font-size:12px;cursor:pointer;color:var(--ink);text-decoration:none}
 .studio-take .vbtn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
-.stage-group{border-top:1px solid var(--a-p-20);padding-top:4px;margin-top:4px}
 .msc-pick{border:1px solid var(--a-p-30);border-radius:10px;padding:8px;margin:8px 0}
 #boardShell .text-grid{min-height:0}
 .rec-opt{display:flex;align-items:center;gap:4px;max-width:100%}
@@ -719,7 +694,6 @@ body{padding-top:var(--mini-h,0px)}
 .rec-note{font-size:11px;color:var(--muted);margin:6px 0 0}
 .scene-font-row{display:flex;flex-wrap:wrap;align-items:end;gap:10px 16px;margin-top:12px}
 .scene-font-row .studio-field{margin:0}
-.live-console{border:2px solid var(--scene-c,#d64545);border-radius:14px;padding:12px;margin:10px 0;background:var(--hi)}
 body{--scene-c:#d64545}
 body[data-cur-scene="standby"]{--scene-c:#a96c0c}
 body[data-cur-scene="away"]{--scene-c:#2f78c4}
@@ -742,7 +716,6 @@ body[data-cur-scene="end"]{--scene-c:#7b5ea7}
 :root[data-tone="dark"] .scene-switch button[data-scene="away"]{--c:#73b3ff}
 :root[data-tone="dark"] .scene-switch button[data-scene="end"]{--c:#bca2f2}
 :root[data-tone="dark"] .scene-switch button[aria-pressed="true"]{color:#1d1411}
-.sound-stop{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--a-p-20)}
 .sound-now{display:flex;gap:6px;align-items:center;min-width:0;font-size:13px}
 .sound-now span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .stop-btn{border:2px solid var(--ink);border-radius:12px;padding:12px 14px;font-size:15px;font-weight:700;background:var(--hi);color:var(--ink);cursor:pointer;white-space:nowrap}
@@ -750,37 +723,11 @@ body[data-cur-scene="end"]{--scene-c:#7b5ea7}
 .stop-btn:disabled{opacity:.4;cursor:default}
 .stream-only{display:none}
 body[data-app="live"][data-kind="stream"] .stream-only{display:inline}
-body[data-app="live"][data-kind="stream"] .stage-card{display:flex;flex-direction:column}
-body[data-app="live"][data-kind="stream"] .live-console{order:1;margin-top:0}
-body[data-app="live"][data-kind="stream"] .stage-tools{order:2}
-body[data-app="live"][data-kind="stream"] .studio-meter{order:3}
-body[data-app="live"][data-kind="stream"] .stage-card>.stage-group{order:4}
-body[data-app="live"][data-kind="stream"] #quickTune{order:5}
-body[data-app="live"][data-kind="stream"] .stage-preview{order:6;width:min(100%,420px);align-self:flex-end;margin-top:12px}
-body[data-app="live"][data-kind="stream"] .stage-preview .stage-head{justify-content:space-between;gap:8px;font-size:11px}
 body[data-app="live"][data-kind="stream"] .rec-panel,body[data-app="live"][data-kind="stream"] .kara-sound,body[data-app="live"][data-kind="stream"] #studioFullscreen{display:none!important}
 body[data-app="live"][data-kind="stream"] #studioOutput{background:var(--accent);color:var(--on-accent);font-weight:700}
-@media(max-width:520px){
-  .scene-switch{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .sound-stop{grid-template-columns:1fr 1fr}
-  .sound-now{grid-column:1/-1}
-  .stop-btn{white-space:normal;font-size:13px;padding:10px 8px}
-}
-@media(min-width:1100px){
-  body[data-app="live"][data-kind="stream"] .studio-workspace{grid-template-columns:minmax(0,1fr) minmax(0,2fr)!important}
-  body[data-app="live"][data-kind="stream"] .scene-switch{grid-template-columns:repeat(2,minmax(0,1fr))}
-  body[data-app="live"][data-kind="stream"] .sound-stop{grid-template-columns:minmax(0,1fr)}
-  body[data-app="live"][data-kind="stream"] .stop-btn{white-space:normal}
-  body[data-app="live"][data-kind="stream"] .stage-preview{width:100%;align-self:stretch}
-}
 body[data-view="stream"] [data-modes]:not([data-modes~="stream"]),body[data-view="video"] [data-modes]:not([data-modes~="video"]),body[data-view="radio"] [data-modes]:not([data-modes~="radio"]){display:none!important}
 .set-mode-note{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:var(--a-p-12);font-size:13px}
-.console-bgm-pick{display:flex;flex-direction:column;gap:3px;font-size:11px;min-width:0}
-.console-bgm-pick select{max-width:100%;font-size:13px;padding:6px}
 .stop-btn.playing{border-color:var(--rec);color:var(--rec)}
-.sound-stop{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.sound-now{grid-column:1/-1}
-.console-bgm-pick{grid-column:1/-1}
 .rec-extra{display:flex;gap:8px;margin-top:8px}
 .rec-extra button{flex:1;border:1px solid var(--a-p-45);border-radius:10px;padding:9px 8px;background:var(--hi);font-size:13px;cursor:pointer}
 .rec-extra button:disabled{opacity:.45;cursor:default}
@@ -876,16 +823,8 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 
 /* 0.9.2 絵文字の効果音・文字の効果音・ボイスは同じ仲間：間の線を引かない */
 .section.sec-join{border-top:0;padding-top:0;margin-top:22px}
-/* 0.9.2 1列のときは、音のお品書きを企画卓・歌枠ノート・AIキャラより上に置く */
-@media(max-width:1099px){
-  .studio-workspace>div:first-child{display:contents}
-  .studio-workspace>div:first-child>.stage-card{order:1}
-  .studio-workspace>#boardShell{order:2}
-  .studio-workspace>div:first-child>.mode-section{order:3}
-}
 
 /* 0.9.2 企画のポン出し */
-.pon-bar{border:2px solid var(--accent);border-radius:14px;padding:12px;margin:0 0 10px;background:var(--hi)}
 .pon-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
 .pon-head strong{font-size:17px;letter-spacing:.06em}
 .pon-clear{border:2px solid var(--ink);border-radius:10px;padding:8px 12px;font-weight:700;background:var(--ink);color:var(--paper);cursor:pointer}
@@ -898,8 +837,6 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 .pon-opts{margin-top:8px;font-size:13px}
 .pon-picks{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0}
 .pon-pick{display:inline-flex;align-items:center;gap:4px}
-body[data-app="live"][data-kind="stream"] .pon-bar{order:1}
-body[data-app="live"][data-kind="stream"] .live-console{order:0}
 
 /* 0.9.2 歌枠ノート */
 .sb-flow{margin:4px 0 14px;padding:10px 12px 10px 30px;border-radius:12px;background:var(--a-p-6);font-size:13px;line-height:1.7}
@@ -926,7 +863,6 @@ body[data-app="live"][data-kind="stream"] .live-console{order:0}
 
 /* 0.9.3 背景画像のリスト・3:4 */
 body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min(72vh,820px)!important;max-height:none!important;width:auto;max-width:100%;margin:0 auto}
-@media(min-width:1100px){body[data-studio-aspect="x34"] .studio-workspace{--stage-col:clamp(440px,calc(min(72vh,820px)*3/4 + 26px),760px)}}
 .bg-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:6px 0}
 .bg-item{display:flex;flex-direction:column;gap:4px;padding:4px;border:2px solid var(--a-p-30);border-radius:10px;background:var(--hi);color:var(--ink);cursor:pointer;font-size:12px;text-align:left}
 .bg-item img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:6px;background:var(--a-p-12)}
@@ -946,7 +882,6 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .expr-imgs input[type=file]{max-width:100%}
 
 /* 0.9.5 ステージの見分けやすさ：ポン出しは「押すと画面に出るもの」、下の欄は「いまの状態を選ぶもの」 */
-.pon-bar{background:var(--a-p-6);border-color:var(--accent)}
 .pon-head strong::before{content:'▶ ';color:var(--accent)}
 .pon-btn{background:var(--hi);border-width:2px;border-color:var(--a-p-45);box-shadow:0 3px 0 var(--a-p-30);text-align:left;padding:12px 14px}
 .pon-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--a-p-30)}
@@ -971,58 +906,175 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .topic-hand{border:2px dashed var(--accent);border-radius:14px;padding:12px;margin:0 0 10px;background:var(--hi)}
 .topic-hand-body{max-height:260px;overflow:auto;padding:4px 2px}
 .topic-st{flex:0 0 auto}
-body[data-app="live"][data-kind="stream"] .topic-hand{order:1}
 .topic-hand .pon-head{flex-wrap:wrap;align-items:baseline}
 .topic-hand .pon-head strong{font-size:15px}
 .topic-hand .pon-head strong::before{content:'📌 '}
 .topic-row select{border:1px solid var(--a-p-45);background:var(--hi);border-radius:8px;padding:7px 8px;font:inherit;color:var(--ink)}
-/* 0.9.8：番組の行をステージへ・目次・企画卓のまとまり */
-.live-prog{display:flex;align-items:center;gap:8px;margin-top:12px;padding:8px 10px;border-radius:12px;background:var(--a-p-6);min-width:0}
+
+</style>
+<style>
+/* 操作盤（デッキ）：配信・動画の画面の並べ方。見せる・隠すは、body の data-level（本番／準備）と data-deck（開いているタブ）で決める。
+   値を変えるのは js/visual/86-deck.js。画面の種類は data-app（live／radio）と data-view（stream／video／radio）。 */
+
+/* ---- 1. 骨組み */
+.deck{margin-bottom:18px;min-width:0}
+.deck-main,.deck-side{min-width:0}
+.deck-side{margin-bottom:8px}
+.deck-panels{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-width:0}
+.deck-panels>*{min-width:0;margin:0}
+
+/* ---- 2. 本番・準備の切り替え */
+.deck-level{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}
+.deck-level button{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;border:2px solid var(--a-p-45);border-radius:12px;padding:7px 6px;background:var(--hi);color:var(--ink);font:inherit;cursor:pointer}
+.deck-level b{font-size:15px;letter-spacing:.04em}
+.deck-level small{font-size:10.5px;opacity:.8}
+.deck-level .selected{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+/* ---- 3. タブ（映像と帯のすぐ下に残る） */
+.deck-nav{position:sticky;top:calc(var(--mini-h,0px) + var(--side-h,0px));z-index:6;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:0 0 10px;padding:5px;background:var(--paper);border:1px solid var(--a-p-30);border-radius:14px;box-shadow:0 4px 10px color-mix(in srgb,var(--shade) 10%,transparent)}
+body[data-level="prep"] .deck-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
+.deck-nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;min-height:46px;border:1px solid transparent;border-radius:10px;padding:4px 2px;background:transparent;color:var(--ink);font-size:11.5px;font-weight:700;line-height:1.2;white-space:nowrap;cursor:pointer}
+.deck-nav button i{font-style:normal;font-size:19px;line-height:1.1}
+.deck-nav button.selected{background:var(--accent);color:var(--on-accent)}
+body[data-level="prep"] .deck-nav [data-level-of="live"],body:not([data-level="prep"]) .deck-nav [data-level-of="prep"]{display:none}
+/* 印：BGM が流れている／見てほしいものがある */
+.deck-nav button.playing::after,.deck-nav button.marked::after{content:'';position:absolute;top:3px;left:calc(50% + 10px);width:9px;height:9px;border-radius:50%;background:var(--rec);box-shadow:0 0 0 2px var(--paper)}
+
+/* ---- 4. 見せる・隠す（配信・動画）。準備の3枚は .mode-section.on（setMode）が決める */
+body[data-app="live"] .deck-panel[data-panel="kikaku"],body[data-app="live"] .deck-panel[data-panel="chara"],body[data-app="live"] .deck-panel[data-panel="tools"],body[data-app="live"] #boardShell{display:none}
+body[data-app="live"][data-deck="kikaku"] .deck-panel[data-panel="kikaku"],body[data-app="live"][data-deck="chara"] .deck-panel[data-panel="chara"],body[data-app="live"][data-deck="tools"] .deck-panel[data-panel="tools"],body[data-app="live"][data-deck="all"] .deck-panel[data-panel="kikaku"],body[data-app="live"][data-deck="all"] .deck-panel[data-panel="chara"],body[data-app="live"][data-deck="all"] .deck-panel[data-panel="tools"]{display:block}
+body[data-app="live"][data-deck="se"] #boardShell,body[data-app="live"][data-deck="bgm"] #boardShell,body[data-app="live"][data-deck="all"] #boardShell{display:block}
+body[data-app="live"][data-deck="se"] #boardShell [data-panel="bgm"],body[data-app="live"][data-deck="bgm"] #boardShell [data-panel="se"]{display:none}
+/* BGM のタブでは、BGM を環境音より先に見せる */
+body[data-app="live"][data-deck="bgm"] #boardShell>.content{display:flex;flex-direction:column}
+body[data-app="live"][data-deck="bgm"] #boardShell .menu-heading{order:-2}
+body[data-app="live"][data-deck="bgm"] #boardShell [data-panel="bgm"]:last-of-type{order:-1;border-top:0;padding-top:0;margin-top:0}
+/* 音声（ラジオ）：操作盤は使わず、録音バーと音のお品書きだけ */
+body[data-app="radio"] .deck-side,body[data-app="radio"] .deck-nav,body[data-app="radio"] .deck-level,body[data-app="radio"] .deck-panel,body[data-app="radio"] .studio-help{display:none!important}
+
+/* ---- 5. 映像と、いつも使う操作の帯 */
+.deck-side .stage-preview{position:relative;width:min(100%,var(--pv-w,100%));margin:0 auto}
+body[data-app] .deck-side .stage-wrap{width:100%!important;height:auto!important;max-width:none;margin:0}
+body[data-app] .deck-side .stage-wrap:fullscreen{width:100vw!important;height:100vh!important;aspect-ratio:auto!important;border-radius:0}
+body[data-studio-aspect="portrait"] .deck-side{--pv-w:calc(56vh*9/16)}
+body[data-studio-aspect="x34"] .deck-side{--pv-w:calc(56vh*3/4)}
+.deck-side .stage-head{position:absolute;right:6px;bottom:6px;z-index:2;margin:0;display:block;pointer-events:none}
+.deck-side .stage-head small{font-size:10px;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--shade) 60%,transparent);color:#fff}
+.deck-side .stage-head .stream-only{display:none!important}
+.deck-side .rec-time{position:absolute;left:6px;top:6px;z-index:2;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--shade) 60%,transparent);color:#fff;pointer-events:none}
+body[data-capturing] .deck-side .rec-time{background:var(--rec)}
+body[data-outwin]:not([data-pv-on]) .deck-side .stage-head,body[data-outwin]:not([data-pv-on]) .deck-side .rec-time{position:static;display:inline-block}
+.deck-strip{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;margin-top:6px;align-items:stretch}
+body[data-view="video"] .deck-strip{grid-template-columns:minmax(0,1.2fr) minmax(0,1.7fr) minmax(0,1fr) minmax(0,1fr)}
+.deck-strip>button{min-width:0;min-height:44px;margin:0;border-radius:10px;padding:6px 4px;font-size:13px;line-height:1.2;white-space:normal}
+.deck-strip .rec-big{font-size:13px;padding:6px 2px}
+.deck-strip #studioMute{border:1px solid var(--a-p-45);background:var(--hi);color:var(--ink);font-weight:700;font-size:12px;cursor:pointer}
+.deck-strip .stop-all{font-size:12.5px;padding:6px 10px}
+.strip-scene{min-width:0}
+.strip-scene:empty{display:none}
+.deck-strip .scene-switch{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;height:100%}
+.deck-strip .scene-switch button{min-width:0;min-height:44px;border-radius:10px;padding:6px 2px;font-size:13px;white-space:nowrap}
+
+/* 狭い画面の「本番」：映像と帯を上に残す（「映像を上に残す」がオンのとき） */
+@media(max-width:1099px){
+  body[data-app="live"][data-level="live"][data-pv-pin] .deck-side{position:sticky;top:var(--mini-h,0px);z-index:7;margin:0;padding:6px 0;background:var(--bg)}
+  body[data-app="live"][data-level="live"][data-pv-pin] .deck-side{--pv-w:calc(24vh*16/9)}
+  body[data-app="live"][data-level="live"][data-pv-pin][data-studio-aspect="portrait"] .deck-side{--pv-w:calc(30vh*9/16)}
+  body[data-app="live"][data-level="live"][data-pv-pin][data-studio-aspect="x34"] .deck-side{--pv-w:calc(30vh*3/4)}
+  /* 準備の画面では、映像は小さめにして流す（入力のじゃまにならないように） */
+  body[data-level="prep"] .deck-side{--pv-w:calc(26vh*16/9)}
+  body[data-level="prep"][data-studio-aspect="portrait"] .deck-side{--pv-w:calc(30vh*9/16)}
+  body[data-level="prep"][data-studio-aspect="x34"] .deck-side{--pv-w:calc(30vh*3/4)}
+}
+@media(max-width:780px){
+  body[data-app="live"] .top{padding:10px 10px 12px}
+  body[data-app="live"] .top h1{font-size:19px;margin:0 0 2px;line-height:1.4}
+  body[data-app="live"] .top .shop-eyebrow{display:none}
+  body[data-app="live"] .top p{margin:0 0 8px}
+}
+
+/* 広い画面：左に映像と帯、右にタブと中身。「全部」では右を2列にして、音のお品書きを並べる */
+@media(min-width:1100px){
+  body[data-app="live"] .deck{display:grid;grid-template-columns:var(--stage-col,clamp(340px,32vw,520px)) minmax(0,1fr);gap:18px;align-items:start}
+  body[data-app="live"][data-studio-aspect="portrait"] .deck{--stage-col:clamp(280px,calc(min(72vh,820px)*9/16),480px)}
+  body[data-app="live"][data-studio-aspect="x34"] .deck{--stage-col:clamp(300px,calc(min(72vh,820px)*3/4),560px)}
+  body[data-app="live"] .deck-side{position:sticky;top:calc(var(--mini-h,0px) + 8px);margin:0;--pv-w:100%}
+  body[data-app="live"][data-deck="all"] .deck-panels{grid-template-columns:minmax(260px,2fr) minmax(0,3fr);grid-template-rows:auto auto 1fr;align-items:start}
+  body[data-app="live"][data-deck="all"] #boardShell{grid-column:2;grid-row:1/span 3}
+  body[data-app="live"][data-deck="all"] .deck-panel{grid-column:1}
+  .deck-level{max-width:520px}
+}
+
+/* ---- 6. 本番の各タブの中身 */
+.pon-bar{margin:0;padding:0;border:0;background:none}
+.deck-panel .stage-group{margin-top:0}
+.deck-panel .stage-group>.studio-row[hidden]{display:none}
+/* 音のお品書きの見出しは、タブの中では小さくする */
+body[data-app="live"] #boardShell .menu-heading{padding-bottom:8px;margin-bottom:12px}
+body[data-app="live"] #boardShell .menu-heading span{font-size:15px}
+.pon-hidden{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:var(--a-p-6);font-size:12px;line-height:1.7}
+.pon-hidden button{margin-left:6px;border:1px solid var(--a-p-45);border-radius:8px;padding:5px 10px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer}
+.topic-hand{margin:12px 0 0}
+@media(max-width:520px){.pon-grid{grid-template-columns:1fr 1fr;gap:6px}.pon-btn{padding:10px 6px;font-size:14px}}
+.deck-panel[data-panel="tools"] h3{margin:0 0 8px;font:700 15px var(--title-font)}
+.deck-panel[data-panel="tools"]>*+*{margin-top:16px;padding-top:14px;border-top:1px solid var(--a-p-20)}
+.deck-panel[data-panel="tools"] .rec-panel .vid-h{margin-top:18px}
+.deck-panel[data-panel="tools"] .studio-tray{max-height:300px}
+/* 配信では、場面のボタンは上の帯にあるので、ここには「いまの場面」の1行だけを出す */
+body[data-view="stream"] .deck-panel[data-panel="tools"]>.live-console{margin-top:0;padding-top:0;border-top:0}
+body[data-view="stream"] .live-console h3{display:none}
+.live-console .onair-head{margin:0 0 10px}
+.tools-box .studio-row{margin:8px 0}
+.tools-box .studio-meter{margin:6px 0}
+@media(max-width:520px){.deck-panel[data-panel="tools"] .scene-switch{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pv-pin{border:1px solid var(--a-p-45);border-radius:999px;padding:7px 12px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer;white-space:nowrap}
+.pv-pin[aria-pressed="false"]{opacity:.75}
+/* BGM の欄：いま流れている曲と、番組 */
+.bgm-now-row{display:flex;align-items:center;gap:8px;margin:0 0 8px;min-width:0}
+.bgm-now-row .sound-now{flex:1}
+.bgm-now-row .stop-btn{padding:8px 12px;font-size:13px}
+body[data-app="radio"] .bgm-now-row,body[data-app="radio"] .live-prog{display:none}
+.live-prog{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:8px 10px;border-radius:12px;background:var(--a-p-6);min-width:0}
 .live-prog-label{flex:none;font-size:12px;font-weight:700;opacity:.8}
 .live-prog .prog-row{flex:1;min-width:0;flex-wrap:wrap}
 .live-prog .prog-chips{flex:1 1 160px;min-width:0}
 .live-prog #progEdit{flex:none;white-space:nowrap}
-.jump-bar{min-width:0;max-width:100%;box-sizing:border-box;position:sticky;top:0;z-index:7;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:6px 4px;margin:0 0 10px;background:var(--paper);border:1px solid var(--a-p-30);border-radius:12px;box-shadow:0 4px 12px color-mix(in srgb,var(--shade) 10%,transparent);scrollbar-width:none}
-.jump-bar::-webkit-scrollbar{display:none}
-.jump-bar:empty{display:none}
-.jump-bar button{flex:none;white-space:nowrap;border:1px solid var(--a-p-45);border-radius:999px;padding:7px 12px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer}
-.jump-bar button.j-stage,.jump-bar button.j-board{background:var(--a-p-12);font-weight:700}
-body[data-app="radio"] .jump-bar{display:none!important}
-.stage-card,#boardShell,#boardShell .section,.plan-group,.mode-section h3{scroll-margin-top:64px}
-#studioPlan.plan-grouped .plan-group{background:var(--a-p-6);border:1px solid var(--a-p-20);border-radius:14px;padding:12px 14px 14px;margin:14px 0 0}
-#studioPlan.plan-grouped .plan-group>h3:first-child{margin:0 0 8px;padding:0 0 8px;border-bottom:2px solid var(--a-p-30)}
-#studioPlan.plan-grouped .app-dock.plan-group{border-top:1px solid var(--a-p-20)}
-#studioPlan.plan-grouped .play-dock{border-top:0;padding-top:0;margin-top:0}
-#studioPlan.plan-grouped .plan-group details.sb-opts>summary{font-weight:700}
-@media (max-width:420px){#studioPlan.plan-grouped .plan-group{padding:10px 10px 12px}.live-prog{flex-wrap:wrap}.live-prog-label{flex:0 0 100%}}
-/* 0.9.9：ステージは「見ながらポン出し」の並び（プレビュー → ポン出し → 手元カード → 収録 → 配信の状態 → 表情など → マイクは最後） */
-body[data-app="live"][data-kind] .stage-card{display:flex;flex-direction:column}
-body[data-app="live"][data-kind] .stage-card>.stage-preview{order:1}
-body[data-app="live"][data-kind] .stage-card>.pon-bar{order:2;margin-top:10px}
-body[data-app="live"][data-kind] .stage-card>.topic-hand{order:3}
-body[data-app="live"][data-kind] .stage-card>.rec-panel{order:4}
-body[data-app="live"][data-kind] .stage-card>.live-console{order:5;margin-top:0}
-body[data-app="live"][data-kind] .stage-card>.stage-group{order:6}
-body[data-app="live"][data-kind] .stage-card>.drag-row{order:7}
-body[data-app="live"][data-kind] .stage-card>#quickTune{order:8}
-body[data-app="live"][data-kind] .stage-card>.stage-tools{order:9;margin:12px 0 4px}
-body[data-app="live"][data-kind] .stage-card>.studio-meter{order:10}
-body[data-app="live"][data-kind="stream"] .stage-card>.stage-preview{align-self:center;margin-top:0}
-body[data-app="live"][data-kind] .stage-tools button{font-size:11px;padding:6px 6px}
-/* 配信の状態の欄：BGMは「いま流れている曲・止める・すべて止める」だけ（選ぶのは音のお品書き） */
-body[data-app="live"] .console-bgm-pick{display:none}
-/* 番組の行（音のお品書きの BGM 欄） */
-#boardShell .live-prog{margin:0 0 8px}
-/* プレビューを上に固定（ステージの画面のとき） */
-.pv-pin{border:1px solid var(--a-p-45);border-radius:999px;padding:4px 10px;background:var(--hi);color:var(--ink);font-size:11px;cursor:pointer;white-space:nowrap}
-.pv-pin[aria-pressed="false"]{opacity:.7}
-.stage-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
-body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-card>.stage-preview{position:sticky;top:var(--jump-h,56px);z-index:6;background:var(--paper);padding:4px 0 6px;box-shadow:0 8px 10px -8px color-mix(in srgb,var(--shade) 25%,transparent)}
-body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-preview .stage-wrap{width:min(100%,calc(26vh*16/9));margin:0 auto}
-body[data-app="live"][data-studio-mode="live"][data-pv-pin][data-studio-aspect="portrait"] .stage-preview .stage-wrap{height:26vh!important;width:auto}
-body[data-app="live"][data-studio-mode="live"][data-pv-pin][data-studio-aspect="x34"] .stage-preview .stage-wrap{height:26vh!important;width:auto}
-@media (max-width:520px){.pon-grid{grid-template-columns:1fr 1fr;gap:6px}.pon-btn{padding:10px 6px;font-size:14px}}
-body[data-app="live"][data-studio-mode="live"][data-pv-pin] .stage-preview .stream-only{display:none}
+@media(max-width:420px){.live-prog{flex-wrap:wrap}.live-prog-label{flex:0 0 100%}}
+
+/* ---- 7. 準備：企画の準備は、見出しを押して開く */
+.plan-lead{margin:0 0 4px}
+#studioPlan .play-dock{margin:0;padding:0;border:0}
+#studioPlan .plan-group{margin:10px 0 0;padding:0;border:1px solid var(--a-p-20);border-radius:14px;background:var(--a-p-6)}
+#studioPlan .plan-group>summary{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;padding:13px 14px;list-style:none;cursor:pointer}
+#studioPlan .plan-group>summary::-webkit-details-marker{display:none}
+#studioPlan .plan-group>summary::before{content:'＋';flex:none;width:1.3em;font-weight:700;color:var(--accent)}
+#studioPlan .plan-group[open]>summary::before{content:'－'}
+#studioPlan .plan-group>summary h3{margin:0;font-size:16px}
+#studioPlan .plan-group>summary small{font-size:11.5px;color:var(--muted)}
+#studioPlan .plan-group[open]{padding-bottom:14px}
+#studioPlan .plan-group[open]>summary{margin-bottom:10px;border-bottom:2px solid var(--a-p-30)}
+#studioPlan .plan-group>:not(summary){margin-left:14px;margin-right:14px}
+@media(max-width:420px){#studioPlan .plan-group>:not(summary){margin-left:10px;margin-right:10px}#studioPlan .plan-group>summary{padding:12px 10px}}
+.perf-hint{margin:6px 0 0;padding:8px 10px;border-radius:10px;background:var(--w-p-12);font-size:12px;line-height:1.6}
+.perf-hint button{margin-left:6px;border:1px solid var(--a-p-45);border-radius:8px;padding:5px 10px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer}
+
+/* ---- 8. 狭い画面で幅を押し広げないための手当て */
+.panel{grid-template-columns:minmax(0,1fr)}
+.panel>*{min-width:0}
+.qt-grid{grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr))}
+.qt-grid label,.qt-grid select,.qt-grid output{min-width:0;max-width:100%}
+@media(max-width:360px){
+  .deck-strip .scene-switch{gap:3px}
+  .deck-strip .scene-switch button{font-size:11.5px;padding:6px 0;letter-spacing:-.03em}
+  .deck-strip .stop-all{font-size:11.5px;padding:6px 6px}
+  .deck-strip .rec-big{font-size:12px}
+}
+#settingsShell select{max-width:100%;min-width:0}
+.deck-strip>button,.deck-strip .scene-switch button{word-break:keep-all;overflow-wrap:normal}
+
+/* ---- 9. 使い方 */
+.studio-help h3{margin:12px 0 6px;font:700 15px var(--title-font)}
+.studio-help .help-list{margin:0 0 10px;padding-left:1.2em;display:grid;gap:6px;font-size:13px;line-height:1.7}
 
 </style>
 <script>
@@ -1131,10 +1183,10 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.9.10 / 「ポン出し」の呼び名を「企画」に・目次の「企画」で企画のボタンが隠れないように</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.0 / 本番と準備に分けた操作盤・収録の途中保存</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
-<nav class="studio-tabs" aria-label="スタジオモード"><button data-mode="live" class="selected">ステージ</button><button data-mode="plan">企画・AI連携</button><button data-mode="songs">歌枠ノート</button><button data-mode="aivoice">AIキャラ・声</button></nav>
+<div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
 <section class="shell recbar" aria-label="録音"><div class="content recbar-in">
  <div class="prog-row"><div class="prog-chips" id="progChips" role="tablist" aria-label="番組"></div><button class="btn gold" type="button" id="progEdit" hidden>番組の設定</button></div>
  <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><div class="head-btns"><button class="pill" type="button" id="monBtn" title="ヘッドホン・スピーカーから出す音のオン／オフ（録音には影響しません）">モニター音：オン</button><button class="pill danger" id="stopAll">■ 全音停止</button></div></div>
@@ -1152,32 +1204,63 @@ lookPaint(look);
   <div class="meter-row"><span>録音</span><div class="meter"><i id="mixMeter"></i><b id="mixPeak"></b></div><output id="mixDb">-∞ dB</output></div>
  </div>
 </div></section>
-<div class="studio-workspace">
-<div>
-<section class="studio-card stage-card">
-<div class="studio-row stage-tools"><button id="studioMic" class="accent">マイクを接続</button><button id="studioMute" aria-pressed="false">マイク：オン</button><button id="studioTest">口パクを試す</button><button id="studioOutput">映像だけ別窓</button><button id="studioFullscreen">全画面</button><span id="studioState" class="studio-state">マイク未接続</span></div>
-<div class="studio-meter" aria-label="マイク音量"><i id="studioMeter"></i></div>
-<div class="stage-preview" id="stagePreview"><div class="stage-head"><small class="stream-only">プレビュー（OBSには「配信用の映像ウインドウ」を取り込みます）</small><button type="button" id="pvPin" class="pv-pin" aria-pressed="true">📌 上に固定：オン</button><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
-<p class="outwin-note">配信用の映像ウインドウを表示中のため、ここのプレビューは止めています。<button type="button" id="pvToggle">プレビューも表示する</button></p><div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas></div></div>
-<div class="rec-panel" aria-label="映像の収録"><div class="rec-main"><button id="studioRec" class="rec-big rec-start" type="button">● 収録開始</button><button id="studioStop" class="rec-big rec-stop" type="button" disabled>■ 停止して保存</button></div><div class="rec-extra"><button id="studioRetake" type="button" disabled title="今の収録を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button><button id="studioDiscard" class="discard" type="button" disabled title="収録を止めて、保存せずに捨てます">✕ 停止して破棄</button></div><div class="rec-sub"><span id="studioRecTime" role="status" class="rec-time">未収録</span><label class="rec-opt">番組<select id="vidProg" aria-label="番組（初期BGM）"></select></label><label class="rec-opt">形式<select id="vidFormat"><option value="mp4">MP4（写真アプリ向け）</option><option value="webm">WebM</option></select></label><label class="rec-opt">画質<select id="vidQuality"><option value="8">高画質</option><option value="16">最高画質（容量大）</option><option value="4.5">標準</option></select></label></div><p class="rec-note" id="vidProgNote"></p><p class="rec-note" id="studioVideoInfo"></p><div id="studioVideos" class="studio-tray" aria-label="収録した動画"></div></div>
-<div class="live-console" id="liveConsole"><div class="onair-head"><span class="onair-lamp" aria-hidden="true"></span><strong id="studioSceneState" role="status">配信中</strong></div><div class="scene-switch" role="group" aria-label="配信の状態"><button type="button" data-scene="live" class="selected" aria-pressed="true">配信中</button><button type="button" data-scene="standby" aria-pressed="false">準備中</button><button type="button" data-scene="away" aria-pressed="false">離席中</button><button type="button" data-scene="end" aria-pressed="false">配信終了</button></div><div class="sound-stop"><div class="sound-now"><span aria-hidden="true">♪</span><span id="consoleBgmName">BGM：なし</span></div><label class="console-bgm-pick">流すBGM<select id="consoleBgmSel"></select></label><button type="button" class="stop-btn" id="consoleBgmStop" disabled>▶ 初期BGM</button><button type="button" class="stop-btn stop-all" id="consoleAllStop">■ 効果音とBGMをすべて止める</button></div></div>
+<div class="deck" id="deck">
+<aside class="deck-side" id="deckSide" aria-label="映像と、いつも使う操作">
+<div class="stage-preview" id="stagePreview"><div class="stage-head"><small class="stream-only">プレビュー（OBSには「配信用の映像ウインドウ」を取り込みます）</small><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
+<p class="outwin-note">配信用の映像ウインドウを表示中のため、ここのプレビューは止めています。<button type="button" id="pvToggle">プレビューも表示する</button></p><div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas></div><span id="studioRecTime" role="status" class="rec-time" data-modes="video">未収録</span></div>
+<div class="deck-strip" id="deckStrip"><button id="studioRec" class="rec-big rec-start" data-modes="video" type="button">● 収録開始</button><button id="studioStop" class="rec-big rec-stop" data-modes="video" type="button" disabled>■ 停止して保存</button><div class="strip-scene" id="sceneSlotStrip"></div><button id="studioMute" type="button" data-modes="video" aria-pressed="false">マイク：オン</button><button type="button" class="stop-btn stop-all" id="consoleAllStop" title="効果音・ボイス・環境音・BGMをすべて止めます">■ 全音停止</button></div>
+<p class="perf-hint" id="perfHint" hidden>動きが重くなっています。<button type="button" id="perfHintGo">軽くする</button><button type="button" id="perfHintNo">このまま</button></p>
+</aside>
+<div class="deck-main">
+<nav class="studio-tabs deck-nav" id="deckNav" aria-label="操作の切り替え">
+<button type="button" data-deck="kikaku" data-mode="live" data-level-of="live"><i aria-hidden="true">🎲</i>企画</button>
+<button type="button" data-deck="se" data-mode="live" data-level-of="live"><i aria-hidden="true">🔊</i>効果音</button>
+<button type="button" data-deck="bgm" data-mode="live" data-level-of="live"><i aria-hidden="true">🎵</i>BGM</button>
+<button type="button" data-deck="chara" data-mode="live" data-level-of="live"><i aria-hidden="true">😀</i>表情</button>
+<button type="button" data-deck="tools" data-mode="live" data-level-of="live"><i aria-hidden="true">🎛</i><span data-modes="video">収録</span><span data-modes="stream">接続</span></button>
+<button type="button" data-deck="all" data-mode="live" data-level-of="live"><i aria-hidden="true">☰</i>全部</button>
+<button type="button" data-deck="plan" data-mode="plan" data-level-of="prep"><i aria-hidden="true">📝</i>企画の準備</button>
+<button type="button" data-deck="songs" data-mode="songs" data-level-of="prep"><i aria-hidden="true">🎤</i>歌枠ノート</button>
+<button type="button" data-deck="aivoice" data-mode="aivoice" data-level-of="prep"><i aria-hidden="true">🤖</i>AIキャラ・声</button>
+</nav>
+<div class="deck-panels" id="deckPanels">
+<section class="studio-card deck-panel" data-panel="kikaku" aria-label="企画">
 <section class="pon-bar" id="ponBar" aria-label="企画"><div class="pon-head"><strong>企画</strong><button type="button" class="pon-clear" id="ponClear">画面から消す</button></div>
 <div class="pon-grid" id="ponGrid" role="group" aria-label="企画"></div>
 <div class="pon-sub"><button type="button" id="ponSlotRe" hidden>🎰 役柄だけ引き直す</button><button type="button" id="ponSlotRb" hidden>🎰 セリフだけ引き直す</button></div>
 <p class="pon-now" id="ponNow" aria-live="polite"></p>
-<p class="studio-mini" id="ponEmpty" hidden>企画卓のセリフ帳・アプリを並べるに登録すると、ここに並びます。</p>
-<details class="pon-opts"><summary>並べるもの・アプリの開き方</summary><label class="studio-field">セリフ帳のシチュエーション<select id="ponSerif"></select></label><div class="pon-picks" id="ponPick"></div><div class="studio-row"><button type="button" id="ponAll">すべて並べる</button><label class="studio-field">アプリの開き方<select id="ponApp"><option value="window">アプリと立ち絵のウインドウ（OBS用）で開く</option><option value="page">企画卓の中で開く</option></select></label></div><p class="studio-mini">シチュエーションのボタンは、押すたびにそのシチュエーションのセリフを1つ出します。全部出し終えるまで同じセリフは出ません。セリフ・役柄は企画卓のセリフ帳で前もって登録します。</p></details>
+<p class="studio-mini" id="ponEmpty" hidden>「🛠 準備」の「企画の準備」でセリフ帳・お題帳・アプリを登録すると、ここにボタンが並びます。</p>
+<details class="pon-opts"><summary>ここに並べるものを選ぶ・アプリの開き方</summary><label class="studio-field">セリフ帳のシチュエーション<select id="ponSerif"></select></label><div class="pon-picks" id="ponPick"></div><div class="studio-row"><button type="button" id="ponAll">すべて並べる</button><label class="studio-field">アプリの開き方<select id="ponApp"><option value="window">アプリと立ち絵のウインドウ（OBS用）で開く</option><option value="page">「企画の準備」の中で開く</option></select></label></div><p class="studio-mini">シチュエーションのボタンは、押すたびにそのシチュエーションのセリフを1つ出します。全部出し終えるまで同じセリフは出ません。セリフ・役柄は「🛠 準備」の「企画の準備」のセリフ帳で、前もって登録します。</p></details>
 </section>
+<p class="pon-hidden" id="ponHidden" hidden></p>
 <section class="topic-hand" id="topicHand" hidden aria-label="お題の手元カード"><div class="pon-head"><strong id="topicHandTitle">お題</strong><span class="studio-mini">手元だけに表示（配信画面には出ません）</span></div>
 <div class="topic-hand-body" id="topicHandBody"></div>
 <div class="studio-row"><button type="button" id="topicHandPrev">◀ 前</button><button type="button" id="topicHandNext">次へ ▶</button><button type="button" id="topicHandShow" class="accent">📌 配信画面に貼り出す</button><button type="button" id="topicHandHide">下げる</button><label class="studio-field topic-st">状態<select id="topicHandSt"><option value="cand">候補</option><option value="adopt">採用・準備中</option><option value="rec">収録済み・未公開</option><option value="pub">公開済み</option><option value="hold">保留</option><option value="rej">不採用</option><option value="used">使った</option></select></label></div>
 </section>
+</section>
+<main class="shell in-workspace" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span><label class="pad-size">ボタンの大きさ<select id="padSize"><option value="s">小</option><option value="m">中</option><option value="l">大</option></select></label></div>
+<section data-panel="se" class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
+<section data-panel="se" class="section sec-join"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
+<section data-panel="se" class="section sec-join"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="bgm-tabs voice-tabs" id="voiceTabs" role="tablist" aria-label="ボイスの名義" hidden></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
+<section data-panel="bgm" class="section"><div class="section-title"><h2>環境音 <span>04 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
+<section data-panel="bgm" class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="bgm-now-row"><div class="sound-now"><span aria-hidden="true">♪</span><span id="consoleBgmName">BGM：なし</span></div><button type="button" class="stop-btn" id="consoleBgmStop" disabled>▶ 初期BGM</button></div><div class="live-prog" id="liveProgSlot" aria-label="番組"><span class="live-prog-label">番組</span></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは「標準」と名義ごとのタブです。名義専用のタブを開いているときに名義を切り替えると、その名義のタブに移ります。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
+</div></main>
+<section class="studio-card deck-panel" data-panel="chara" aria-label="表情・キャラ・動き">
 <div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook" class="ghost-btn">⚙ キャラの設定へ</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button><button data-motion="wander" aria-pressed="false">右往左往</button><button data-motion="iya" aria-pressed="false">いやいや</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
 <div class="studio-row drag-row"><button type="button" id="dragFree" class="drag-btn" aria-pressed="false">✋ ドラッグで動かす：オフ</button><span class="studio-mini" id="dragHint">オンにすると、プレビューの立ち絵・マスコット・スロット・ルーレット・サイコロを指やマウスで動かせます</span></div>
 <details class="scene-details" id="quickTune"><summary>見た目をその場で調整（開いているあいだも、ドラッグで動かせます）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">この欄を閉じると位置はロックされ、プレビューに触れても動きません。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
 </section>
-<section class="studio-card mode-section" id="studioPlan" style="margin-top:16px">
-<p class="studio-kicker">PLANNING / AI HANDOFF</p><h2>企画卓</h2>
+<section class="studio-card deck-panel" data-panel="tools" aria-label="収録・接続">
+<div class="rec-panel" aria-label="映像の収録" data-modes="video"><h3>動画の収録</h3><div class="rec-extra"><button id="studioRetake" type="button" disabled title="今の収録を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button><button id="studioDiscard" class="discard" type="button" disabled title="収録を止めて、保存せずに捨てます">✕ 停止して破棄</button></div><h3 class="vid-h">収録した動画</h3><p class="rec-note">止めた動画はこのブラウザの中に残ります。収録中も数秒ごとに書き足しているので、途中で画面が閉じても、次に開いたときに取り戻します。</p><div id="studioVideos" class="studio-tray" aria-label="収録した動画"></div><p class="rec-note" id="studioVideoInfo"></p><h3 class="vid-h">収録の設定</h3><div class="rec-sub"><label class="rec-opt">番組<select id="vidProg" aria-label="番組（初期BGM）"></select></label><label class="rec-opt">形式<select id="vidFormat"><option value="mp4">MP4（写真アプリ向け）</option><option value="webm">WebM</option></select></label><label class="rec-opt">画質<select id="vidQuality"><option value="8">高画質</option><option value="16">最高画質（容量大）</option><option value="4.5">標準</option><option value="2.5">軽い（容量小・低スペック向け）</option></select></label></div><p class="rec-note" id="vidProgNote"></p></div>
+<div class="live-console" id="liveConsole"><h3>場面</h3><div class="onair-head"><span class="onair-lamp" aria-hidden="true"></span><strong id="studioSceneState" role="status">配信中</strong></div><div id="sceneSlotPanel"><div class="scene-switch" role="group" aria-label="配信の状態"><button type="button" data-scene="live" class="selected" aria-pressed="true">配信中</button><button type="button" data-scene="standby" aria-pressed="false">準備中</button><button type="button" data-scene="away" aria-pressed="false">離席中</button><button type="button" data-scene="end" aria-pressed="false">配信終了</button></div></div></div>
+<div class="tools-box"><h3>マイク・映像の窓</h3>
+<div class="studio-row stage-tools"><button id="studioMic" class="accent">マイクを接続</button><button id="studioTest">口パクを試す</button><button id="studioOutput">映像だけ別窓</button><button id="studioFullscreen">全画面</button><span id="studioState" class="studio-state">マイク未接続</span></div>
+<div class="studio-meter" aria-label="マイク音量"><i id="studioMeter"></i></div>
+<div class="studio-row"><button type="button" id="pvPin" class="pv-pin" aria-pressed="true">📌 上に固定：オン</button><small class="studio-mini" data-modes="stream">OBSには「配信用の映像ウインドウ」を取り込みます</small></div></div>
+</section>
+<section class="studio-card mode-section deck-panel" id="studioPlan" data-panel="plan">
+<h2>企画の準備</h2><p class="studio-note plan-lead">見出しを押すと開きます。ここで登録したものが、本番の「🎲 企画」にボタンとして並びます。</p>
+<details class="plan-group" data-pg="prog"><summary><h3>番組・企画の設定</h3><small>企画タイトル・AIに渡す設定・台本</small></summary>
 <div class="studio-inline"><label class="studio-field">企画タイトル<input type="text" id="planTitle" placeholder="例：彼岸リオと四季の喫茶便り"></label><label class="studio-field">進行中のコーナー<input type="text" id="planCue" placeholder="例：お便り紹介 → 即興トーク"></label></div>
 <label class="studio-field">AIに渡す設定・依頼<textarea id="planPrompt" class="studio-textarea" placeholder="人格設定、話し方、今回のテーマ、回答の長さなど"></textarea></label>
 <div class="studio-row"><button id="planCopy" class="accent">企画文をコピー</button><a href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPTを開く</a><a href="https://claude.ai/" target="_blank" rel="noopener">Claudeを開く</a></div>
@@ -1185,8 +1268,9 @@ lookPaint(look);
 <div class="studio-row"><button id="planNext">次の段落</button><button id="planReset">先頭に戻る</button><label><input id="planShow" type="checkbox"> 進行中の段落を映像にも表示</label></div>
 <div id="planCurrent" class="studio-live-box" aria-live="polite">台本を入力すると、段落ごとに確認できます。</div>
 <p class="studio-note">台本は空行で区切ります。文字のない映像が必要なときは表示チェックを外してください。AI音声の再生・自動口パク連動は今後の拡張です。</p>
+</details>
 <div class="app-dock play-dock">
-<h3>セリフ帳</h3>
+<details class="plan-group" data-pg="serif"><summary><h3>セリフ帳</h3><small>場面ごとのセリフをためて、吹き出しで出す</small></summary>
 <p class="studio-note">シチュエーションごとにセリフをためておき、押すたびに配信画面へ吹き出しで出します。セリフは1行に1つ。AIに考えてもらうときは「AIに頼む文をコピー」を使い、返ってきたセリフを貼り付けてください（上の「AIに渡す設定・依頼」の内容も一緒に入ります）。</p>
 <div class="studio-row"><label class="studio-field app-url">新しいシチュエーション<input id="serifNew" type="text" maxlength="80" placeholder="例：雨の日に傘を忘れたあなたを迎えに来た"></label><button type="button" id="serifAdd">＋ 作る</button></div>
 <div class="studio-inline"><label class="studio-field">シチュエーション<select id="serifSel"></select></label><label class="studio-field">AIに頼む数<select id="serifCount"><option>5</option><option selected>10</option><option>20</option><option>30</option></select></label></div>
@@ -1202,7 +1286,8 @@ lookPaint(look);
 <div class="studio-row play-big"><button type="button" id="serifRandom" class="accent">🎲 ランダムに出す</button><button type="button" id="serifPrev">← 前</button><button type="button" id="serifNext">次 →</button><button type="button" id="serifHide">吹き出しを消す</button></div>
 <p class="studio-mini" id="serifNow"></p>
 <div class="studio-inline"><label class="studio-field">吹き出しの位置<select id="serifPos"><option value="bottom">下</option><option value="top">上</option><option value="left">左下（字幕の上）</option><option value="right">右下（字幕の上）</option></select></label><label class="studio-field"><input type="checkbox" id="serifName"> 名義の名前を添える</label></div>
-<h3>スロット（役柄×セリフ）</h3>
+</details>
+<details class="plan-group" data-pg="slot"><summary><h3>スロット（役柄×セリフ）</h3><small>役柄とセリフをくじ引きで出す</small></summary>
 <p class="studio-note">筋肉室スロットと同じ2段の抽選です。シチュエーション（役柄）をくじで引き、その中のセリフをくじで引きます。どちらも、全部出し終えるまで同じものを繰り返しません。下で選んだシチュエーションだけを対象にでき、何も選ばなければ、セリフのあるものすべてが対象です。</p>
 <div class="studio-row play-big"><button type="button" id="slotSpin" class="accent">🎰 抽選開始</button><button type="button" id="slotRe">役柄だけ引き直す</button><button type="button" id="slotRb">セリフだけ引き直す</button><button type="button" id="slotHide">画面から消す</button></div>
 <p class="studio-mini" id="slotNow" aria-live="polite"></p>
@@ -1233,7 +1318,8 @@ lookPaint(look);
 <p class="studio-mini" id="slotBulkInfo" aria-live="polite"></p>
 <ul class="sb-list aud-log" id="slotBulkPrev" aria-label="足す内容"></ul>
 </details>
-<h3>お題帳（議題・お悩み相談・ラブレター・コメント100本ノック）</h3>
+</details>
+<details class="plan-group" data-pg="topic"><summary><h3>お題帳</h3><small>議題・お悩み相談・ラブレター・コメント100本ノック</small></summary>
 <p class="studio-note">AIに企画のお題を作ってもらい、一覧（台帳）にためて、配信画面に貼り出します。台帳にある題は、次に頼むときに「既出」として依頼文に添えるので、重なりを避けられます。お題帳は企画ごとに作れます（30冊まで・1冊2000件まで）。架空の相談・手紙・コメントは、架空とわかる見出しで出します。</p>
 <div class="studio-inline"><label class="studio-field">使うお題帳<select id="topicDeck"></select></label>
 <label class="studio-field">新しく作る<select id="topicPreset"><option value="talk">番組の議題</option><option value="consult">架空のお悩み相談</option><option value="letter">ヤンデレラブレター</option><option value="gachi">架空コメント100本ノック（ガチ恋）</option><option value="chuuni">架空コメント100本ノック（厨二病）</option><option value="free">自由なお題</option></select></label></div>
@@ -1262,11 +1348,12 @@ lookPaint(look);
 <ul class="sb-list topic-list" id="topicList"></ul>
 <div class="studio-row"><button type="button" id="topicCopyList">一覧をコピー（Markdown）</button><button type="button" id="topicExport">このお題帳を書き出す（JSON）</button><button type="button" id="topicImport">お題帳を読み込む</button><input type="file" id="topicFile" accept=".json,application/json" hidden></div>
 </div>
-<h3>ルーレット・サイコロ</h3>
+</details>
+<details class="plan-group" data-pg="wheel"><summary><h3>ルーレット・サイコロ</h3><small>項目・目の数・画面の位置と大きさ</small></summary>
 <div class="studio-inline"><label class="studio-field">サイコロの数<select id="diceN"><option value="1">1個</option><option value="2">2個</option><option value="3">3個</option></select></label><label class="studio-field">目の数<select id="diceF"><option value="6">6面（ふつうのサイコロ）</option><option value="4">4面</option><option value="8">8面</option><option value="10">10面</option><option value="12">12面</option><option value="20">20面</option><option value="100">1〜100</option></select></label><label class="studio-field">画面の位置<select id="playPos"><option value="center">中央</option><option value="left">左</option><option value="right">右</option></select></label></div>
 <label class="studio-field">ルーレットの項目（1行に1つ・2〜24個）<textarea id="wheelItems" class="studio-textarea" rows="4" placeholder="例：&#10;歌う&#10;セリフを言う&#10;罰ゲーム&#10;もう一回"></textarea></label>
 <details class="sb-opts" id="layBox"><summary>お題カード・スロット・ルーレット・サイコロの位置と大きさ</summary>
-<p class="studio-mini" id="layWhere"></p>
+<p class="studio-mini" id="layWhere"></p><p class="studio-mini">この欄を開いているあいだは、上の映像の中をドラッグしても動かせます。</p>
 <div class="studio-inline"><label class="studio-field">動かすもの<select id="layKind"><option value="slot">🎰 スロット</option><option value="wheel">🎡 ルーレット</option><option value="dice">🎲 サイコロ</option><option value="topic">📌 お題カード</option></select></label></div>
 <div class="studio-inline"><label class="studio-field">横（左 0 ←→ 右 100） <output id="layXVal"></output><input id="layX" type="range" min="0" max="100" step="1"></label>
 <label class="studio-field">縦（上 0 ←→ 下 100） <output id="layYVal"></output><input id="layY" type="range" min="0" max="100" step="1"></label>
@@ -1277,9 +1364,10 @@ lookPaint(look);
 <div class="studio-row play-big"><button type="button" id="diceRoll" class="accent">🎲 サイコロを振る</button><button type="button" id="wheelSpin" class="accent">🎡 ルーレットを回す</button><button type="button" id="playClear">画面から消す</button></div>
 <p class="studio-mini" id="playResult" aria-live="polite"></p>
 <p class="studio-mini">セリフの吹き出し・サイコロ・ルーレットは、配信画面・配信用ウインドウ・アプリと立ち絵のウインドウ・収録する動画に映ります。出目と止まる項目は、毎回ブラウザの乱数で決めます。</p>
+</details>
 </div>
-<div class="app-dock">
-<h3>アプリを並べる</h3>
+<details class="app-dock plan-group" data-pg="apps"><summary><h3>アプリを並べる</h3><small>自作のゲームやアプリを、立ち絵と並べて映す</small></summary>
+
 <p class="studio-note">AITuberアプリ、セリフを出すゲームなど、HTMLで作ったアプリをここで開けます。HTMLファイルを登録するか、公開しているページのURLを登録してください。下の「別ウインドウで開く」で、アプリの画面に立ち絵（配信画面と同じ絵）を重ねた、OBSに取り込む用のウインドウを作れます。登録したアプリのファイルは、このブラウザ内に保存されます（.live には入りません）。</p>
 <div class="studio-row app-chips" id="appChips"></div>
 <div class="studio-row"><button type="button" id="appAddFile">＋ HTMLファイルを登録</button><input id="appFile" type="file" accept=".html,.htm,text/html" hidden><label class="studio-field app-url">URLで登録<input id="appUrl" type="url" placeholder="https://…"></label><button type="button" id="appAddUrl">URLを登録</button></div>
@@ -1301,14 +1389,14 @@ lookPaint(look);
 <p class="studio-mini" id="appBgNote" hidden>重ねるときは、設定の「背景」を「透過」にすると、立ち絵だけがアプリの上に重なります（いまの背景のままだと、背景ごと四角く重なります）。</p></div>
 <div class="studio-row"><button type="button" id="appWinBtn" class="accent">アプリと立ち絵を別ウインドウで開く（OBS用）</button></div>
 <details class="bridge-dev"><summary>オトノハ連携（アプリを作る人向け）</summary>
-<p class="studio-note">企画卓に登録したアプリは、ブラウザ標準の postMessage で「オトノハ連携 1」の決まりに沿って伝言を送ると、配信画面にセリフ・サイコロ・ルーレット・コメントを出したり、歌い始め・場面の切り替え・配信者が話したことなどの出来事を受け取ったりできます。自分のアプリにも、ほかの人が作ったアプリにも、同じ決まりで対応できます。</p>
+<p class="studio-note">「企画の準備」に登録したアプリは、ブラウザ標準の postMessage で「オトノハ連携 1」の決まりに沿って伝言を送ると、配信画面にセリフ・サイコロ・ルーレット・コメントを出したり、歌い始め・場面の切り替え・配信者が話したことなどの出来事を受け取ったりできます。自分のアプリにも、ほかの人が作ったアプリにも、同じ決まりで対応できます。</p>
 <div class="studio-row"><button type="button" id="bridgeDoc">決まりの説明を保存（.md）</button><button type="button" id="bridgeSample">見本アプリを保存（.html）</button></div>
 <p class="studio-mini">見本アプリを「HTMLファイルを登録」で登録すると、そのまま連携を試せます。</p>
 <pre class="bridge-log" id="bridgeLog" aria-live="polite"></pre>
 </details>
-</div>
-<div class="app-dock aud-dock">
-<h3>AI観客席</h3>
+</details>
+<details class="app-dock aud-dock plan-group" data-pg="aud"><summary><h3>AI観客席</h3><small>AIのリスナーにコメントしてもらう（手渡し）</small></summary>
+
 <p class="studio-note">最大5人の架空のAIリスナーが、配信者の発言や配信の出来事（歌い始めた曲、セリフ、サイコロ・ルーレットの結果、場面の切り替え）にコメントします。いまは「手渡し」でつなぎます：依頼文をコピーしてChatGPT／Claudeに貼り、返ってきたJSONを貼り戻すと、配信画面の端にコメントが流れます。人物の作りと依頼文・検証の規則は、AI観客席 0.8 と同じです。</p>
 <div class="studio-inline"><label class="studio-field">つなぎ先<select id="audVia"><option value="handoff">手渡し（ChatGPT／Claudeのプラン内の会話に貼る）</option><option value="soon" disabled>このPCのAI（Ollama・LM Studio）…準備中</option><option value="soon2" disabled>API…準備中</option></select></label><label class="studio-field">配信者の名前（空欄なら名義の名前）<input id="audStreamer" type="text" maxlength="40"></label></div>
 <label class="studio-field">配信の話題<input id="audTopic" type="text" maxlength="2000" placeholder="例：秋の夜長の雑談と歌枠"></label>
@@ -1335,9 +1423,9 @@ lookPaint(look);
 </div>
 </details>
 <ol class="sb-list aud-log" id="audLog" aria-label="これまでのコメント"></ol>
-</div>
+</details>
 </section>
-<section class="studio-card mode-section" id="studioSongs" style="margin-top:16px"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore">
+<section class="studio-card mode-section deck-panel" id="studioSongs" data-panel="songs"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore">
 <ol class="sb-flow"><li><b>曲リスト</b>：曲と、カラオケ音源のURLを登録しておく</li><li><b>セトリ</b>：今日歌う曲を並べる</li><li><b>本番</b>：「▶ 音源」でオケを開き、歌い始めに「♪ 歌い始め」</li><li><b>配信のあと</b>：時刻を直して概要欄に。歌枠管理シートへも送れる</li></ol>
 <h3 class="kara-h">① 曲リスト <small id="repCount"></small></h3>
 <div class="sb-find"><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・音源・メモで探す" aria-label="曲リストを探す"><label class="studio-field sb-sort">並び<select id="repSort"><option value="recent">最近歌った順</option><option value="name">曲名順</option><option value="count">よく歌う順</option></select></label></div>
@@ -1395,7 +1483,7 @@ lookPaint(look);
 <label class="studio-field"><input id="karaSuppress" type="checkbox" checked> 取り込んだタブ側では音を鳴らさない（アプリのモニター音で聞く。二重に聞こえるのを防ぎます。次に取り込むときから反映）</label>
 <label class="studio-field"><input id="karaAutoFade" type="checkbox" checked> 伴奏が鳴り始めたら（歌い始めたら）BGMと効果音を自動でフェードアウトする</label><label class="studio-field"><input id="karaFadeEnv" type="checkbox"> 環境音（雨音など）も一緒に止める</label><div class="studio-row"><button id="karaSingStart" type="button">歌い始め：BGM・効果音をフェードアウト</button></div><p class="studio-note">自動のフェードアウトは、取り込んだ伴奏タブの音が約2秒以上の無音のあとに鳴り始めたときに働きます。購入音源をアプリの外で流すときなど、伴奏を取り込んでいない場合は「歌い始め」ボタンを使います。</p><p class="studio-note">選ぶ画面では「Chromeタブ」（Edgeでは「タブ」）から伴奏のタブを選び、「タブの音声も共有する」をオンにします。パソコン版のChrome・Edge向けの機能で、スマートフォンでは使えません。伴奏は効果音・BGMと同じく自動で小さくなる処理（ダッキング）の対象外です。モニター音がオフ（スピーカー判定など）のときは、上の「タブ側では鳴らさない」をオンにしていると伴奏が聞こえません。</p></div>
 </div></section>
-<section class="studio-card mode-section" id="studioAiVoice" style="margin-top:16px">
+<section class="studio-card mode-section deck-panel" id="studioAiVoice" data-panel="aivoice">
 <p class="studio-kicker">AI CHARACTER / VOICE</p>
 <h2>AIキャラ・声</h2>
 <p class="studio-note">AIキャラクター（たとえば彼岸リオ）に話してもらうための、声の準備の場所です。声の合成エンジン（AivisSpeech など）とのつなぎ込みと、AIキャラクターの口パクは、これから順に足していきます。</p>
@@ -1418,15 +1506,28 @@ lookPaint(look);
 <div class="studio-row"><button type="button" id="vrExport" class="accent">録音をZIPで書き出す</button></div>
 </section>
 </div>
-<main class="shell in-workspace" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span><label class="pad-size">ボタンの大きさ<select id="padSize"><option value="s">小</option><option value="m">中</option><option value="l">大</option></select></label></div>
-<section class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
-<section class="section sec-join"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
-<section class="section sec-join"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="bgm-tabs voice-tabs" id="voiceTabs" role="tablist" aria-label="ボイスの名義" hidden></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
-<section class="section"><div class="section-title"><h2>環境音 <span>04 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
-<section class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="live-prog" id="liveProgSlot" aria-label="番組"><span class="live-prog-label">番組</span></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは「標準」と名義ごとのタブです。名義専用のタブを開いているときに名義を切り替えると、その名義のタブに移ります。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
-</div></main>
 </div>
-<details class="studio-card studio-help"><summary>使い方</summary><p data-modes="stream"><strong>配信モード（PC＋OBS）</strong>：このアプリは映像と、効果音・BGM・環境音だけを作ります。マイクの声は口パクの判定にだけ使い、アプリからは出しません。OBSでは「配信用の映像ウインドウ」をウィンドウキャプチャで取り込み、音はブラウザの音（効果音・BGM）とマイク（AG03など）を別々に取り込みます。録画はOBS側で行ってください。</p><p data-modes="video"><strong>動画モード（スマホ・タブレット向け）</strong>：立ち絵とBGM・効果音つきの動画を、この画面で収録して保存します。マイクの声も動画に入ります。収録した動画はこのブラウザ内に最大30本まで残り、あとから保存・共有・削除できます。各動画の横には「ブラウザ内に保存」「一時保持のみ」などの状態が出ます。30本を超えた分は古い動画を自動では消さず一時保持になるので、古い動画を削除してから「ブラウザ内に保存を再試行」を押してください。ブラウザ内の動画は「すべてを書き出す（.live）」には入りません。</p><p data-modes="radio"><strong>音声モード</strong>：ラジオのように声とBGM・効果音を録音します。</p><p>準備：「設定」の「表情と演出」で立ち絵を登録（4枚の表情差分か1枚）→ マイクをつなぐ → 声を出して「口が開く音量」を調整 → 効果音・BGMを登録。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p><p>画像・台本・設定はこの端末のブラウザ内に保存します。別のブラウザや別のURLへは自動で引き継がないので、「設定」の「すべてを書き出す（.live）」で書き出してから移してください。</p></details>
+</div>
+<details class="studio-card studio-help"><summary>使い方</summary>
+<h3>画面の見方</h3>
+<ul class="help-list">
+<li><strong>▶ 本番</strong>：配信・収録の最中に押すものだけを並べています。映像と、いつも使うボタンの帯は、下へ進めても上に残ります。</li>
+<li><strong>タブ</strong>：🎲 企画（スロット・ルーレット・サイコロ・セリフ・お題・アプリ）／🔊 効果音／🎵 BGM（環境音も）／😀 表情（キャラ・動き）／🎛 収録・接続／☰ 全部。開いていたタブは、このブラウザが覚えます。</li>
+<li><strong>🛠 準備</strong>：前もって登録するものです。企画の準備（セリフ帳・スロット・お題帳・ルーレット・アプリ・AI観客席）、歌枠ノート、AIキャラ・声。ここで登録したものが、本番の「🎲 企画」にボタンとして並びます。</li>
+<li><strong>■ 全音停止</strong>：効果音・ボイス・環境音・BGMをすべて止めます。</li>
+</ul>
+<p data-modes="stream"><strong>配信（PC＋OBS）</strong>：このアプリは映像と、効果音・BGM・環境音だけを作ります。マイクの声は口パクの判定にだけ使い、アプリからは出しません。OBSでは「配信用の映像ウインドウ」（🎛 接続 のタブにあります）をウィンドウキャプチャで取り込み、音はブラウザの音（効果音・BGM）とマイク（AG03など）を別々に取り込みます。録画はOBS側で行ってください。帯の「配信中・準備中・離席中・配信終了」で、画面を切り替えます。</p>
+<div data-modes="video"><p><strong>動画（スマホ・タブレット向け）</strong>：立ち絵とBGM・効果音つきの動画を、この画面で収録します。マイクの声も動画に入ります。</p>
+<ul class="help-list">
+<li>帯の「● 収録開始」で始め、「■ 停止して保存」で止めます。止めると「🎛 収録」のタブが開き、動画の一覧に出ます。</li>
+<li>収録中のデータは、数秒ごとにこのブラウザの中へ書き足しています。途中で画面が閉じたり固まったりしても、次に開いたときに、そこまでの分を動画として取り戻します（終わりの数秒は欠けることがあります）。</li>
+<li>パソコン・Android では、止めると同時にファイルのダウンロードも始めます。iPhone・iPad では「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります。</li>
+<li>ブラウザの中の動画は、サイトデータを消すと一緒に消えます。残したい動画は、ファイルか写真アプリへ書き出してください。「すべてを書き出す（.live）」には入りません。</li>
+<li>動きが重いときは、「設定」の「映像のなめらかさ」を15fpsに、「軽量モード」をオンに、収録の「画質」を「軽い」にすると、負担が減ります。</li>
+</ul></div>
+<p data-modes="radio"><strong>音声（ラジオ）</strong>：ラジオのように声とBGM・効果音を録音します。</p>
+<p>はじめに：「設定」の「表情と演出」で立ち絵を登録（4枚の表情差分か1枚）→ マイクをつなぐ → 声を出して「口が開く音量」を調整 → 効果音・BGMを登録。同じキャンバスサイズ・同じ位置で書き出したPNGを使うと、表情の切り替えで位置がずれません。</p>
+<p>画像・台本・設定はこの端末のブラウザ内に保存します。別のブラウザや別のURLへは自動で引き継がないので、「設定」の「すべてを書き出す（.live）」で書き出してから移してください。</p></details>
 </section>
 
 
@@ -7159,7 +7260,9 @@ let recbarSeen=false;
 function setMini(on){
   const audio=rec.state!=='idle',
     video=!!window.__otonohaVideoRec?.();
-  on=(audio&&!(recbarSeen&&document.body.dataset.page!=='settings'&&document.body.dataset.app==='radio'))||video;
+  // 映像の収録中の小さな欄は、収録のボタンが上に残っていないときだけ出す（設定の画面・準備の画面・映像を上に残していないとき）
+  const stripUp=document.body.dataset.page!=='settings'&&!!window.__otonohaDeck?.sideSticky();
+  on=(audio&&!(recbarSeen&&document.body.dataset.page!=='settings'&&document.body.dataset.app==='radio'))||(video&&!stripUp);
   if(miniOn!==on){
     miniOn=on;
     $('#miniBar').hidden=!on
@@ -7190,6 +7293,8 @@ function gotoBgm(){
   }
 
   const sec=$('#bgmTabs').closest('.section');
+  // 配信・動画では、BGM のタブを開いてから動かす
+  if(document.body.dataset.app==='live'&&window.__otonohaDeck){window.__otonohaDeck.show('bgm',sec);return}
   const y=sec.getBoundingClientRect().top+scrollY;
 
   requestAnimationFrame(()=>{
@@ -7284,43 +7389,21 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
   navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
 })();
 
-const CONSOLE_BGM_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_console_bgm';
-let consoleBgmSig='';
-function consoleBgm(){
-  let id='';
-  try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
-  // 0.9.9：ステージの「流すBGM」の選択欄は出さない（BGMは音のお品書きから流す）。▶ は番組の初期BGMだけ
-  if(document.getElementById('consoleBgmSel')?.offsetParent===null)return progBgm()||null;
-  return (id&&cfg.bgms.find(b=>b.id===id&&b.assetId))||progBgm()||null
-}
-function renderConsoleBgm(){
-  if(!cfg)return;
-  const sel=$('#consoleBgmSel'),pb=progBgm(),rank=b=>b.tabIndex===0?0:b.tabIndex===bgmCurTab?1:2,
-    list=cfg.bgms.filter(b=>b.assetId).sort((a,b)=>rank(a)-rank(b)||a.tabIndex-b.tabIndex||a.slotIndex-b.slotIndex);
-  let id='';
-  try{id=localStorage.getItem(CONSOLE_BGM_KEY)||''}catch(_){}
-  const sig=JSON.stringify([id,pb?.id,bgmCurTab,cfg.bgmTabs,list.map(b=>[b.id,b.name,b.tabIndex])]);
-  if(sig===consoleBgmSig)return;
-  consoleBgmSig=sig;
-  sel.replaceChildren(new Option(pb?'番組の初期BGM（'+pb.name+'）':'番組の初期BGM（未設定）',''),...list.map(b=>new Option((cfg.bgmTabs.length>1?cfg.bgmTabs[b.tabIndex]+'｜':'')+b.name,b.id)));
-  sel.value=list.some(b=>b.id===id)?id:''
-}
+// 配信・動画の BGM 欄の上の行：いま流れている曲と、番組の初期BGMを流す・止めるボタン
+const consoleBgm=()=>progBgm()||null;
 function syncConsole(){
   if(!cfg)return;
-  renderConsoleBgm();
   const nm=$('#bgmNowName').textContent,c=$('#consoleBgmName');
   if(c.textContent!==nm)c.textContent=nm;
   const btn=$('#consoleBgmStop'),on=!!(bgmPlaying||bgmLoadingId),txt=on?'■ BGMを止める':'▶ 初期BGM';
   if(btn.textContent!==txt)btn.textContent=txt;
   btn.classList.toggle('playing',on);
-  btn.disabled=!on&&!consoleBgm()
+  btn.disabled=!on&&!consoleBgm();
+  // BGM が流れているあいだ、BGM のタブに印を付ける
+  const tab=document.querySelector('#deckNav [data-deck="bgm"]');
+  if(tab&&tab.classList.contains('playing')!==on)tab.classList.toggle('playing',on)
 }
 setInterval(syncConsole,300);
-$('#consoleBgmSel').onchange=e=>{
-  try{localStorage.setItem(CONSOLE_BGM_KEY,e.target.value)}catch(_){}
-  consoleBgmSig='';
-  syncConsole()
-};
 $('#consoleBgmStop').onclick=()=>{
   if(bgmLoadingId){
     bgmSerial++;
@@ -7477,7 +7560,6 @@ fps:30,
     videoStream=null,
     videoDest=null,
     recordStart=0,
-    recordChunks=[],
     videoUrls=[],
     closing=false,
     captureStarting=false;
@@ -7677,7 +7759,7 @@ function sanitize(v){
 out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     out.light=v.light===true;
     out.vidFormat=v.vidFormat==='webm'?'webm':'mp4';
-    out.vidQuality=[4.5,8,16].includes(Number(v.vidQuality))?Number(v.vidQuality):8;
+    out.vidQuality=[2.5,4.5,8,16].includes(Number(v.vidQuality))?Number(v.vidQuality):8;
     {const MV=['float','sway','hop','run','shake','still','play','walk'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];
      if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,600)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40),tilt:num(m.tilt,-180,180,0),pos:aspectPosClean(m.pos,'msc'),kind:m.kind==='mini'?'mini':'mascot',owner:typeof m.owner==='string'&&/^[a-z0-9]{1,16}$/.test(m.owner)?m.owner:''})}
      
@@ -9502,14 +9584,14 @@ const BRIDGE_VER=1;
         return ok({count:list.length})
       }
       case 'se':{
-        if(!app.bridgeMore)return ng('効果音を鳴らす許可がありません（企画卓の「アプリを並べる」で許可できます）');
+        if(!app.bridgeMore)return ng('効果音を鳴らす許可がありません（「企画の準備」の「アプリを並べる」で許可できます）');
         const label=S_(m.label,60).trim();
         const s=(typeof cfg!=='undefined'?cfg.sounds:[]).find(x=>x.assetId&&x.label===label);
         if(!s)return ng('その名前の効果音が見つかりません：'+label);
         playSound(s);return ok()
       }
       case 'scene':{
-        if(!app.bridgeMore)return ng('場面を切り替える許可がありません（企画卓の「アプリを並べる」で許可できます）');
+        if(!app.bridgeMore)return ng('場面を切り替える許可がありません（「企画の準備」の「アプリを並べる」で許可できます）');
         if(!['live','standby','away','end'].includes(m.scene))return ng('scene は live / standby / away / end のどれかです');
         enterScene(m.scene);return ok()
       }
@@ -9520,7 +9602,7 @@ const BRIDGE_VER=1;
   // 開発者向けの説明と、そのまま動く見本アプリ
   const BRIDGE_DOC=`# オトノハ連携（Otonoha Bridge 1）
 
-配信処オトノハの企画卓「アプリを並べる」に登録したHTMLアプリは、ブラウザ標準の window.postMessage で、オトノハと伝言を交わせます。
+配信処オトノハの「企画の準備」の「アプリを並べる」に登録したHTMLアプリは、ブラウザ標準の window.postMessage で、オトノハと伝言を交わせます。
 
 ## つなぐ
 アプリの中で、親のページ（オトノハ）へ hello を送ります。
@@ -10283,9 +10365,8 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
   async function ponApp(a){
     state.appSel=a.id;save();
     if(ponCfg().app==='page'){
-      document.querySelector('.studio-tabs [data-mode="plan"]')?.click();
       await appShow();
-      E('appStageWrap')?.scrollIntoView({block:'start',behavior:'smooth'});
+      deckShow('plan',E('appStageWrap'));
       return
     }
     if(appWinOpen()){
@@ -10299,7 +10380,7 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
   }
   function ponRun(it){
     if(it.kind==='serif')ponSerif(it.s);
-    else if(it.kind==='slot'){if(!serifList().some(x=>serifLines(x).length)){toast('スロットの役柄とセリフがまだありません（企画卓の「セリフ帳」「スロット」で作れます）',4500);return}slotSpin('all')}
+    else if(it.kind==='slot'){if(!serifList().some(x=>serifLines(x).length)){toast('スロットの役柄とセリフがまだありません（「🛠 準備」→「企画の準備」の「セリフ帳」「スロット」で作れます）',4500);return}slotSpin('all')}
     else if(it.kind==='wheel')E('wheelSpin').click();
     else if(it.kind==='dice')E('diceRoll').click();
     else if(it.kind==='app')ponApp(it.a);
@@ -10326,12 +10407,21 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
       ponSig=sig;
       ponNodes=shown.map(it=>{
         const b=document.createElement('button');b.type='button';b.className='pon-btn pon-'+it.kind;b.textContent=it.label;
-        b.title=it.kind==='serif'?'押すたびに、このシチュエーションのセリフを1つ出します（全部出し終えるまで同じセリフは出ません）':it.kind==='app'?(c.app==='page'?'企画卓の中で開きます':'アプリと立ち絵のウインドウで開きます'):'';
+        b.title=it.kind==='serif'?'押すたびに、このシチュエーションのセリフを1つ出します（全部出し終えるまで同じセリフは出ません）':it.kind==='app'?(c.app==='page'?'「企画の準備」の中で開きます':'アプリと立ち絵のウインドウで開きます'):'';
         b.onclick=()=>ponRun(it);
         return {it,b}
       });
       E('ponGrid').replaceChildren(...ponNodes.map(n=>n.b));
       E('ponEmpty').hidden=shown.length>0;
+      // 並べていない企画があるときは、何が外れているかを見せて、その場で戻せるようにする
+      {
+        const off=all.filter(it=>!shown.includes(it)),ph=E('ponHidden');
+        ph.hidden=!off.length;
+        if(off.length){
+          const b=document.createElement('button');b.type='button';b.textContent='すべて並べる';b.onclick=()=>E('ponAll').click();
+          ph.replaceChildren('いま並べていない企画：'+off.slice(0,8).map(it=>it.label).join('、')+(off.length>8?' ほか'+(off.length-8)+'個':'')+' ',b)
+        }
+      }
       // 並べるものの選択
       const sel=E('ponSerif'),ser=all.filter(it=>it.kind==='serif');
       sel.replaceChildren(...[['none','今回は使用しない'],['all','すべて並べる（'+ser.length+'個）'],...ser.map(it=>['s:'+it.s.id,it.label.replace(/^💬 /,'')])].map(([v,t])=>Object.assign(document.createElement('option'),{value:v,textContent:t})));
@@ -10599,7 +10689,16 @@ function cleanChar(c){
       imgAmp:num(x.imgAmp,0,200,100),
       imgSize:num(x.imgSize,10,150,60),
       imgX:num(x.imgX,-100,100,0),
-      imgY:num(x.imgY,-100,100,0)
+      imgY:num(x.imgY,-100,100,0),
+      // 映像の向きごとの、画像の大きさと位置の控え（41-aspect-memory.js）
+      pos:(()=>{
+        const out={};
+        for(const asp of ['landscape','portrait','x34']){
+          const q=x.pos&&typeof x.pos==='object'?x.pos[asp]:null;
+          if(q&&typeof q==='object'&&['imgSize','imgX','imgY'].every(f=>Number.isFinite(Number(q[f]))))out[asp]={imgSize:num(q.imgSize,10,150,60),imgX:num(q.imgX,-100,100,0),imgY:num(q.imgY,-100,100,0)}
+        }
+        return out
+      })()
     }
   }
 
@@ -11145,14 +11244,10 @@ function setMode(mode){
     document.body.dataset.studioMode=mode;
     studioLiveMode=mode==='live';
     applyMonitor();
-    document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('selected',b.dataset.mode===mode));
     E('studioPlan').classList.toggle('on',mode==='plan');
     E('studioSongs').classList.toggle('on',mode==='songs');
     E('studioAiVoice').classList.toggle('on',mode==='aivoice');
-    if(E('studioModeHelp'))E('studioModeHelp').textContent=mode==='plan'?'企画文をAIへ渡し、返答を台本欄に貼り付けて進行できます。AIと自動通信する機能はありません。':'配信ソフトで「映像だけ別窓」を取り込み、音声はこのブラウザの音＋マイクを配信側で取り込みます。配信サービスへの直接送出機能はありません。'
   }
-
-  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
 
   E('studioMic').onclick=async()=>{
     if(!ready){
@@ -12216,10 +12311,13 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
     syncChar();
     charPosKeep(curChar(),asp);
     for(const m of state.mascots||[]){if(!m.pos||typeof m.pos!=='object')m.pos={};m.pos[asp]={x:m.x,y:m.y,size:m.size,tilt:m.tilt||0}}
+    for(const k of ['standby','away','end']){const c=state.scenes[k];if(!c.pos||typeof c.pos!=='object')c.pos={};c.pos[asp]={imgSize:c.imgSize,imgX:c.imgX,imgY:c.imgY}}
   }
   function aspectRestore(asp){
     charPosApply(curChar(),asp);
     for(const m of state.mascots||[]){const r=m.pos?.[asp];if(r){m.x=r.x;m.y=r.y;m.size=r.size;m.tilt=r.tilt}}
+    for(const k of ['standby','away','end']){const c=state.scenes[k],r=c.pos?.[asp];if(r){c.imgSize=r.imgSize;c.imgX=r.imgX;c.imgY=r.imgY}}
+    renderSceneForm();
     // 走る・お散歩の途中の位置は画面の寸法で持っているので、向きを変えたら決めた位置からやり直す
     for(const o of [mscRun,mscWalk,mscPlay])for(const k of Object.keys(o))delete o[k]
   }
@@ -12697,16 +12795,76 @@ let frameToken=0,
       E('studioMic').textContent=ready&&micLive()?'マイクを再接続':'マイクを接続';
       if(mediaRecorder&&mediaRecorder.state==='recording'&&!mediaRecorder.__ending)E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
     }
+    perfWatch(performance.now()-now);
     scheduleFrame()
   }
 
-function cleanupCapture(){
+  // 描くのが追いつかない状態が数秒つづいたら、軽くする方法を一度だけ知らせる（勝手には変えない）
+  let slowN=0,slowTold=false;
+  function perfWatch(cost){
+    if(slowTold||(state.light&&(state.fps||30)<=15))return;
+    const fps=state.fps||30;
+    slowN=cost>800/fps?slowN+1:Math.max(0,slowN-2);
+    if(slowN<fps*6)return;
+    slowTold=true;
+    E('perfHint').hidden=false
+  }
+  E('perfHintNo').onclick=()=>{E('perfHint').hidden=true};
+  E('perfHintGo').onclick=()=>{
+    E('perfHint').hidden=true;
+    state.light=true;
+    // 収録中は、なめらかさ（fps）を変えない
+    if(!studioCapturing&&!captureStarting&&(state.fps||30)>15)state.fps=15;
+    applyPerf();save();
+    toast('軽量モードにしました'+(state.fps===15?'（映像は15fps）':'')+'。「設定」の「映像のなめらかさ」「軽量モード」で戻せます',6000)
+  };
+
+// ---- 途中保存：1回の収録ぶんの控え
+  const cap={id:'',seq:0,parts:[],q:Promise.resolve(),warned:false,lock:null};
+  function capBegin(mime){
+    cap.id=Math.random().toString(36).slice(2,10);
+    cap.seq=0;cap.parts=[];cap.warned=false;
+    cap.q=vidPersistent()?putAsset(VREC+cap.id,{id:cap.id,type:mime,at:new Date().toISOString(),v:1}).catch(()=>{}):Promise.resolve()
+  }
+  function capChunk(blob){
+    const part={mem:blob,key:'',size:blob.size};
+    cap.parts.push(part);
+    if(!vidPersistent())return;
+    const key=partKey(cap.id,cap.seq++);
+    cap.q=cap.q.then(()=>putAsset(key,blob)).then(()=>{part.key=key;part.mem=null},()=>{
+      if(cap.warned)return;
+      cap.warned=true;
+      toast('ブラウザ内への途中保存ができませんでした（空き容量をご確認ください）。収録は続けています。止めたあと「ファイルに保存」で書き出してください',9000)
+    })
+  }
+  // 収録中は画面が消えないようにする（対応しているブラウザだけ）
+  async function capWake(on){
+    try{
+      if(on){if(!cap.lock&&navigator.wakeLock)cap.lock=await navigator.wakeLock.request('screen')}
+      else if(cap.lock){const l=cap.lock;cap.lock=null;await l.release()}
+    }catch(_){cap.lock=null}
+  }
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&studioCapturing&&cap.lock?.released!==false){cap.lock=null;capWake(true)}});
+  // 収録の前に、保存先の空きを見て、少ないときだけ知らせる（止めはしない）
+  async function capSpaceCheck(){
+    if(!vidPersistent())return;
+    try{navigator.storage?.persist?.()}catch(_){}
+    try{
+      const s=await navigator.storage?.estimate?.();
+      if(s&&s.quota&&s.quota-s.usage<300*1048576)toast('ブラウザ内の空きが少なくなっています（残り約'+Math.max(0,Math.round((s.quota-s.usage)/1048576))+' MB）。長い収録の前に、「収録・接続」の一覧で古い動画を書き出して削除しておくと安心です',9000)
+    }catch(_){}
+  }
+
+  function cleanupCapture(){
     if(micGain)updateGains();
     captureStarting=false;
     mediaRecorder=null;
+    cap.id='';
     E('studioAspect').disabled=false;
     E('studioFps').disabled=false;
     E('vidFormat').disabled=false;E('vidQuality').disabled=false;
+    document.body.removeAttribute('data-capturing');
+    capWake(false);
     if(studioCapturing){
       studioCapturing=false;
       applyMonitor();
@@ -12749,10 +12907,11 @@ function cleanupCapture(){
       videoDest.stream.getAudioTracks().forEach(t=>videoStream.addTrack(t));
       mediaRecorder=new MediaRecorder(videoStream,{mimeType:type,videoBitsPerSecond:Math.round((state.vidQuality||8)*1e6),audioBitsPerSecond:192000});
       const rec=mediaRecorder;
-      recordChunks=[];
+      capBegin(type.split(';')[0]);
+      capSpaceCheck();
       let failed=false,finished=false;
       rec.ondataavailable=e=>{
-        if(e.data&&e.data.size)recordChunks.push(e.data)
+        if(e.data&&e.data.size)capChunk(e.data)
       };
       rec.onerror=e=>{
         failed=true;
@@ -12760,34 +12919,48 @@ function cleanupCapture(){
         try{if(rec.state!=='inactive')rec.stop()}catch(_){finish()}
       };
 
-      const finish=()=>{
+      const finish=async()=>{
         if(finished)return;
         finished=true;
         clearTimeout(stopWatch);
+        const id=cap.id,parts=cap.parts;
+        // 書き足しが終わるのを待つ（長くても20秒）
+        await Promise.race([cap.q,new Promise(r=>setTimeout(r,20000))]);
         if(rec.__discard){
-          recordChunks=[];
           cleanupCapture();
+          vidDropParts(id);
           rec.__after?.();
           return
         }
         const mime=(rec.mimeType||type).split(';')[0],
-          blob=new Blob(recordChunks,{type:mime});
-        recordChunks=[];
-        const ext=mime==='video/mp4'?'mp4':'webm',
+          size=parts.reduce((n,p)=>n+p.size,0),
+          ext=mime==='video/mp4'?'mp4':'webm',
           name='otonoha_'+new Date().toISOString().replace(/[:.]/g,'-')+(failed?'_partial':'')+'.'+ext;
         cleanupCapture();
-        if(blob.size)addVideoRow(blob,name);else toast('動画データを取得できませんでした',5000)
+        if(!size){toast('動画データを取得できませんでした',5000);vidDropParts(id);return}
+        try{
+          if(vidPersistent()&&parts.every(p=>p.key))await addVideoParts({id,name,size,type:mime,parts:parts.length,at:new Date().toISOString()});
+          else{
+            // 途中保存できなかった分がある：手元の分と合わせて1本にまとめる
+            const list=[];
+            for(const p of parts){const b=p.mem||await getAsset(p.key).catch(()=>null);if(b)list.push(b)}
+            const res=await addVideoRow(new Blob(list,{type:mime}),name);
+            if(res==='stored')vidDropParts(id)
+          }
+        }catch(e){toast('動画の保存処理でエラーが起きました：'+(e?.message||'不明')+'。「収録・接続」の一覧をご確認ください',9000)}
       };
       let stopWatch=0;
       rec.onstop=finish;
       rec.__finishSoon=()=>{stopWatch=setTimeout(finish,6000)};
-      mediaRecorder.start(1000);
+      mediaRecorder.start(2000);
       captureStarting=false;
       {const pb=progBgm();if(curProgram()?.autoBgm&&pb&&!bgmPlaying&&!bgmLoadingId)playBgm(pb,{restart:true})}
       E('studioAspect').disabled=true;
       E('studioFps').disabled=true;
       E('vidFormat').disabled=true;E('vidQuality').disabled=true;
       studioCapturing=true;
+      document.body.setAttribute('data-capturing','');
+      capWake(true);
       boostHold=true;
       applyMonitor();
       if(monitorMuted()&&!monitorManualOff)toast('収録中はモニター音を自動で消しています（設定「録音中のモニター音」で変更できます）。動画には効果音・BGMも入ります',6000);
@@ -12799,7 +12972,9 @@ function cleanupCapture(){
       E('studioRec').classList.add('recording');
       E('studioRecTime').textContent='● 収録中 0:00'
     }catch(err){
+      const dead=cap.id;
       cleanupCapture();
+      if(dead)vidDropParts(dead);
       toast(err.message||'動画収録を開始できませんでした',6000)
     }
   };
@@ -12864,15 +13039,17 @@ function cleanupCapture(){
   };
 
 const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-  const VID_MAX=30,VMETA='vmeta:',VBLOB='video:';
+  const VID_MAX=30,VMETA='vmeta:',VBLOB='video:',VPART='vpart:',VREC='vrec:';
+  const partKey=(id,seq)=>VPART+id+':'+String(seq).padStart(6,'0');
+  const partRange=id=>IDBKeyRange.bound(VPART+id+':',VPART+id+':\uffff');
   // 動画は設定（state）とは別に、IndexedDBの assets に「実体 video:ID」と「目録 vmeta:ID」を同じトランザクションで置く。
   const vids=[];
   let vidQ=Promise.resolve();
   function vidQueue(fn){const run=vidQ.then(()=>fn());vidQ=run.catch(()=>{});return run}
-  const vidRange=p=>IDBKeyRange.bound(p,p+'￿');
+  const vidRange=p=>IDBKeyRange.bound(p,p+'\uffff');
   const vidPersistent=()=>!!(ready&&db&&!db.memory);
-  const vidMetaOf=m=>({id:m.id,name:String(m.name||'otonoha.mp4').slice(0,120),size:Math.max(0,Number(m.size)||0),type:String(m.type||'').slice(0,40),at:m.at||new Date().toISOString(),v:1});
-  const VST={saving:'保存処理中…',stored:'ブラウザ内に保存',temp:'一時保持のみ（この画面を閉じると消えます）',failed:'保存失敗・一時保持（この画面を閉じると消えます）',missing:'実体なし（この端末に動画データがありません）',orphan:'一覧から外れていた動画データ',unknown:'保存状態を確認できません'};
+  const vidMetaOf=m=>({id:m.id,name:String(m.name||'otonoha.mp4').slice(0,120),size:Math.max(0,Number(m.size)||0),type:String(m.type||'').slice(0,40),at:m.at||new Date().toISOString(),v:1,...(m.parts?{parts:Math.max(1,m.parts|0)}:{}),...(m.rec?{rec:true}:{})});
+  const VST={saving:'保存処理中…',stored:'ブラウザ内に保存',recovered:'途中で終わった収録を取り戻しました（終わりの数秒が欠けていることがあります）',temp:'一時保持のみ（この画面を閉じると消えます）',failed:'保存失敗・一時保持（この画面を閉じると消えます）',missing:'実体なし（この端末に動画データがありません）',orphan:'一覧から外れていた動画データ',unknown:'保存状態を確認できません'};
   function vidTx(work,mode='readwrite'){
     return new Promise((resolve,reject)=>{
       let t;
@@ -12897,20 +13074,33 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform===
       }
     }))
   }
-  function vidDelete(id){return vidQueue(()=>vidTx(s=>{s.delete(VBLOB+id);s.delete(VMETA+id)}))}
+  function vidDelete(id){return vidQueue(()=>vidTx(s=>{s.delete(VBLOB+id);s.delete(VMETA+id);s.delete(VREC+id);s.delete(partRange(id))}))}
+  // 途中保存のかけらだけを消す（破棄・録り直し、1本にまとめ直したあと）
+  function vidDropParts(id){
+    if(!id||!vidPersistent())return Promise.resolve();
+    return vidQueue(()=>vidTx(s=>{s.delete(VREC+id);s.delete(partRange(id))})).catch(()=>{})
+  }
+  // 分けて保存した動画の目録を書く（実体はもうブラウザ内にあるので、本数の上限では断らない）
+  function vidRegister(m){return vidQueue(()=>vidTx(s=>{s.put(vidMetaOf(m),VMETA+m.id);s.delete(VREC+m.id)}))}
+  function vidParts(id){return vidTx((s,t,out)=>{const r=s.getAll(partRange(id));r.onsuccess=()=>{out.list=r.result||[]}},'readonly').then(o=>o.list||[])}
   function vidCatalog(){
     return vidTx((s,t,out)=>{
-      const a=s.getAll(vidRange(VMETA)),k=s.getAllKeys(vidRange(VBLOB));
+      const a=s.getAll(vidRange(VMETA)),k=s.getAllKeys(vidRange(VBLOB)),p=s.getAllKeys(vidRange(VPART)),r=s.getAll(vidRange(VREC));
       a.onsuccess=()=>{out.metas=(a.result||[]).filter(x=>x&&typeof x.id==='string')};
-      k.onsuccess=()=>{out.blobs=new Set(k.result||[])}
+      k.onsuccess=()=>{out.blobs=new Set(k.result||[])};
+      // かけらの数を、動画のIDごとに数える
+      p.onsuccess=()=>{out.parts=new Map();for(const key of p.result||[]){const id=String(key).slice(VPART.length).split(':')[0];out.parts.set(id,(out.parts.get(id)||0)+1)}};
+      r.onsuccess=()=>{out.recs=new Map((r.result||[]).filter(x=>x&&typeof x.id==='string').map(x=>[x.id,x]))}
     },'readonly')
   }
   async function videoBlob(v){
     if(v.mem)return v.mem;
     if(!vidPersistent())throw Error('この動画のデータが見つかりません');
     const b=await getAsset(VBLOB+v.m.id);
-    if(!b)throw Error('この動画のデータが見つかりません');
-    return b
+    if(b)return b;
+    const list=await vidParts(v.m.id);
+    if(!list.length)throw Error('この動画のデータが見つかりません');
+    return new Blob(list,{type:v.m.type||list[0].type||'video/mp4'})
   }
   function vidDownload(v){
     return videoBlob(v).then(b=>{
@@ -12934,7 +13124,7 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform===
     if(v.m.at)name.title=new Date(v.m.at).toLocaleString('ja-JP');
     const st=document.createElement('span');
     st.className='vstate';
-    st.textContent=VST[v.status]||'';
+    st.textContent=(v.status==='stored'&&v.m.rec?VST.recovered:VST[v.status])||'';
     const kids=[name,st];
     const has=v.mem||v.status==='stored'||v.status==='orphan';
     if(has){
@@ -13005,12 +13195,22 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform===
     if(!el)return;
     const n=vids.filter(v=>v.status==='stored').length,t=vids.filter(v=>v.mem).length,miss=vids.filter(v=>v.status==='missing'||v.status==='orphan').length;
     const parts=[];
-    if(n)parts.push('ブラウザ内に保存した動画 '+n+'／'+VID_MAX+'本');
+    if(n)parts.push('ブラウザ内に保存した動画 '+n+'本'+(n>=VID_MAX?'（'+VID_MAX+'本を超えると保存の場所が足りなくなりやすいので、書き出してから削除するのがおすすめです）':''));
     if(t)parts.push('一時保持 '+t+'本（画面を閉じると消えます）');
     if(miss)parts.push('要確認 '+miss+'件');
     if(parts.length&&vidPersistent())try{const s=await navigator.storage?.estimate?.();if(s&&s.quota)parts.push('このサイトの保存容量 '+(s.usage/1048576).toFixed(0)+' MB／上限の目安 '+(s.quota/1073741824).toFixed(1)+' GB')}catch(_){}
     el.textContent=parts.length?parts.join('・')+'。ブラウザ内の保存は、サイトデータの削除などで消えることがあります。残したい動画はファイルに書き出してください':''
   }
+  // 収録が終わったあとの知らせ。保存できたことを、一覧の行と文の両方で伝える
+  function vidAnnounce(res,dl){
+    window.__otonohaDeck?.show('tools',E('studioVideos'));
+    const tail=isIOS?'「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります':dl?'ファイルのダウンロードを開始しました（完了はブラウザの表示でご確認ください）':'「ファイルに保存」で書き出せます';
+    if(res==='stored')toast('収録できました。ブラウザ内に保存し、'+tail,7000);
+    else if(res==='full')toast('ブラウザ内の動画が'+VID_MAX+'本あるため、今回の動画は一時保持です（古い動画は自動では消しません）。古い動画を削除すると「ブラウザ内に保存を再試行」で保存できます。'+tail,11000);
+    else if(res==='temp')toast('この画面ではブラウザ内に保存できないため、一時保持です。'+tail,9000);
+    else toast('ブラウザ内に保存できませんでした（空き容量をご確認ください）。一時保持のまま残しています。'+tail,10000)
+  }
+  // 1本にまとまった動画（途中保存を使えなかったとき）
   async function addVideoRow(blob,name){
     const v={m:{id:Math.random().toString(36).slice(2,10),name,size:blob.size,type:blob.type,at:new Date().toISOString()},mem:blob,status:'saving'};
     vids.unshift(v);
@@ -13018,11 +13218,26 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform===
     let dl=false;
     if(!isIOS)try{dl=await vidDownload(v)}catch(_){}
     const res=await vidCommit(v,false);
-    const tail=isIOS?'「写真に保存（共有）」→「ビデオを保存」で写真アプリに入ります':dl?'ファイルのダウンロードを開始しました（完了はブラウザの表示でご確認ください）':'「ファイルに保存」で書き出せます';
-    if(res==='stored')toast('収録できました。ブラウザ内に保存し、'+tail,7000);
-    else if(res==='full')toast('ブラウザ内の動画が'+VID_MAX+'本あるため、今回の動画は一時保持です（古い動画は自動では消しません）。古い動画を削除すると「ブラウザ内に保存を再試行」で保存できます。'+tail,11000);
-    else if(res==='temp')toast('この画面ではブラウザ内に保存できないため、一時保持です。'+tail,9000);
-    else toast('ブラウザ内に保存できませんでした（空き容量をご確認ください）。一時保持のまま残しています。'+tail,10000)
+    vidAnnounce(res,dl);
+    return res
+  }
+  // 途中保存がすべて済んでいる動画：目録を書くだけで保存が終わる
+  async function addVideoParts(m){
+    const v={m,mem:null,status:'saving'};
+    vids.unshift(v);
+    E('studioVideos').prepend(vidPaint(v));
+    let res='stored';
+    try{await vidRegister(m);v.status='stored'}
+    catch(_){
+      // 目録を書けなかった：かけらを手元でまとめて、一時保持にする（かけらは消さないので、次の起動でも取り戻せる）
+      try{v.mem=new Blob(await vidParts(m.id),{type:m.type})}catch(_){}
+      v.status='failed';res='failed'
+    }
+    vidPaint(v);renderVideoInfo();
+    let dl=false;
+    if(!isIOS)try{dl=await vidDownload(v)}catch(_){}
+    vidAnnounce(res,dl);
+    return res
   }
   // 起動時：目録を読み、0.6.8までの設定内の動画一覧（legacyVideos）を実体と照合して移す。実体のないものは「実体なし」として残し、勝手に消さない。
   async function renderStoredVideos(){
@@ -13049,8 +13264,30 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform===
       if(keep.length!==legacy.length||keep.some((m,i)=>m.missing!==legacy[i].missing)){state.legacyVideos=keep;save()}
       try{cat=await vidCatalog()}catch(_){}
     }
+    // 途中で終わった収録（かけらはあるのに目録がない）を、動画として取り戻す
+    {
+      const have=new Set(cat.metas.map(x=>x.id));let n=0;
+      for(const [id,count] of cat.parts||[]){
+        if(have.has(id)||id===cap.id)continue;
+        try{
+          const parts=await vidParts(id);
+          if(!parts.length)continue;
+          const r=cat.recs?.get(id);
+          let type=r?.type||parts[0].type||'';
+          if(!type)try{const h=new Uint8Array(await parts[0].slice(0,12).arrayBuffer());type=h[0]===0x1a&&h[1]===0x45?'video/webm':'video/mp4'}catch(_){type='video/mp4'}
+          const at=r?.at||new Date().toISOString();
+          await vidRegister({id,name:'otonoha_'+String(at).replace(/[:.]/g,'-')+'_recovered.'+(type==='video/webm'?'webm':'mp4'),size:parts.reduce((a,b)=>a+b.size,0),type,at,parts:count,rec:true});
+          n++
+        }catch(_){}
+      }
+      if(n){
+        try{cat=await vidCatalog()}catch(_){}
+        toast('前回、途中で終わった収録を'+n+'本、取り戻しました。「収録・接続」の動画の一覧にあります（終わりの数秒が欠けていることがあります）',11000);
+        window.__otonohaDeck?.mark('tools',true)
+      }
+    }
     const metaIds=new Set(cat.metas.map(x=>x.id)),list=[];
-    for(const m of cat.metas.sort((a,b)=>String(b.at).localeCompare(String(a.at))))list.push(cat.blobs.has(VBLOB+m.id)?{m,mem:null,status:'stored'}:{m,mem:null,status:'missing',cat:true});
+    for(const m of cat.metas.sort((a,b)=>String(b.at).localeCompare(String(a.at))))list.push(cat.blobs.has(VBLOB+m.id)||cat.parts?.has(m.id)?{m,mem:null,status:'stored'}:{m,mem:null,status:'missing',cat:true});
     for(const m of state.legacyVideos||[])if(!metaIds.has(m.id))list.push({m,mem:null,status:m.missing?'missing':'unknown'});
     for(const k of cat.blobs){
       const id=String(k).slice(VBLOB.length);
@@ -13771,14 +14008,15 @@ const QT=[['studioThreshold','口が開く音量',' dB'],['studioMouthMode','口
     const r=canvas.getBoundingClientRect(),s=Math.min(r.width/W,r.height/H),ox=(r.width-W*s)/2,oy=(r.height-H*s)/2;
     return {x:(e.clientX-r.left-ox)/s,y:(e.clientY-r.top-oy)/s}
   }
-  // 「✋ ドラッグで動かす」がオンのとき、または「その場で調整」を開いているときだけ動かせる（配信中にうっかり動かさないため）
+  // 「✋ ドラッグで動かす」がオンのとき、「その場で調整」か、企画の準備の「位置と大きさ」を開いているときだけ動かせる（配信中にうっかり動かさないため）
   let dragFree=false;
-  const dragOn=()=>dragFree||E('quickTune').open;
+  const dragOn=()=>dragFree||E('quickTune').open||(E('layBox').open&&!!E('layBox').offsetParent);
   const lockView=()=>{
     canvas.classList.toggle('locked',!dragOn());
     const b=E('dragFree');b.setAttribute('aria-pressed',String(dragFree));b.textContent='✋ ドラッグで動かす：'+(dragFree?'オン':'オフ');b.classList.toggle('on',dragFree)
   };
   E('quickTune').addEventListener('toggle',lockView);
+  E('layBox').addEventListener('toggle',lockView);
   E('dragFree').onclick=()=>{dragFree=!dragFree;lockView();if(!dragFree)endDrag()};
   lockView();
   canvas.addEventListener('pointerdown',e=>{
@@ -13926,114 +14164,123 @@ const BG_MAX=10,BG_ASPECTS={landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'};
     return out
   }
 
-// ---- ① 番組の行（#progChips・#progEdit）を、配信・動画では BGM 欄（#liveProgSlot）へ移す。要素ごと動かすので、ボタンの働きはそのまま
-  const progRow=document.querySelector('.recbar .prog-row'),progHome=progRow&&progRow.parentNode,progAfter=progRow&&progRow.nextElementSibling;
-  function progPlace(app){
-    const slot=E('liveProgSlot');
-    if(!progRow||!slot)return;
-    if(app==='live'){
-      if(progRow.parentNode!==slot)slot.appendChild(progRow);
-      E('progEdit').hidden=false;
-      E('progEdit').textContent='⚙ 番組の設定';
-      E('progEdit').title='番組名・初期BGM・色・並び順など（フリーのときは選べません）'
-    }else{
-      if(progRow.parentNode!==progHome)progHome.insertBefore(progRow,progAfter);
-      E('progEdit').hidden=true;
-      E('progEdit').textContent='番組の設定'
-    }
+const DECK_KEY='otonoha-deck',PV_PIN_KEY='otonoha-pv-pin',PLAN_KEY='otonoha-plan-open';
+  const DECK_LIVE=['kikaku','se','bgm','chara','tools','all'],DECK_PREP=['plan','songs','aivoice'];
+  const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}};
+  const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
+  const deck={level:'live',live:'kikaku',prep:'plan'};
+  {
+    let s={};
+    try{s=JSON.parse(lsGet(DECK_KEY)||'{}')||{}}catch(_){}
+    // 広い画面は「全部」、狭い画面は「企画」から始める（選んだあとは、選んだものを覚える）
+    deck.live=DECK_LIVE.includes(s.live)?s.live:matchMedia('(min-width:1100px)').matches?'all':'kikaku';
+    deck.prep=DECK_PREP.includes(s.prep)?s.prep:'plan'
+  }
+  const deckCur=()=>deck.level==='prep'?deck.prep:deck.live;
+
+  // ---- 上に残す部分の高さ（タブの位置と、移動先の計算に使う）
+  const deckSideEl=E('deckSide'),deckNavEl=E('deckNav');
+  const sideSticky=()=>getComputedStyle(deckSideEl).position==='sticky'&&matchMedia('(max-width:1099px)').matches;
+  function deckMeasure(){
+    document.body.style.setProperty('--side-h',(sideSticky()?deckSideEl.offsetHeight:0)+'px')
+  }
+  if('ResizeObserver' in window)new ResizeObserver(deckMeasure).observe(deckSideEl);
+  window.addEventListener('resize',deckMeasure);
+  // 上に残っているもの（録音中の小さな欄・映像と帯・タブ）の下端
+  function deckStickyBottom(){
+    const mini=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--mini-h'))||0;
+    return mini+(sideSticky()?deckSideEl.offsetHeight:0)+(getComputedStyle(deckNavEl).position==='sticky'?deckNavEl.offsetHeight:0)+8
+  }
+  function deckScrollTo(el){
+    // 縦だけ動かす（scrollIntoView は横にも動かすことがある）
+    window.scrollTo({top:Math.max(0,el.getBoundingClientRect().top+scrollY-deckStickyBottom()),behavior:'smooth'})
   }
 
-  // ---- ② 企画卓を、見出しごとのまとまりに分ける（中身は移すだけで、消さない）
-  function planGroup(nodes,title,id){
-    if(!nodes.length)return null;
-    const g=document.createElement('div');
-    g.className='plan-group';
-    if(id)g.id=id;
-    nodes[0].parentNode.insertBefore(g,nodes[0]);
-    if(title){const h=document.createElement('h3');h.textContent=title;g.appendChild(h)}
-    for(const n of nodes)g.appendChild(n);
-    return g
+  function deckApply(){
+    const cur=deckCur(),b=document.body;
+    b.dataset.level=deck.level;
+    b.dataset.deck=cur;
+    for(const x of deckNavEl.querySelectorAll('[data-deck]')){const on=x.dataset.deck===cur;x.classList.toggle('selected',on);x.setAttribute('aria-pressed',String(on))}
+    for(const x of E('deckLevel').querySelectorAll('[data-level]')){const on=x.dataset.level===deck.level;x.classList.toggle('selected',on);x.setAttribute('aria-pressed',String(on))}
+    if(cur==='tools'||cur==='all')deckMark('tools',false);
+    lockView();
+    deckMeasure()
   }
-  (function planWrap(){
-    const sec=E('studioPlan');
-    if(!sec||sec.dataset.grouped)return;
-    sec.dataset.grouped='1';
-    // 企画タイトル〜台本の注記まで → 「番組・企画の設定」
-    const kids=[...sec.children],h2=sec.querySelector(':scope>h2'),firstDock=kids.find(n=>n.classList.contains('app-dock'));
-    const head=[];
-    for(let n=h2&&h2.nextElementSibling;n&&n!==firstDock;n=n.nextElementSibling)head.push(n);
-    planGroup(head,'番組・企画の設定（企画タイトル・AIに渡す設定・台本）','planGroupProg');
-    // セリフ帳・スロット・お題帳・ルーレット：h3 ごとに分ける
-    const play=sec.querySelector('.play-dock');
-    if(play){
-      let cur=[];const groups=[];
-      for(const n of [...play.children]){
-        if(n.tagName==='H3'&&cur.length){groups.push(cur);cur=[]}
-        cur.push(n)
+  // name のタブを開く。target があれば、その場所まで動かす（閉じた見出しの中なら開く）
+  function deckShow(name,target){
+    if(DECK_PREP.includes(name)){deck.level='prep';deck.prep=name}
+    else if(DECK_LIVE.includes(name)){deck.level='live';if(deck.live!=='all'||name==='all'||!target)deck.live=name}
+    else return;
+    lsSet(DECK_KEY,JSON.stringify({live:deck.live,prep:deck.prep}));
+    setMode(deck.level==='prep'?deck.prep:'live');
+    deckApply();
+    requestAnimationFrame(()=>{
+      if(target){
+        for(let d=target.closest('details');d;d=d.parentElement?.closest('details'))d.open=true;
+        deckScrollTo(target)
+      }else{
+        // タブを替えたとき、中身の先頭が上に隠れていたら、先頭が見える位置まで戻す
+        const p=E('deckPanels');
+        if(p.getBoundingClientRect().top<deckStickyBottom()-8)deckScrollTo(p)
       }
-      if(cur.length)groups.push(cur);
-      for(const g of groups)planGroup(g,'',null);
-    }
-    for(const d of sec.querySelectorAll(':scope>.app-dock:not(.play-dock)'))d.classList.add('plan-group');
-    sec.classList.add('plan-grouped')
-  })();
-
-  // ---- ③ 目次：ステージ・音のお品書き・BGM と、いま開いている画面の見出しへ移動する
-  const jump=document.createElement('nav');
-  jump.className='jump-bar';jump.id='jumpBar';jump.setAttribute('aria-label','この画面の目次');
-  document.querySelector('.studio-tabs')?.after(jump);
-  const jumpTargets=[];
-  function jumpShort(t){return t.replace(/\s+/g,' ').replace(/（.*$/,'').replace(/^[①-⑳]\s*/,'').trim().slice(0,14)}
-  function renderJump(){
-    const mode=document.body.dataset.studioMode||'live';
-    jumpTargets.length=0;
-    const add=(label,el,cls)=>{if(el)jumpTargets.push({label,el,cls:cls||''})};
-    add('🎬 映像',document.querySelector('.stage-card'),'j-stage');
-    add('🎲 企画',E('ponBar'),'j-stage');
-    add('🔊 音のお品書き',E('boardShell'),'j-board');
-    const bgm=[...document.querySelectorAll('#boardShell h2')].find(h=>/^BGM/.test(h.textContent.trim()));
-    add('♪ BGM',bgm&&bgm.closest('section'),'j-board');
-    const sec={plan:'studioPlan',songs:'studioSongs',aivoice:'studioAiVoice'}[mode];
-    const box=sec&&E(sec);
-    if(box)for(const h of box.querySelectorAll('h3')){
-      if(!h.offsetParent&&!h.closest('.plan-group'))continue;
-      if(h.closest('details:not([open])'))continue;
-      const t=jumpShort(h.textContent);
-      if(t)add(t,h.closest('.plan-group')||h)
-    }
-    jump.innerHTML=jumpTargets.map((x,i)=>`<button type="button" class="${x.cls}" data-jump="${i}">${esc(x.label)}</button>`).join('')
+    })
   }
-  jump.onclick=e=>{
-    const b=e.target.closest('[data-jump]');
-    const x=b&&jumpTargets[+b.dataset.jump];
-    if(!x)return;
-    // scrollIntoView は横にも動かすことがあるので、縦だけ動かす（目次の高さぶん下げる）
-    // 0.9.10：プレビューが上に残っているときは、その下に出るようにする（隠れないように）
-    const pv=E('stagePreview');
-    const pinned=pv&&x.el!==pv&&!pv.contains(x.el)&&getComputedStyle(pv).position==='sticky'&&pv.compareDocumentPosition(x.el)&Node.DOCUMENT_POSITION_FOLLOWING&&pv.closest('.stage-card').contains(x.el);
-    const off=jump.getBoundingClientRect().height+(pinned?pv.getBoundingClientRect().height:0)+12;
-    window.scrollTo({top:Math.max(0,x.el.getBoundingClientRect().top+scrollY-off),behavior:'smooth'})
-  };
-  document.querySelectorAll('.studio-tabs [data-mode]').forEach(b=>b.addEventListener('click',()=>setTimeout(renderJump,0)));
+  // タブに「見てほしい」印を付ける（取り戻した動画があるとき など）
+  function deckMark(name,on){deckNavEl.querySelector('[data-deck="'+name+'"]')?.classList.toggle('marked',!!on)}
+  window.__otonohaDeck={show:deckShow,mark:deckMark,cur:deckCur,sideSticky};
 
-  // ---- 0.9.9：プレビューを上に固定（ステージの画面のとき）。手元の便利さだけなので、このブラウザに覚える
-  const PV_PIN_KEY='otonoha-pv-pin';
+  deckNavEl.addEventListener('click',e=>{const b=e.target.closest('[data-deck]');if(b)deckShow(b.dataset.deck)});
+  E('deckLevel').addEventListener('click',e=>{
+    const b=e.target.closest('[data-level]');
+    if(b)deckShow(b.dataset.level==='prep'?deck.prep:deck.live)
+  });
+
+  // ---- 映像を上に残す（狭い画面の「本番」のとき）。手元の便利さだけなので、このブラウザに覚える
   function pvPinSet(on){
     document.body.toggleAttribute('data-pv-pin',on);
-    const b=E('pvPin');if(b){b.setAttribute('aria-pressed',on);b.textContent=on?'📌 上に固定：オン':'📌 上に固定：オフ'}
+    const b=E('pvPin');
+    b.setAttribute('aria-pressed',String(on));
+    b.textContent=on?'📌 映像を上に残す：オン':'📌 映像を上に残す：オフ';
+    deckMeasure()
   }
-  {let on=true;try{on=localStorage.getItem(PV_PIN_KEY)!=='0'}catch(_){}pvPinSet(on)}
-  E('pvPin').onclick=()=>{const on=!document.body.hasAttribute('data-pv-pin');pvPinSet(on);try{localStorage.setItem(PV_PIN_KEY,on?'1':'0')}catch(_){}};
-  const jumpH=()=>document.body.style.setProperty('--jump-h',(jump.offsetHeight||48)+'px');
-  window.addEventListener('resize',jumpH);
+  pvPinSet(lsGet(PV_PIN_KEY)!=='0');
+  E('pvPin').onclick=()=>{const on=!document.body.hasAttribute('data-pv-pin');pvPinSet(on);lsSet(PV_PIN_KEY,on?'1':'0')};
 
+  // ---- 企画の準備：見出しの開け閉めを覚える（'*' はすべて開く）
+  {
+    let open=[];
+    const raw=lsGet(PLAN_KEY);
+    try{open=raw==='*'?'*':JSON.parse(raw||'[]')||[]}catch(_){}
+    const groups=[...document.querySelectorAll('#studioPlan details.plan-group')];
+    for(const d of groups){
+      d.open=open==='*'||(Array.isArray(open)&&open.includes(d.dataset.pg));
+      d.addEventListener('toggle',()=>{if(lsGet(PLAN_KEY)!=='*')lsSet(PLAN_KEY,JSON.stringify(groups.filter(x=>x.open).map(x=>x.dataset.pg)))})
+    }
+  }
+
+  // ---- 置き場所が画面の種類で変わるもの
+  const progRow=document.querySelector('.recbar .prog-row'),progHome=progRow.parentNode,progAfter=progRow.nextElementSibling;
+  function deckPlace(app){
+    // 番組の行：ラジオは録音バー、配信・動画は BGM の欄
+    const slot=E('liveProgSlot'),edit=E('progEdit');
+    if(app==='live'){
+      if(progRow.parentNode!==slot)slot.appendChild(progRow);
+      edit.hidden=false;edit.textContent='⚙ 番組の設定';
+      edit.title='番組名・初期BGM・色・並び順など（フリーのときは選べません）'
+    }else{
+      if(progRow.parentNode!==progHome)progHome.insertBefore(progRow,progAfter);
+      edit.hidden=true;edit.textContent='番組の設定'
+    }
+    // 場面のボタン：配信は帯（いつでも押せる）、動画は「収録・接続」
+    const sw=document.querySelector('.scene-switch'),to=E(app==='live'&&streamMode()?'sceneSlotStrip':'sceneSlotPanel');
+    if(sw.parentNode!==to)to.appendChild(sw)
+  }
   {
     const prev=window.__otonohaAppChanged;
     window.__otonohaAppChanged=app=>{
       prev(app);
-      progPlace(app);
-      renderJump();
-      jumpH()
+      deckPlace(app);
+      deckApply()
     }
   }
 
