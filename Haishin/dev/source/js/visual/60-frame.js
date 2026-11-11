@@ -155,12 +155,14 @@
   }
 
   // 描くのが追いつかない状態が数秒つづいたら、軽くする方法を一度だけ知らせる（勝手には変えない）
-  let slowN=0,slowTold=false;
+  // 重さは「遅いコマが続いた時間」で数える（コマ数で数えると、遅い端末ほど知らせが遅れる）
+  let slowMs=0,slowLast=0,slowTold=false;
   function perfWatch(cost){
     if(slowTold||(state.light&&(state.fps||30)<=15))return;
-    const fps=state.fps||30;
-    slowN=cost>800/fps?slowN+1:Math.max(0,slowN-2);
-    if(slowN<fps*6)return;
+    const t=performance.now(),dt=slowLast?Math.min(1000,t-slowLast):0;
+    slowLast=t;
+    slowMs=cost>800/(state.fps||30)?slowMs+dt:Math.max(0,slowMs-dt*2);
+    if(slowMs<6000)return;
     slowTold=true;
     E('perfHint').hidden=false
   }
