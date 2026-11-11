@@ -50,12 +50,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .bgm-play{width:100%;border:0;border-radius:8px;display:flex;align-items:center;text-align:left}
 .bgm-icon{flex:none;display:grid;place-items:center;border:1px solid var(--i-d-20)}
 .bgm-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bgm-card.unset{border-style:dashed;background:var(--p-h-60);box-shadow:none}
-.bgm-card.unset .bgm-play{background:transparent}
-.bgm-card.unset .bgm-icon{visibility:hidden;width:0;border:0}
 .desk{display:grid;gap:12px}
 .content.desk{padding:6px 6px 2px}
-.rec-head{justify-content:space-between}
 .lamp{display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:4px 10px;border-radius:999px}
 .lamp i{width:9px;height:9px;border-radius:50%;background:var(--i-p-30)}
 .lamp.ready i{background:var(--leaf)}
@@ -157,11 +153,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 @media(pointer:coarse){
  input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea{font-size:16px!important}
 }
-.category-line{display:grid!important;grid-template-columns:minmax(0,1fr) 40px 40px}
-.category-line input{width:100%}
 .category-line .tab-move{width:40px;padding:6px 0;font-size:14px;border-radius:9px}
-.category-line{display:flex;gap:6px}
-.category-line input{min-width:0;flex:1;border:1px solid var(--d-p-75);border-radius:9px;background:var(--hi);padding:8px}
+.category-line{display:grid;grid-template-columns:minmax(0,1fr) 40px 40px;gap:6px}
+.category-line input{width:100%;min-width:0;border:1px solid var(--d-p-75);border-radius:9px;background:var(--hi);padding:8px}
 .category-note{font-size:10px;color:var(--i-p-75);line-height:1.5}
 .emoji-head-controls{display:flex;align-items:center;gap:5px}
 .btn.armed{background:var(--rec);border-color:var(--rec);color:var(--on-accent);font-weight:700}
@@ -172,8 +166,6 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .notice.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:390px){
  .emoji-head-controls{gap:3px}
- .section-title h2{font-size:13px}
- .timer{font-size:32px}
 }
 @media(max-width:360px){
  .app{padding-left:6px;padding-right:6px}
@@ -188,21 +180,16 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .lamp{white-space:nowrap}
 .top{margin-bottom:0}
 .recbar-in{display:grid}
-.rec-head{display:grid;grid-template-columns:auto 1fr auto;align-items:center}
 .recbar .timer{padding:0}
-.meters{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+.meters{display:grid;grid-template-columns:1fr 1fr auto;gap:4px 12px;align-items:center}
 .meters .meter-row{grid-template-columns:34px minmax(0,1fr) 46px;gap:5px;font-size:10px}
-@media(min-height:700px){
+@media(min-width:700px) and (min-height:700px){
  .recbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
 }
 @media(max-width:420px){
- .meters{grid-template-columns:1fr}
- .recbar .timer{font-size:26px;text-align:right}
- .rec-head{grid-template-columns:auto 1fr}
- .head-btns{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}
- .head-btns .pill{padding:7px 6px}
- .prog-row{flex-wrap:nowrap}
- 
+ .meters{grid-template-columns:minmax(0,1fr) auto}
+ .meters .meter-row{grid-column:1}
+ .meters .mon-btn{grid-column:2;grid-row:1/3}
  .cover-row{grid-template-columns:72px minmax(0,1fr)}
  .cover-thumb{width:72px}
  .cover-ctl label{display:grid;gap:3px}
@@ -216,7 +203,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .bgm-now-icon{width:28px;height:28px;display:grid;place-items:center;font-weight:700}
 .bgm-now-name{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bgm-now-track{height:5px;border-radius:3px;background:var(--i-p-12);overflow:hidden;margin-top:3px}
-.bgm-now-track i{display:block;height:100%;width:0;background:var(--leaf)}
+.bgm-now-track i{display:block;height:100%;transform-origin:0 50%;transform:scaleX(0);background:var(--leaf)}
 .bgm-now-time{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .bgm-now .btn{padding:6px 9px}
 .bgm-now[data-state="idle"] .bgm-now-name{color:var(--muted);font-weight:400}
@@ -240,14 +227,10 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .bgm-card{min-height:auto;padding:5px 6px}
 .bgm-card.active{border-color:var(--i-a-6);box-shadow:0 0 0 2px color-mix(in srgb,var(--a-p-60) 67%,transparent)}
 @media(max-width:420px){
- .transport{grid-template-columns:1fr 1fr}
  .bgm-now{grid-template-columns:auto minmax(0,1fr) auto}
  .bgm-now-time{display:none}
 }
-.prog-row{display:flex;gap:6px;align-items:center;padding-right:2px}
-.prog-chips{display:flex;flex-wrap:nowrap;gap:4px;flex:1;min-width:0;padding:3px 2px;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none}
-.prog-chips::-webkit-scrollbar{display:none}
-.prog-chip{flex:none;scroll-snap-align:start}
+.prog-chips{display:flex;flex-wrap:wrap;gap:4px}
 .prog-chip{border:1px solid var(--d-p-60);border-radius:999px;padding:6px 11px;background:var(--paper);white-space:nowrap;font-size:12px}
 .prog-chip.active{background:var(--a-p-20);border-color:var(--a-p-88);color:var(--i-a-88);font-weight:800;box-shadow:0 0 0 2px color-mix(in srgb,var(--a-p-60) 40%,transparent)}
 .prog-chip:disabled{opacity:.5}
@@ -256,7 +239,6 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .prog-colors{display:flex;flex-wrap:wrap;gap:6px}
 .prog-colors label{display:flex;align-items:center;gap:5px;border:1px solid var(--d-p-75);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:400!important;background:var(--hi);cursor:pointer}
 .prog-colors input{width:auto!important;margin:0}
-.head-btns{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
 #monBtn.off{background:var(--w-p-12);border-color:var(--w-p-75);color:var(--i-w-75);font-weight:700}
 .prog-bgm{margin-bottom:8px}
 .prog-bgm .bgm-card{border-width:2px;border-color:var(--w-p-88)}
@@ -280,9 +262,6 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .pc-slot.use::after{content:"使用中";position:absolute;left:2px;right:2px;bottom:2px;background:color-mix(in srgb,var(--accent) 90%,transparent);color:var(--on-accent);font-size:8.5px;border-radius:5px;text-align:center;line-height:1.5}
 .pc-slot .pc-n{position:absolute;top:1px;left:4px;font-size:9px;color:var(--i-d-60);text-shadow:0 0 3px #fff}
 .pc-actions{display:flex;flex-wrap:wrap;gap:5px}
-@media(max-width:420px){
- .pc-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
-}
 .pagenav{display:flex;justify-content:center;margin-top:8px}
 .pagenav .pill.on{font-weight:800}
 body[data-page="settings"] #boardShell,body[data-page="settings"] #takesShell{display:none}
@@ -303,8 +282,8 @@ body:not([data-page="settings"]) #settingsShell{display:none}
 .save-warn{font-weight:400}
 .save-warn .warn-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
 .save-warn .btn{font-size:11.5px;white-space:normal}
-.minibar{position:fixed;left:0;right:0;top:0;z-index:6;padding:calc(env(safe-area-inset-top,0px) + 6px) 10px 6px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.minibar-in{width:min(100%,540px);margin:0 auto;display:grid;gap:5px}
+.minibar{position:fixed;left:0;right:0;top:0;z-index:6;padding:calc(env(safe-area-inset-top,0px) + 6px) 10px 6px}
+.minibar-in{width:min(100%,540px);margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:5px}
 .mini-row{display:flex;align-items:center;gap:5px;min-width:0}
 .mini-timer{font:700 17px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;flex:none}
 .mini-timer[data-st="recording"],.mini-timer[data-st="ending"]{color:var(--rec)}
@@ -319,7 +298,7 @@ body:not([data-page="settings"]) #settingsShell{display:none}
 .mbtn.armed{background:var(--rec);border-color:var(--rec);color:var(--on-accent)}
 .mini-bgm{display:flex;align-items:center;gap:6px;font-size:11.5px;border:1px solid var(--d-p-60);border-radius:9px;padding:3px 3px 3px 8px;background:var(--paper)}
 .mini-bgm-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
-.mini-bgm .mbtn{flex:none;height:28px;font-size:11px;padding:0 8px}
+.mini-bgm .mbtn{flex:none;height:30px;font-size:11.5px;padding:0 10px}
 .mini-bgm[data-state="playing"]{border-color:var(--a-p-75);background:var(--a-p-6)}
 .mini-bgm[data-state="low"]{border-color:var(--w-p-75);background:var(--w-p-6)}
 .mini-bgm[data-state="error"]{border-color:var(--r-p-45);background:var(--rec-pale);color:var(--i-r-45)}
@@ -336,7 +315,7 @@ body:not([data-page="settings"]) #settingsShell{display:none}
 .chip.active,.prog-chip.active,.prog-chip.free.active{background:var(--accent);border-color:var(--accent);color:var(--on-accent);box-shadow:none}
 .emoji-pad,.text-pad,.voice-pad,.bgm-card,.pc-slot,.cover-thumb,.take,.panel,.cover-row,.bgm-now,.mini-bgm{border-radius:4px}
 .emoji-pad.loaded,.text-pad.loaded,.voice-pad.loaded{background:var(--hi);border:1.5px solid var(--accent)}
-.emoji-pad:not(.loaded),.text-pad:not(.loaded),.voice-pad:not(.loaded),.bgm-card.unset{background:transparent;border:1.5px dashed var(--a-p-30)}
+.emoji-pad:not(.loaded),.text-pad:not(.loaded),.voice-pad:not(.loaded){background:transparent;border:1.5px dashed var(--a-p-30)}
 .emoji-pad.playing,.text-pad.playing,.voice-pad.playing,.bgm-card.active{background:var(--decor);border-color:var(--decor);color:var(--on-decor);box-shadow:none}
 .bgm-card{border:1.5px solid var(--accent);background:var(--hi)}
 .bgm-icon{border-radius:4px;background:var(--a-p-20);border-color:var(--accent);color:var(--ink)}
@@ -379,7 +358,6 @@ body{background:var(--bg);line-height:1.55}
 .app{width:min(100%,760px);padding:28px 18px 36px;gap:22px}
 .top{position:relative;overflow:hidden;padding:26px 20px 20px;border:1px solid var(--decor);border-radius:3px;background:var(--accent);color:var(--on-accent);box-shadow:inset 0 0 0 5px var(--accent),inset 0 0 0 6px var(--decor),0 8px 20px #2a201815}
 .shop-eyebrow{font:10px Georgia,serif;letter-spacing:.29em;opacity:.85}
-.top h1{margin-top:10px}
 .top h1{font-size:30px;letter-spacing:.15em;line-height:1.5;margin:0 0 5px}
 .top p{font-size:12px;letter-spacing:.06em;margin:0 0 15px}
 .pagenav{gap:8px}
@@ -389,8 +367,6 @@ body{background:var(--bg);line-height:1.55}
 .recbar{border-top:4px solid var(--accent);padding:12px 14px;box-shadow:0 5px 18px #2a20181a}
 .recbar-in{padding:0;gap:12px}
 .recbar .timer{font-size:36px;letter-spacing:.03em}
-.rec-head{gap:8px}
-.head-btns{max-width:255px}
 .lamp{border:0;background:var(--a-p-6);font-size:11px}
 .section+.section{padding-top:24px;margin-top:26px;border-top:1px solid var(--d-p-30)}
 .section-title{margin-bottom:12px}
@@ -398,7 +374,6 @@ body{background:var(--bg);line-height:1.55}
 .section-title h2 span{display:block;margin-top:3px;font:9px Georgia,serif;letter-spacing:.13em}
 .menu-heading{display:flex;align-items:center;justify-content:space-between;border-bottom:3px double var(--decor);padding-bottom:14px;margin-bottom:24px}
 .menu-heading span{font:21px Georgia,serif;letter-spacing:.16em;color:var(--accent)}
-.menu-heading small{font-family:var(--title-font);font-size:11px;letter-spacing:.1em}
 .btn,.pill,.chip,.prog-chip{min-height:34px;font-size:12px;transition:background .15s,box-shadow .15s}
 .btn,.pill{padding:7px 12px}
 .btn:hover:not(:disabled),.pill:hover:not(:disabled){box-shadow:0 2px 5px #2a20181a;background:var(--d-p-12)}
@@ -438,8 +413,6 @@ a{color:var(--accent)}
 .film-preview{display:block;width:min(100%,320px);height:auto;aspect-ratio:1;margin:14px auto 0;border:1px solid var(--decor);background:var(--paper)}
 .film-status{min-height:1.6em;font-size:11px;color:var(--muted)}
 @media(min-width:700px){
- .rec-head{grid-template-columns:auto 1fr auto}
- .recbar .timer{text-align:center}
  .emoji-grid{grid-auto-rows:68px}
  .emoji-pad{height:68px}
  .content.desk{gap:15px}
@@ -450,12 +423,8 @@ a{color:var(--accent)}
  .top h1{font-size:24px}
  .shell{padding:14px}
  .recbar{padding:12px}
- .rec-head{grid-template-columns:auto 1fr}
- .head-btns{grid-column:1/-1;max-width:none;display:grid;grid-template-columns:1fr 1fr}
- .recbar .timer{text-align:right}
  .menu-heading{gap:8px}
  .menu-heading span{font-size:17px}
- .menu-heading small{font-size:10px}
  .btn,.pill{padding:7px 9px}
  .emoji-grid{gap:5px;grid-auto-rows:53px}
  .emoji-pad{height:53px}
@@ -467,23 +436,41 @@ a{color:var(--accent)}
 @media(prefers-reduced-motion:reduce){
  *,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}
 }
-.prog-row.prog-row{flex-wrap:wrap;align-items:flex-start}
-.prog-row .prog-chips{display:contents}
-.prog-row.prog-row{gap:4px}
-
 .emoji-grid.emoji-grid{grid-auto-rows:auto}
 .emoji-grid .emoji-pad{height:auto;aspect-ratio:1/1;font-size:clamp(20px,7vw,32px)}
 #voiceGrid .voice-pad.loaded{background-color:transparent;background-size:cover;background-repeat:no-repeat;background-position:center;padding:0}
 .menu-heading span,.section-title h2,.panel h3,.modal h2,.film-panel h3{font-weight:700}
-.head-btns .stop-all{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:800;font-size:13px;min-height:40px;padding:8px 14px;letter-spacing:.04em}
-.head-btns .stop-all:active{transform:scale(.97)}
 .emoji-head-controls .play-mode{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:10.5px;font-weight:700;color:var(--muted)}
 .emoji-head-controls .play-mode select{border:1.5px solid var(--line);border-radius:4px;background:var(--hi);padding:4px 6px;font-size:12px;color:var(--ink);font-weight:400}
 .section-title:has(.emoji-head-controls){align-items:flex-end}
 .panel.flash{animation:panelflash 1.6s ease-out 2}
 @keyframes panelflash{0%{box-shadow:0 0 0 4px var(--rec)}100%{box-shadow:0 0 0 0 transparent}}
-.minibar .se-stop{flex:none;background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:800}
 #settingsShell .film-panel{margin-top:0}
+.rec-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mon-btn{min-height:32px;max-width:124px;padding:4px 9px;font-size:11px;line-height:1.3;white-space:normal}
+.stops{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stop-btn{min-width:0;min-height:46px;border:1.5px solid var(--ink);border-radius:4px;background:var(--hi);font-weight:800;font-size:13px;letter-spacing:.03em;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stop-btn.stop-all,.mbtn.stop-all{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.stop-btn:active{transform:scale(.97)}
+.mini-stops{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mini-stops .mbtn{height:34px;border-color:var(--ink)}
+.jump{display:flex;gap:4px}
+.jump button{flex:1 1 0;min-width:0;height:34px;border:1.5px solid var(--d-p-60);border-radius:4px;background:var(--paper);font-size:11.5px;font-weight:700;padding:0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.minibar .jump button{height:32px;font-size:11px}
+.take-video{display:grid;gap:6px;border:1.5px solid var(--accent);border-radius:4px;background:var(--a-p-6);padding:10px}
+.take-video strong{font-size:12.5px}
+.take-video span{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.take-video .btns{display:flex;flex-wrap:wrap;gap:6px}
+.take-video .btn{min-height:40px}
+.look-labels summary{cursor:pointer;font-size:12px;font-weight:700}
+.look-labels .look-names{margin-top:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.emoji-pad,.text-pad,.voice-pad,.bgm-tile,.stop-btn,.tbtn,.mbtn,.jump button{-webkit-tap-highlight-color:transparent}
+select{min-height:36px}
+body[data-pon] .rec-only{display:none!important}
+@media(max-width:360px){
+ .stop-btn{font-size:12px;letter-spacing:0}
+ .jump button{font-size:10.5px}
+}
 </style>
 <script>
 'use strict';
@@ -500,6 +487,7 @@ const LOOK_PRESETS={
  hotchoco:{name:'ホットショコラ',bg:'#36271f',paper:'#46342b',accent:'#d8a873',decor:'#c2775c'}
 };
 const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];
+const LOOK_LABELS={menu:'音のお品書き',emoji:'絵文字の効果音',text:'文字の効果音',voice:'ボイス',bgm:'BGM',env:'環境音'};
 const LOOK_DEFAULT={title:'純喫茶オトノハ',subtitle:'',eyebrow:'RADIO & SOUND',preset:'kissaten',...LOOK_PRESETS.kissaten};
 function lookSanitize(v){
  v=v&&typeof v==='object'?v:{};const out={...LOOK_DEFAULT};
@@ -508,6 +496,7 @@ function lookSanitize(v){
  if(v.preset==='custom'||Object.prototype.hasOwnProperty.call(LOOK_PRESETS,v.preset))out.preset=v.preset;
  if(out.preset!=='custom')Object.assign(out,LOOK_PRESETS[out.preset]);
  for(const k of LOOK_COLOR_KEYS)if(out.preset==='custom'&&typeof v[k]==='string'&&/^#[0-9a-f]{6}$/i.test(v[k]))out[k]=v[k].toLowerCase();
+ out.labels={...LOOK_LABELS};if(v.labels&&typeof v.labels==='object')for(const k in LOOK_LABELS)if(typeof v.labels[k]==='string'&&v.labels[k].trim())out.labels[k]=v.labels[k].trim().slice(0,20);
  delete out.name;return out;
 }
 function lookLuminance(hex){const c=hex.slice(1).match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return c[0]*.2126+c[1]*.7152+c[2]*.0722}
@@ -521,6 +510,8 @@ function lookPaint(v){
  document.documentElement.dataset.tone=dark?'dark':'light';
  document.title=v.title;
  const t=document.getElementById('appTitle'),s=document.getElementById('appSub'),e=document.getElementById('appEyebrow');if(t)t.textContent=v.title;if(s){s.textContent=v.subtitle;s.hidden=!v.subtitle}if(e){e.textContent=v.eyebrow;e.hidden=!v.eyebrow}
+ for(const el of document.querySelectorAll('[data-label]'))el.textContent=v.labels[el.dataset.label];
+ if(typeof renderJump==='function')renderJump(v);
 }
 let look=lookLoad();lookPaint(look);
 </script>
@@ -530,39 +521,44 @@ let look=lookLoad();lookPaint(look);
 <header class="top"><div class="shop-eyebrow" id="appEyebrow">RADIO &amp; SOUND</div><h1 id="appTitle">純喫茶オトノハ</h1><p><span id="appSub"></span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" id="navMain">収録画面</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <!-- 1. 録音（画面上部に固定） -->
-<section class="shell recbar" aria-label="録音"><div class="content recbar-in">
- <div class="prog-row"><div class="prog-chips" id="progChips" role="tablist" aria-label="番組"></div></div>
- <div class="rec-head"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div><div class="head-btns"><button class="pill stop-all" type="button" id="stopAll" title="鳴っている効果音・BGM・環境音を、すべてフェードして止めます">■ 全音停止</button><button class="pill" type="button" id="monBtn" title="ヘッドホン・スピーカーから出す音のオン／オフ（録音には影響しません）">モニター音：オン</button></div></div>
- <div class="transport">
+<section class="shell recbar" aria-label="録音と音の操作"><div class="content recbar-in">
+ <div class="prog-chips rec-only" id="progChips" role="tablist" aria-label="番組"></div>
+ <div class="rec-head rec-only"><span class="lamp" id="recLamp"><i></i><span id="recLampText">マイク未接続</span></span><div class="timer" id="timer" aria-live="off">00:00<small>.0</small></div></div>
+ <div class="stops"><button class="stop-btn stop-all" type="button" id="stopAll" title="鳴っている効果音・BGM・環境音・ボイスを、すべてフェードして止めます">■ 全音停止</button><button class="stop-btn" type="button" id="stopSeEnv" title="鳴っている効果音と環境音を、まとめてフェードして止めます（BGMとボイスはそのまま）">■ 効果音＋環境音</button></div>
+ <div class="transport rec-only">
   <button class="tbtn recbtn" id="recBtn">● 録音開始</button>
   <button class="tbtn" id="stopRecBtn" disabled>■ 停止・保存</button>
   <button class="tbtn" id="retakeBtn" disabled title="今のテイク（または直前のテイク）を消して、同じBGMを頭から流して録り直します">↺ 録り直し</button>
   <button class="tbtn discardbtn" id="discardBtn" disabled title="録音を止めて、保存せずに捨てます">✕ 停止して破棄</button>
  </div>
- <div class="voice-warn" id="voiceWarn" role="alert" hidden></div>
- <div class="voice-warn save-warn" id="saveWarn" role="alert" hidden></div>
+ <div class="voice-warn rec-only" id="voiceWarn" role="alert" hidden></div>
+ <div class="voice-warn save-warn rec-only" id="saveWarn" role="alert" hidden></div>
  <div class="bgm-now" id="bgmNow" data-state="idle"><span class="bgm-now-icon" aria-hidden="true">♪</span><div class="bgm-now-main" id="bgmNowMain" role="button" tabindex="0" title="押すとBGM欄へ移動"><div class="bgm-now-name" id="bgmNowName">BGM：なし</div><div class="bgm-now-track"><i id="bgmNowBar"></i></div></div><span class="bgm-now-time" id="bgmNowTime"></span><button class="btn" id="bgmNowStop" disabled>■ BGM停止</button></div>
- <div class="meters">
+ <div class="meters rec-only">
   <div class="meter-row"><span>マイク</span><div class="meter"><i id="micMeter"></i><b id="micPeak"></b></div><output id="micDb">-∞ dB</output></div>
   <div class="meter-row"><span>録音</span><div class="meter"><i id="mixMeter"></i><b id="mixPeak"></b></div><output id="mixDb">-∞ dB</output></div>
+  <button class="pill mon-btn" type="button" id="monBtn" title="ヘッドホン・スピーカーから出す音のオン／オフ（録音には影響しません）">モニター音：オン</button>
  </div>
+ <nav class="jump" aria-label="画面内の移動"></nav>
 </div></section>
 
 <div class="minibar" id="miniBar" hidden><div class="minibar-in">
- <div class="mini-row"><span class="mini-timer" id="miniTimer">00:00.0</span><button class="mbtn recbtn" type="button" id="miniRec">● 録音開始</button><button class="mbtn" type="button" id="miniStop">■ 停止</button><button class="mbtn" type="button" id="miniRetake">↺ 録り直し</button></div>
- <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button><button class="mbtn se-stop" type="button" id="miniSeStop" title="鳴っている効果音と環境音を、まとめてフェードして止めます（BGMとボイスはそのまま）">■ 効果音＋環境音</button></div>
+ <div class="mini-row rec-only"><span class="mini-timer" id="miniTimer">00:00.0</span><button class="mbtn recbtn" type="button" id="miniRec">● 録音開始</button><button class="mbtn" type="button" id="miniStop">■ 停止</button><button class="mbtn" type="button" id="miniRetake">↺ 録り直し</button></div>
+ <div class="mini-bgm" id="miniBgm" data-state="idle"><span class="mini-bgm-name" id="miniBgmName" role="button" tabindex="0" title="押すとBGM欄へ移動">BGM：なし</span><button class="mbtn" type="button" id="miniBgmBtn">■ BGM停止</button></div>
+ <div class="mini-stops"><button class="mbtn stop-all" type="button" id="miniStopAll">■ 全音停止</button><button class="mbtn" type="button" id="miniSeStop" title="鳴っている効果音と環境音を、まとめてフェードして止めます（BGMとボイスはそのまま）">■ 効果音＋環境音</button></div>
+ <nav class="jump" aria-label="画面内の移動"></nav>
 </div></div>
 <!-- 2. 効果音・BGM -->
-<main class="shell" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span></div>
-<section class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><label class="play-mode" for="playMode">再生中に押したら<select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></label></div></div><div class="emoji-grid" id="emojiGrid"></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
-<section class="section"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
-<section class="section"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。最後の行まで埋まると枠が1行増えます。</p></section>
-<section class="section"><div class="section-title"><h2>BGM <span>04 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
-<section class="section"><div class="section-title"><h2>環境音 <span>05 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
+<main class="shell" id="boardShell"><div class="content"><div class="menu-heading"><span data-label="menu">音のお品書き</span></div>
+<section class="section" id="secEmoji"><div class="section-title"><h2><bdi data-label="emoji">絵文字の効果音</bdi> <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><label class="play-mode" for="playMode">再生中に押したら<select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></label></div></div><div class="emoji-grid" id="emojiGrid"></div><p class="section-help">空欄を押して登録。登録後は長押し・右クリックで編集できます。8秒以上の長い音は、鳴っている間にもう一度押すと止まります（ボタンごとに変えられます）。最後の行まで埋まると枠が1行増えます。</p></section>
+<section class="section" id="secText"><div class="section-title"><h2><bdi data-label="text">文字の効果音</bdi> <span>02 / SHORT WORDS</span></h2></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。鳴っている間にもう一度押すと、フェードして止まります（ボタンごとに変えられます）。最後の行まで埋まると枠が1行増えます。</p></section>
+<section class="section" id="secVoice"><div class="section-title"><h2><bdi data-label="voice">ボイス</bdi> <span>03 / VOICE</span></h2></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。最後の行まで埋まると枠が1行増えます。</p></section>
+<section class="section" id="secBgm"><div class="section-title"><h2><bdi data-label="bgm">BGM</bdi> <span>04 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs">分類名編集</button></div><div class="prog-bgm rec-only" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
+<section class="section" id="secEnv"><div class="section-title"><h2><bdi data-label="env">環境音</bdi> <span>05 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
 </div></main>
 
 <!-- 3. 収録したテイク -->
-<section class="shell" id="takesShell"><div class="content desk">
+<section class="shell rec-only" id="takesShell"><div class="content desk">
  <div class="section-title" style="margin:0"><h2>収録したテイク</h2><span class="storage" id="storageInfo"></span></div>
  <div class="takes" id="takes"></div>
  <div class="export-opts">
@@ -575,13 +571,13 @@ let look=lookLoad();lookPaint(look);
    <strong>動画用サムネイル（正方形）</strong>
    <div class="btns"><button class="btn" type="button" id="coverPick">画像を選ぶ</button><button class="btn danger" type="button" id="coverClear">外す</button></div>
    <label>収め方 <select id="coverFit"><option value="cover">中央を正方形に切り抜く</option><option value="contain">全体を収める（余白はぼかし）</option></select></label>
-   <label>動画サイズ <select id="videoSize"><option value="1080">1080×1080</option><option value="720">720×720</option></select></label>
+   <label>動画サイズ <select id="videoSize"><option value="1080">1080×1080</option><option value="720">720×720</option><option value="540">540×540（軽い）</option></select></label>
   </div>
  </div>
 
   <div class="film-actions"><button class="btn" id="cancelVideoBtn" type="button" hidden>動画書き出しを中止</button></div>
  <input type="file" id="coverFile" accept="image/*" hidden><input type="file" id="takeCoverFile" accept="image/*" hidden>
- <p class="note">各テイクの「BGM操作の記録」には、BGMを流した・止めた・小さくした時刻が自動で残ります。編集ソフトで切り貼りするときの目安に使えます。録音は数秒ごとにブラウザ内へ保存されます。途中でタブが閉じても、そこまでの音声はテイク一覧に残ります。テイク名の左の四角を押すと、そのテイクだけ動画の画像を変えられます。</p>
+ <p class="note">各テイクの「BGM操作の記録」には、BGMを流した・止めた・小さくした時刻が自動で残ります。編集ソフトで切り貼りするときの目安に使えます。録音は数秒ごとにブラウザ内へ保存されます。途中でタブが閉じても、そこまでの音声はテイク一覧に残ります。テイク名の左の四角を押すと、そのテイクだけ動画の画像を変えられます。書き出した動画はブラウザ内にも残るので、保存に失敗したときや別の場所にも置きたいときは、作り直さずに保存し直せます。</p>
 </div></section>
 
 <!-- 4. 設定（音量・マイクなど） -->
@@ -590,7 +586,7 @@ let look=lookLoad();lookPaint(look);
 
  <section class="panel" aria-labelledby="mixTitle">
   <h3 id="mixTitle">音量 <span>ヘッドホン音量は録音に影響しません</span></h3>
-  <div class="volume-row"><label for="micVolume">マイク</label><input id="micVolume" type="range" min="0" max="300"><output id="micVal"></output></div>
+  <div class="volume-row rec-only"><label for="micVolume">マイク</label><input id="micVolume" type="range" min="0" max="300"><output id="micVal"></output></div>
   <div class="volume-row"><label for="seVolume">効果音</label><input id="seVolume" type="range" min="-60" max="0" step="0.5"><output id="seVal"></output></div>
   <div class="volume-row"><label for="bgmVolume">BGM</label><input id="bgmVolume" type="range" min="-60" max="0" step="0.5"><output id="bgmVal"></output></div>
   <div class="volume-row"><label for="voVolume">ボイス</label><input id="voVolume" type="range" min="-60" max="0" step="0.5"><output id="voVal"></output></div>
@@ -603,26 +599,26 @@ let look=lookLoad();lookPaint(look);
   <div class="opts"><label><input type="checkbox" id="optLimiter">音割れ防止リミッター</label></div>
   <div class="opts"><label><input type="checkbox" id="previewFull">録音していないときは、効果音とBGMを端末の音量いっぱいで鳴らす（比率はそのまま）</label></div>
   <p class="note" id="previewInfo"></p>
-  <div class="end-row"><label for="monitorMode">録音中のモニター音</label><select id="monitorMode"><option value="auto">自動（イヤホンでなければ消す）</option><option value="muteRec">録音中は必ず消す</option><option value="always">消さない</option></select></div>
-  <p class="note" id="outputInfo">出力先を確認中…</p>
+  <div class="end-row rec-only"><label for="monitorMode">録音中のモニター音</label><select id="monitorMode"><option value="auto">自動（イヤホンでなければ消す）</option><option value="muteRec">録音中は必ず消す</option><option value="always">消さない</option></select></div>
+  <p class="note rec-only" id="outputInfo">出力先を確認中…</p>
  </section>
 
  <section class="panel" aria-labelledby="endTitle">
   <h3 id="endTitle">BGMの締め</h3>
   <div class="volume-row"><label for="bgmLowLevel">小さくした時</label><input id="bgmLowLevel" type="range" min="5" max="80"><output id="bgmLowVal"></output></div>
   <div class="end-row"><label for="fadeSec">フェードアウトの長さ</label><select id="fadeSec"><option value="2">2秒</option><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option><option value="12">12秒</option></select></div>
-  <div class="opts"><label><input type="checkbox" id="fadeOnStop">「停止・保存」でBGMをフェードアウトしてから録音を止める</label></div>
+  <div class="opts rec-only"><label><input type="checkbox" id="fadeOnStop">「停止・保存」でBGMをフェードアウトしてから録音を止める</label></div>
   <p class="note">BGM欄の「BGMを小さくする」は約2秒かけて下げ、もう一度押すと元の音量へ戻します。</p>
  </section>
 
- <section class="panel" aria-labelledby="duckTitle">
+ <section class="panel rec-only" aria-labelledby="duckTitle">
   <h3 id="duckTitle"><label style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" id="duckOn" style="accent-color:var(--accent)">話すとBGMを下げる</label><span class="duck-state" id="duckState">待機</span></h3>
   <div class="volume-row"><label for="duckDepth">下げ幅</label><input id="duckDepth" type="range" min="3" max="30"><output id="duckDepthVal"></output></div>
   <div class="volume-row"><label for="duckThresh">反応する声</label><input id="duckThresh" type="range" min="-65" max="-15"><output id="duckThreshVal"></output></div>
   <p class="note">マイクの音が「反応する声」を超えるとBGMが下がり、話し終えて約0.5秒で戻ります。右へ動かすほど大きな声にだけ反応します。</p>
  </section>
 
- <section class="panel" aria-labelledby="micTitle">
+ <section class="panel rec-only" aria-labelledby="micTitle">
   <h3 id="micTitle">マイク <span id="micInfo">未接続</span></h3>
   <div class="mic-row"><select id="micSelect" aria-label="使うマイク"><option value="">既定のマイク</option></select><button class="btn primary" id="micBtn">マイクを有効にする</button></div>
   <div class="opts">
@@ -636,7 +632,7 @@ let look=lookLoad();lookPaint(look);
   <p class="note" id="micHelp">開くたびにマイクの許可を求められる場合は、許可の画面で「サイトにアクセスしている間は許可する」（Chrome）を選ぶか、ブラウザのサイト設定でマイクを「許可」にすると、次回から自動でつながります。</p>
  </section>
 
- <section class="panel film-panel" aria-labelledby="filmTitle">
+ <section class="panel film-panel rec-only" aria-labelledby="filmTitle">
   <h3 id="filmTitle">映像の演出</h3>
   <div class="film-controls">
    <label>季節の演出<select id="videoEffect"><option value="none">なし（静止画）</option><option value="spring">春：はらはら桜</option><option value="summer">夏：ぷくぷくソーダ</option><option value="autumn">秋：ころころ木の実</option><option value="winter">冬：ふわふわ白雪</option></select></label>
@@ -657,10 +653,17 @@ let look=lookLoad();lookPaint(look);
  <section class="panel" aria-labelledby="lookTitle">
   <h3 id="lookTitle">名前と着せ替え <span id="lookState">保存済み</span></h3>
   <div class="look-names"><label>看板の上の小さな文字<input id="lookEyebrowIn" maxlength="30" autocomplete="off"></label><label>タイトル<input id="lookTitleIn" maxlength="30" autocomplete="off"></label><label>サブタイトル<input id="lookSubIn" maxlength="80" autocomplete="off"></label></div>
+  <details class="look-labels"><summary>見出しの名前を変える</summary><div class="look-names"><label>音のお品書き<input data-look-label="menu" maxlength="20" autocomplete="off"></label><label>絵文字の効果音<input data-look-label="emoji" maxlength="20" autocomplete="off"></label><label>文字の効果音<input data-look-label="text" maxlength="20" autocomplete="off"></label><label>ボイス<input data-look-label="voice" maxlength="20" autocomplete="off"></label><label>BGM<input data-look-label="bgm" maxlength="20" autocomplete="off"></label><label>環境音<input data-look-label="env" maxlength="20" autocomplete="off"></label></div></details>
   <div class="look-presets" id="lookPresets" role="radiogroup" aria-label="配色"></div>
   <div class="look-colors"><label>地<input type="color" data-look="bg"></label><label>面<input type="color" data-look="paper"></label><label>差し色<input type="color" data-look="accent"></label><label>装飾<input type="color" data-look="decor"></label></div>
   <p class="note">変更はすぐ画面に反映されます（収録画面でも確かめられます）。「保存」を押すまでは仮の表示で、ページを開き直すと保存済みの状態に戻ります。4色のどれかを変えると「カスタム」になります。文字の色は、背景の明るさから自動で決まります。</p>
   <div class="end-row"><button class="btn primary" type="button" id="lookSave">保存</button><button class="btn" type="button" id="lookRevert">変更を取り消す</button><button class="btn" type="button" id="lookReset">初期状態に戻す</button></div>
+ </section>
+
+ <section class="panel" aria-labelledby="ponTitle">
+  <h3 id="ponTitle">使う機能</h3>
+  <div class="opts"><label><input type="checkbox" id="ponOnly">収録機能を使わない（効果音・BGM・環境音を鳴らすだけの画面にする）</label></div>
+  <p class="note">入れると、録音・マイク・テイク・動画の欄を隠し、マイクにもつなぎません。登録した音源や録音済みのテイクは消えず、外せば元の画面に戻ります。</p>
  </section>
 
  <section class="panel" aria-labelledby="fileTitle">
@@ -684,7 +687,7 @@ let look=lookLoad();lookPaint(look);
  <div class="field"><label>番組の並び順</label><div class="move-row"><button type="button" class="btn" id="progMovePrev">← 前へ</button><button type="button" class="btn" id="progMoveNext">次へ →</button></div></div>
  <div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="progModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <input type="file" id="progCoverFile" accept="image/*" hidden>
-<div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field" id="imageField" hidden><label for="imageFile">ボタンの画像</label><div class="filebox"><input id="imageFile" type="file" accept="image/*"><small id="currentImage"></small></div></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
+<div class="modal-back" id="soundModal"><form class="modal" id="soundForm"><h2 id="soundHeading">効果音の編集</h2><input type="hidden" id="soundId"><input type="hidden" id="soundType"><div class="field"><label for="labelInput" id="labelCaption">ボタン名</label><input id="labelInput" required><small id="labelHelp"></small></div><div class="field" id="imageField" hidden><label for="imageFile">ボタンの画像</label><div class="filebox"><input id="imageFile" type="file" accept="image/*"><small id="currentImage"></small></div></div><div class="field"><label for="soundFile">音源ファイル</label><div class="filebox"><input id="soundFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentSoundFile"></small></div></div><div class="field"><label for="soundVol">この効果音の音量：<span id="soundVolVal"></span></label><input id="soundVol" type="range" min="0" max="100"></div><div class="field" id="modeField"><label for="soundMode">鳴っている間にもう一度押したら</label><select id="soundMode"><option value="">おまかせ</option><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option><option value="toggle">止める</option></select><small id="soundModeHelp"></small></div><div class="field"><label for="shortcutInput">ショートカット</label><input id="shortcutInput" readonly placeholder="ここを選んでキーを押す"><small>Escキーで解除。文字入力中はショートカットが作動しません。</small></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="movePrev">← 前へ</button><button type="button" class="btn" id="moveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="deleteSound">削除</button><div class="actions-right"><button type="button" class="btn" data-close="soundModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back" id="bgmModal"><form class="modal" id="bgmForm"><h2 id="bgmHeading">BGMの設定</h2><input type="hidden" id="bgmId"><div class="field"><label for="bgmNameInput">表示名</label><input id="bgmNameInput" maxlength="80" required placeholder="例：午後の喫茶店"></div><div class="field"><label for="bgmFile">音源ファイル</label><div class="filebox"><input id="bgmFile" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac"><small id="currentBgmFile"></small></div></div><div class="field"><label for="bgmVolModal">この曲の音量：<span id="bgmVolModalVal"></span></label><input id="bgmVolModal" type="range" min="0" max="100"></div><div class="field"><label>並び順</label><div class="move-row"><button type="button" class="btn" id="bgmMovePrev">← 前へ</button><button type="button" class="btn" id="bgmMoveNext">次へ →</button></div></div><div class="modal-actions"><button type="button" class="btn danger" id="resetBgm">選択リセット</button><div class="actions-right"><button type="button" class="btn" data-close="bgmModal">キャンセル</button><button type="submit" class="btn gold">保存</button></div></div></form></div>
 <div class="modal-back" id="bgmTabsModal"><form class="modal" id="bgmTabsForm"><h2>BGMのタブの編集</h2><p class="category-note">5つのタブ名と並び順を編集できます。↑↓で順番を入れ替えると、タブの中身も一緒に移動します。登録済みの曲は各タブに残ります。</p><div class="category-list" id="bgmTabNames"></div><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" data-close="bgmTabsModal">キャンセル</button><button type="submit" class="btn primary">保存</button></div></div></form></div>
 <div class="modal-back confirm-back" id="confirmModal"><div class="modal" role="alertdialog" aria-labelledby="confirmTitle" aria-describedby="confirmText"><h2 id="confirmTitle">確認</h2><p id="confirmText" class="confirm-text"></p><div class="modal-actions"><span></span><div class="actions-right"><button type="button" class="btn" id="confirmNo">キャンセル</button><button type="button" class="btn danger" id="confirmYes">削除する</button></div></div></div></div>
@@ -700,12 +703,14 @@ const GRID={emoji:{cols:6,min:42,grow:true},text:{cols:5,min:15,grow:true},voice
 const SOUND_TYPES=Object.keys(GRID),GRID_MAX=600,BGM_TABS=5,BGM_SLOTS=20;
 const BGM_TAB_DEFAULTS=['明るい','穏やか','切ない','緊張','その他'];
 const REC_DEFAULTS={micVolume:100,micId:'',ec:false,ns:false,agc:false,monitor:false,limiter:true,duck:true,duckDepth:10,duckThresh:-42,keepVoice:true,keepProg:false,normalize:false,mp3Rate:192,monitorMode:'auto',previewFull:true,bgmLevel:true,bgmLowLevel:35,fadeSec:3,fadeOnStop:true,coverFit:'cover',videoSize:1080,videoEffect:'none',effectSource:'default',videoFps:15,effectCount:45,effectSpeed:60,effectScale:70,effectOpacity:75};
+// 端末の記憶域が少ないとき（4GB以下）は、動画の初期設定や先読みを軽めにする
+const LOW_SPEC=(navigator.deviceMemory||8)<=4;
 const id=()=>globalThis.crypto?.randomUUID?.()||'s'+Date.now().toString(36)+Math.random().toString(36).slice(2);
 const graphemes=s=>[...new Intl.Segmenter('ja',{granularity:'grapheme'}).segment(String(s))].map(x=>x.segment);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const newSound=(type,slot)=>({id:id(),type,label:'',volume:100,assetId:null,fileName:'',shortcut:'',configured:false,slotIndex:slot,order:slot});
 const newBgm=(tabIndex,slotIndex)=>({id:id(),name:'',volume:100,assetId:null,fileName:'',tabIndex,slotIndex});
-const defaults=()=>({version:7,sounds:[],bgmTabs:[...BGM_TAB_DEFAULTS],bgms:[],master:100,playMode:'restart',seDb:-18,bgmDb:-30,voDb:-6,envDb:-24,rec:{...REC_DEFAULTS},programs:defaultPrograms(),currentProgram:0});
+const defaults=()=>({version:7,sounds:[],bgmTabs:[...BGM_TAB_DEFAULTS],bgms:[],master:100,playMode:'restart',ponOnly:false,seDb:-18,bgmDb:-30,voDb:-6,envDb:-24,rec:{...REC_DEFAULTS},programs:defaultPrograms(),currentProgram:0});
 const dbGain=db=>db<=-60?0:Math.pow(10,db/20);
 const fmtDb=db=>db<=-60?'消音':(db>0?'+':'')+(+db).toFixed(1)+'dB';
 const PROGRAMS=8;
@@ -728,7 +733,8 @@ function normalize(raw){
  if(!['none','spring','summer','autumn','winter'].includes(r.videoEffect))r.videoEffect='none';
  if(!['default','image'].includes(r.effectSource))r.effectSource='default';
  for(const [k,min,max] of [['effectCount',10,120],['effectSpeed',20,180],['effectScale',30,160],['effectOpacity',10,100]])r[k]=clamp(r[k],min,max,REC_DEFAULTS[k]);
- r.videoFps=[8,15,30].includes(+r.videoFps)?+r.videoFps:15;r.videoSize=+r.videoSize===720?720:1080;
+ r.videoFps=[8,15,30].includes(+r.videoFps)?+r.videoFps:15;r.videoSize=[540,720,1080].includes(+r.videoSize)?+r.videoSize:1080;
+ if(!raw.rec&&LOW_SPEC){r.videoSize=720;r.videoFps=8}
  if(Array.isArray(raw.programs)&&raw.programs.length){const defs=defaultPrograms();base.programs=defs.map((d,i)=>({...d,...(raw.programs[i]||{}),id:raw.programs[i]?.id||d.id}))}
  base.currentProgram=Number.isInteger(raw.currentProgram)&&raw.currentProgram>=-1&&raw.currentProgram<PROGRAMS?raw.currentProgram:0;
  base.sounds=Array.isArray(raw.sounds)?raw.sounds.filter(x=>x&&GRID[x.type]):[];
@@ -736,7 +742,7 @@ function normalize(raw){
  if(Array.isArray(raw.bgmTabs))base.bgmTabs=BGM_TAB_DEFAULTS.map((d,i)=>String(raw.bgmTabs[i]||d).slice(0,20));
  base.master=clamp(raw.master,0,100,100);
  for(const k of ['seDb','bgmDb','voDb','envDb'])base[k]=clamp(raw[k],-60,0,base[k]);
- base.playMode=raw.playMode==='overlap'?'overlap':'restart';
+ base.playMode=raw.playMode==='overlap'?'overlap':'restart';base.ponOnly=!!raw.ponOnly;
  for(const t of SOUND_TYPES)layoutSounds(base,t);
  return layoutBgms(base);
 }
@@ -792,7 +798,11 @@ const idbDelStrict=(store,keyOrRange)=>new Promise((resolve,reject)=>{const t=db
 const idbAll=store=>new Promise((resolve,reject)=>{const r=db.transaction(store,'readonly').objectStore(store).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)});
 const idbKeys=(store,range)=>new Promise((resolve,reject)=>{const r=db.transaction(store,'readonly').objectStore(store).getAllKeys(range);r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)});
 const putAsset=(k,b)=>idbPut('assets',k,b), getAsset=k=>idbGet('assets',k), deleteAsset=k=>idbDel('assets',k);
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(cfg))}catch(e){if(!persist.warned){persist.warned=true;console.warn('設定を保存できない環境です',e.name);toast('設定を保存できません。移行前に設定ファイルを書き出してください',8000)}}}
+// 設定の保存：続けて変わるときは少し待ってまとめて書く。画面を閉じる・裏に回るときはすぐ書く
+let persistTimer=0;
+function persist(){clearTimeout(persistTimer);persistTimer=setTimeout(persistNow,250)}
+function persistNow(){clearTimeout(persistTimer);persistTimer=0;if(!cfg)return;try{localStorage.setItem(KEY,JSON.stringify(cfg))}catch(e){if(!persist.warned){persist.warned=true;console.warn('設定を保存できない環境です',e.name);toast('設定を保存できません。移行前に設定ファイルを書き出してください',8000)}}}
+window.addEventListener('pagehide',()=>{if(persistTimer)persistNow()});document.addEventListener('visibilitychange',()=>{if(document.hidden&&persistTimer)persistNow()});
 function toast(msg,ms=2400){const el=$('#notice');el.textContent=msg;el.classList.add('show');clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>el.classList.remove('show'),ms)}
 
 /* ===================== 音声エンジン ===================== */
@@ -850,21 +860,45 @@ function startBuffer(buffer,volume,bus,meta,{loop=false,offset=0}={}){
  source.onended=()=>release(inst);source.start(0,offset%buffer.duration);return inst;
 }
 async function ensureRunning(){audioEngine();if(ctx.state!=='running'){try{await Promise.race([ctx.resume(),sleep(1500)])}catch(_){}}}
+// 鳴っている間にもう一度押したときの動き：restart=最初から鳴らす／overlap=重ねて鳴らす／toggle=止める
+// ボタンごとの指定がなければ、ボイス・環境音・文字の効果音は「止める」、絵文字の効果音は長さで決める
+const LONG_SE_SEC=8;
+function pressMode(s){
+ if(s.type==='voice'||s.type==='env')return 'toggle';
+ if(s.mode==='restart'||s.mode==='overlap'||s.mode==='toggle')return s.mode;
+ if(s.type==='text')return 'toggle';
+ return s.dur>=LONG_SE_SEC?'toggle':cfg.playMode;
+}
+function noteDuration(s,buf){const d=Math.round(buf.duration*10)/10;if(s.dur!==d){s.dur=d;persist()}}
 async function playSound(s){
  if(!s.assetId){toast('このボタンの音源を長押しして登録してください');return}
- if(s.type!=='emoji'){
+ const mode=pressMode(s),bump=()=>{const n=(soundSerial.get(s.id)||0)+1;soundSerial.set(s.id,n);return n};
+ if(mode==='toggle'){
   const playingNow=[...active].filter(a=>a.soundId===s.id);
-  if(playingNow.length){soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);playingNow.forEach(a=>fadeStop(a));return}
-  if(pendingText.has(s.id)){soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);pendingText.delete(s.id);return}
+  if(playingNow.length){bump();playingNow.forEach(a=>fadeStop(a));return}
+  if(pendingText.has(s.id)){bump();pendingText.delete(s.id);return}
   pendingText.add(s.id);
  }
- const serial=(soundSerial.get(s.id)||0)+1;soundSerial.set(s.id,serial);
+ const serial=bump();
  try{await ensureRunning();
-  if(s.type==='emoji'&&cfg.playMode==='restart')[...active].filter(a=>a.soundId===s.id).forEach(a=>release(a));
-  const buf=await decodeAsset(s.assetId,false);if(serial!==soundSerial.get(s.id)&&(s.type!=='emoji'||cfg.playMode==='restart'))return;
+  if(mode==='restart')[...active].filter(a=>a.soundId===s.id).forEach(a=>release(a));
+  const buf=await decodeAsset(s.assetId,false);noteDuration(s,buf);if(mode!=='overlap'&&serial!==soundSerial.get(s.id))return;
   const inst=startBuffer(buf,s.volume,s.type==='voice'?voBus:s.type==='env'?envBus:seBus,{soundId:s.id,soundType:s.type},{loop:s.type==='env'});active.add(inst);render();
  }catch(e){console.error(e);toast(e.userMessage||'効果音を再生できませんでした',5000)}
- finally{if(s.type!=='emoji'&&serial===soundSerial.get(s.id))pendingText.delete(s.id)}
+ finally{if(mode==='toggle'&&serial===soundSerial.get(s.id))pendingText.delete(s.id)}
+}
+// 短い音は、手が空いている間に先に解析しておく（最初の一押しを待たせない）。長い音と環境音は押したときに解析する
+const WARM_MAX_SEC=12,WARM_MAX_BYTES=500000;
+function warmSounds(){
+ const list=cfg.sounds.filter(s=>s.assetId&&s.type!=='env'&&!(s.dur>WARM_MAX_SEC)).sort((a,b)=>(a.dur||99)-(b.dur||99));let budget=LOW_SPEC?40:100;
+ const idle=window.requestIdleCallback?f=>requestIdleCallback(f,{timeout:1500}):f=>setTimeout(f,250);
+ const next=async()=>{
+  const s=list.shift();if(!s||budget<=0)return;
+  try{if(rec.state==='idle'&&!videoJob&&!bufCache.has(s.assetId)){
+   if(!s.dur){const b=await getAsset(s.assetId);if(!b||b.size>WARM_MAX_BYTES)return idle(next)}
+   const buf=await decodeAsset(s.assetId,false);noteDuration(s,buf);budget-=buf.duration}}catch(_){}
+  idle(next)};
+ idle(next);
 }
 let bgmLoadingId=null,bgmError='',bgmFading=null;
 async function playBgm(b,{restart=false,quiet=false}={}){
@@ -886,7 +920,6 @@ async function playBgm(b,{restart=false,quiet=false}={}){
 function stopSeEnv(){const list=[...active].filter(a=>['emoji','text','env'].includes(a.soundType));for(const s of cfg.sounds)if(['emoji','text','env'].includes(s.type))soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);pendingText.clear();list.forEach(x=>fadeStop(x,.3));toast(list.length?'効果音と環境音を止めました':'鳴っている効果音・環境音はありません')}
 function stopAll(){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;for(const s of cfg.sounds)soundSerial.set(s.id,(soundSerial.get(s.id)||0)+1);pendingText.clear();const sounds=[...active];if(bgmPlaying)sounds.push(bgmPlaying);sounds.forEach(x=>fadeStop(x,.42));toast('すべての音をフェードアウトしました')}
 // 録音欄のBGM表示
-
 function renderBgmNow(){
  const el=document.getElementById('bgmNow');if(!el)return;
  const name=$('#bgmNowName'),stopBtn=$('#bgmNowStop');let state='idle',label='BGM：なし';
@@ -898,11 +931,11 @@ function renderBgmNow(){
  if((state==='idle'||state==='error')&&pb){if(state==='idle')label='待機中｜初期BGM：'+pb.name;stopBtn.textContent='▶ 初期BGM';stopBtn.disabled=false;stopBtn.dataset.mode='play'}
  else{stopBtn.textContent='■ BGM停止';stopBtn.disabled=!(bgmPlaying||bgmLoadingId);stopBtn.dataset.mode='stop'}
  el.dataset.state=state;name.textContent=label;
- if(state!=='playing'&&state!=='low'){$('#bgmNowTime').textContent='';$('#bgmNowBar').style.width='0%'}
+ if(state!=='playing'&&state!=='low'){$('#bgmNowTime').textContent='';$('#bgmNowBar').style.transform=''}
 }
 function tickBgmNow(){
  if(!bgmPlaying||!ctx)return;const d=bgmPlaying.buffer.duration,t=((ctx.currentTime-bgmPlaying.startedAt)%d+d)%d;
- $('#bgmNowTime').textContent=fmtTime(t)+' / '+fmtTime(d);$('#bgmNowBar').style.width=(t/d*100).toFixed(2)+'%';
+ const txt=fmtTime(t)+' / '+fmtTime(d),el=$('#bgmNowTime');if(el.textContent!==txt)el.textContent=txt;$('#bgmNowBar').style.transform=`scaleX(${(t/d).toFixed(3)})`;
 }
 /* ===================== マイク・メーター・ダッキング ===================== */
 let micStream=null,micSource=null,ducked=false,forceDuck=false,lastVoiceAt=0;
@@ -931,19 +964,24 @@ async function listMics(){
 }
 function peakDb(an,buf){an.getFloatTimeDomainData(buf);let p=0;for(let i=0;i<buf.length;i++){const a=Math.abs(buf[i]);if(a>p)p=a}return p>0?20*Math.log10(p):-99}
 function rmsDb(an,buf){let s=0;for(let i=0;i<buf.length;i++)s+=buf[i]*buf[i];const r=Math.sqrt(s/buf.length);return r>0?20*Math.log10(r):-99}
+const meterEl={};
 function drawMeter(name,db){
- const now=performance.now(),h=peakHold[name];if(db>=h.v||now-h.t>1200){h.v=db;h.t=now}
- const pct=v=>Math.max(0,Math.min(100,(v+60)/60*100));
- $('#'+name+'Meter').style.clipPath=`inset(0 ${100-pct(db)}% 0 0)`;$('#'+name+'Peak').style.left=`calc(${pct(h.v)}% - 2px)`;
- const out=$('#'+name+'Db');if(name==='mix'&&db>-0.5)clipUntil=now+1500;
- const clip=name==='mix'&&now<clipUntil;out.classList.toggle('clip',clip);out.textContent=clip?'過大':(h.v<=-60?'-∞ dB':h.v.toFixed(1)+' dB');
+ const now=performance.now(),h=peakHold[name],m=meterEl[name]||={bar:$('#'+name+'Meter'),peak:$('#'+name+'Peak'),out:$('#'+name+'Db'),w:'',p:'',t:''};
+ if(db>=h.v||now-h.t>1200){h.v=db;h.t=now}
+ const pct=v=>Math.round(Math.max(0,Math.min(100,(v+60)/60*100))*2)/2;
+ const w=`inset(0 ${100-pct(db)}% 0 0)`,pk=`calc(${pct(h.v)}% - 2px)`;
+ if(m.w!==w)m.bar.style.clipPath=m.w=w;if(m.p!==pk)m.peak.style.left=m.p=pk;
+ if(name==='mix'&&db>-0.5)clipUntil=now+1500;
+ const clip=name==='mix'&&now<clipUntil,txt=clip?'過大':(h.v<=-60?'-∞ dB':h.v.toFixed(1)+' dB');
+ if(m.t!==txt){m.out.classList.toggle('clip',clip);m.out.textContent=m.t=txt}
 }
-function meterLoop(){
- if(ctx){drawMeter('mic',micStream?peakDb(micAnalyser,micBuf):-99);drawMeter('mix',peakDb(mixAnalyser,mixBuf))}
+let meterAt=0,meterN=0;
+function meterLoop(now){
+ requestAnimationFrame(meterLoop);if(now-meterAt<48)return;meterAt=now;meterN++;
+ if(ctx&&!cfg.ponOnly){drawMeter('mic',micStream?peakDb(micAnalyser,micBuf):-99);drawMeter('mix',peakDb(mixAnalyser,mixBuf))}
  if(rec.state!=='idle')renderTimer();
  if(miniOn)syncMini();
- tickBgmNow();checkVoice();
- requestAnimationFrame(meterLoop);
+ if(meterN%5===0){tickBgmNow();checkVoice()}
 }
 function duckLoop(){
  if(!ctx||!cfg.rec.duck||rec.state==='ending')return;const now=performance.now();
@@ -959,12 +997,10 @@ function preloadProgBgm(){const pb=progBgm();if(pb&&db)setTimeout(()=>decodeAsse
 function progBgm(){const pr=curProgram();return pr?.bgmId?cfg.bgms.find(b=>b.id===pr.bgmId&&b.assetId):null}
 function renderPrograms(){
  const busy=rec.state!=='idle';
- 
- $('#progChips').innerHTML=`<button class="prog-chip free ${isFree()?'active':''}" role="tab" aria-selected="${isFree()}" data-prog="-1" title="番組を使わずに録る（初期BGM・番組の画像なし）" ${busy&&!isFree()?'disabled':''}>フリー</button>`+cfg.programs.map((pr,i)=>`<button${progColorStyle(pr.color)} class="prog-chip ${progColorKey(pr.color)?'pc':''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join('');
- {const act=$('#progChips .prog-chip.active');if(act){const c=$('#progChips');const l=act.offsetLeft-c.offsetLeft,rgt=l+act.offsetWidth;if(l<c.scrollLeft||rgt>c.scrollLeft+c.clientWidth)c.scrollLeft=Math.max(0,l-8)}}
- const pb=progBgm(),box=$('#progBgm');
- box.innerHTML=pb?`<p class="prog-bgm-label">「${esc(curProgram().name)}」の初期BGM</p><div class="bgm-card ${bgmPlaying?.trackId===pb.id||bgmLoadingId===pb.id?'active':''}"><div class="bgm-row" style="grid-template-columns:minmax(0,1fr)"><button class="bgm-play" data-play-bgm="${esc(pb.id)}"><span class="bgm-icon">${bgmPlaying?.trackId===pb.id?'■':bgmLoadingId===pb.id?'…':'▶'}</span><span class="bgm-name">${esc(pb.name)}</span></button></div></div>`
-  :isFree()?`<div class="empty">フリー収録中です。初期BGMと番組の画像は使いません。BGMを流すときは下の一覧から選べます。</div>`:`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。番組ボタンを長押し（パソコンでは右クリック）すると選べます。</div>`;
+ setHtml($('#progChips'),`<button class="prog-chip free ${isFree()?'active':''}" role="tab" aria-selected="${isFree()}" data-prog="-1" title="番組を使わずに録る（初期BGM・番組の画像なし）" ${busy&&!isFree()?'disabled':''}>フリー</button>`+cfg.programs.map((pr,i)=>`<button${progColorStyle(pr.color)} class="prog-chip ${progColorKey(pr.color)?'pc':''} ${i===cfg.currentProgram?'active':''}" role="tab" aria-selected="${i===cfg.currentProgram}" data-prog="${i}" ${busy&&i!==cfg.currentProgram?'disabled':''}>${esc(pr.name)}</button>`).join(''));
+ const pb=progBgm();
+ setHtml($('#progBgm'),pb?`<p class="prog-bgm-label">「${esc(curProgram().name)}」の初期BGM</p><div class="bgm-card ${bgmPlaying?.trackId===pb.id||bgmLoadingId===pb.id?'active':''}"><div class="bgm-row" style="grid-template-columns:minmax(0,1fr)"><button class="bgm-play" data-play-bgm="${esc(pb.id)}"><span class="bgm-icon">${bgmPlaying?.trackId===pb.id?'■':bgmLoadingId===pb.id?'…':'▶'}</span><span class="bgm-name">${esc(pb.name)}</span></button></div></div>`
+  :isFree()?`<div class="empty">フリー収録中です。初期BGMと番組の画像は使いません。BGMを流すときは下の一覧から選べます。</div>`:`<div class="empty">「${esc(curProgram()?.name||'')}」の初期BGMは未設定です。番組ボタンを長押し（パソコンでは右クリック）すると選べます。</div>`);
  renderBgmNow();
 }
 $('#progChips').onclick=e=>{const c=e.target.closest('[data-prog]');if(!c||rec.state!=='idle')return;cfg.currentProgram=+c.dataset.prog;persist();renderPrograms();preloadProgBgm();toast(isFree()?'フリー収録に切り替えました（初期BGM・番組の画像なし）':'番組を「'+curProgram().name+'」に切り替えました')};
@@ -984,7 +1020,7 @@ async function openProgEdit(){if(isFree())return;
  $('#progBgmSel').value=list.some(b=>b.id===pr.bgmId)?pr.bgmId:'';
  pcSel=-1;await renderProgCover();updateProgMoveBtns();openModal('progModal');
 };
-// 番組ごとの動画用サムネイル：7枠（保存名 cover:prog-<番組ID>-<0〜6>）。coverIdx が使う枠（-1は共通画像）
+// 番組ごとの動画用サムネイル：8枠（保存名 cover:prog-<番組ID>-<0〜7>）。coverIdx が使う枠（-1は共通画像）
 const PC_SLOTS=8;let pcSel=-1,pcTarget=-1;
 const progCoverKey=(pid,n)=>'prog-'+pid+'-'+n;
 function activeProgCoverKey(pid){const pr=cfg.programs.find(x=>x.id===pid);if(!pr||!(pr.coverIdx>=0))return null;return progCoverKey(pid,pr.coverIdx)}
@@ -1060,6 +1096,14 @@ function checkVoice(){
 function renderDuck(){const el=$('#duckState');el.textContent=!cfg.rec.duck?'オフ':ducked?'BGMを下げています':'待機';el.classList.toggle('on',ducked&&cfg.rec.duck)}
 
 /* ===================== 録音 ===================== */
+// 録音中と動画の書き出し中は、画面が自動で消えないようにする（対応しているブラウザだけ）
+let wakeLock=null;
+async function keepAwake(){
+ const want=rec.state!=='idle'||!!videoJob;
+ try{if(want&&!wakeLock&&navigator.wakeLock&&!document.hidden){wakeLock=await navigator.wakeLock.request('screen');wakeLock.onrelease=()=>{wakeLock=null}}
+  else if(!want&&wakeLock){const w=wakeLock;wakeLock=null;await w.release()}}catch(_){wakeLock=null}
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)keepAwake()});
 const WORKLET=`class R extends AudioWorkletProcessor{constructor(){super();this.on=false;this.N=8192;this.b=[0,1,2,3,4].map(()=>new Float32Array(this.N));this.n=0;this.port.onmessage=e=>{const m=e.data;if(m==='start')this.on=true;else if(m==='pause'){this.on=false;this.flush()}else if(m==='stop'){this.on=false;this.flush();this.port.postMessage({done:true})}}}
 flush(){if(!this.n)return;const ch=this.b.map(a=>a.slice(0,this.n));this.port.postMessage({frames:this.n,ch},ch.map(a=>a.buffer));this.n=0}
 process(inputs){if(!this.on)return true;const inp=inputs[0]||[];const len=inp[0]?inp[0].length:128;if(this.n+len>this.N)this.flush();for(let c=0;c<5;c++){const src=inp[c],dst=this.b[c];if(src)dst.set(src,this.n);else dst.fill(0,this.n,this.n+len)}this.n+=len;return true}}
@@ -1176,6 +1220,7 @@ function goMicSettings(){
  toast('マイクにつながりませんでした。「マイクを有効にする」を押して、許可の画面で「許可」を選んでください',8000);
 }
 async function startRec(opts={}){
+ if(cfg.ponOnly)return;
  try{
   audioEngine();
   if(!micLive()){toast('マイクに接続しています…',3000);await enableMic()}
@@ -1228,7 +1273,8 @@ function addMarker(label,auto=false){
  if(!auto)toast('マーカー'+n+'：'+fmtTime(rec.frames/t.sampleRate));renderLiveMarkers();
 }
 function fmtTime(sec,tenths=false){sec=Math.max(0,sec);const h=Math.floor(sec/3600),m=Math.floor(sec/60)%60,s=Math.floor(sec)%60,p=n=>String(n).padStart(2,'0');return (h?h+':'+p(m):p(m))+':'+p(s)+(tenths?'.'+Math.floor(sec*10)%10:'')}
-function renderTimer(){const t=rec.take,sec=t?rec.frames/t.sampleRate:0,str=fmtTime(sec,true),i=str.lastIndexOf('.');$('#timer').innerHTML=esc(str.slice(0,i))+'<small>'+esc(str.slice(i))+'</small>'}
+let timerShown='';
+function renderTimer(){const t=rec.take,sec=t?rec.frames/t.sampleRate:0,str=fmtTime(sec,true);if(str===timerShown)return;timerShown=str;const i=str.lastIndexOf('.');$('#timer').innerHTML=esc(str.slice(0,i))+'<small>'+esc(str.slice(i))+'</small>'}
 function renderRecState(){if(rec.state!=='idle'&&rec.state!=='paused')boostHold=true;applyMonitor();if(cfg?.programs)renderPrograms();
  const lamp=$('#recLamp'),txt=$('#recLampText'),st=rec.state;
  lamp.className='lamp '+(st==='recording'||st==='ending'?'rec':st==='paused'?'pause':micLive()?'ready':'');
@@ -1236,17 +1282,42 @@ function renderRecState(){if(rec.state!=='idle'&&rec.state!=='paused')boostHold=
  const rb=$('#recBtn');rb.textContent=st==='recording'?'‖ 一時停止':st==='paused'?'● 再開':'● 録音開始';rb.classList.toggle('on',st==='recording');rb.disabled=st==='stopping'||st==='ending';
  $('#stopRecBtn').disabled=!(st==='recording'||st==='paused');const rb2=$('#retakeBtn');rb2.disabled=!(st==='recording'||st==='paused'||(st==='idle'&&lastTakeId));if(rb2.dataset.armed!=='1')rb2.textContent='↺ 録り直し';const db2=$('#discardBtn');db2.disabled=!(st==='recording'||st==='paused');if(db2.dataset.armed!=='1')db2.textContent='✕ 停止して破棄';
  const busy=st!=='idle';for(const s of ['#micSelect','#optEc','#optNs','#optAgc','#micBtn','#importBtn','#keepVoice','#keepProg'])$(s).disabled=busy;
- if(st==='idle')$('#timer').innerHTML='00:00<small>.0</small>';
+ if(st==='idle'){timerShown='';$('#timer').innerHTML='00:00<small>.0</small>'}
+ keepAwake();
 }
 function renderLiveMarkers(){const el=document.getElementById('liveMarkers');if(el&&rec.take)el.innerHTML=markerList(rec.take.markers)}
 function markerList(ms){return ms.length?ms.map(m=>`<li><time>${fmtTime(m.t,true)}</time><span>${esc(m.label)}</span></li>`).join(''):'<li>なし</li>'}
 
 /* ===================== テイク一覧・書き出し ===================== */
 const TRACK_INFO={mix:{label:'ミックス',ch:2},voice:{label:'声だけ',ch:1},prog:{label:'BGM＋効果音',ch:2}};
-const busyTakes=new Map();
+const busyTakes=new Map(),takeCache=new Map();
+// 書き出した動画（保存名 video:<テイクID>）。画面にも持っておき、ボタンを押したその場で保存・共有できるようにする
+const videoKey=takeId=>'video:'+takeId,videoBlobs=new Map(),CAN_SHARE=!!(navigator.share&&navigator.canShare);
+const videoName=(t,ext)=>`${safeName(t.name)}.${ext}`;
+async function keepVideo(takeId,v){
+ videoBlobs.set(takeId,v.blob);const info={ext:v.ext,size:v.blob.size,made:Date.now(),kept:true};
+ try{await idbPut('assets',videoKey(takeId),v.blob)}catch(e){console.error(e);info.kept=false}
+ try{const t=await idbGet('takes',takeId);if(t){t.video=info;await idbPut('takes',takeId,t)}}catch(e){console.error(e)}
+ return info.kept;
+}
+function saveVideoAgain(takeId,share){
+ const t=takeCache.get(takeId),b=t?.video&&videoBlobs.get(takeId);
+ if(!b){toast('動画が見つかりません。「動画を書き出す」で作り直してください',5000);return}
+ const name=videoName(t,t.video.ext);
+ if(!share){download(b,name);toast('保存を始めました（'+name+'）',3500);return}
+ const file=new File([b],name,{type:b.type||(t.video.ext==='mp4'?'video/mp4':'video/webm')});
+ if(!navigator.canShare({files:[file]})){toast('この端末では動画を共有できないため、「端末に保存」をお使いください',5000);return}
+ navigator.share({files:[file],title:t.name}).catch(e=>{if(e.name!=='AbortError'){console.error(e);toast('共有できませんでした。「端末に保存」をお使いください',5000)}});
+}
+async function deleteVideo(takeId){
+ await idbDel('assets',videoKey(takeId));videoBlobs.delete(takeId);
+ const t=await idbGet('takes',takeId);if(t?.video){delete t.video;await idbPut('takes',takeId,t)}
+ await renderTakes();updateStorage();toast('動画を消しました（録音は残っています）');
+}
 async function loadTakes(){return (await idbAll('takes')).sort((a,b)=>b.created-a.created)}
 async function renderTakes(){
  const list=await loadTakes(),box=$('#takes');
+ takeCache.clear();for(const t of list){takeCache.set(t.id,t);if(t.video&&!videoBlobs.has(t.id)){const b=await idbGet('assets',videoKey(t.id)).catch(()=>null);if(b)videoBlobs.set(t.id,b);else{delete t.video;idbPut('takes',t.id,t).catch(()=>{})}}}
  await coverUrl('default');for(const pr of cfg.programs){const k=activeProgCoverKey(pr.id);if(k)await coverUrl(k)}for(const t of list)if(t.cover)await coverUrl(t.id);
  const openState=new Map([...box.querySelectorAll('details[data-take]')].map(d=>[d.dataset.take,d.open]));
  const players=new Map([...box.querySelectorAll('audio[data-take]')].map(a=>[a.dataset.take,a]));
@@ -1260,6 +1331,7 @@ async function renderTakes(){
    ${live?'':`<div class="take-play" data-player="${esc(t.id)}"><button class="btn primary" data-listen="${esc(t.id)}">▶ 試聴する</button></div>`}
    ${live?'':`<div class="take-actions">${t.tracks.map(k=>`<button class="btn" data-wav="${esc(t.id)}" data-track="${k}">${TRACK_INFO[k].label} WAV</button>`).join('')}<button class="btn gold" data-mp3="${esc(t.id)}" data-track="mix">ミックス MP3</button><button class="btn primary" data-video="${esc(t.id)}">動画を書き出す</button>${t.cover?`<button class="btn" data-uncover="${esc(t.id)}">画像を共通に戻す</button>`:''}${t.tracks.includes('voice')?`<button class="btn" data-mp3="${esc(t.id)}" data-track="voice">声だけ MP3</button>`:''}</div>`}
    <div class="take-progress" data-progress="${esc(t.id)}">${esc(busyTakes.get(t.id)||'')}</div>
+   ${!live&&t.video?`<div class="take-video"><strong>動画ができています</strong><span>${t.video.ext.toUpperCase()}・${(t.video.size/1048576).toFixed(1)}MB・${esc(stamp(new Date(t.video.made)))} 作成${t.video.kept?'':'（ブラウザ内に残せませんでした。この画面を閉じる前に保存してください）'}</span><div class="btns"><button class="btn primary" data-vsave="${esc(t.id)}">端末に保存</button>${CAN_SHARE?`<button class="btn" data-vshare="${esc(t.id)}">共有・写真アプリへ</button>`:''}<button class="btn danger" data-vdel="${esc(t.id)}">動画を消す</button></div></div>`:''}
    <details class="markers" data-take="${esc(t.id)}" ${live||openState.get(t.id)?'open':''}><summary>BGM操作の記録（${mk.length}）</summary><ol ${live?'id="liveMarkers"':''}>${markerList(mk)}</ol>${!live&&mk.length?`<button class="btn" style="margin-top:5px" data-copy="${esc(t.id)}">記録をコピー</button>`:''}</details>
   </article>`}).join('');
  for(const [tid,audio] of players){const slot=box.querySelector(`[data-player="${CSS.escape(tid)}"]`);if(slot){slot.replaceChildren(audio)}}
@@ -1394,7 +1466,7 @@ async function coverUrl(key){if(coverUrls.has(key))return coverUrls.get(key);con
 function coverStyle(t){const url=t.cover?coverUrls.get(t.id):(t.programId&&coverUrls.get(activeProgCoverKey(t.programId)))||coverUrls.get('default');return url?`background-image:url('${url}')`:''}
 async function renderCover(){const url=await coverUrl('default'),el=$('#coverPreview');el.style.backgroundImage=url?`url('${url}')`:'';el.style.backgroundSize=cfg.rec.coverFit==='contain'?'contain':'cover';el.classList.toggle('set',!!url);el.textContent=url?'':'画像なし';$('#coverClear').disabled=!url}
 async function setCover(key,file){
- if(coverUrls.get(key))URL.revokeObjectURL(coverUrls.get(key));coverUrls.delete(key);
+ coverUrls.delete(key);
  if(file)await idbPut('assets','cover:'+key,file);else await idbDel('assets','cover:'+key);
  if(key!=='default'){const t=await idbGet('takes',key);if(t){t.cover=!!file;await idbPut('takes',t.id,t);if(rec.take?.id===t.id)rec.take.cover=t.cover}}
  await renderCover();await renderTakes();toast(file?'動画用の画像を設定しました':'画像を外しました');
@@ -1432,7 +1504,6 @@ const SEASON_FX={
  autumn:{size:.075,img:.1,n:.35},
  winter:{size:.042,img:.065,n:.8}
 };
-// 標準の絵（中心0,0・大きさrで描く）
 // 標準の絵：平らな色と縁取りだけで描く、レトロで丸っこい絵（中心0,0・大きさr）
 const ART_LINE=r=>Math.max(1,r*.13);
 function drawPetal(g,r){
@@ -1483,9 +1554,10 @@ function drawEffectFrame(canvas,base,time,settings,image){
  const fx=SEASON_FX[settings.mode];if(!fx)return;
  const rand=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v)};
  const useImg=settings.source==='image'&&image,count=Math.max(1,Math.round(settings.count*fx.n)),sp=settings.speed/100,alpha=settings.opacity/100,TAU=Math.PI*2;
- let blossom=false;const put=(x,y,r,rot,sx,sy,wx,wy)=>{g.save();g.translate(x,y);if(wx)g.scale(wx,wy);g.rotate(rot);g.scale(sx,sy);
+ // 登録した画像は、位置・回転・縦横同じ倍率だけで描く（つぶさない・裏返さない）。thin は標準の花びらをひらひら見せるための幅
+ let blossom=false;const put=(x,y,r,rot,thin=1)=>{g.save();g.translate(x,y);g.rotate(rot);
   if(useImg){const ratio=image.width/image.height,w=ratio>=1?r*2:r*2*ratio,h=ratio>=1?r*2/ratio:r*2;g.drawImage(image,-w/2,-h/2,w,h)}
-  else if(settings.mode==='spring')(blossom?drawBlossom(g,r):drawPetal(g,r));else if(settings.mode==='summer')drawBubble(g,r);else if(settings.mode==='autumn')drawAcorn(g,r);else drawSnow(g,r);
+  else if(settings.mode==='spring'){g.scale(thin,1);blossom?drawBlossom(g,r):drawPetal(g,r)}else if(settings.mode==='summer')drawBubble(g,r);else if(settings.mode==='autumn')drawAcorn(g,r);else drawSnow(g,r);
   g.restore()};
  for(let i=0;i<count;i++){
   const a=k=>rand(i*13+k),depth=.45+a(1)*.55,r=(useImg?fx.img:fx.size)*S*(settings.scale/70)*depth*.5;
@@ -1494,18 +1566,18 @@ function drawEffectFrame(canvas,base,time,settings,image){
    // ゆったり降る雪：遅い落下と、大きくゆるやかな横揺れ
    const span=S+r*4,y=((a(2)*span+time*S*.06*sp*(.55+depth))%span)-r*2;
    const x=a(3)*S+Math.sin(time*.45*(.6+a(4))+a(5)*TAU)*S*.035;
-   put(x,y,r,useImg?Math.sin(time*.3+a(6)*TAU)*.3:0,1,1);
+   put(x,y,r,useImg?Math.sin(time*.3+a(6)*TAU)*.3:0);
   }else if(settings.mode==='spring'){
-   // はらはらと散る花：斜めに流れ、ひらひら裏返りながら回る
+   // はらはらと散る花：斜めに流れ、ひらひらしながら回る
    const span=S+r*6,prog=time*S*.11*sp*(.6+depth),y=((a(2)*span+prog)%span)-r*3;
    const x=((a(3)*S*1.4+prog*.45+Math.sin(time*1.3*(.7+a(4))+a(5)*TAU)*S*.05)%(S*1.4))-S*.2;
    const flip=Math.cos(time*2.2*(.6+a(6))+a(7)*TAU);blossom=a(10)<.35;
-   put(x,y,r,a(8)*TAU+time*(a(9)-.5)*2.4,Math.max(.15,Math.abs(flip)),1);
+   put(x,y,r,a(8)*TAU+time*(a(9)-.5)*2.4,Math.max(.15,Math.abs(flip)));
   }else if(settings.mode==='summer'){
    // ぷくぷくソーダ：下から湧き出て、ゆらゆら揺れながら上へ（形と大きさは変えない）
    const span=S+r*6,rise=((a(2)*span+time*S*.15*sp*(.55+depth))%span),y=S+r*3-rise,pos=Math.min(1,Math.max(0,rise/S));
    const x=a(3)*S+Math.sin(time*2.6*(.6+a(4))+a(5)*TAU)*S*(.006+pos*.014);
-   put(x,y,r*.8,0,1,1);
+   put(x,y,r*.8,0);
   }else{
    blossom=false;
    // 転がるどんぐり：画面の下を、左右どちらかへ転がる（進んだ距離に合わせて回る）
@@ -1513,7 +1585,7 @@ function drawEffectFrame(canvas,base,time,settings,image){
    const x=dir>0?off-r*3:S+r*3-off,floor=S*(.86+depth*.1)-r;
    // 元気に跳ねる：一歩ごとに高く弾む（形は変えない）
    const hop=(dist/(r*(4.2+a(4)*2))+a(5))%1,height=r*(2.6+a(6)*2.4)*4*hop*(1-hop);
-   put(x,floor-height,r,dir*dist/r,1,1);
+   put(x,floor-height,r,dir*dist/r);
   }
  }
  g.globalAlpha=1;
@@ -1533,7 +1605,8 @@ async function startFilmPreview(){
   if(settings.mode!=='none'&&settings.source==='image'){const b=await getAsset(EFFECT_ASSET);if(!b)throw Error('動かす画像を選んでください');image=await createImageBitmap(b)}
   if(token!==previewToken){image?.close();return}
   previewImage=image;const c=$('#filmPreview');c.hidden=false;$('#filmPreviewBtn').textContent='■ プレビューを止める';$('#filmPreviewBtn').setAttribute('aria-pressed','true');$('#filmStatus').textContent='共通サムネイルのプレビュー';
-  let started;const tick=now=>{if(token!==previewToken)return;started??=now;drawEffectFrame(c,base,(now-started)/1000,settings,image);previewRaf=requestAnimationFrame(tick)};
+  const gap=settings.mode==='none'?1000:1000/settings.fps-4;let started,drawn=-1e9;
+  const tick=now=>{if(token!==previewToken)return;started??=now;if(now-drawn>=gap){drawn=now;drawEffectFrame(c,base,(now-started)/1000,settings,image)}previewRaf=requestAnimationFrame(tick)};
   previewRaf=requestAnimationFrame(tick);
  }catch(e){image?.close();if(token===previewToken){stopFilmPreview();$('#filmStatus').textContent=e.message}}
 }
@@ -1546,9 +1619,10 @@ $('#effectImageClear').onclick=async()=>{try{await deleteAsset(EFFECT_ASSET);if(
 $('#cancelVideoBtn').onclick=()=>{if(videoJob){videoJob.cancelled=true;$('#filmStatus').textContent='中止しています…'}};
 
 const toU8=d=>!d?null:d instanceof ArrayBuffer?new Uint8Array(d.slice(0)):new Uint8Array(d.buffer.slice(d.byteOffset,d.byteOffset+d.byteLength));
+const videoBitrate=size=>size>=1080?2000000:size>=720?1200000:800000;
 async function pickVideoFormat(size,sr,forceWebm=false,fps=1){
  const ok=async(E,c)=>{try{return (await E.isConfigSupported(c)).supported}catch(_){return false}};
- const vbase={width:size,height:size,bitrate:size>=1080?2000000:1200000,framerate:fps};
+ const vbase={width:size,height:size,bitrate:videoBitrate(size),framerate:fps};
  const aac={codec:'mp4a.40.2',sampleRate:sr,numberOfChannels:2,bitrate:192000};
  if(window.VideoEncoder&&window.AudioEncoder){
   if(!forceWebm&&await ok(AudioEncoder,aac))for(const codec of ['avc1.640028','avc1.4d0028','avc1.420028']){const v={...vbase,codec,latencyMode:'realtime',avc:{format:'avc'}};if(await ok(VideoEncoder,v))return {kind:'mp4',v,a:aac}}
@@ -1619,21 +1693,31 @@ async function verifyMp4Audio(vChunks,aChunks,{size,sr,vDesc,srcPeak}){
  }catch(e){console.warn('MP4音声の確認に失敗',e);return false}
 }
 function safeName(s){return String(s).replace(/[\\/:*?"<>|]/g,'_').trim()||'recording'}
-function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),300000)}
 async function exportTake(takeId,track,kind){
  if(busyTakes.has(takeId)){toast('このテイクは書き出し中です');return}
  if(kind==='video'&&videoJob){toast('別の動画を書き出し中です');return}
  const t=await idbGet('takes',takeId);if(!t)return;
+ if(kind==='video'){
+  // 長い録音は、作る前に大きさの見込みを伝える（書き出しは終わるまで端末のメモリに持つため）
+  const moving=cfg.rec.videoEffect!=='none',est=t.frames/t.sampleRate*(videoBitrate(cfg.rec.videoSize)*(moving?1:.35)+192000)/8/1048576,limit=LOW_SPEC?150:400;
+  if(est>limit&&!await askConfirm(`この動画は、最大で約${Math.round(est)}MBになる見込みです。\n端末によっては途中で止まることがあります。「動画サイズ」を小さくするか、映像のなめらかさを下げると軽くなります。`,'このまま書き出す','長い動画の書き出し'))return;
+ }
  if(busyTakes.has(takeId)||(kind==='video'&&videoJob)){toast('書き出し中です');return}
- let job=null;if(kind==='video'){job={cancelled:false};videoJob=job;$('#cancelVideoBtn').hidden=false;stopFilmPreview()}
+ let job=null;if(kind==='video'){job={cancelled:false};videoJob=job;$('#cancelVideoBtn').hidden=false;stopFilmPreview();keepAwake()}
  const el=()=>document.querySelector(`[data-progress="${CSS.escape(takeId)}"]`);
  const progress=msg=>{busyTakes.set(takeId,msg);const e=el();if(e)e.textContent=msg;if(job)$('#filmStatus').textContent=msg};
  try{progress(kind==='mp3'?'MP3変換の準備中…':'WAVを作成中…');
-  if(kind==='video'){const v=await buildVideo(t,progress,false,null,job);checkVideoJob(job);download(v.blob,`${safeName(t.name)}.${v.ext}`);toast(`動画を書き出しました（${v.ext.toUpperCase()}・${(v.blob.size/1048576).toFixed(1)}MB）${v.fallback?'。MP4で音声を確認できなかったためWebMにしました':''}`,6000);return}
+  if(kind==='video'){
+   const v=await buildVideo(t,progress,false,null,job);checkVideoJob(job);
+   // 先にブラウザ内へ残してから、端末への保存を始める（保存に失敗しても作り直さずに済むように）
+   progress('動画を保存しています…');const kept=await keepVideo(takeId,v);
+   download(v.blob,videoName((await idbGet('takes',takeId))||t,v.ext));busyTakes.delete(takeId);await renderTakes();updateStorage();
+   toast(`動画を書き出しました（${v.ext.toUpperCase()}・${(v.blob.size/1048576).toFixed(1)}MB）。${kept?'テイクの欄から、いつでも保存し直せます':'ブラウザ内には残せなかったため、この画面を閉じる前に保存してください'}${v.fallback?'。MP4で音声を確認できなかったためWebMにしました':''}`,7000);return}
   const blob=kind==='mp3'?await buildMp3(t,track,progress):await buildWav(t,track,progress);
   download(blob,`${safeName(t.name)}_${({mix:'mix',voice:'voice',prog:'bgm-sfx'})[track]||track}.${kind}`);toast('書き出しました（'+(blob.size/1048576).toFixed(1)+'MB）');
  }catch(e){console.error(e);toast(e.user?e.message:'書き出しに失敗しました',4500)}
- finally{busyTakes.delete(takeId);const e=el();if(e)e.textContent='';if(job){videoJob=null;$('#cancelVideoBtn').hidden=true;$('#filmStatus').textContent=job.cancelled?'動画の書き出しを中止しました':''}}
+ finally{busyTakes.delete(takeId);const e=el();if(e)e.textContent='';if(job){videoJob=null;$('#cancelVideoBtn').hidden=true;$('#filmStatus').textContent=job.cancelled?'動画の書き出しを中止しました':'';keepAwake()}}
 }
 async function listenTake(takeId,btn){
  const t=await idbGet('takes',takeId);if(!t)return;btn.disabled=true;btn.textContent='準備中…';
@@ -1643,7 +1727,7 @@ async function listenTake(takeId,btn){
 async function deleteTakeData(takeId){
  if(busyTakes.has(takeId))throw Object.assign(Error('書き出し中のテイクは削除できません'),{user:true});
  for(const k of ['mix','voice','prog'])await idbDelStrict('chunks',chunkRange(takeId,k));
- await idbDelStrict('takes',takeId);await idbDel('assets','cover:'+takeId);if(lastTakeId===takeId)lastTakeId=null;
+ await idbDelStrict('takes',takeId);await idbDel('assets','cover:'+takeId);await idbDel('assets',videoKey(takeId));videoBlobs.delete(takeId);if(lastTakeId===takeId)lastTakeId=null;
 }
 async function deleteTake(takeId,btn){
  if(rec.take?.id===takeId){toast('録音中のテイクは削除できません');return}
@@ -1652,8 +1736,7 @@ async function deleteTake(takeId,btn){
   await deleteTakeData(takeId);
   if(await idbGet('takes',takeId))throw Error('削除後もデータが残っています');
   const a=document.querySelector(`audio[data-take="${CSS.escape(takeId)}"]`);if(a){a.pause();URL.revokeObjectURL(a.src)}
-  document.querySelector(`.take[data-id="${CSS.escape(takeId)}"]`)?.remove();
-  if(coverUrls.get(takeId))URL.revokeObjectURL(coverUrls.get(takeId));coverUrls.delete(takeId);
+  document.querySelector(`.take[data-id="${CSS.escape(takeId)}"]`)?.remove();coverUrls.delete(takeId);
   await renderTakes();updateStorage();toast('テイクを削除しました');
  }catch(e){console.error(e);toast('削除できませんでした（'+(e?.name&&e.name!=='Error'?e.name+'：':'')+(e?.message||e)+'）',6000);if(btn){btn.disabled=false;btn.textContent='削除'}}
 }
@@ -1662,10 +1745,13 @@ $('#takes').addEventListener('click',e=>{const b=e.target.closest('button');if(!
  if(b.dataset.uncover){setCover(b.dataset.uncover,null);return}
  if(b.dataset.del&&busyTakes.has(b.dataset.del)){toast('書き出し中のテイクは削除できません');return}
  if(b.dataset.video){exportTake(b.dataset.video,'mix','video');return}
+ if(b.dataset.vsave){saveVideoAgain(b.dataset.vsave,false);return}
+ if(b.dataset.vshare){saveVideoAgain(b.dataset.vshare,true);return}
+ if(b.dataset.vdel){if(armButton(b,'もう一度押すと消す'))deleteVideo(b.dataset.vdel);return}
  if(b.dataset.listen)listenTake(b.dataset.listen,b);else if(b.dataset.wav)exportTake(b.dataset.wav,b.dataset.track,'wav');else if(b.dataset.mp3)exportTake(b.dataset.mp3,b.dataset.track,'mp3');else if(b.dataset.del){if(armButton(b))deleteTake(b.dataset.del,b)}
  else if(b.dataset.copy){idbGet('takes',b.dataset.copy).then(t=>{const text=(t.markers||[]).map(m=>fmtTime(m.t,true)+'\t'+m.label).join('\n');copyText(text)})}});
 $('#takes').addEventListener('change',async e=>{const inp=e.target.closest('[data-rename]');if(!inp)return;const name=inp.value.trim()||'収録';
- if(rec.take?.id===inp.dataset.rename){rec.take.name=name;return}const t=await idbGet('takes',inp.dataset.rename);if(t){t.name=name;await idbPut('takes',t.id,t);toast('テイク名を変更しました')}});
+ if(rec.take?.id===inp.dataset.rename){rec.take.name=name;return}const t=await idbGet('takes',inp.dataset.rename);if(t){t.name=name;await idbPut('takes',t.id,t);if(takeCache.has(t.id))takeCache.get(t.id).name=name;toast('テイク名を変更しました')}});
 async function updateStorage(){try{const est=await navigator.storage?.estimate?.();if(!est)return;const mb=x=>x>1073741824?(x/1073741824).toFixed(1)+'GB':Math.round(x/1048576)+'MB';$('#storageInfo').textContent=`保存 ${mb(est.usage)}／空き 約${mb(est.quota-est.usage)}`}catch(_){}}
 
 /* ===================== 画面描画（ポン出し） ===================== */
@@ -1676,11 +1762,12 @@ function renderVolumes(){
  const r=cfg.rec;$('#micVolume').value=r.micVolume;$('#micVal').textContent=r.micVolume+'%';
  $('#duckDepth').value=r.duckDepth;$('#duckDepthVal').textContent='-'+r.duckDepth+'dB';$('#duckThresh').value=r.duckThresh;$('#duckThreshVal').textContent=r.duckThresh+'dB';
  for(const [sel,key] of [['#optEc','ec'],['#optNs','ns'],['#optAgc','agc'],['#optMon','monitor'],['#optLimiter','limiter'],['#duckOn','duck'],['#keepVoice','keepVoice'],['#keepProg','keepProg'],['#optNormalize','normalize']])$(sel).checked=!!r[key];
- $('#mp3Rate').value=String(r.mp3Rate);$('#previewFull').checked=r.previewFull!==false;$('#monitorMode').value=r.monitorMode||'auto';$('#bgmLowLevel').value=r.bgmLowLevel;$('#bgmLowVal').textContent=r.bgmLowLevel+'%';$('#fadeSec').value=String(r.fadeSec);$('#fadeOnStop').checked=!!r.fadeOnStop;$('#coverFit').value=r.coverFit;$('#videoSize').value=String(r.videoSize);if(typeof renderBgmLow==='function'&&$('#bgmLowBtn'))renderBgmLow();$('#playMode').value=cfg.playMode;renderDuck();
+ $('#mp3Rate').value=String(r.mp3Rate);$('#previewFull').checked=r.previewFull!==false;$('#monitorMode').value=r.monitorMode||'auto';$('#bgmLowLevel').value=r.bgmLowLevel;$('#bgmLowVal').textContent=r.bgmLowLevel+'%';$('#fadeSec').value=String(r.fadeSec);$('#fadeOnStop').checked=!!r.fadeOnStop;$('#coverFit').value=r.coverFit;$('#videoSize').value=String(r.videoSize);renderBgmLow();$('#playMode').value=cfg.playMode;renderDuck();
 }
 // ボタンの並びは、中身が変わったときだけ作り直す。再生中の印は付け外しだけにする（毎回作り直すと画像の読み直しで重くなるため）
-const gridHtml=new Map();
-function setGrid(el,html,playing){if(gridHtml.get(el.id)!==html){el.innerHTML=html;gridHtml.set(el.id,html)}for(const b of el.children)b.classList.toggle('playing',playing.has(b.dataset.sound))}
+const shownHtml=new Map();
+function setHtml(el,html){if(shownHtml.get(el.id)!==html){el.innerHTML=html;shownHtml.set(el.id,html)}}
+function setGrid(el,html,playing){setHtml(el,html);for(const b of el.children)b.classList.toggle('playing',playing.has(b.dataset.sound))}
 function render(){if(cfg?.programs&&document.getElementById('progChips'))queueMicrotask(renderPrograms);
  const playing=new Set([...active].map(a=>a.soundId));
  for(const type of ['emoji','text','env']){
@@ -1689,13 +1776,13 @@ function render(){if(cfg?.programs&&document.getElementById('progChips'))queueMi
  }
  {const list=cfg.sounds.filter(s=>s.type==='voice').sort((a,b)=>a.order-b.order);
   setGrid($('#voiceGrid'),list.map(s=>{const loaded=!!s.assetId,img=s.imageId?imgUrl(s.imageId):null;return `<button class="voice-pad ${loaded||s.imageId?'loaded':''}" data-sound="${esc(s.id)}" ${img?`style="background-image:url('${img}')"`:''} title="${esc(loaded?(s.label||s.fileName)+' · 長押しで編集':'空き枠 · 押して設定')}" aria-label="${esc(loaded?(s.label||'ボイス'):'空き枠、押して設定')}">${!img&&(loaded||s.label)?`<span class="vp-noimg">${esc(s.label||'♪')}</span>`:''}${img&&s.label?`<span class="vp-name">${esc(s.label)}</span>`:''}${loaded&&s.shortcut?`<span class="shortcut">${esc(s.shortcut)}</span>`:''}</button>`}).join(''),playing);}
- $('#bgmTabs').innerHTML=cfg.bgmTabs.map((name,i)=>`<button class="chip ${i===bgmTab?'active':''}" data-bgm-tab="${i}">${esc(name)}</button>`).join('');
- $('#bgmList').innerHTML=cfg.bgms.filter(b=>b.tabIndex===bgmTab).sort((a,b)=>a.slotIndex-b.slotIndex).map(b=>{const on=bgmPlaying?.trackId===b.id,load=bgmLoadingId===b.id;return `<button class="bgm-tile ${b.assetId?'':'unset'} ${on||load?'active':''}" data-play-bgm="${esc(b.id)}" title="${esc(b.assetId?(b.fileName||b.name)+' · 長押し・右クリックで編集':'空き枠 · 押して登録')}" aria-label="${esc(b.assetId?b.name:'空きBGM枠、押して登録')}"><span class="bt-ic">${b.assetId?(on?'■':load?'…':'▶'):'＋'}</span><span class="bt-name">${b.assetId?esc(b.name):''}</span></button>`}).join('');
+ setHtml($('#bgmTabs'),cfg.bgmTabs.map((name,i)=>`<button class="chip ${i===bgmTab?'active':''}" data-bgm-tab="${i}">${esc(name)}</button>`).join(''));
+ setHtml($('#bgmList'),cfg.bgms.filter(b=>b.tabIndex===bgmTab).sort((a,b)=>a.slotIndex-b.slotIndex).map(b=>{const on=bgmPlaying?.trackId===b.id,load=bgmLoadingId===b.id;return `<button class="bgm-tile ${b.assetId?'':'unset'} ${on||load?'active':''}" data-play-bgm="${esc(b.id)}" title="${esc(b.assetId?(b.fileName||b.name)+' · 長押し・右クリックで編集':'空き枠 · 押して登録')}" aria-label="${esc(b.assetId?b.name:'空きBGM枠、押して登録')}"><span class="bt-ic">${b.assetId?(on?'■':load?'…':'▶'):'＋'}</span><span class="bt-name">${b.assetId?esc(b.name):''}</span></button>`}).join(''));
 }
 function save(){growSe();persist();render()}
 const imgUrls=new Map(),imgLoading=new Set();
 function imgUrl(id){if(imgUrls.has(id))return imgUrls.get(id);if(!imgLoading.has(id)&&db){imgLoading.add(id);getAsset(id).then(async b=>{imgUrls.set(id,b?await thumbUrl(b,256):null);imgLoading.delete(id);render()}).catch(()=>imgLoading.delete(id))}return null}
-function openSound(s,type){const del=$('#deleteSound');clearTimeout(del._armTimer);del.dataset.armed='';del.classList.remove('armed');del.textContent='削除';$('#soundForm').reset();$('#soundId').value=s?.id||'';$('#soundType').value=type;$('#soundHeading').textContent=type==='voice'?'ボイスの編集':type==='env'?'環境音の編集':s?'効果音の編集':'効果音を追加';const configured=!!(s?.assetId||s?.configured);$('#labelInput').value=configured?s.label||'':'';$('#labelInput').maxLength=type==='emoji'?12:20;$('#labelInput').required=type!=='voice';$('#labelCaption').textContent=type==='emoji'?'ボタン名（絵文字1文字）':type==='env'?'ボタン名（最大6文字）':type==='voice'?'ボタン名（なくても可・12文字まで）':'ボタン名（最大3文字）';$('#labelHelp').textContent=type==='emoji'?'絵文字1文字を指定します。':type==='env'?'押すとループ再生、もう一度押すと止まります。':type==='voice'?'画像の下に小さく表示されます。画像がないときはボタンに文字で表示します。':'絵文字も1文字として数えます。';$('#imageField').hidden=type!=='voice';$('#imageFile').value='';$('#currentImage').textContent=s?.imageId?(s.imageName||'登録済み'):'画像未登録';$('#soundVol').previousElementSibling.firstChild.textContent=type==='voice'?'このボイスの音量：':type==='env'?'この環境音の音量：':'この効果音の音量：';const volume=configured?s.volume??100:100;$('#soundVol').value=volume;$('#soundVolVal').textContent=volume+'%';$('#shortcutInput').value=configured?s.shortcut||'':'';$('#currentSoundFile').textContent=s?.fileName||'音源未登録';$('#soundFile').value='';$('#deleteSound').hidden=!s;$('#movePrev').disabled=!s;$('#moveNext').disabled=!s;openModal('soundModal')}
+function openSound(s,type){const del=$('#deleteSound');clearTimeout(del._armTimer);del.dataset.armed='';del.classList.remove('armed');del.textContent='削除';$('#soundForm').reset();$('#soundId').value=s?.id||'';$('#soundType').value=type;$('#soundHeading').textContent=type==='voice'?'ボイスの編集':type==='env'?'環境音の編集':s?'効果音の編集':'効果音を追加';const configured=!!(s?.assetId||s?.configured);$('#labelInput').value=configured?s.label||'':'';$('#labelInput').maxLength=type==='emoji'?12:20;$('#labelInput').required=type!=='voice';$('#labelCaption').textContent=type==='emoji'?'ボタン名（絵文字1文字）':type==='env'?'ボタン名（最大6文字）':type==='voice'?'ボタン名（なくても可・12文字まで）':'ボタン名（最大3文字）';$('#labelHelp').textContent=type==='emoji'?'絵文字1文字を指定します。':type==='env'?'押すとループ再生、もう一度押すと止まります。':type==='voice'?'画像の下に小さく表示されます。画像がないときはボタンに文字で表示します。':'絵文字も1文字として数えます。';$('#imageField').hidden=type!=='voice';$('#imageFile').value='';$('#currentImage').textContent=s?.imageId?(s.imageName||'登録済み'):'画像未登録';$('#soundVol').previousElementSibling.firstChild.textContent=type==='voice'?'このボイスの音量：':type==='env'?'この環境音の音量：':'この効果音の音量：';const volume=configured?s.volume??100:100;$('#soundVol').value=volume;$('#soundVolVal').textContent=volume+'%';$('#modeField').hidden=!(type==='emoji'||type==='text');$('#soundMode').value=configured&&['restart','overlap','toggle'].includes(s.mode)?s.mode:'';$('#soundModeHelp').textContent=type==='emoji'?`おまかせ：${LONG_SE_SEC}秒より短い音は、絵文字の効果音の見出し横の設定どおり。${LONG_SE_SEC}秒以上の音は止めます。`:'おまかせ：止めます。';$('#shortcutInput').value=configured?s.shortcut||'':'';$('#currentSoundFile').textContent=s?.fileName||'音源未登録';$('#soundFile').value='';$('#deleteSound').hidden=!s;$('#movePrev').disabled=!s;$('#moveNext').disabled=!s;openModal('soundModal')}
 function openBgm(b){if(!b)return;{const rb=$('#resetBgm');clearTimeout(rb._armTimer);rb.dataset.armed='';rb.classList.remove('armed');rb.textContent='選択リセット'}$('#bgmForm').reset();$('#bgmId').value=b.id;$('#bgmHeading').textContent=b.assetId||b.name?'BGMの編集':'BGMを登録';$('#bgmNameInput').value=b.name||'';$('#currentBgmFile').textContent=b.fileName||'音源未登録';$('#bgmVolModal').value=b.volume??100;$('#bgmVolModalVal').textContent=(b.volume??100)+'%';$('#resetBgm').disabled=!b.assetId&&!b.name;$('#bgmMovePrev').disabled=b.slotIndex===0;$('#bgmMoveNext').disabled=b.slotIndex===BGM_SLOTS-1;openModal('bgmModal')}
 // コピー：使える方法から順に試し、どれもだめなら画面に出して手で選べるようにする
 async function copyText(text){
@@ -1756,7 +1843,7 @@ function tabEditor(kind,label){
   const moved=order.some((o,i)=>o!==i);cfg[key]=names;save();closeModal(k+'TabsModal');toast(label+(moved?'のタブの名前と順番を保存しました':'の分類名を保存しました'))};
 }
 tabEditor('Bgm','BGM');
-$('#bgmList').onclick=e=>{const edit=e.target.closest('[data-edit-bgm]'),reset=e.target.closest('[data-reset-bgm]'),play=e.target.closest('[data-play-bgm]');if(edit){openBgm(cfg.bgms.find(b=>b.id===edit.dataset.editBgm));return}if(reset){resetBgm(reset.dataset.resetBgm);return}if(play){const b=cfg.bgms.find(x=>x.id===play.dataset.playBgm);if(b){if(b.assetId)playBgm(b);else openBgm(b)}}};
+$('#bgmList').onclick=e=>{const play=e.target.closest('[data-play-bgm]');if(play){const b=cfg.bgms.find(x=>x.id===play.dataset.playBgm);if(b){if(b.assetId)playBgm(b);else openBgm(b)}}};
 function moveBgm(direction){const b=cfg.bgms.find(x=>x.id===$('#bgmId').value);if(!b)return;const target=b.slotIndex+direction,other=cfg.bgms.find(x=>x.tabIndex===b.tabIndex&&x.slotIndex===target);if(!other)return;[b.slotIndex,other.slotIndex]=[other.slotIndex,b.slotIndex];persist();render();$('#bgmMovePrev').disabled=b.slotIndex===0;$('#bgmMoveNext').disabled=b.slotIndex===BGM_SLOTS-1}
 {const g=$('#bgmList');let lp=null,skip=null;
  g.addEventListener('contextmenu',e=>{const t=e.target.closest('[data-play-bgm]');if(!t)return;e.preventDefault();openBgm(cfg.bgms.find(b=>b.id===t.dataset.playBgm))});
@@ -1769,7 +1856,7 @@ function setDb(kind,db){const key=DB_KEY[kind];cfg[key]=Math.max(-60,Math.min(0,
 $('#seVolume').oninput=e=>setDb('se',+e.target.value);$('#voVolume').oninput=e=>setDb('vo',+e.target.value);$('#envVolume').oninput=e=>setDb('env',+e.target.value);$('#bgmVolume').oninput=e=>setDb('bgm',+e.target.value);
 document.querySelector('.db-steps').onclick=e=>{const b=e.target.closest('[data-db]');if(!b)return;const [k,d]=b.dataset.db.split(':');setDb(k,cfg[DB_KEY[k]]+(+d))};
 $('#bgmLevel').onchange=e=>{cfg.rec.bgmLevel=e.target.checked;persist();if(bgmPlaying)bgmPlaying.gain.gain.value=bgmItemGain(bgmPlaying.assetId,cfg.bgms.find(x=>x.id===bgmPlaying.trackId)?.volume??100)};
-for(const [selector,key] of [['masterVolume','master']])$('#'+selector).oninput=e=>{queueMicrotask(renderMonitor);cfg[key]=+e.target.value;$('#'+selector.replace('Volume','Val')).textContent=cfg[key]+'%';updateGains();persist()};
+$('#masterVolume').oninput=e=>{cfg.master=+e.target.value;$('#masterVal').textContent=cfg.master+'%';updateGains();renderMonitor();persist()};
 $('#micVolume').oninput=e=>{cfg.rec.micVolume=+e.target.value;$('#micVal').textContent=cfg.rec.micVolume+'%';updateGains();persist()};
 $('#duckDepth').oninput=e=>{cfg.rec.duckDepth=+e.target.value;$('#duckDepthVal').textContent='-'+cfg.rec.duckDepth+'dB';forceDuck=true;persist()};
 $('#duckThresh').oninput=e=>{cfg.rec.duckThresh=+e.target.value;$('#duckThreshVal').textContent=cfg.rec.duckThresh+'dB';persist()};
@@ -1790,7 +1877,7 @@ $('#fadeSec').onchange=e=>{cfg.rec.fadeSec=+e.target.value;persist()};
 $('#fadeOnStop').onchange=e=>{cfg.rec.fadeOnStop=e.target.checked;persist()};
 $('#coverFit').onchange=e=>{cfg.rec.coverFit=e.target.value;persist();renderCover()};
 $('#videoSize').onchange=e=>{cfg.rec.videoSize=+e.target.value;persist()};
-$('#playMode').onchange=e=>{cfg.playMode=e.target.value;persist()};$('#stopAll').onclick=stopAll;$('#soundVol').oninput=e=>$('#soundVolVal').textContent=e.target.value+'%';$('#bgmVolModal').oninput=e=>$('#bgmVolModalVal').textContent=e.target.value+'%';
+$('#playMode').onchange=e=>{cfg.playMode=e.target.value;persist()};$('#stopAll').onclick=$('#miniStopAll').onclick=stopAll;$('#stopSeEnv').onclick=$('#miniSeStop').onclick=stopSeEnv;$('#soundVol').oninput=e=>$('#soundVolVal').textContent=e.target.value+'%';$('#bgmVolModal').oninput=e=>$('#bgmVolModalVal').textContent=e.target.value+'%';
 $('#shortcutInput').onkeydown=e=>{e.preventDefault();$('#shortcutInput').value=e.key==='Escape'?'':(e.key.length===1?e.key.toUpperCase():e.key)};
 function moveSound(direction){const s=cfg.sounds.find(x=>x.id===$('#soundId').value);if(!s)return;const list=cfg.sounds.filter(x=>x.type===s.type).sort((a,b)=>a.order-b.order),index=list.findIndex(x=>x.id===s.id),other=list[index+direction];if(!other)return;const o=s.order;s.order=other.order;other.order=o;s.slotIndex=s.order;other.slotIndex=other.order;save()}
 $('#movePrev').onclick=()=>moveSound(-1);$('#moveNext').onclick=()=>moveSound(1);
@@ -1801,10 +1888,10 @@ $('#soundForm').onsubmit=async e=>{e.preventDefault();const type=$('#soundType')
  if(type==='voice'&&!file&&!previousAsset){toast('音声ファイルを選んでください');return}
  try{if(file){const nextId=id();await putAsset(nextId,file);assetId=nextId;fileName=file.name}
   if(imgFile){const nid=id();await putAsset(nid,imgFile);imageId=nid;imageName=imgFile.name}
-  Object.assign(old,{label,volume:+$('#soundVol').value,assetId,fileName,shortcut:$('#shortcutInput').value.trim(),configured:true},type==='voice'?{imageId,imageName}:{});save();closeModal('soundModal');if(file&&previousAsset)await deleteAsset(previousAsset);if(imgFile&&prevImg){await deleteAsset(prevImg);imgUrls.delete(prevImg)}toast(type==='voice'?'ボイスを保存しました':type==='env'?'環境音を保存しました':'効果音を保存しました')
+  Object.assign(old,{label,volume:+$('#soundVol').value,assetId,fileName,shortcut:$('#shortcutInput').value.trim(),configured:true,mode:type==='emoji'||type==='text'?$('#soundMode').value:''},type==='voice'?{imageId,imageName}:{},file?{dur:0}:{});save();closeModal('soundModal');if(file&&type!=='env')decodeAsset(assetId,false).then(buf=>noteDuration(old,buf)).catch(()=>{});if(file&&previousAsset)await deleteAsset(previousAsset);if(imgFile&&prevImg){await deleteAsset(prevImg);imgUrls.delete(prevImg)}toast(type==='voice'?'ボイスを保存しました':type==='env'?'環境音を保存しました':'効果音を保存しました')
  }catch(err){console.error(err);toast('音源を保存できませんでした。空き容量をご確認ください')}};
 $('#deleteSound').onclick=async e=>{const s=cfg.sounds.find(x=>x.id===$('#soundId').value);if(!s||!armButton(e.currentTarget,'もう一度押すと削除'))return;[...active].filter(a=>a.soundId===s.id).forEach(release);const previousAsset=s.assetId;
- const prevImg=s.imageId;Object.assign(s,{label:'',volume:100,assetId:null,fileName:'',shortcut:'',configured:false,imageId:null,imageName:''});save();closeModal('soundModal');await deleteAsset(previousAsset);if(prevImg){await deleteAsset(prevImg);imgUrls.delete(prevImg)}};
+ const prevImg=s.imageId;Object.assign(s,{label:'',volume:100,assetId:null,fileName:'',shortcut:'',configured:false,imageId:null,imageName:'',mode:'',dur:0});save();closeModal('soundModal');await deleteAsset(previousAsset);if(prevImg){await deleteAsset(prevImg);imgUrls.delete(prevImg)}};
 $('#bgmForm').onsubmit=async e=>{e.preventDefault();const old=cfg.bgms.find(x=>x.id===$('#bgmId').value);if(!old){toast('BGMの枠が見つかりません');return}const file=$('#bgmFile').files[0],previousAsset=old.assetId;let assetId=previousAsset||null,fileName=old.fileName||'';
  try{if(file){const nextId=id();await putAsset(nextId,file);assetId=nextId;fileName=file.name}
   const next={name:$('#bgmNameInput').value.trim(),volume:+$('#bgmVolModal').value,assetId,fileName};Object.assign(old,next);
@@ -1817,7 +1904,7 @@ async function resetBgm(trackId){const b=cfg.bgms.find(x=>x.id===trackId);if(!b|
 $('#resetBgm').onclick=e=>{if(armButton(e.currentTarget,'もう一度押すとリセット'))resetBgm($('#bgmId').value)};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));document.querySelectorAll('.modal-back').forEach(m=>m.onclick=e=>{if(e.target===m){if(m.id==='confirmModal')closeConfirm(false);else closeModal(m.id)}});
 document.addEventListener('keydown',e=>{if(e.repeat||e.altKey||e.ctrlKey||e.metaKey||document.querySelector('.modal-back.open')||e.target.closest('input,select,textarea,[contenteditable]'))return;const key=e.key.length===1?e.key.toUpperCase():e.key;const s=cfg.sounds.find(x=>x.shortcut&&x.shortcut.toUpperCase()===key);if(s){e.preventDefault();playSound(s)}});
-window.addEventListener('beforeunload',e=>{if(rec.state!=='idle'||videoJob){e.preventDefault();e.returnValue=''}});
+window.addEventListener('beforeunload',e=>{if(persistTimer)persistNow();if(rec.state!=='idle'||videoJob){e.preventDefault();e.returnValue=''}});
 
 /* ===================== 設定の書き出し・読み込み ===================== */
 // 設定ファイル（.kissa）：先頭8バイト "MTKSPACK" + 見出しJSONの長さ(4バイト) + 見出しJSON + 音源・画像をそのまま連結
@@ -1856,9 +1943,9 @@ async function readPackHeader(file){
 async function applyImported(incoming,stored,coverBlob,progCovers={}){
  stopFilmPreview();const importedEffect=incoming.rec?.effectImageAsset;if(importedEffect){const effectBlob=await getAsset(importedEffect);if(effectBlob)await putAsset(EFFECT_ASSET,effectBlob);delete incoming.rec.effectImageAsset;await deleteAsset(importedEffect)}else await deleteAsset(EFFECT_ASSET);
  const oldAssets=[...cfg.sounds,...cfg.bgms].flatMap(x=>[x.assetId,x.imageId]).filter(Boolean);imgUrls.clear();
- const keepRec=cfg.rec;stopAll();cfg=normalize(incoming);if(!incoming.rec)cfg.rec=keepRec;bgmTab=0;save();renderVolumes();updateGains();
+ const keepRec=cfg.rec,keepPon=cfg.ponOnly;stopAll();cfg=normalize(incoming);if(!incoming.rec)cfg.rec=keepRec;cfg.ponOnly=keepPon;bgmTab=0;save();renderVolumes();updateGains();
  if(coverBlob){await setCover('default',coverBlob)}
- for(const [k,b] of Object.entries(progCovers))await setCover(k,b);persist();
+ for(const [k,b] of Object.entries(progCovers))await setCover(k,b);persistNow();
  renderPrograms();renderEffectControls();await renderEffectAsset();
  for(const assetId of oldAssets)await deleteAsset(assetId);updateStorage();
  toast(`設定を読み込みました（音源${stored}件${coverBlob?'・サムネイル画像':''}）`,4000);
@@ -1883,7 +1970,6 @@ $('#importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return
  }catch(err){console.error(err);for(const k of added)await deleteAsset(k);toast('設定ファイルを読み込めませんでした（'+errText(err)+'）',9000)}
  finally{e.target.value=''}};
 
-/* ===================== 起動 ===================== */
 /* ===================== 名前と着せ替え（設定画面） ===================== */
 let lookSaved={...look};
 const lookSame=(a,b)=>JSON.stringify(lookSanitize(a))===JSON.stringify(lookSanitize(b));
@@ -1903,6 +1989,7 @@ function lookRenderUI(){
  if(document.activeElement!==$('#lookTitleIn'))$('#lookTitleIn').value=look.title;
  if(document.activeElement!==$('#lookSubIn'))$('#lookSubIn').value=look.subtitle;
  if(document.activeElement!==$('#lookEyebrowIn'))$('#lookEyebrowIn').value=look.eyebrow;
+ for(const inp of document.querySelectorAll('[data-look-label]'))if(document.activeElement!==inp)inp.value=look.labels[inp.dataset.lookLabel];
  const dirty=!lookSame(look,lookSaved),st=$('#lookState');st.textContent=dirty?'未保存（仮の表示）':'保存済み';st.classList.toggle('dirty',dirty);
 }
 function lookDraft(v){look=lookSanitize(v);lookPaint(look);lookRenderUI()}
@@ -1911,6 +1998,7 @@ for(const inp of document.querySelectorAll('[data-look]'))inp.oninput=()=>lookDr
 $('#lookTitleIn').oninput=e=>lookDraft({...look,title:e.target.value});
 $('#lookSubIn').oninput=e=>lookDraft({...look,subtitle:e.target.value});
 $('#lookEyebrowIn').oninput=e=>lookDraft({...look,eyebrow:e.target.value});
+for(const inp of document.querySelectorAll('[data-look-label]')){inp.oninput=()=>lookDraft({...look,labels:{...look.labels,[inp.dataset.lookLabel]:inp.value}});inp.onblur=()=>lookRenderUI()}
 $('#lookTitleIn').onblur=$('#lookSubIn').onblur=$('#lookEyebrowIn').onblur=()=>lookRenderUI();
 $('#lookSave').onclick=()=>{lookCommit(look);toast('名前と着せ替えを保存しました')};
 $('#lookRevert').onclick=()=>{lookDraft(lookSaved);toast('保存済みの状態に戻しました')};
@@ -1932,7 +2020,7 @@ $('#trySe').onclick=()=>{const s=cfg.sounds.find(x=>(x.type==='emoji'||x.type===
 $('#tryVo').onclick=()=>{const s=cfg.sounds.find(x=>x.type==='voice'&&x.assetId);if(s)playSound(s);else toast('登録済みのボイスがありません')};
 $('#tryEnv').onclick=()=>{const on=[...active].filter(a=>a.soundType==='env');if(on.length){on.forEach(a=>fadeStop(a,.4));return}const s=cfg.sounds.find(x=>x.type==='env'&&x.assetId);if(s)playSound(s);else toast('登録済みの環境音がありません')};
 $('#tryBgm').onclick=()=>{if(bgmPlaying||bgmLoadingId){bgmSerial++;bgmPendingId=null;bgmLoadingId=null;if(bgmPlaying)fadeStop(bgmPlaying,.4);renderBgmNow();return}const b=progBgm()||cfg.bgms.find(x=>x.assetId);if(b)playBgm(b);else toast('登録済みのBGMがありません')};
-/* ===================== スクロール中の小さな録音欄・BGM欄への移動 ===================== */
+/* ===================== スクロール中の小さな操作欄・画面内の移動 ===================== */
 let miniOn=false;
 const MINI_LABEL={'● 録音開始':'● 録音','‖ 一時停止':'‖ 一時停止','● 再開':'● 再開','■ 停止・保存':'■ 停止','↺ 録り直し':'↺ 録り直し'};
 function syncMini(){
@@ -1943,26 +2031,44 @@ function syncMini(){
 }
 function setMini(on){miniOn=on;$('#miniBar').hidden=!on;if(on)syncMini()}
 if('IntersectionObserver' in window){new IntersectionObserver(([e])=>setMini(!e.isIntersecting&&e.boundingClientRect.top<0),{threshold:0}).observe(document.querySelector('.recbar'))}
-$('#miniRec').onclick=()=>$('#recBtn').click();$('#miniStop').onclick=()=>$('#stopRecBtn').click();$('#miniRetake').onclick=()=>$('#retakeBtn').click();$('#miniSeStop').onclick=stopSeEnv;$('#miniBgmBtn').onclick=()=>$('#bgmNowStop').click();
-function gotoBgm(){
- if(document.body.dataset.page==='settings'){clearPageHash();applyPage()}
- const sec=$('#bgmTabs').closest('.section');const y=sec.getBoundingClientRect().top+scrollY;
- requestAnimationFrame(()=>{const bar=document.querySelector('.recbar');const stickyH=getComputedStyle(bar).position==='sticky'?bar.offsetHeight:($('#miniBar').offsetHeight||110);window.scrollTo({top:Math.max(0,y-stickyH-8),behavior:'smooth'})});
+$('#miniRec').onclick=()=>$('#recBtn').click();$('#miniStop').onclick=()=>$('#stopRecBtn').click();$('#miniRetake').onclick=()=>$('#retakeBtn').click();$('#miniBgmBtn').onclick=()=>$('#bgmNowStop').click();
+// 各欄へ移動するボタン。名前を変えた見出しは、その名前で出す
+function renderJump(v=look){
+ const html=[['emoji','絵文字','#secEmoji'],['text','文字','#secText'],['voice','ボイス','#secVoice'],['bgm','BGM','#secBgm'],['env','環境音','#secEnv'],['takes','テイク','#takesShell']].map(([k,short,sel])=>`<button type="button" data-jump="${sel}"${k==='takes'?' class="rec-only"':''}>${esc(k==='takes'||v.labels[k]===LOOK_LABELS[k]?short:v.labels[k])}</button>`).join('');
+ for(const nav of document.querySelectorAll('.jump'))nav.innerHTML=html;
 }
-for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){el.onclick=gotoBgm;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();gotoBgm()}}}
+// 上に重なる操作欄の高さ（大きな画面では録音欄、それ以外では小さな操作欄）
+function barHeight(){const bar=$('.recbar');if(getComputedStyle(bar).position==='sticky')return bar.offsetHeight;const m=$('#miniBar'),was=m.hidden;m.hidden=false;const h=m.offsetHeight;m.hidden=was;return h}
+function jumpTo(sel){
+ if(document.body.dataset.page==='settings'){clearPageHash();applyPage()}
+ requestAnimationFrame(()=>{const y=$(sel).getBoundingClientRect().top+scrollY;window.scrollTo({top:Math.max(0,y-barHeight()-10),behavior:'smooth'})});
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-jump]');if(b)jumpTo(b.dataset.jump)});
+for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){el.onclick=()=>jumpTo('#secBgm');el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();jumpTo('#secBgm')}}}
+renderJump();
+// 使う機能：収録機能を使わない（鳴らすだけの画面）
+function applyPon(){document.body.toggleAttribute('data-pon',!!cfg.ponOnly);$('#ponOnly').checked=!!cfg.ponOnly}
+$('#ponOnly').onchange=e=>{
+ if(rec.state!=='idle'||videoJob){e.target.checked=!!cfg.ponOnly;toast('収録・動画書き出しが終わってから切り替えてください');return}
+ cfg.ponOnly=e.target.checked;persistNow();applyPon();stopFilmPreview();
+ if(cfg.ponOnly){micStream?.getTracks().forEach(t=>t.stop());micStream=null;if(micSource){micSource.disconnect();micSource=null}renderRecState();toast('鳴らすだけの画面にしました（マイクにはつなぎません）',4000)}
+ else{if(navigator.mediaDevices?.getUserMedia)enableMic(true);toast('収録機能を使う画面に戻しました',3500)}
+};
+
+/* ===================== 起動 ===================== */
 (async()=>{
  try{db=await openDB();let stored=null;try{stored=localStorage.getItem(KEY)}catch(_){}cfg=normalize(stored?JSON.parse(stored):null);persist()}
  catch(err){console.warn('保存領域を使えないため一時保存で動作します',err);db=memoryDB();cfg=normalize(null);try{const st=localStorage.getItem(KEY);if(st)cfg=normalize(JSON.parse(st))}catch(_){}
   $('.footer').textContent='この画面ではブラウザに保存できないため、お試し表示で動いています。登録した音源や録音は、画面を閉じると消えます。';$('.footer').classList.add('temp-note');toast('お試し表示で動いています（保存はされません）',6000)}
- renderVolumes();render();renderRecState();renderEffectControls();if(db){renderCover();renderEffectAsset()}
+ applyPon();renderVolumes();render();renderRecState();renderEffectControls();if(db){renderCover();renderEffectAsset()}
  if(db){const takes=await loadTakes();for(const t of takes)if(t.status==='recording'){t.status='recovered';await idbPut('takes',t.id,t)}await renderTakes();
   if(takes.some(t=>t.status==='recovered'))toast('前回途中で終了した録音を復旧しました',4000)}
  updateStorage();
  if(!navigator.mediaDevices?.getUserMedia){$('#micBtn').disabled=true;$('#micInfo').textContent='このブラウザではマイクを使えません'}
- else{let st=null;try{st=await navigator.permissions?.query?.({name:'microphone'})}catch(_){}if(st?.state==='denied')toast('マイクの使用がブロックされています。アドレスバーのサイト設定から許可してください',6000);else enableMic(true)}
+ else{let st=null;try{st=await navigator.permissions?.query?.({name:'microphone'})}catch(_){}if(cfg.ponOnly){}else if(st?.state==='denied')toast('マイクの使用がブロックされています。アドレスバーのサイト設定から許可してください',6000);else enableMic(true)}
  document.addEventListener('pointerdown',()=>{if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})});
- navigator.mediaDevices?.addEventListener?.('devicechange',()=>{listMics();if(micStream&&!micLive())enableMic(true)});
- setTimeout(preloadProgBgm,1500);renderBgmNow();renderPrograms();detectOutput();navigator.mediaDevices?.addEventListener?.('devicechange',detectOutput);
+ navigator.mediaDevices?.addEventListener?.('devicechange',()=>{listMics();detectOutput();if(micStream&&!micLive())enableMic(true)});
+ setTimeout(preloadProgBgm,1500);setTimeout(warmSounds,2500);renderBgmNow();renderPrograms();detectOutput();
 })();
 </script>
 </body>
