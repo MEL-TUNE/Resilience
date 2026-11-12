@@ -33,7 +33,7 @@ const W=+process.env.W||390,H=+process.env.H||844,TAG=process.env.TAG||'m';
     console.log('    曲リストの📝ボタン',n);
   });
   await ok('開くとシートを読み込み、曲の一覧が出る',async()=>{
-    await E(`(async()=>{$('#sxBox summary').click();await wait(600);return true})()`);
+    await E(`(async()=>{$('#sxBox summary').click();await wait(600);btn('🎵 曲と音源');await wait(50);return true})()`);
     const r=await E(`({st:$('.sx-status').textContent,items:$$('.sx-item').length,calls:__calls.map(x=>x.op+':'+x.method)})`);
     assert.match(r.st,/曲 217・音源 126・提供者 6/);assert.equal(r.items,40);assert.ok(r.calls.includes('sheet:GET'),r.calls.join());
   });
@@ -152,6 +152,42 @@ const W=+process.env.W||390,H=+process.env.H||844,TAG=process.env.TAG||'m';
       setv(fieldOf('作品名（タイアップ）'),'こちらの値');btn('✓ 直したところを確かめる');await wait(30);btn('📝 シートに書き込む');await wait(400);
       return {msg:$('.sx-confirm').innerText,val:sh.g[i][1],re:!!$$('.sx-confirm button').find(b=>b.textContent.includes('読み直す'))}})()`);
     assert.match(r.msg,/変わっています/);assert.equal(r.val,'ほかの端末で直した');assert.ok(r.re);
+  });
+  await ok('曲リストの「曲リストに登録」で、シートにも曲と音源が入る',async()=>{
+    const r=await E(`(async()=>{$('#sbAdd').open=true;setv($('#songTitle'),'リスト追加曲');setv($('#songArtist'),'リスト歌手');setv($('#songOke'),'https://youtu.be/qqqqqqqqqqq?si=abc');setv($('#songOkeBy'),'OKE-sound');
+      $('#repAdd').click();await wait(1500);
+      const S=__G.ss.sheets['曲'].g.find(r=>r[0]==='リスト追加曲'),R=__G.ss.sheets['音源'].g.find(r=>r[0]==='リスト追加曲／リスト歌手');
+      return {S:!!S,y:S&&(S[3]||''),R:R&&[R[1],R[4],R[6],R[15]],sk:__otonohaChars.state.repertoire.find(x=>x.title==='リスト追加曲').sk}})()`);
+    assert.ok(r.S);assert.equal(r.y,'');assert.deepEqual(r.R,['リスト追加曲 / OKE-sound','https://www.youtube.com/watch?v=qqqqqqqqqqq','OKE-sound','原曲キー']);assert.equal(r.sk,'リスト追加曲／リスト歌手');
+  });
+  await ok('曲リストの「編集」でラベルを足すと、シートのラベル列とラベル一覧に入る（シートにあったラベルは残す）',async()=>{
+    const r=await E(`(async()=>{
+      const sh=__G.ss.sheets['曲'];const i=sh.g.findIndex(r=>r[0]==='リスト追加曲');sh.g[i][19]='アニメソング';
+      setv($('#repFilter'),'リスト追加曲');await wait(450);
+      const li=$$('#repList > li').find(x=>x.textContent.includes('リスト追加曲'));btn('編集',li);await wait(50);
+      const box=li.nextElementSibling;const tag=[...box.querySelectorAll('label.studio-field')].find(l=>l.firstChild.textContent.startsWith('ラベル')).querySelector('input');
+      setv(tag,'男性キー、Vジャンプ');
+      const w=[...box.querySelectorAll('label.studio-field')].find(l=>l.firstChild.textContent.startsWith('作品名')).querySelector('input');setv(w,'リスト作品');
+      btn('保存',box);await wait(2000);
+      return {g:sh.g[i][19],w:sh.g[i][1],lab:__G.ss.sheets['ラベル一覧'].g.slice(1).filter(r=>r[0]==='Vジャンプ').map(r=>r[1])}})()`);
+    assert.equal(r.g,'アニメソング、男性キー、Vジャンプ');assert.equal(r.w,'リスト作品');assert.deepEqual(r.lab,['未分類']);
+  });
+  await ok('「🔄 曲リストとそろえる」：シートにない曲・音源をまとめて書き込む',async()=>{
+    const r=await E(`(async()=>{
+      localStorage.setItem('otonoha-sheet-autopush','0');
+      $('#sbAdd').open=true;setv($('#songTitle'),'まとめ曲A');setv($('#songArtist'),'まとめ歌手');setv($('#songOke'),'https://youtu.be/aaaaaaaaaa1');setv($('#songOkeBy'),'新しい提供者さん');$('#repAdd').click();await wait(300);
+      setv($('#songTitle'),'まとめ曲B');setv($('#songArtist'),'まとめ歌手');setv($('#songOke'),'');setv($('#songOkeBy'),'');$('#repAdd').click();await wait(300);
+      const before=__G.ss.sheets['曲'].g.filter(r=>r[0].startsWith('まとめ曲')).length;
+      btn('🔄 曲リストとそろえる');await wait(50);btn('曲リストとシートを比べる');await wait(600);
+      const txt=$('.sx-pane').innerText;
+      btn('📝 シートに書き込む');await wait(4000);
+      const after=__G.ss.sheets['曲'].g.filter(r=>r[0].startsWith('まとめ曲')).length;
+      const src=__G.ss.sheets['音源'].g.find(r=>r[0]==='まとめ曲A／まとめ歌手');
+      const prov=__G.ss.sheets['提供者'].g.find(r=>r[0]==='新しい提供者さん');
+      btn('曲リストとシートを比べる');await wait(600);
+      return {before,after,src:src&&src[6],prov:prov&&prov[2],txt,again:$('.sx-pane').innerText}})()`);
+    assert.equal(r.before,0);assert.equal(r.after,2);assert.equal(r.src,'新しい提供者さん');assert.equal(r.prov,'未確認');
+    assert.match(r.txt,/曲を足す/);assert.match(r.txt,/提供者を足す/);assert.match(r.again,/そろっています/);
   });
   await ok('書き込みは POST、読むのは GET',async()=>{
     const c=await E(`__calls.map(x=>x.op+':'+x.method)`);

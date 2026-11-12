@@ -142,15 +142,16 @@
     if(state.songs.length>=300){toast('セトリは300曲までです');return}
     const src=formSrc(v);if(src===null)return;
     state.songs.push({title:v.title,artist:v.artist});
+    const had=repFind(v.title,v.artist),before=had?JSON.parse(JSON.stringify(had)):null;
     const r=repAdd(v.title,v.artist,v.memo,src);
-    save();renderSet();if(r)repRowUpdate(r);sbClear()
+    save();renderSet();if(r)repRowUpdate(r);sbClear();if(r)sxAutoPush(r,before)
   };
   E('repAdd').onclick=()=>{
     const v=sbInput();
     if(!v.title){toast('曲名を入力してください');return}
     const src=formSrc(v);if(src===null)return;
-    const had=repFind(v.title,v.artist),n0=had?.srcs?.length||0,r=repAdd(v.title,v.artist,v.memo,src);
-    if(r){save();repRowUpdate(r,true);sbClear();toast(had?((r.srcs?.length||0)>n0?'登録済みの曲に音源を足しました':'登録済みの曲です'+(v.memo?'（メモを更新しました）':'')):'曲リストに登録しました')}
+    const had=repFind(v.title,v.artist),n0=had?.srcs?.length||0,before=had?JSON.parse(JSON.stringify(had)):null,r=repAdd(v.title,v.artist,v.memo,src);
+    if(r){save();repRowUpdate(r,true);sbClear();sxAutoPush(r,before);toast(had?((r.srcs?.length||0)>n0?'登録済みの曲に音源を足しました':'登録済みの曲です'+(v.memo?'（メモを更新しました）':'')):'曲リストに登録しました')}
   };
   E('singNowBtn').onclick=()=>{
     const v=sbInput();
@@ -234,7 +235,7 @@
     const row=document.createElement('div');row.className='studio-row';
     row.append(rowBtn('＋ 音源を足す','',()=>{if(rows.length>=8){toast('1曲に登録できる音源は8つまでです');return}addRow({})}),
       rowBtn('保存','accent',()=>{
-        const t=it.value.trim(),a=ia.value.trim();
+        const t=it.value.trim(),a=ia.value.trim(),before=JSON.parse(JSON.stringify(s));
         if(!t){toast('曲名を入れてください');return}
         const other=repFind(t,a);
         if(other&&other!==s){toast('同じ曲名・アーティストの曲がすでにあります',4000);return}
@@ -251,7 +252,7 @@
         s.title=t.slice(0,200);s.artist=a.slice(0,200);s.memo=im.value.trim().slice(0,200);s.srcs=srcs;
         {const w=iw.value.trim().slice(0,200),g=tagNorm(ig.value);if(w)s.w=w;else delete s.w;if(g)s.tag=g;else delete s.tag}
         if(s.useSrc&&!srcs.some(x=>x.n===s.useSrc||x.u===s.useSrc))delete s.useSrc;
-        saveNow();box.remove();renderRep();renderSet();if(k0!==k1)renderLog();toast('保存しました',2000)
+        saveNow();box.remove();renderRep();renderSet();if(k0!==k1)renderLog();toast('保存しました',2000);sxAutoPush(s,before)
       }),
       rowBtn('閉じる','',()=>box.remove()));
     {const d2=Object.assign(document.createElement('div'),{className:'studio-inline'});d2.append(lw,lg);box.append(Object.assign(document.createElement('div'),{className:'studio-inline'}),d2,lm,srcBox,row)}
