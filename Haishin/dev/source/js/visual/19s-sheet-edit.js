@@ -22,7 +22,7 @@
     {group:'掲載誌',name:'週刊少年ジャンプ',mark:''},{group:'掲載誌',name:'週刊少年サンデー',mark:''},{group:'掲載誌',name:'りぼん',mark:''},{group:'掲載誌',name:'なかよし',mark:''},
     {group:'作者',name:'CLAMP',mark:''}
   ];
-  const SX={box:E('sxBox'),body:E('sxBody'),data:null,at:'',view:'songs',q:'',lab:'',busy:false};
+  const SX={box:E('sxBox'),body:E('sxBody'),data:null,at:'',view:'sync',q:'',lab:'',busy:false};
 
   // ---- 小さな部品
   function h(tag,props,...kids){
@@ -69,13 +69,19 @@
   function sxSay(el,t,kind){el.textContent=t;el.dataset.kind=kind||''}
 
   // ---- 読み込み
+  // 画面を作り直さずに、シートを読み直す
+  async function sxFetch(){
+    let j;
+    try{j=await sxCall('sheet')}catch(e){if(/知らない操作/.test(e.message))e.message='Apps Script が古い版です。下の「歌枠管理シートとつなぐ」の「コードをコピー」で版3に入れ替えて、デプロイを「新バージョン」にしてください';throw e}
+    if(!(j.version>=3))throw Error('Apps Script が古い版です（版'+(j.version||'?')+'）。下の「歌枠管理シートとつなぐ」の「コードをコピー」で版3に入れ替えて、デプロイを「新バージョン」にしてください');
+    SX.data=j;SX.at=new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+    return j
+  }
   async function sxLoad(quiet){
     const say=SX.body.querySelector('.sx-status');
     if(say&&!quiet)sxSay(say,'シートを読んでいます…');
     try{
-      const j=await sxCall('sheet');
-      if(!(j.version>=3))throw Error('Apps Script が古い版です（版'+(j.version||'?')+'）。下の「歌枠管理シートとつなぐ」の「コードをコピー」で版3に入れ替えて、デプロイを「新バージョン」にしてください');
-      SX.data=j;SX.at=new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+      await sxFetch();
       sxRender()
     }catch(e){
       if(/知らない操作/.test(e.message))e.message='Apps Script が古い版です。下の「歌枠管理シートとつなぐ」の「コードをコピー」で版3に入れ替えて、デプロイを「新バージョン」にしてください';
@@ -97,12 +103,12 @@
     if(err){sxSay(status,err,'err');return}
     if(!SX.data){sxSay(status,'「🔄 読み直す」でシートを読み込みます');return}
     sxSay(status,'📗 '+(SX.data.name||'スプレッドシート')+'（'+SX.at+' に読み込み）　曲 '+SX.data.songs.length+'・音源 '+SX.data.srcs.length+'・提供者 '+SX.data.provs.length);
-    const tabs=[['songs','🎵 曲と音源'],['provs','🎧 音源の提供者'],['labels','🏷 ラベルの項目'],['hist','📜 変更の記録']];
+    const tabs=[['sync','🔄 曲リストとそろえる'],['songs','🎵 曲と音源'],['provs','🎧 音源の提供者'],['labels','🏷 ラベルの項目'],['hist','📜 変更の記録']];
     const nav=h('div',{class:'sx-nav',role:'tablist'});
     for(const [v,l] of tabs)nav.append(h('button',{type:'button',role:'tab','aria-selected':String(SX.view===v),class:SX.view===v?'selected':null,onclick:()=>{SX.view=v;sxRender()}},l));
     const pane=h('div',{class:'sx-pane'});
     B.append(nav,pane);
-    ({songs:sxSongList,provs:sxProvList,labels:sxLabelPane,hist:sxHistPane})[SX.view](pane)
+    ({sync:sxSyncPane,songs:sxSongList,provs:sxProvList,labels:sxLabelPane,hist:sxHistPane})[SX.view](pane)
   }
 
   // ---- 書き込む前に、変わるところを見せる
@@ -138,14 +144,17 @@
       if(tab==='曲'&&songSk(old)!==songSk(now))for(const x of SX.data.srcs)if(x.s===songSk(old))x.s=songSk(now);
       if(tab==='提供者'&&old.n!==now.n)for(const x of SX.data.srcs)if(x.by===old.n)x.by=now.n
     }
-    try{if(tab==='曲')sxSyncSong(old,now);else if(tab==='音源')sxSyncSrc(old,now)}catch(e){toast('シートには書き込みました。オトノハの曲リストへの反映でつまずきました：'+e.message,6000)}
+    try{if(tab==='曲')sxSyncSong(old,now,j.wrote);else if(tab==='音源')sxSyncSrc(old,now)}catch(e){toast('シートには書き込みました。オトノハの曲リストへの反映でつまずきました：'+e.message,6000)}
     return {j,rec:now}
   }
   // ---- オトノハの曲リスト（歌枠ノート）へ反映する
-  function sxSyncSong(old,rec){
+  // wrote＝シートに書いた項目。曲リストにもとからある曲は、書いた項目だけを写す（書いていない作品名・ラベルを、シートの値で消さない）
+  function sxSyncSong(old,rec,wrote){
     const oldSk=old?songSk(old):'';
     let s=(oldSk&&repList().find(x=>x.sk===oldSk))||(old&&repFind(old.t,old.a))||repFind(rec.t,rec.a);
+    const fresh=!s;
     if(!s){s=repAdd(rec.t,rec.a);if(!s)return}
+    const all=fresh||!Array.isArray(wrote);
     const k0=songKey(s.title,s.artist),k1=songKey(rec.t,rec.a);
     if(k0!==k1){
       if(repFind(rec.t,rec.a)&&repFind(rec.t,rec.a)!==s)return;
@@ -154,8 +163,8 @@
       s.title=rec.t.slice(0,200);s.artist=(rec.a||'').slice(0,200)
     }
     s.sk=songSk(rec).slice(0,420);
-    if(rec.w)s.w=rec.w.slice(0,200);else delete s.w;
-    if('g' in rec){const g=tagNorm(rec.g);if(g)s.tag=g;else delete s.tag}
+    if(all||wrote.includes('w')){if(rec.w)s.w=rec.w.slice(0,200);else delete s.w}
+    if('g' in rec&&(all||wrote.includes('g'))){const g=tagNorm(rec.g);if(g)s.tag=g;else delete s.tag}
     saveNow();renderRep();renderSet();if(k0!==k1)renderLog()
   }
   function sxLocalSrc(rec){
@@ -524,4 +533,170 @@
     const rec=SX.data.songs.find(o=>s.sk&&songSk(o)===s.sk)||SX.data.songs.find(o=>songKey(o.t,o.a)===songKey(s.title,s.artist));
     sxSongEdit(pane,rec||null,rec?null:{t:s.title,a:s.artist,w:s.w||'',g:s.tag||''});
     SX.box.scrollIntoView({block:'start',behavior:'smooth'})
+  }
+
+  // ===================== 曲リスト（③）とシートをそろえる =====================
+  // ③ 曲リストで足した・直した曲、音源、ラベルを、シートへ書き込む。
+  // ・まとめて：曲リスト全体とシートを比べ、シートにないものを足す（シートにある値は消さない。ラベルは両方を合わせる）
+  // ・その場で：曲リストの「編集」「曲リストに登録」のあと、直したところだけをシートへ（前の値と比べて、足したラベル・外したラベルを、シートのいまの値に当てる）
+  const SX_AUTO_LS='otonoha-sheet-autopush';
+  const sxAutoOn=()=>{try{return localStorage.getItem(SX_AUTO_LS)!=='0'}catch(_){return true}};
+  const sxVid=u=>{const m=String(u||'').match(/(?:youtu\.be\/|[?&]v=|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/);return m?m[1]:String(u||'').replace(/[?&]si=[^&]*/,'').trim()};
+  function sxSheetSongOf(s){
+    const D=SX.data;
+    return D.songs.find(o=>s.sk&&songSk(o)===s.sk)||D.songs.find(o=>songKey(o.t,o.a)===songKey(s.title,s.artist))||null
+  }
+  function sxSheetSrcOf(sk,x){
+    const list=SX.data.srcs.filter(y=>y.s===sk);
+    return (x.n&&list.find(y=>y.n===x.n))||(x.u&&list.find(y=>y.u&&sxVid(y.u)===sxVid(x.u)))||null
+  }
+  function sxSrcFields(sk,t,x){
+    const u=x.u?okeNorm(x.u)||'':'';
+    const f={s:sk,u,by:x.by||'',key:x.k||'',kk:x.kk||'原曲キー',kind:x.kind||(/youtube\.com|youtu\.be/.test(u)?'YouTube動画':''),f:x.f||'',lyr:x.ly||''};
+    f.n=x.n||sxSrcName({t},f);
+    return f
+  }
+  // 1曲ぶんの書き込みの計画。before＝直す前の曲リストの曲（新しい曲なら null）。all＝まとめて（両方を合わせる）
+  function sxPlanSong(s,before,all){
+    const items=[],rec=sxSheetSongOf(before&&!all?{...before,title:before.title,artist:before.artist}:s)||sxSheetSongOf(s);
+    const tags=tagSplit(s.tag),sk0=rec?songSk(rec):(s.title+'／'+(s.artist||''));
+    if(!rec){
+      const f={t:s.title,a:s.artist||'',w:s.w||'',y:sxYomi(s.title),st:'下書き・要確認'};
+      if(tags.length&&sxHas('曲','g'))f.g=tags.join('、');
+      items.push({kind:'song',label:'曲を足す',text:s.title+(s.artist?' / '+s.artist:''),s,rec:null,f,on:true})
+    }else{
+      const f={};
+      if(before&&!all){
+        if(songKey(before.title,before.artist)!==songKey(s.title,s.artist)){f.t=s.title;f.a=s.artist||''}
+        if((before.w||'')!==(s.w||''))f.w=s.w||'';
+        if(sxHas('曲','g')){
+          const b=tagSplit(before.tag),add=tags.filter(x=>!b.includes(x)),del=b.filter(x=>!tags.includes(x));
+          if(add.length||del.length){const g=[...tagSplit(rec.g).filter(x=>!del.includes(x)),...add.filter(x=>!tagSplit(rec.g).includes(x))];f.g=g.join('、')}
+        }
+      }else{
+        if(s.w&&!rec.w)f.w=s.w;
+        if(sxHas('曲','g')){const g0=tagSplit(rec.g),add=tags.filter(x=>!g0.includes(x));if(add.length)f.g=[...g0,...add].join('、')}
+      }
+      for(const k of Object.keys(f))if((rec[k]||'')===(f[k]||''))delete f[k];
+      if(Object.keys(f).length)items.push({kind:'song',label:'曲を直す',text:s.title+(s.artist?' / '+s.artist:'')+'：'+Object.keys(f).map(k=>SX_NAMES['曲'][k]+'「'+(f[k]||'空欄')+'」').join('、'),s,rec,f,on:true})
+      if(all&&s.w&&rec.w&&s.w!==rec.w)items.push({kind:'song',label:'作品名がちがう',text:s.title+'：シート「'+rec.w+'」→ 曲リスト「'+s.w+'」にする',s,rec,f:{w:s.w},on:false})
+    }
+    const sk=(f=>f?f.t+'／'+f.a:sk0)(items.find(x=>x.kind==='song'&&x.f.t)?.f);
+    const bsrcs=before&&!all?(before.srcs||[]):[];
+    (s.srcs||[]).forEach((x,i)=>{
+      if(!x.u&&!x.n)return;
+      const prev=bsrcs.find(y=>(y.n&&y.n===x.n)||(y.u&&y.u===x.u))||(before&&!all?bsrcs[i]:null);
+      const hit=rec?(sxSheetSrcOf(songSk(rec),x)||(prev&&sxSheetSrcOf(songSk(rec),prev))):null;
+      if(!hit){items.push({kind:'src',label:'音源を足す',text:s.title+'：'+(x.n||x.by||x.u),s,x,sk,rec:null,on:true});return}
+      if(before&&!all&&prev){
+        const f={};
+        if(x.u&&prev.u!==x.u&&sxVid(hit.u)!==sxVid(x.u))f.u=okeNorm(x.u)||'';
+        if((prev.by||'')!==(x.by||'')&&(hit.by||'')!==(x.by||''))f.by=x.by||'';
+        if((prev.n||'')!==(x.n||'')&&x.n&&hit.n!==x.n)f.n=x.n;
+        if(Object.keys(f).length)items.push({kind:'srcset',label:'音源を直す',text:hit.n+'：'+Object.keys(f).map(k=>SX_NAMES['音源'][k]+'「'+f[k]+'」').join('、'),s,x,rec:hit,f,on:true})
+      }
+    });
+    return items
+  }
+  // 足すラベル・提供者（ラベル一覧・提供者タブにない名前）
+  function sxPlanExtras(items){
+    const L=sxLabels(),out=[];
+    if(L){
+      const have=new Set(L.map(x=>x.name)),need=new Set();
+      for(const it of items)if(it.kind==='song'&&it.f.g)for(const g of tagSplit(it.f.g))if(!have.has(g))need.add(g);
+      if(need.size)out.push({kind:'labels',label:'ラベル一覧に足す',text:[...need].join('、')+'（分類は「未分類」。あとで「🏷 ラベルの項目」で直せます）',names:[...need],on:true})
+    }
+    const pv=new Set(SX.data.provs.map(x=>x.n)),needP=new Set();
+    for(const it of items){const by=it.kind==='src'?it.x.by:it.kind==='srcset'?it.f.by:'';if(by&&!pv.has(by))needP.add(by)}
+    for(const n of needP)out.push({kind:'prov',label:'提供者を足す',text:n+'（名前だけ。使ってよい配信は「未確認」）',name:n,on:true});
+    return out
+  }
+  async function sxRun(items,prog,stop){
+    const done={ok:0,ng:[]};let i=0;
+    const order=['labels','prov','song','src','srcset'];
+    items=items.filter(x=>x.on).sort((a,b)=>order.indexOf(a.kind)-order.indexOf(b.kind));
+    for(const it of items){
+      if(stop&&stop.v)break;
+      prog&&prog(++i,items.length,it);
+      try{
+        if(it.kind==='labels'){
+          const L=sxLabels();
+          const j=await sxCall('labels',{base:L.map(x=>x.name),list:[...L.map(x=>({was:x.name,name:x.name,group:x.group,mark:x.mark,memo:x.memo})),...it.names.map(n=>({was:'',name:n,group:'未分類',mark:'',memo:''}))]});
+          SX.data.labels=j.labels
+        }else if(it.kind==='prov')await sxSave('提供者',null,{n:it.name,yt:'未確認',mon:'未確認',oth:'未確認',y:sxYomi(it.name)});
+        else if(it.kind==='song'){
+          const rec=it.rec?SX.data.songs.find(o=>o===it.rec)||sxSheetSongOf(it.s):null;
+          if(!it.rec&&sxSheetSongOf(it.s)){done.ok++;continue}
+          const r=await sxSave('曲',rec,it.f);
+          it.s.sk=songSk(r.rec)
+        }else if(it.kind==='src'){
+          const sk=it.s.sk||it.sk,song=SX.data.songs.find(o=>songSk(o)===sk);
+          if(!song)throw Error('シートに曲「'+it.s.title+'」がないので、音源を足せません');
+          if(sxSheetSrcOf(sk,it.x)){done.ok++;continue}
+          await sxSave('音源',null,sxSrcFields(sk,song.t,it.x))
+        }else if(it.kind==='srcset')await sxSave('音源',it.rec,it.f);
+        done.ok++
+      }catch(e){if(e.conflict)done.conflict=true;done.ng.push(it.text+'：'+e.message)}
+    }
+    saveNow();renderRep();
+    return done
+  }
+  // 曲リストの「編集」「曲リストに登録」のあと（11-songbook.js から呼ぶ）。before＝直す前の写し（新しい曲は null）
+  let sxQ=Promise.resolve();
+  function sxAutoPush(s,before){
+    if(!s||!sheetLink()||!sxAutoOn())return;
+    sxQ=sxQ.then(async()=>{
+      try{
+        // ほかの端末やシートで直したあとかもしれないので、書く前にシートを読み直す
+        await sxFetch();
+        let items=sxPlanSong(s,before,false);
+        if(!items.length)return;
+        items=[...sxPlanExtras(items),...items];
+        let r=await sxRun(items);
+        if(r.conflict){await sxFetch();items=sxPlanSong(s,before,false);items=[...sxPlanExtras(items),...items];const r2=await sxRun(items);r={ok:r.ok+r2.ok,ng:r2.ng}}
+        if(r.ng.length)toast('曲リストは保存しました。シートへの書き込みで、うまくいかなかったところがあります：'+r.ng[0]+(r.ng.length>1?'　ほか'+(r.ng.length-1)+'件':''),9000);
+        else toast('シートにも書き込みました（'+r.ok+'件）',2500);
+        if(SX.box.open&&SX.view!=='sync')sxRender()
+      }catch(e){toast('曲リストは保存しました。シートには書き込めませんでした：'+e.message+'（「📝 歌枠管理シート」の「🔄 曲リストとそろえる」から、あとでまとめて送れます）',9000)}
+    })
+  }
+  function sxSyncPane(pane){
+    const auto=h('input',{type:'checkbox'});auto.checked=sxAutoOn();
+    auto.onchange=()=>{try{localStorage.setItem(SX_AUTO_LS,auto.checked?'1':'0')}catch(_){}};
+    const say=h('p',{class:'studio-mini','aria-live':'polite'});
+    const box=h('div');
+    pane.append(sxNote('③ 曲リストで足した曲・音源・ラベルを、歌枠管理シートへ書き込みます。シートにある値は消しません（ラベルは、シートと曲リストの両方を合わせます）。','studio-note'),
+      h('label',{class:'sx-check'},auto,'曲リストの「編集」「曲リストに登録」で保存したら、シートにもすぐ書き込む（この端末の設定）'),
+      h('div',{class:'studio-row'},sxBtn('曲リストとシートを比べる',()=>draw(),'accent')),say,box);
+    const draw=async()=>{
+      box.replaceChildren();
+      sxSay(say,'シートを読み直しています…');
+      try{await sxFetch()}catch(e){sxSay(say,e.message,'err');return}
+      let items=[];
+      for(const s of repList())items.push(...sxPlanSong(s,null,true));
+      items=[...sxPlanExtras(items),...items];
+      if(!items.length){sxSay(say,'曲リストとシートは、そろっています（シートにない曲・音源・ラベルはありません）');return}
+      const groups={};for(const it of items)(groups[it.label]=groups[it.label]||[]).push(it);
+      const n=()=>items.filter(x=>x.on).length;
+      const go=sxBtn('',null,'accent');const upd=()=>{go.textContent='📝 シートに書き込む（'+n()+'件）';go.disabled=!n()};
+      for(const [label,list] of Object.entries(groups)){
+        const all=h('input',{type:'checkbox'});all.checked=list.every(x=>x.on);
+        const det=h('details',{class:'sx-more',open:list.length<=12},h('summary',null,h('label',{class:'sx-check',onclick:e=>e.stopPropagation()},all,label+'（'+list.length+'件）')));
+        const cbs=list.map(it=>{const cb=h('input',{type:'checkbox'});cb.checked=it.on;cb.onchange=()=>{it.on=cb.checked;all.checked=list.every(x=>x.on);upd()};det.append(h('label',{class:'sx-check'},cb,it.text));return cb});
+        all.onchange=()=>{for(const [i,it] of list.entries()){it.on=all.checked;cbs[i].checked=all.checked}upd()};
+        box.append(det)
+      }
+      const stop={v:false},prog=h('p',{class:'studio-mini','aria-live':'polite'});
+      const stopBtn=sxBtn('止める',()=>{stop.v=true;stopBtn.disabled=true},null);stopBtn.hidden=true;
+      go.onclick=async()=>{
+        go.disabled=true;stopBtn.hidden=false;
+        const r=await sxRun(items,(i,all,it)=>sxSay(prog,'書き込んでいます… '+i+' / '+all+'　'+it.text),stop);
+        stopBtn.hidden=true;
+        sxSay(prog,(stop.v?'途中で止めました。':'終わりました。')+'書き込んだ '+r.ok+'件'+(r.ng.length?'・うまくいかなかった '+r.ng.length+'件：'+r.ng.slice(0,5).join('　/　'):''),r.ng.length?'err':'');
+        toast('シートへ書き込みました（'+r.ok+'件）',3000)
+      };
+      upd();
+      sxSay(say,'シートにないもの・ちがうものが見つかりました。書き込まないものは、チェックを外せます。');
+      box.append(h('div',{class:'studio-row'},go,stopBtn),prog)
+    };
   }

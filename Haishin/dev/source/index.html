@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.3 / 表情ごとの動きの大きさ・速さ・PNGTuberの動きの見直し</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.4 / 曲リストで足した・直した曲を、歌枠管理シートにも書き込む</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -268,7 +268,7 @@
 <h3 class="kara-h">② 本番：歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびにセトリか曲リストの「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。「▶」で開いた音源も一緒に残ります。</p>
 <h3 class="kara-h">③ 曲リスト <small id="repCount"></small></h3>
 <div class="sb-find"><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・音源・メモで探す" aria-label="曲リストを探す"><label class="studio-field sb-sort">並び<select id="repSort"><option value="recent">最近歌った順</option><option value="name">曲名順</option><option value="count">よく歌う順</option></select></label></div>
-<details class="sx-box" id="sxBox"><summary>📝 歌枠管理シートの曲を足す・直す（曲・音源・提供者・ラベル）</summary><div id="sxBody" class="sx-body"></div></details>
+<details class="sx-box" id="sxBox"><summary>📝 歌枠管理シート（曲リストとそろえる・曲・音源・提供者・ラベル）</summary><div id="sxBody" class="sx-body"></div></details>
 <details class="sb-add" id="sbAdd"><summary>＋ 曲を登録する（曲名・アーティスト・音源のURL）</summary>
 <div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div>
 <div class="studio-inline"><label class="studio-field">カラオケ音源のURL（共有リンクのまま貼れます）<input id="songOke" type="url" maxlength="500" placeholder="https://youtu.be/…?si=…"></label><label class="studio-field">音源の名前・提供者（任意）<input id="songOkeBy" type="text" maxlength="120" placeholder="例：OKE-sound"></label></div>

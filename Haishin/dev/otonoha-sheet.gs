@@ -409,9 +409,8 @@ const HIST_HEAD_ = ['日時', 'タブ', '行の名前', '項目', '前', '後', 
 // 先頭が「=」の文字は、数式にならないよう「'」を付けて入れる（シートには「'」は見えません）
 function text_(v) { v = String(v == null ? '' : v); return /^=/.test(v) ? "'" + v : v; }
 function stamp_(ss) {
-  let tz = 'Asia/Tokyo';
-  try { tz = ss.getSpreadsheetTimeZone() || tz; } catch (err) { }
-  return Utilities.formatDate(new Date(), tz, 'yyyy/MM/dd HH:mm:ss');
+  // 日本の時刻で残す（コピーしたシートは、タイムゾーンが日本以外になっていることがあるため）
+  return Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy/MM/dd HH:mm:ss');
 }
 function hist_(ss, rows) {
   if (!rows || !rows.length) return;
