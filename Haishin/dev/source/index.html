@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.1 / 歌枠ルーレット・セトリを上に・動きとタブの記憶・演出の向きごとの記憶</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.2 / 歌枠管理シートを歌枠ノートから編集（曲・音源・提供者・ラベル）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -268,6 +268,7 @@
 <h3 class="kara-h">② 本番：歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびにセトリか曲リストの「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。「▶」で開いた音源も一緒に残ります。</p>
 <h3 class="kara-h">③ 曲リスト <small id="repCount"></small></h3>
 <div class="sb-find"><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・音源・メモで探す" aria-label="曲リストを探す"><label class="studio-field sb-sort">並び<select id="repSort"><option value="recent">最近歌った順</option><option value="name">曲名順</option><option value="count">よく歌う順</option></select></label></div>
+<details class="sx-box" id="sxBox"><summary>📝 歌枠管理シートの曲を足す・直す（曲・音源・提供者・ラベル）</summary><div id="sxBody" class="sx-body"></div></details>
 <details class="sb-add" id="sbAdd"><summary>＋ 曲を登録する（曲名・アーティスト・音源のURL）</summary>
 <div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div>
 <div class="studio-inline"><label class="studio-field">カラオケ音源のURL（共有リンクのまま貼れます）<input id="songOke" type="url" maxlength="500" placeholder="https://youtu.be/…?si=…"></label><label class="studio-field">音源の名前・提供者（任意）<input id="songOkeBy" type="text" maxlength="120" placeholder="例：OKE-sound"></label></div>
@@ -294,7 +295,8 @@
 <textarea id="sheetPaste" class="studio-textarea" rows="3" placeholder="シートからコピーした表をここに貼り付け"></textarea>
 <div class="studio-row"><button type="button" id="sheetPasteGo" class="accent">読み込む</button></div>
 <p class="studio-mini" id="sheetPasteInfo" aria-live="polite"></p>
-<h4 class="sb-h4">B. Apps Script でつなぐ（読み込みと、配信ログへの書き込み）</h4>
+<h4 class="sb-h4">B. Apps Script でつなぐ（読み込み、配信ログへの書き込み、シートの編集）</h4>
+<p class="studio-mini">いまのコードは版3です（シートの編集・ラベル・編集の記録・控え）。版2をお使いなら、Apps Script のコードを全部置き換えて保存し、「デプロイ」→「デプロイを管理」→ 鉛筆の印 → バージョン「新バージョン」→「デプロイ」で入れ替えます（URLと合言葉はそのままです。合言葉の行は、書き換えた合言葉に直してから保存します）。</p>
 <ol class="studio-mini sb-steps"><li>シートを開き、メニューの「拡張機能」→「Apps Script」を開きます。</li><li>下の「コードをコピー」で写したコードを、最初からあるコードと全部置き換えて貼り付けます。</li><li>コードの中の <code>ここに合言葉</code> を、自分だけの合言葉（英数字で12文字以上がおすすめ）に書き換えて保存します。</li><li>「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」でデプロイし、表示される許可の画面で許可します。</li><li>出てきた「ウェブアプリ」のURL（…/exec）と合言葉を、下に入れて「保存して確かめる」を押します。</li></ol>
 <div class="studio-row"><button type="button" id="sheetGasCopy">コードをコピー</button><button type="button" id="sheetGasSave">コードをファイルに保存</button></div>
 <div class="studio-inline"><label class="studio-field">ウェブアプリのURL<input id="sheetUrl" type="url" maxlength="300" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></label><label class="studio-field">合言葉<input id="sheetKey" type="password" maxlength="200" autocomplete="off"></label></div>

@@ -32,9 +32,10 @@
     if(!r||!src||(!src.u&&!src.n&&!src.by))return false;
     if(!Array.isArray(r.srcs))r.srcs=[];
     const same=r.srcs.find(x=>(src.u&&x.u===src.u)||(src.n&&x.n&&sbNorm(x.n)===sbNorm(src.n)));
-    if(same){for(const k of ['u','n','by','k','kind','f'])if(src[k]&&!same[k])same[k]=src[k];return false}
+    if(same){for(const k of ['u','n','by','k','kind','f','kk','ly'])if(src[k]&&!same[k])same[k]=src[k];return false}
     if(r.srcs.length>=8){toast('1曲に登録できる音源は8つまでです');return false}
-    r.srcs.push({u:src.u||'',n:(src.n||'').slice(0,200),by:(src.by||'').slice(0,120),k:(src.k||'').slice(0,20),kind:(src.kind||'').slice(0,30),f:src.f||''});
+    // kk＝キーの区分（原曲キー・女性キー・男性キー・その他）、ly＝動画内の歌詞（出る・出ない）。歌枠管理シートの「音源」タブから
+    r.srcs.push({u:src.u||'',n:(src.n||'').slice(0,200),by:(src.by||'').slice(0,120),k:(src.k||'').slice(0,20),kind:(src.kind||'').slice(0,30),f:src.f||'',...(src.kk?{kk:String(src.kk).slice(0,20)}:{}),...(src.ly?{ly:String(src.ly).slice(0,10)}:{})});
     return true
   }
   // 音源を開く（カラオケ音源を探すときと同じ窓を使う）。開いた音源は、次の「♪ 歌い始め」の記録に残す
@@ -45,7 +46,8 @@
   }
   function okeButtons(r){
     const list=(r?.srcs||[]).filter(x=>x.u);
-    return list.map((x,i)=>rowBtn('▶ '+(x.by||'音源'+(list.length>1?i+1:'')),'sb-oke'+(r.useSrc&&(r.useSrc===x.n||r.useSrc===x.u)?' used':''),()=>{okeOpen(r,x);for(const b of document.querySelectorAll('.sb-oke'))b.classList.remove('used')},(x.n?x.n+'\n':'')+x.u))
+    const kk=x=>x.kk&&x.kk!=='原曲キー'?'（'+x.kk.replace(/キー$/,'')+'）':'';
+    return list.map((x,i)=>rowBtn('▶ '+(x.by||'音源'+(list.length>1?i+1:''))+kk(x),'sb-oke'+(r.useSrc&&(r.useSrc===x.n||r.useSrc===x.u)?' used':''),()=>{okeOpen(r,x);for(const b of document.querySelectorAll('.sb-oke'))b.classList.remove('used')},(x.n?x.n+'\n':'')+x.u))
   }
   function repFind(t,a){const k=songKey(t,a);return repList().find(s=>songKey(s.title,s.artist)===k)}
   function repAdd(t,a,memo,src){
@@ -206,6 +208,7 @@
     li.append(rowBtn('♪ 歌い始め','sb-sing',()=>sing(s.title,s.artist)),songSpan(s.title,s.artist,repInfo(s)),...okeButtons(s),
       rowBtn('セトリへ','',()=>{state.songs.push({title:s.title,artist:s.artist});save();renderSet();toast('セトリに追加しました')}),
       rowBtn('編集','',()=>repEdit(s,li)),
+      sheetLink()?rowBtn('📝 シート','',()=>sxOpenSong(s),'歌枠管理シートで、この曲と音源を足す・直す'):'',
       rowBtn('削除','',e=>armed(e.currentTarget,'もう一度押すと削除',()=>{state.repertoire=repList().filter(x=>x!==s);save();repRows.get(s.id)?.remove();repRows.delete(s.id);SB.repCount.textContent=repList().length+'曲'})));
     repRows.set(s.id,li);
     return li
