@@ -982,6 +982,10 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
   .sx-lab-btns button{padding:7px 8px}
   .sx-lab-used{grid-column:1/-1;margin-top:0}
 }
+/* 0.10.3 表情ごとの動きの大きさ・速さ */
+.expr-motion{border-top:1px dotted var(--a-p-45);padding-top:4px}
+.expr-motion[hidden]{display:none}
+.expr-motion button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 
 </style>
 <style>
@@ -1267,7 +1271,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.2 / 歌枠管理シートを歌枠ノートから編集（曲・音源・提供者・ラベル）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.3 / 表情ごとの動きの大きさ・速さ・PNGTuberの動きの見直し</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1681,7 +1685,7 @@ lookPaint(look);
 <label class="studio-field">口が開く音量 <output id="thresholdValue">−38 dB</output><input type="range" id="studioThreshold" min="-65" max="-5" step="1" value="-38"></label>
 <label class="studio-field">口を閉じるまで <output id="holdValue">140 ms</output><input type="range" id="studioHold" min="40" max="600" step="10" value="140"></label>
 <div class="studio-inline"><label class="studio-field">口の動き<select id="studioMouthMode"><option value="hold">声が出ているあいだ開けたまま</option><option value="flap">声が出ているあいだパクパクを繰り返す</option></select></label></div><div class="studio-inline"><label class="studio-field">パクパクの長さ（いちばん短いとき） <output id="flapMinValue">80 ms</output><input type="range" id="studioFlapMin" min="40" max="400" step="10" value="80"></label><label class="studio-field">パクパクの長さ（いちばん長いとき） <output id="flapMaxValue">220 ms</output><input type="range" id="studioFlapMax" min="40" max="600" step="10" value="220"></label></div><p class="studio-note">「口が開く音量」を超えた声に反応します。パクパクは、開けている時間・閉じている時間を、この範囲の中から毎回ランダムに決めます。映像のなめらかさ（fps）より速くは動けません（10fpsなら100msより短くしても同じ動きです）。</p><label class="studio-field"><input id="studioBlink" type="checkbox" checked> 自動まばたき（約3〜6秒おき）</label>
-<details><summary>位置・サイズを調整</summary><label class="studio-field">大きさ <output id="scaleVal">85%</output><input id="studioScale" type="range" min="10" max="500" value="85"></label><label class="studio-field">左右<input id="studioX" type="range" min="-300" max="300" value="0"></label><label class="studio-field">上下（大きくした立ち絵の頭が切れるときは右へ動かすと下がります） <output id="yVal">0%</output><input id="studioY" type="range" min="-200" max="500" value="0"></label><label class="studio-field"><input id="studioBounce" type="checkbox" checked> 発話時に少し弾む</label></details><fieldset class="scene-set motion-set"><legend>動きの大きさ・速さ（キャラクターごとに保存）</legend><label class="studio-field">歌うゆらぎの大きさ <output data-out="studioMotionSing"></output><input id="studioMotionSing" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">歌うゆらぎの速さ <output data-out="studioMotionSingSpeed"></output><input id="studioMotionSingSpeed" type="range" min="40" max="200" step="5" value="100"></label><label class="studio-field">ぴょんぴょんの大きさ <output data-out="studioMotionHop"></output><input id="studioMotionHop" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">ガタガタの大きさ <output data-out="studioMotionShake"></output><input id="studioMotionShake" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">右往左往の歩く幅 <output data-out="studioMotionWander"></output><input id="studioMotionWander" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">いやいやの大きさ <output data-out="studioMotionIya"></output><input id="studioMotionIya" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">呼吸・話すときの動きの大きさ <output data-out="studioMotionAmt"></output><input id="studioMotionAmt" type="range" min="0" max="200" step="5" value="100"></label><p class="studio-note">どの動きも立ち絵の縦横比は変えず、位置の移動と傾きだけで動かします。0%にするとその動きは止まります。動きを切り替えるときは0.3秒ほどかけてなめらかに移ります。</p></fieldset>
+<details><summary>位置・サイズを調整</summary><label class="studio-field">大きさ <output id="scaleVal">85%</output><input id="studioScale" type="range" min="10" max="500" value="85"></label><label class="studio-field">左右<input id="studioX" type="range" min="-300" max="300" value="0"></label><label class="studio-field">上下（大きくした立ち絵の頭が切れるときは右へ動かすと下がります） <output id="yVal">0%</output><input id="studioY" type="range" min="-200" max="500" value="0"></label><label class="studio-field"><input id="studioBounce" type="checkbox" checked> 発話時に少し弾む</label></details><fieldset class="scene-set motion-set"><legend>動きの大きさ・速さ（キャラクターごとに保存。表情に連動した動きは、その表情の欄の値を使います）</legend><label class="studio-field">歌うゆらぎの大きさ <output data-out="studioMotionSing"></output><input id="studioMotionSing" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">歌うゆらぎの速さ <output data-out="studioMotionSingSpeed"></output><input id="studioMotionSingSpeed" type="range" min="40" max="200" step="5" value="100"></label><label class="studio-field">ぴょんぴょんの高さ <output data-out="studioMotionHop"></output><input id="studioMotionHop" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">ぴょんぴょんの速さ <output data-out="studioMotionHopSpeed"></output><input id="studioMotionHopSpeed" type="range" min="40" max="200" step="5" value="100"></label><label class="studio-field">ガタガタの大きさ <output data-out="studioMotionShake"></output><input id="studioMotionShake" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">ガタガタの速さ <output data-out="studioMotionShakeSpeed"></output><input id="studioMotionShakeSpeed" type="range" min="40" max="200" step="5" value="100"></label><label class="studio-field">右往左往の歩く幅 <output data-out="studioMotionWander"></output><input id="studioMotionWander" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">右往左往の速さ <output data-out="studioMotionWanderSpeed"></output><input id="studioMotionWanderSpeed" type="range" min="40" max="200" step="5" value="100"></label><label class="studio-field">いやいやの大きさ <output data-out="studioMotionIya"></output><input id="studioMotionIya" type="range" min="0" max="200" step="5" value="100"></label><label class="studio-field">いやいやの速さ <output data-out="studioMotionIyaSpeed"></output><input id="studioMotionIyaSpeed" type="range" min="40" max="200" step="5" value="100"></label><label class="studio-field">呼吸・話すときの動きの大きさ <output data-out="studioMotionAmt"></output><input id="studioMotionAmt" type="range" min="0" max="200" step="5" value="100"></label><p class="studio-note">大きさは、画面に見えている立ち絵の高さに合わせて決まるので、立ち絵の大きさを変えても同じ％なら同じくらいに見えます。どの動きも立ち絵の縦横比は変えず、位置の移動と傾きだけで動かします。0%にするとその動きは止まります。動きを切り替えるときは0.3秒ほどかけてなめらかに移ります。</p></fieldset>
 <hr class="studio-divider">
 <label class="studio-field">季節の演出・画像のプリセット（量・速さ・大きさ・濃さは、季節とプリセットごとに保存。名義・キャラクターを切り替えても変わりません）<select id="studioEffect"><option value="none">なし</option></select></label><div class="fx-preset"><div class="studio-row"><button type="button" id="fxPresetNew">＋ 画像のプリセットを作る</button><button type="button" id="fxPresetDup" class="fxp-only">複製</button><button type="button" id="fxPresetDel" class="fxp-only">このプリセットを削除</button></div><label class="studio-field fxp-only">プリセットの名前<input id="fxPresetName" type="text" maxlength="30" placeholder="例：彼岸花／マカロン"></label></div>
 <div class="studio-field fxp-only">このプリセットの画像（最大6枚・登録した画像を混ぜて降らせます）<div class="png-grid fx-grid" id="particleSlots"></div></div>
@@ -7630,6 +7634,10 @@ $('#consoleAllStop').onclick=()=>stopAll();
     motionShake:100,
     motionWander:100,
     motionIya:100,
+    motionHopSpeed:100,
+    motionShakeSpeed:100,
+    motionWanderSpeed:100,
+    motionIyaSpeed:100,
     fxSeason:null,
     fxPresets:null,
 fps:30,
@@ -7675,7 +7683,7 @@ fps:30,
     closing=false,
     captureStarting=false;
 
-  var CHAR_KEYS=['threshold','hold','blink','bounce','scale','x','y','motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya'],
+  var CHAR_KEYS=['threshold','hold','blink','bounce','scale','x','y','motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya','motionHopSpeed','motionShakeSpeed','motionWanderSpeed','motionIyaSpeed'],
     CHAR_RANGES={
     threshold:[-65,-5],
     hold:[40,600],
@@ -7688,7 +7696,11 @@ fps:30,
     motionHop:[0,200],
     motionShake:[0,200],
     motionWander:[0,200],
-    motionIya:[0,200]
+    motionIya:[0,200],
+    motionHopSpeed:[40,200],
+    motionShakeSpeed:[40,200],
+    motionWanderSpeed:[40,200],
+    motionIyaSpeed:[40,200]
   };
   var charBlobs={},
     charImgs={},
@@ -7786,7 +7798,7 @@ function sanitize(v){
     if(out.flapMax<out.flapMin)out.flapMax=out.flapMin;
     if(typeof v.sinkId==='string')out.sinkId=v.sinkId.slice(0,300);
     if(['landscape','portrait','x34'].includes(v.aspect))out.aspect=v.aspect;
-    for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya']){
+    for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya','motionHopSpeed','motionShakeSpeed','motionWanderSpeed','motionIyaSpeed']){
       const n=Number(v[k]);
       if(Number.isFinite(n))out[k]=Math.max(CHAR_RANGES[k][0],Math.min(CHAR_RANGES[k][1],n))
     }
@@ -8067,6 +8079,10 @@ const bindings={
     studioMotionShake:'motionShake',
     studioMotionWander:'motionWander',
     studioMotionIya:'motionIya',
+    studioMotionHopSpeed:'motionHopSpeed',
+    studioMotionShakeSpeed:'motionShakeSpeed',
+    studioMotionWanderSpeed:'motionWanderSpeed',
+    studioMotionIyaSpeed:'motionIyaSpeed',
     studioImageMotion:'imageMotion'
   };
 
@@ -9246,7 +9262,7 @@ const APP_MAX=12;
     const L=appLayerInfo,t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
     if(!L)return;
     // 切り抜く範囲：全身＋動き（右往左往・跳ねる）の分。レイヤーの外には出ない
-    const move=W*.13*L.k*Math.max(1,(state.motionWander||0)/100)+18,
+    const move=W*.13*L.k*Math.max(1,(state.motionWander||0)/100,...((curChar()?.exprs)||[]).filter(e=>e.motion==='wander').map(e=>(e.amt??100)/100))+18,
       hw=Math.min(APP_LW/2,L.w/2+move),top=Math.max(0,L.bottom-L.h*1.08-40),
       sx=APP_LW/2-hw,cropW=hw*2,cropH=APP_LH-top;
     const ms=state.appMsc!==false?myMascots().filter(m=>m.show&&images['msc-'+m.id]):[];
@@ -11269,7 +11285,7 @@ function cleanChar(c){
       bgMode:['inherit','own','cafe','transparent','green','blue','black'].includes(c.bgMode)?c.bgMode:'inherit',
       trim:c.trim!==false,
       pos:aspectPosClean(c.pos,'char'),
-      exprs:Array.isArray(c.exprs)?c.exprs.filter(e=>e&&typeof e==='object'&&typeof e.id==='string'&&/^[a-z0-9]{1,8}$/.test(e.id)).slice(0,12).map(e=>({id:e.id,name:String(e.name||'表情').slice(0,20),motion:['none','shake','hop','sing'].includes(e.motion)?e.motion:'none'})):[]
+      exprs:Array.isArray(c.exprs)?c.exprs.filter(e=>e&&typeof e==='object'&&typeof e.id==='string'&&/^[a-z0-9]{1,8}$/.test(e.id)).slice(0,12).map(e=>({id:e.id,name:String(e.name||'表情').slice(0,20),motion:['none','shake','hop','sing','wander','iya'].includes(e.motion)?e.motion:'none',amt:Number.isFinite(Number(e.amt))?Math.max(0,Math.min(200,Math.round(Number(e.amt)))):100,spd:Number.isFinite(Number(e.spd))?Math.max(40,Math.min(200,Math.round(Number(e.spd)))):100})):[]
     };
     for(const k of CHAR_KEYS){
       if(k==='blink'||k==='bounce'){
@@ -12430,9 +12446,22 @@ let W=1280,
     popS=0,
     singPh=0,
     hopPh=0,
-    wanPh=0,
-    iyaPh=0;
+    iyaPh=0,
+    shakeT=0,
+    hopRun=false;
   const mw={sing:0,hop:0,shake:0,wander:0,iya:0};
+  // 動きごとの大きさ・速さ。表情に連動した動きは、その表情の値（e.amt・e.spd）を使う。
+  // 表情を切り替えたときに大きさが急に変わらないよう、値もなめらかに寄せる（mk・ms）
+  const MKEY={sing:'Sing',hop:'Hop',shake:'Shake',wander:'Wander',iya:'Iya'};
+  const mk={sing:1,hop:1,shake:1,wander:1,iya:1},ms={sing:1,hop:1,shake:1,wander:1,iya:1};
+  function motionParam(m){
+    const e=curExprObj();
+    if(e&&e.motion===m)return [(Number.isFinite(e.amt)?e.amt:100)/100,(Number.isFinite(e.spd)?e.spd:100)/100];
+    const a=state['motion'+MKEY[m]],sp=state['motion'+MKEY[m]+'Speed'];
+    return [(Number.isFinite(a)?a:100)/100,(Number.isFinite(sp)?sp:100)/100]
+  }
+  // 右往左往の状態：x＝いまの位置（-1〜1。1で歩く幅いっぱい）、v＝速さ、tx＝行き先、lean＝傾き
+  const wan={x:0,v:0,tx:0,next:0,t:0,n:0,step:0,lean:0,dir:1};
 
   function vnoise(x,seed){
     const i=Math.floor(x),
@@ -12443,11 +12472,14 @@ let W=1280,
 
   function avatarPose(now,talking){
     const t=now/1000,
-      u=H/720,
       TAU=Math.PI*2,
       geo=avatarGeom(),
       pv=Math.min(geo.bottom,H*1.04),
-      arm=Math.max(H*.3,pv-geo.faceY);
+      arm=Math.max(H*.3,pv-geo.faceY),
+      // 動きの大きさの物差し：画面に見えている立ち絵の高さ（大きく拡大した立ち絵は画面の高さで頭打ち）。
+      // 立ち絵の大きさを変えても、同じ％なら同じくらいに見える。q＝高さ600pxの立ち絵のときを1とした倍率
+      S=Math.max(H*.2,Math.min(geo.h,H*1.15)),
+      q=S/600;
 
     const dtp=poseLast?Math.min(.1,Math.max(0,(now-poseLast)/1000)):0;
     poseLast=now;
@@ -12457,35 +12489,43 @@ let W=1280,
     {const te=selfSpeak()?talkEnv:0;envS=ease(envS,te,te>envS?.16:.6)}
     popS=ease(popS,talking&&state.bounce?1:0,talking?.05:.12);
 
-    {const em=effMotion();for(const m in mw)mw[m]=ease(mw[m],em===m?1:0,.28)}
+    const em=effMotion();
+    // ぴょんぴょんは、止めても宙に浮いたまま消えないよう、いまの一跳びを着地まで続けてから止める。始めるときは、しゃがむところから
+    if(em==='hop'){if(!hopRun){hopRun=true;if(mw.hop<.05)hopPh=Math.ceil(hopPh)}}
+    else if(hopRun&&hopPh%1>=.82)hopRun=false;
+    for(const m in mw){
+      mw[m]=ease(mw[m],(m==='hop'?hopRun:em===m)?1:0,m==='hop'?.08:.28);
+      const [a,sp]=motionParam(m);mk[m]=ease(mk[m],a,.25);ms[m]=ease(ms[m],sp,.25)
+    }
 
     const k=state.motionAmt/100;
     let dx=0,
       dy=0,
       rot=0;
 
-    dy-=popS*7*u;
+    dy-=popS*7*q;
 
     if(mw.sing>.001){
-      const kS=state.motionSing/100*mw.sing,
-        sp=state.motionSingSpeed/100;
+      const kS=mk.sing*mw.sing,
+        sp=ms.sing;
       singPh+=dtp*TAU/5.6*sp*(.9+.25*envS);
 
       const lean=Math.sin(singPh)*.8+Math.sin(singPh*.47+1.9)*.2;
 
-      const head=lean*11*u*(.75+.45*envS)+Math.sin(singPh*1.63+.6)*1.6*u;
+      const head=lean*11*q*(.75+.45*envS)+Math.sin(singPh*1.63+.6)*1.6*q;
 
       rot+=head/arm*kS;
-      dx+=Math.sin(singPh-.5)*5*u*kS*(.8+.3*envS);
+      dx+=Math.sin(singPh-.5)*5*q*kS*(.8+.3*envS);
 
-      dy-=((Math.cos(singPh*2)*.5+.5)*2.2*u+envS*4*u)*kS
+      dy-=((Math.cos(singPh*2)*.5+.5)*2.2*q+envS*4*q)*kS
     }
 
+    // ぴょんぴょん：しゃがむ→跳ぶ（放物線）→着地で沈む→少し止まる、をくり返す。縦横比は変えず、位置だけで動かす
     if(mw.hop>.001){
-      const kH=state.motionHop/100*mw.hop;
-      hopPh+=dtp/.74;
+      const kH=mk.hop*mw.hop;
+      hopPh+=dtp/.74*ms.hop;
       const ph=hopPh%1,
-        J=Math.max(16*u,Math.min(64*u,geo.h*.055)),
+        J=S*.055,
         D=J*.2;
       let y=0;
       if(ph<.16)y=D*Math.sin(ph/.16*Math.PI);
@@ -12494,45 +12534,69 @@ let W=1280,
       dy+=y*kH
     }
 
-    // 右往左往：周期の違うゆっくりした揺れを重ね、止まらずに左右をうろうろする。速さも向きの変わり目もなめらかに続く
-    if(mw.wander>.001){
-      const kW=state.motionWander/100*mw.wander,R=W*.13;
-      wanPh+=dtp;
-      const p=wanPh,
-        x=.62*Math.sin(p*TAU/7.3)+.28*Math.sin(p*TAU/4.4+1.7)+.10*Math.sin(p*TAU/2.9+.4),
-        v=(.62*Math.cos(p*TAU/7.3)*TAU/7.3+.28*Math.cos(p*TAU/4.4+1.7)*TAU/4.4+.10*Math.cos(p*TAU/2.9+.4)*TAU/2.9);
-      dx+=x*R*kW;
-      rot+=v*.012*kW
+    // 右往左往：行き先を決めて歩いて向かい、着くか着かないかのうちに逆へ向きを変える（あたふた）。ときどき、その場で小さくおろおろする。
+    // 歩くあいだは一歩ごとに少し上下し、進む向きへ少し傾く。止めたとき・表情を戻したときは、まん中まで歩いて戻る（すべって戻らない）
+    {
+      const on=em==='wander',sW=on?ms.wander:1,R=W*.13*mk.wander;
+      wan.t+=dtp*sW;
+      if(on){
+        if(wan.t>=wan.next){
+          const n=++wan.n,r1=rnd(n*1.73+.31),r2=rnd(n*2.31+.97),r3=rnd(n*3.11+.53);
+          if(r2<.22&&Math.abs(wan.x)<.85)wan.tx=Math.max(-1,Math.min(1,wan.x+(r1-.5)*.36));
+          else{wan.dir=wan.x>.15?-1:wan.x<-.15?1:-wan.dir;wan.tx=wan.dir*(.35+.65*r1)}
+          wan.next=wan.t+.75+.85*r3
+        }
+      }else{wan.tx=0;wan.next=0}
+      const h=1/120;let left=dtp*sW;
+      const w0=4.4,vmax=1.7;
+      while(left>1e-6){
+        const st=Math.min(h,left);left-=st;
+        const acc=w0*w0*(wan.tx-wan.x)-2*w0*wan.v;
+        wan.v=Math.max(-vmax,Math.min(vmax,wan.v+acc*st));
+        wan.x+=wan.v*st
+      }
+      if(!on&&Math.abs(wan.x)<.002&&Math.abs(wan.v)<.01){wan.x=0;wan.v=0}
+      const vpx=wan.v*sW*R,
+        g=Math.min(1,Math.abs(vpx)/(S*.4));
+      wan.step+=Math.abs(vpx)*dtp/(S*.12);
+      wan.lean=ease(wan.lean,Math.max(-1,Math.min(1,vpx/(S*.6)))*.05,.18);
+      dx+=wan.x*R;
+      dy-=Math.abs(Math.sin(wan.step*Math.PI))*S*.014*g;
+      rot+=wan.lean
     }
 
-    // いやいや：小刻みに左右へ。速さと大きさをゆっくり変わる揺らぎで少しずつずらし、規則的に見えないようにする
+    // いやいや：足もとを軸に、上半身を左右へ振る。左右の端で少しためてから戻る（規則的に見えないよう、速さと大きさをゆっくりずらす）
     if(mw.iya>.001){
-      const kI=state.motionIya/100*mw.iya;
-      iyaPh+=dtp*TAU*(2.4+.75*vnoise(t*1.1,.23));
-      const amp=.7+.3*vnoise(t*.8,.91),s=Math.sin(iyaPh);
-      dx+=s*amp*6*u*kI;
-      rot+=Math.sin(iyaPh-.5)*amp*7*u/arm*kI
+      const kI=mk.iya*mw.iya;
+      iyaPh+=dtp*TAU*2.1*ms.iya*(1+.15*vnoise(t*1.3,.23));
+      const env=.82+.18*vnoise(t*.9,.91),
+        s=(Math.sin(iyaPh)+.16*Math.sin(3*iyaPh))/1.03;
+      rot+=s*.042*env*kI;
+      dx+=Math.sin(iyaPh-.4)*S*.007*env*kI;
+      dy-=Math.abs(Math.sin(iyaPh))*S*.004*env*kI
     }
 
+    // ガタガタ：細かくふるえる
     if(mw.shake>.001){
-      const kX=state.motionShake/100*mw.shake,
-        f=t*13;
-      dx+=vnoise(f,.1)*6*u*kX;
-      dy+=vnoise(f,.37)*2.6*u*kX;
-      rot+=vnoise(f*.8,.71)*3*u/arm*kX
+      const kX=mk.shake*mw.shake;
+      shakeT+=dtp*13*ms.shake;
+      const f=shakeT;
+      dx+=vnoise(f,.1)*6*q*kX;
+      dy+=vnoise(f,.37)*2.6*q*kX;
+      rot+=vnoise(f*.8,.71)*3*q/arm*kX
     }
 
     const c=curChar();
     if(c){
-      if(c.breath)dy-=(Math.sin(t*TAU/3.8)*.5+.5)*3*u*k;
+      if(c.breath)dy-=(Math.sin(t*TAU/3.8)*.5+.5)*3*q*k;
 
       if(c.mode==='single'){
         const a=Math.max(envS,popS*.5);
 
-        if(c.talk==='hop')dy-=a*10*u*k+(Math.sin(t*TAU*2.3)*.5+.5)*a*6*u*k;
+        if(c.talk==='hop')dy-=a*10*q*k+(Math.sin(t*TAU*2.3)*.5+.5)*a*6*q*k;
    else if(c.talk==='sway'){
-          rot+=Math.sin(t*TAU*1.25)*a*9*u/arm*k;
-          dx+=Math.sin(t*TAU*1.25-.4)*a*5*u*k
+          rot+=Math.sin(t*TAU*1.25)*a*9*q/arm*k;
+          dx+=Math.sin(t*TAU*1.25-.4)*a*5*q*k
         }
       }
     }
@@ -14387,7 +14451,9 @@ let curExpr='';
   function setExpr(id){
     curExpr=id||'';
     switchAt=performance.now();
-    renderExprBar()
+    renderExprBar();
+    // 表情の設定の「この表情を試す」の表示も合わせる
+    for(const b of document.querySelectorAll('#exprList [data-a=try]')){const on=b.closest('.expr-row')?.dataset.id===curExpr&&!!curExpr;b.setAttribute('aria-pressed',String(on));b.textContent=on?'試すのをやめる（通常に戻す）':'この表情を試す'}
   }
   function renderExprBar(){
     const bar=E('exprBar'),c=curChar(),list=(c&&c.exprs)||[];
@@ -14415,15 +14481,35 @@ let curExpr='';
     if(!c)return;
     c.exprs=c.exprs||[];
     c.exprs.forEach((e,i)=>{
-      const row=document.createElement('div');row.className='expr-row';
+      const row=document.createElement('div');row.className='expr-row';row.dataset.id=e.id;
       const u1=exprThumb(state.charId,'x'+e.id),u2=exprThumb(state.charId,'y'+e.id);
       row.innerHTML=`<div class="studio-inline"><label class="studio-field">表情の名前<input type="text" maxlength="20" data-k="name"></label><label class="studio-field">連動する動き<select data-k="motion">${EXPR_MOTION.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></label></div>`
+        +`<div class="expr-motion"><div class="studio-inline"><label class="studio-field"><span data-l="amt">動きの大きさ</span> <output data-o="amt"></output><input type="range" min="0" max="200" step="5" data-k="amt"></label><label class="studio-field">動きの速さ <output data-o="spd"></output><input type="range" min="40" max="200" step="5" data-k="spd"></label></div>`
+        +`<div class="studio-row"><button type="button" data-a="try" aria-pressed="false">この表情を試す</button><button type="button" data-a="base">キャラの設定の値を写す</button></div><p class="studio-mini">この表情のときだけ使う値です（100％＝ふつう）。「試す」を押すと、プレビューでこの表情に切り替わり、動かしながら調整できます。</p></div>`
         +`<div class="expr-imgs"><label>表情の画像 ${u1?`<img src="${u1}" alt="">`:'（未登録）'}<input type="file" accept="image/png,image/webp,image/jpeg" data-f="x"></label><label>口を開いた画像（任意） ${u2?`<img src="${u2}" alt="">`:'（なし）'}<input type="file" accept="image/png,image/webp,image/jpeg" data-f="y"></label></div>`
         +`<div class="studio-row"><button type="button" data-a="del">この表情を削除</button>${u2?'<button type="button" data-a="dely">口を開いた画像を外す</button>':''}</div>`;
       row.querySelector('[data-k=name]').value=e.name;
       row.querySelector('[data-k=motion]').value=e.motion;
       row.querySelector('[data-k=name]').oninput=ev=>{e.name=ev.target.value.slice(0,20)||'表情';save();renderExprBar()};
-      row.querySelector('[data-k=motion]').onchange=ev=>{e.motion=ev.target.value;save()};
+      const mbox=row.querySelector('.expr-motion'),
+        AMT_L={shake:'ガタガタの大きさ',hop:'ぴょんぴょんの高さ',sing:'歌うゆらぎの大きさ',wander:'右往左往の歩く幅',iya:'いやいやの大きさ'},
+        KEY={shake:'Shake',hop:'Hop',sing:'Sing',wander:'Wander',iya:'Iya'};
+      if(!Number.isFinite(e.amt))e.amt=100;
+      if(!Number.isFinite(e.spd))e.spd=100;
+      const drawM=()=>{
+        mbox.hidden=e.motion==='none';
+        mbox.querySelector('[data-l=amt]').textContent=AMT_L[e.motion]||'動きの大きさ';
+        for(const k of ['amt','spd']){mbox.querySelector('[data-k='+k+']').value=e[k];mbox.querySelector('[data-o='+k+']').textContent=e[k]+'%'}
+        const tb=mbox.querySelector('[data-a=try]');tb.setAttribute('aria-pressed',String(curExpr===e.id));tb.textContent=curExpr===e.id?'試すのをやめる（通常に戻す）':'この表情を試す'
+      };
+      drawM();
+      row.querySelector('[data-k=motion]').onchange=ev=>{e.motion=ev.target.value;save();drawM()};
+      for(const k of ['amt','spd'])mbox.querySelector('[data-k='+k+']').oninput=ev=>{e[k]=Number(ev.target.value);mbox.querySelector('[data-o='+k+']').textContent=e[k]+'%';save()};
+      mbox.querySelector('[data-a=try]').onclick=()=>setExpr(curExpr===e.id?'':e.id);
+      mbox.querySelector('[data-a=base]').onclick=()=>{
+        const K=KEY[e.motion];if(!K)return;
+        e.amt=Math.round(state['motion'+K]??100);e.spd=Math.round(state['motion'+K+'Speed']??100);save();drawM()
+      };
       row.querySelectorAll('input[type=file]').forEach(inp=>inp.onchange=async ev=>{
         const f=ev.target.files[0];if(!f)return;
         try{if(!ready)throw Error('保存領域の準備中です');await storeCharImage(state.charId,inp.dataset.f+e.id,f);save();renderExprUI();toast('「'+e.name+'」の画像を登録しました')}catch(err){toast(err.message,5000)}finally{ev.target.value=''}
@@ -14726,7 +14812,7 @@ for(const k of ['standby','away','end']){
     save()
   });
 
-const QT=[['studioThreshold','口が開く音量',' dB'],['studioMouthMode','口の動き',''],['studioFlapMin','パクパク最短',' ms'],['studioFlapMax','パクパク最長',' ms'],['studioScale','大きさ','%'],['studioX','左右',''],['studioY','上下',''],['studioMotionSing','歌うゆらぎの大きさ','%'],['studioMotionSingSpeed','歌うゆらぎの速さ','%'],['studioMotionHop','ぴょんぴょんの大きさ','%'],['studioMotionShake','ガタガタの大きさ','%'],['studioMotionWander','右往左往の歩く幅','%'],['studioMotionIya','いやいやの大きさ','%'],['studioMotionAmt','呼吸・話すときの動き','%'],['studioEffect','季節の演出・画像のプリセット',''],['studioCount','演出の量',''],['studioSpeed','演出の速さ',''],['studioFxSize','演出の大きさ',''],['studioFxOpacity','演出の濃さ','']];
+const QT=[['studioThreshold','口が開く音量',' dB'],['studioMouthMode','口の動き',''],['studioFlapMin','パクパク最短',' ms'],['studioFlapMax','パクパク最長',' ms'],['studioScale','大きさ','%'],['studioX','左右',''],['studioY','上下',''],['studioMotionSing','歌うゆらぎの大きさ','%'],['studioMotionSingSpeed','歌うゆらぎの速さ','%'],['studioMotionHop','ぴょんぴょんの高さ','%'],['studioMotionHopSpeed','ぴょんぴょんの速さ','%'],['studioMotionShake','ガタガタの大きさ','%'],['studioMotionShakeSpeed','ガタガタの速さ','%'],['studioMotionWander','右往左往の歩く幅','%'],['studioMotionWanderSpeed','右往左往の速さ','%'],['studioMotionIya','いやいやの大きさ','%'],['studioMotionIyaSpeed','いやいやの速さ','%'],['studioMotionAmt','呼吸・話すときの動き','%'],['studioEffect','季節の演出・画像のプリセット',''],['studioCount','演出の量',''],['studioSpeed','演出の速さ',''],['studioFxSize','演出の大きさ',''],['studioFxOpacity','演出の濃さ','']];
   (function buildQuickTune(){
     const box=E('quickTuneBody');
     for(const [id,label] of QT){

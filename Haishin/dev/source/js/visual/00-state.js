@@ -93,6 +93,10 @@
     motionShake:100,
     motionWander:100,
     motionIya:100,
+    motionHopSpeed:100,
+    motionShakeSpeed:100,
+    motionWanderSpeed:100,
+    motionIyaSpeed:100,
     fxSeason:null,
     fxPresets:null,
 fps:30,
@@ -138,7 +142,7 @@ fps:30,
     closing=false,
     captureStarting=false;
 
-  var CHAR_KEYS=['threshold','hold','blink','bounce','scale','x','y','motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya'],
+  var CHAR_KEYS=['threshold','hold','blink','bounce','scale','x','y','motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya','motionHopSpeed','motionShakeSpeed','motionWanderSpeed','motionIyaSpeed'],
     CHAR_RANGES={
     threshold:[-65,-5],
     hold:[40,600],
@@ -151,7 +155,11 @@ fps:30,
     motionHop:[0,200],
     motionShake:[0,200],
     motionWander:[0,200],
-    motionIya:[0,200]
+    motionIya:[0,200],
+    motionHopSpeed:[40,200],
+    motionShakeSpeed:[40,200],
+    motionWanderSpeed:[40,200],
+    motionIyaSpeed:[40,200]
   };
   var charBlobs={},
     charImgs={},

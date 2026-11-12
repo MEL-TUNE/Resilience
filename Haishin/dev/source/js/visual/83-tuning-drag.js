@@ -1,6 +1,6 @@
 /* その場で調整（設定画面の項目と連動）、プレビュー上のドラッグ */
 
-  const QT=[['studioThreshold','口が開く音量',' dB'],['studioMouthMode','口の動き',''],['studioFlapMin','パクパク最短',' ms'],['studioFlapMax','パクパク最長',' ms'],['studioScale','大きさ','%'],['studioX','左右',''],['studioY','上下',''],['studioMotionSing','歌うゆらぎの大きさ','%'],['studioMotionSingSpeed','歌うゆらぎの速さ','%'],['studioMotionHop','ぴょんぴょんの大きさ','%'],['studioMotionShake','ガタガタの大きさ','%'],['studioMotionWander','右往左往の歩く幅','%'],['studioMotionIya','いやいやの大きさ','%'],['studioMotionAmt','呼吸・話すときの動き','%'],['studioEffect','季節の演出・画像のプリセット',''],['studioCount','演出の量',''],['studioSpeed','演出の速さ',''],['studioFxSize','演出の大きさ',''],['studioFxOpacity','演出の濃さ','']];
+  const QT=[['studioThreshold','口が開く音量',' dB'],['studioMouthMode','口の動き',''],['studioFlapMin','パクパク最短',' ms'],['studioFlapMax','パクパク最長',' ms'],['studioScale','大きさ','%'],['studioX','左右',''],['studioY','上下',''],['studioMotionSing','歌うゆらぎの大きさ','%'],['studioMotionSingSpeed','歌うゆらぎの速さ','%'],['studioMotionHop','ぴょんぴょんの高さ','%'],['studioMotionHopSpeed','ぴょんぴょんの速さ','%'],['studioMotionShake','ガタガタの大きさ','%'],['studioMotionShakeSpeed','ガタガタの速さ','%'],['studioMotionWander','右往左往の歩く幅','%'],['studioMotionWanderSpeed','右往左往の速さ','%'],['studioMotionIya','いやいやの大きさ','%'],['studioMotionIyaSpeed','いやいやの速さ','%'],['studioMotionAmt','呼吸・話すときの動き','%'],['studioEffect','季節の演出・画像のプリセット',''],['studioCount','演出の量',''],['studioSpeed','演出の速さ',''],['studioFxSize','演出の大きさ',''],['studioFxOpacity','演出の濃さ','']];
   (function buildQuickTune(){
     const box=E('quickTuneBody');
     for(const [id,label] of QT){

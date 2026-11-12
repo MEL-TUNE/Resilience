@@ -490,3 +490,7 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
   .sx-lab-btns button{padding:7px 8px}
   .sx-lab-used{grid-column:1/-1;margin-top:0}
 }
+/* 0.10.3 表情ごとの動きの大きさ・速さ */
+.expr-motion{border-top:1px dotted var(--a-p-45);padding-top:4px}
+.expr-motion[hidden]{display:none}
+.expr-motion button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}

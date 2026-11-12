@@ -168,7 +168,7 @@
     const L=appLayerInfo,t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
     if(!L)return;
     // 切り抜く範囲：全身＋動き（右往左往・跳ねる）の分。レイヤーの外には出ない
-    const move=W*.13*L.k*Math.max(1,(state.motionWander||0)/100)+18,
+    const move=W*.13*L.k*Math.max(1,(state.motionWander||0)/100,...((curChar()?.exprs)||[]).filter(e=>e.motion==='wander').map(e=>(e.amt??100)/100))+18,
       hw=Math.min(APP_LW/2,L.w/2+move),top=Math.max(0,L.bottom-L.h*1.08-40),
       sx=APP_LW/2-hw,cropW=hw*2,cropH=APP_LH-top;
     const ms=state.appMsc!==false?myMascots().filter(m=>m.show&&images['msc-'+m.id]):[];

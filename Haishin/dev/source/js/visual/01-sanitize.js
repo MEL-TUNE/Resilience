@@ -31,7 +31,7 @@
     if(out.flapMax<out.flapMin)out.flapMax=out.flapMin;
     if(typeof v.sinkId==='string')out.sinkId=v.sinkId.slice(0,300);
     if(['landscape','portrait','x34'].includes(v.aspect))out.aspect=v.aspect;
-    for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya']){
+    for(const k of ['motionAmt','motionSing','motionSingSpeed','motionHop','motionShake','motionWander','motionIya','motionHopSpeed','motionShakeSpeed','motionWanderSpeed','motionIyaSpeed']){
       const n=Number(v[k]);
       if(Number.isFinite(n))out[k]=Math.max(CHAR_RANGES[k][0],Math.min(CHAR_RANGES[k][1],n))
     }
