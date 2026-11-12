@@ -172,3 +172,14 @@
 - テスト（手元の `work/test`）：`t0100d.js`（操作盤：4つの幅×配信・動画×全タブ）、`t0100v.js`（動画の保存・取り戻し）。以前のテストは `mk0100.sh` で写して動かす（「全部」のタブと、企画の準備の見出しを開いた状態で始める）。
 - まだないもの：ボイス録りの音声を .live に入れること。AITuber（`dev/AITUBER_RESUME.md`、作者の返事待ち）。
 - 注意：`t094` などの以前のテストは `process.env.PAGE||'v094.html'` で古いファイルを開いていた。写すときに既定のファイル名も置き換えること。
+
+## 2026-11-12 追記（STUDIO 0.10.1）
+
+- 作者は、顔・感情の絵文字が怖く見える。画面の絵文字は、物（🧸👗🎧 など）を使う。
+- 立ち絵の動き：`state.motion`（`setMotion` が保存、起動で戻す）。
+- ボイス・BGM のタブ：localStorage `…otonoha_sound_tabs`（名義のIDで持つ）。`setBgmProfiles` の「名義のタブを追いかける」は、前回の呼び出しから名義が変わったときだけ（`soundTabsLastCur`）。
+- 演出の向きごとの控え：季節（`state.fxSeason[e]`）と画像のプリセット（`state.fxPresets[]`）のそれぞれに `pos[向き]={count,fxSize}`（`fxPosClean`、`41-aspect-memory.js`）。`tests/checks.cjs` の取り出す関数の一覧に `fxPosClean` を足した。
+- 曲リストの曲に `tag`（ラベル、「、」区切り）。シートの読み込みは `g`。Apps Script は版2（`gas/otonoha-sheet.gs` が元。`19-sheet.js` の `SHEET_GAS` は、その中身を JSON の文字列にしたもの。直したら両方そろえる）。
+- お題帳：冊に `rand`（くじ引き）と `pick`（しぼりこみ。`t:ラベル`／`w:作品`／空）。形 `song`（歌枠ルーレット）は項目の並び（曲名・アーティスト・作品・ラベル・メモ）を取り込みに使う。`topicNext` のくじ引き、`topicSongSync`、`topicReset`、`topicPickOptions`。くじ引きの冊は、出したら必ず「使った」にする。
+- 手元カードは、企画に並べていない冊（`ponCfg().hide` に `topic:冊ID`）では出さない。企画のボタンで引くと、その冊を選んだ冊（`topics.sel`）にする。
+- 歌枠管理シートそのもの（Google スプレッドシート）には、ラベルの列を足していない。作者が足すかどうかを決める。

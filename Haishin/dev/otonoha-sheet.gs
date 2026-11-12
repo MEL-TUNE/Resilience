@@ -1,5 +1,5 @@
 /**
- * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版1）
+ * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版2）
  * 1. 下の OTONOHA_KEY を、自分だけの合言葉に書き換えます（英数字で12文字以上がおすすめ）。
  * 2. デプロイ → 新しいデプロイ → 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」。
  * 3. 出てきたウェブアプリのURLと合言葉を、オトノハの「歌枠管理シートとつなぐ」に入れます。
@@ -54,9 +54,12 @@ function lastRow_(sh, col) {
 
 function read_(ss) {
   const S = tab_(ss, '曲'), R = tab_(ss, '音源'), P = tab_(ss, '提供者');
-  const sT = S.col('表示用曲名'), sW = S.col('作品名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用');
+  const sT = S.col('表示用曲名'), sW = S.col('作品名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用'), sG = S.col('ラベル');
   const songs = S.body.filter(function (r) { return cell_(r, sT); }).map(function (r) {
-    return { t: cell_(r, sT), a: cell_(r, sA), w: cell_(r, sW), k: cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA)) };
+    const o = { t: cell_(r, sT), a: cell_(r, sA), w: cell_(r, sW), k: cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA)) };
+    // 「ラベル」で始まる見出しの列があるときだけ、ラベルも送る（歌枠ルーレットのしぼりこみ用）
+    if (sG >= 0) o.g = cell_(r, sG);
+    return o;
   });
   const rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rKey = R.col('キー'), rU2 = R.col('URL（共有IDなし'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）'), rF = R.col('音源ファイルの保存場所');
   const srcs = R.body.filter(function (r) { return cell_(r, rN); }).map(function (r) {

@@ -1076,6 +1076,18 @@ body[data-app="radio"] .bgm-now-row,body[data-app="radio"] .live-prog{display:no
 .studio-help h3{margin:12px 0 6px;font:700 15px var(--title-font)}
 .studio-help .help-list{margin:0 0 10px;padding-left:1.2em;display:grid;gap:6px;font-size:13px;line-height:1.7}
 
+/* ---- 10. お題帳：くじ引きの冊（歌枠ルーレットなど） */
+.topic-rand-box{display:none;margin:0 0 10px;padding:10px 12px;border:2px solid var(--accent);border-radius:12px;background:var(--hi)}
+#topicBody[data-rand] .topic-rand-box{display:block}
+#topicBody:not([data-song]) .topic-song-only{display:none}
+/* 歌枠ルーレットは曲リストから取り込むので、AIに頼む欄は出さない（「元に戻す」は残す） */
+#topicBody[data-song] .topic-ai,#topicBody[data-song] .topic-ai2>:not(#topicUndo){display:none}
+.topic-hand-rand{align-items:flex-end;margin:0 0 6px}
+.topic-hand-rand .studio-field{flex:1 1 180px;min-width:0;margin:0}
+.topic-hand-rand select{max-width:100%;min-width:0}
+.topic-song-row{margin-top:8px}
+.topic-hand[data-rand] .pon-head strong::before{content:'🎤 '}
+
 </style>
 <script>
 'use strict';
@@ -1183,7 +1195,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.0 / 本番と準備に分けた操作盤・収録の途中保存</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.1 / 歌枠ルーレット・セトリを上に・動きとタブの記憶・演出の向きごとの記憶</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1216,12 +1228,12 @@ lookPaint(look);
 <button type="button" data-deck="kikaku" data-mode="live" data-level-of="live"><i aria-hidden="true">🎲</i>企画</button>
 <button type="button" data-deck="se" data-mode="live" data-level-of="live"><i aria-hidden="true">🔊</i>効果音</button>
 <button type="button" data-deck="bgm" data-mode="live" data-level-of="live"><i aria-hidden="true">🎵</i>BGM</button>
-<button type="button" data-deck="chara" data-mode="live" data-level-of="live"><i aria-hidden="true">😀</i>表情</button>
+<button type="button" data-deck="chara" data-mode="live" data-level-of="live"><i aria-hidden="true">👗</i>表情</button>
 <button type="button" data-deck="tools" data-mode="live" data-level-of="live"><i aria-hidden="true">🎛</i><span data-modes="video">収録</span><span data-modes="stream">接続</span></button>
 <button type="button" data-deck="all" data-mode="live" data-level-of="live"><i aria-hidden="true">☰</i>全部</button>
 <button type="button" data-deck="plan" data-mode="plan" data-level-of="prep"><i aria-hidden="true">📝</i>企画の準備</button>
 <button type="button" data-deck="songs" data-mode="songs" data-level-of="prep"><i aria-hidden="true">🎤</i>歌枠ノート</button>
-<button type="button" data-deck="aivoice" data-mode="aivoice" data-level-of="prep"><i aria-hidden="true">🤖</i>AIキャラ・声</button>
+<button type="button" data-deck="aivoice" data-mode="aivoice" data-level-of="prep"><i aria-hidden="true">🎧</i>AIキャラ・声</button>
 </nav>
 <div class="deck-panels" id="deckPanels">
 <section class="studio-card deck-panel" data-panel="kikaku" aria-label="企画">
@@ -1234,6 +1246,7 @@ lookPaint(look);
 </section>
 <p class="pon-hidden" id="ponHidden" hidden></p>
 <section class="topic-hand" id="topicHand" hidden aria-label="お題の手元カード"><div class="pon-head"><strong id="topicHandTitle">お題</strong><span class="studio-mini">手元だけに表示（配信画面には出ません）</span></div>
+<div class="studio-row topic-hand-rand" id="topicHandRand" hidden><label class="studio-field">しぼりこみ<select id="topicHandPick"></select></label><button type="button" id="topicHandReset">↺ リセット</button></div>
 <div class="topic-hand-body" id="topicHandBody"></div>
 <div class="studio-row"><button type="button" id="topicHandPrev">◀ 前</button><button type="button" id="topicHandNext">次へ ▶</button><button type="button" id="topicHandShow" class="accent">📌 配信画面に貼り出す</button><button type="button" id="topicHandHide">下げる</button><label class="studio-field topic-st">状態<select id="topicHandSt"><option value="cand">候補</option><option value="adopt">採用・準備中</option><option value="rec">収録済み・未公開</option><option value="pub">公開済み</option><option value="hold">保留</option><option value="rej">不採用</option><option value="used">使った</option></select></label></div>
 </section>
@@ -1319,24 +1332,31 @@ lookPaint(look);
 <ul class="sb-list aud-log" id="slotBulkPrev" aria-label="足す内容"></ul>
 </details>
 </details>
-<details class="plan-group" data-pg="topic"><summary><h3>お題帳</h3><small>議題・お悩み相談・ラブレター・コメント100本ノック</small></summary>
+<details class="plan-group" data-pg="topic"><summary><h3>お題帳</h3><small>議題・お悩み相談・ラブレター・コメント100本ノック・歌枠ルーレット</small></summary>
 <p class="studio-note">AIに企画のお題を作ってもらい、一覧（台帳）にためて、配信画面に貼り出します。台帳にある題は、次に頼むときに「既出」として依頼文に添えるので、重なりを避けられます。お題帳は企画ごとに作れます（30冊まで・1冊2000件まで）。架空の相談・手紙・コメントは、架空とわかる見出しで出します。</p>
 <div class="studio-inline"><label class="studio-field">使うお題帳<select id="topicDeck"></select></label>
-<label class="studio-field">新しく作る<select id="topicPreset"><option value="talk">番組の議題</option><option value="consult">架空のお悩み相談</option><option value="letter">ヤンデレラブレター</option><option value="gachi">架空コメント100本ノック（ガチ恋）</option><option value="chuuni">架空コメント100本ノック（厨二病）</option><option value="free">自由なお題</option></select></label></div>
+<label class="studio-field">新しく作る<select id="topicPreset"><option value="talk">番組の議題</option><option value="consult">架空のお悩み相談</option><option value="letter">ヤンデレラブレター</option><option value="gachi">架空コメント100本ノック（ガチ恋）</option><option value="chuuni">架空コメント100本ノック（厨二病）</option><option value="song">歌枠ルーレット（曲リストの曲をくじ引き）</option><option value="free">自由なお題</option></select></label></div>
 <div class="studio-row"><button type="button" id="topicAdd">＋ この形で新しいお題帳を作る</button></div>
 <div id="topicBody" hidden>
+<div class="topic-rand-box" id="topicRandBox">
+<p class="studio-note topic-song-only">歌枠ノートの「曲リスト」（歌枠管理シートから読み込んだ曲も含みます）を取り込み、まだ出していない曲から、くじ引きで1曲ずつ配信画面に出します。出した曲は、リセットするまで出ません。作品名は、シートの「作品名（タイアップ）」の列です。ラベルは、シートの「曲」タブに「ラベル」で始まる見出しの列を足すか、曲リストの「編集」で付けられます（「、」で区切ると、いくつでも付きます）。</p>
+<div class="studio-row topic-song-only"><button type="button" id="topicSongSync" class="accent">曲リストから取り込む・更新する</button></div>
+<div class="studio-inline"><label class="studio-field">しぼりこみ（ここで選んだものだけから引きます）<select id="topicPick"></select></label></div>
+<div class="studio-row"><button type="button" id="topicSongReset">↺ リセット（出したものを、まだ出していない状態に戻す）</button></div>
+</div>
 <details class="sb-opts"><summary>⚙ このお題帳の設定（名前・AIへの指示・テーマ・項目・配信画面での出し方）</summary>
 <div class="studio-inline"><label class="studio-field">名前<input id="topicName" maxlength="40"></label><label class="studio-field">1回に作ってもらう数<input id="topicCount" type="number" min="1" max="100"></label></div>
 <label class="studio-field">AIへの指示（番組の企画書や議題生成のプロンプトを、そのまま貼り付けて使えます）<textarea id="topicInstr" class="studio-textarea" rows="6" maxlength="20000"></textarea></label>
 <label class="studio-field">テーマ・方向（今回だけの注文。例：相談・Help型を多めに／秋の話題）<textarea id="topicTheme" class="studio-textarea" rows="2" maxlength="4000"></textarea></label>
 <label class="studio-field">項目（「、」で区切る。AIはこの名前で返します）<input id="topicFields" maxlength="400"></label>
 <div class="studio-inline"><label class="studio-field">見出しにする項目<select id="topicHead"></select></label><label class="studio-field">貼り出すときの本文<select id="topicBodyF"></select></label><label class="studio-field">名前・差出人の項目<select id="topicWho"></select></label></div>
-<div class="studio-inline"><label class="studio-field">配信画面での出し方<select id="topicMode"><option value="card">お題カード（画面に貼り出す）</option><option value="comment">コメント欄に流す（1件ずつ）</option></select></label><label class="studio-field">カードの見出しラベル<input id="topicLabel" maxlength="40"></label><label class="studio-field"><input type="checkbox" id="topicAutoUse"> 出したら「使った」にする</label></div>
+<div class="studio-inline"><label class="studio-field">配信画面での出し方<select id="topicMode"><option value="card">お題カード（画面に貼り出す）</option><option value="comment">コメント欄に流す（1件ずつ）</option></select></label><label class="studio-field">カードの見出しラベル<input id="topicLabel" maxlength="40"></label><label class="studio-field"><input type="checkbox" id="topicAutoUse"> 出したら「使った」にする</label>
+<label class="studio-field"><input type="checkbox" id="topicRand"> くじ引きにする（まだ出していないものから、順番ではなく、でたらめに1つ。作品・ラベルでしぼりこめます）</label></div>
 <div class="studio-row"><button type="button" id="topicDup">設定だけ写して、新しいお題帳にする</button><button type="button" id="topicDel">このお題帳を削除</button></div>
 </details>
-<div class="studio-row"><button type="button" id="topicPromptCopy" class="accent">AIに頼む文をコピー（既出を添えます）</button></div>
-<label class="studio-field">AIの返答（JSON）を貼り付け<textarea id="topicPaste" class="studio-textarea" rows="3" placeholder='{"items":[{"タイトル":"…"}]}'></textarea></label>
-<div class="studio-row"><button type="button" id="topicPasteCheck">中身を確かめる</button><button type="button" id="topicPasteGo" class="accent" disabled>候補として足す</button><button type="button" id="topicUndo" disabled>↶ 元に戻す</button></div>
+<div class="studio-row topic-ai"><button type="button" id="topicPromptCopy" class="accent">AIに頼む文をコピー（既出を添えます）</button></div>
+<label class="studio-field topic-ai">AIの返答（JSON）を貼り付け<textarea id="topicPaste" class="studio-textarea" rows="3" placeholder='{"items":[{"タイトル":"…"}]}'></textarea></label>
+<div class="studio-row topic-ai2"><button type="button" id="topicPasteCheck">中身を確かめる</button><button type="button" id="topicPasteGo" class="accent" disabled>候補として足す</button><button type="button" id="topicUndo" disabled>↶ 元に戻す</button></div>
 <p class="studio-mini" id="topicPasteInfo" aria-live="polite"></p>
 <details class="sb-opts"><summary>これまでの題を貼り付けて登録する（台帳の取り込み）</summary>
 <label class="studio-field">1行に1題<textarea id="topicPast" class="studio-textarea" rows="4"></textarea></label>
@@ -1426,8 +1446,10 @@ lookPaint(look);
 </details>
 </section>
 <section class="studio-card mode-section deck-panel" id="studioSongs" data-panel="songs"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore">
-<ol class="sb-flow"><li><b>曲リスト</b>：曲と、カラオケ音源のURLを登録しておく</li><li><b>セトリ</b>：今日歌う曲を並べる</li><li><b>本番</b>：「▶ 音源」でオケを開き、歌い始めに「♪ 歌い始め」</li><li><b>配信のあと</b>：時刻を直して概要欄に。歌枠管理シートへも送れる</li></ol>
-<h3 class="kara-h">① 曲リスト <small id="repCount"></small></h3>
+<ol class="sb-flow"><li><b>セトリ</b>：今日歌う曲。歌い始めに「♪ 歌い始め」を押す</li><li><b>本番</b>：歌唱の記録を始める・取り消す</li><li><b>曲リスト</b>：曲と、カラオケ音源のURLを登録しておく（ここからセトリへ入れる）</li><li><b>配信のあと</b>：時刻を直して概要欄に。歌枠管理シートへも送れる</li></ol>
+<h3 class="kara-h">① セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div>
+<h3 class="kara-h">② 本番：歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびにセトリか曲リストの「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。「▶」で開いた音源も一緒に残ります。</p>
+<h3 class="kara-h">③ 曲リスト <small id="repCount"></small></h3>
 <div class="sb-find"><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・音源・メモで探す" aria-label="曲リストを探す"><label class="studio-field sb-sort">並び<select id="repSort"><option value="recent">最近歌った順</option><option value="name">曲名順</option><option value="count">よく歌う順</option></select></label></div>
 <details class="sb-add" id="sbAdd"><summary>＋ 曲を登録する（曲名・アーティスト・音源のURL）</summary>
 <div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div>
@@ -1437,8 +1459,6 @@ lookPaint(look);
 <p class="studio-mini">URLの共有ID（?si=…）は外して登録します。YouTubeの動画は「https://www.youtube.com/watch?v=…」の形にそろえます。同じ曲名・アーティストで登録すると、音源が足されます。</p>
 </details>
 <ul id="repList" class="sb-list"></ul>
-<h3 class="kara-h">② セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div>
-<h3 class="kara-h">③ 本番：歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびにセトリか曲リストの「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。「▶」で開いた音源も一緒に残ります。</p>
 <h3 class="kara-h">④ 配信のあと：これまでの記録（回ごと）</h3><div id="singLog"></div>
 <details class="sb-opts" id="sbOpts"><summary>配信画面に曲名を出す・概要欄の形</summary>
 <div class="studio-inline"><label class="studio-field">配信画面（PNGTuber画面）に出す<select id="setlistShow"><option value="off">出さない</option><option value="now">いま歌っている曲</option><option value="list">これまでの曲（最新8曲）</option></select></label>
@@ -1512,7 +1532,7 @@ lookPaint(look);
 <h3>画面の見方</h3>
 <ul class="help-list">
 <li><strong>▶ 本番</strong>：配信・収録の最中に押すものだけを並べています。映像と、いつも使うボタンの帯は、下へ進めても上に残ります。</li>
-<li><strong>タブ</strong>：🎲 企画（スロット・ルーレット・サイコロ・セリフ・お題・アプリ）／🔊 効果音／🎵 BGM（環境音も）／😀 表情（キャラ・動き）／🎛 収録・接続／☰ 全部。開いていたタブは、このブラウザが覚えます。</li>
+<li><strong>タブ</strong>：🎲 企画（スロット・ルーレット・サイコロ・セリフ・お題・アプリ）／🔊 効果音／🎵 BGM（環境音も）／👗 表情（キャラ・動き）／🎛 収録・接続／☰ 全部。開いていたタブは、このブラウザが覚えます。</li>
 <li><strong>🛠 準備</strong>：前もって登録するものです。企画の準備（セリフ帳・スロット・お題帳・ルーレット・アプリ・AI観客席）、歌枠ノート、AIキャラ・声。ここで登録したものが、本番の「🎲 企画」にボタンとして並びます。</li>
 <li><strong>■ 全音停止</strong>：効果音・ボイス・環境音・BGMをすべて止めます。</li>
 </ul>
@@ -2073,6 +2093,12 @@ const ensureTextSlots=config=>layoutVoices(ensureSe(ensureSe(config,'text'),'env
 // ボイスは「標準」＋名義ごとのタブ（owner＝'std' か名義のid）。各タブは最後の行まで埋まると1行増える
 const VOICE_COLS=5,VOICE_MAX=600;
 let voiceOwnerIds=null,voiceTab=0;
+// ボイス・BGM で開いていたタブ（名義）は、このブラウザに覚える。名義の並びが変わってもずれないように、名義のIDで持つ
+const SOUND_TAB_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_sound_tabs';
+let soundTabsRestored=false,soundTabsLastCur=null;
+function soundTabsSave(){
+  try{const ids=voiceOwnerIds||bgmOwnerIds;if(ids)localStorage.setItem(SOUND_TAB_KEY,JSON.stringify({voice:ids[voiceTab]||'std',bgm:(bgmOwnerIds||ids)[bgmTab]||'std'}))}catch(_){}
+}
 const voiceOwnerOf=s=>typeof s.owner==='string'&&s.owner?s.owner:'std';
 function voiceSlotsNeeded(items){
   let max=-1;
@@ -2182,7 +2208,10 @@ orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(
   const vBefore=vSig();
   voiceOwnerIds=ids;
   layoutVoices(cfg,ids);
-  if(follow&&cur0(ids,curId)>0&&voiceTab>0)voiceTab=cur0(ids,curId);
+  // 名義のタブを追いかけるのは、名義が実際に切り替わったときだけ（起動のときは、前に開いていたタブを優先する）
+  const switched=soundTabsLastCur!==null&&soundTabsLastCur!==curId;
+  soundTabsLastCur=curId;
+  if(follow&&switched&&cur0(ids,curId)>0&&voiceTab>0)voiceTab=cur0(ids,curId);
   if(voiceTab>=ids.length)voiceTab=0;
   const vChanged=vBefore!==vSig();
   const before=JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join();
@@ -2190,8 +2219,13 @@ orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(
   cfg.bgmTabs=list.slice(0,BGM_TAB_MAX).map(p=>String(p.name||'名義').slice(0,40));
   const cur=ids.indexOf(curId);
   bgmCurTab=cur>0?cur:0;
-  if(follow&&cur>0&&bgmTab>0)bgmTab=cur;
+  if(follow&&switched&&cur>0&&bgmTab>0)bgmTab=cur;
   if(bgmTab>=ids.length)bgmTab=0;
+  if(!soundTabsRestored){
+    // 起動して最初の1回だけ、前に開いていたタブに戻す
+    soundTabsRestored=true;
+    try{const s=JSON.parse(localStorage.getItem(SOUND_TAB_KEY)||'null');if(s){const v=ids.indexOf(s.voice),b=ids.indexOf(s.bgm);if(v>=0)voiceTab=v;if(b>=0)bgmTab=b}}catch(_){}
+  }else soundTabsSave();
   if(vChanged||before!==JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join())persist();
   render();
   renderPrograms?.()
@@ -6206,6 +6240,7 @@ $('#voiceTabs').onclick=e=>{
   const tab=e.target.closest('[data-voice-tab]');
   if(tab){
     voiceTab=+tab.dataset.voiceTab;
+    soundTabsSave();
     render()
   }
 };
@@ -6214,6 +6249,7 @@ $('#bgmTabs').onclick=e=>{
   const tab=e.target.closest('[data-bgm-tab]');
   if(tab){
     bgmTab=+tab.dataset.bgmTab;
+    soundTabsSave();
     render()
   }
 };
@@ -7524,6 +7560,7 @@ $('#consoleAllStop').onclick=()=>stopAll();
     fxPresets:null,
 fps:30,
     light:false,
+    motion:'still',
     vidFormat:'mp4',
     vidQuality:8,
     imageMotion:'flutter',
@@ -7661,7 +7698,7 @@ function sanitize(v){
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last),...(()=>{const o={};
        const http=u=>{const t=S(u,500);return /^https?:\/\//i.test(t)?t:''};
        if(Array.isArray(x.srcs))o.srcs=x.srcs.filter(y=>y&&typeof y==='object').slice(0,8).map(y=>({u:http(y.u),n:S(y.n,200),by:S(y.by,120),k:S(y.k,20),kind:S(y.kind,30),f:http(y.f)})).filter(y=>y.u||y.n);
-       if(x.useSrc)o.useSrc=S(x.useSrc,500);if(x.sk)o.sk=S(x.sk,420);if(x.w)o.w=S(x.w,200);return o})()}));
+       if(x.useSrc)o.useSrc=S(x.useSrc,500);if(x.sk)o.sk=S(x.sk,420);if(x.w)o.w=S(x.w,200);if(x.tag)o.tag=S(x.tag,200);return o})()}));
      if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).map(x=>{const o={id:S(x.id,16)||Math.random().toString(36).slice(2,10),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)};if(Number.isFinite(Number(x.off0)))o.off0=Math.max(0,Math.floor(Number(x.off0)));if(x.ts!==null&&x.ts!==undefined&&Number.isFinite(Number(x.ts)))o.ts=Math.max(0,Math.floor(Number(x.ts)));if(x.src)o.src=S(x.src,500);return o});
      if(Array.isArray(v.legacyVideos))out.legacyVideos=v.legacyVideos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,60).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at),missing:x.missing===true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
@@ -7744,11 +7781,12 @@ function sanitize(v){
           o[k]=Number.isFinite(n)?Math.max(R[k][0],Math.min(R[k][1],n)):out[k]
         }
         o.imageMotion=['flutter','leaf','rise','snow','roll'].includes(x.imageMotion)?x.imageMotion:out.imageMotion;
+        o.pos=fxPosClean(x.pos);
         fs[e]=o
       }
       out.fxSeason=fs;
 
-      const MV=['flutter','leaf','rise','snow','roll'],mk=(x,id,name)=>{const o={id,name:String(name||'画像のプリセット').slice(0,30)};for(const k in R){const n=Number(x[k]);o[k]=Number.isFinite(n)?Math.max(R[k][0],Math.min(R[k][1],n)):out[k]}o.imageMotion=MV.includes(x.imageMotion)?x.imageMotion:'flutter';return o};
+      const MV=['flutter','leaf','rise','snow','roll'],mk=(x,id,name)=>{const o={id,name:String(name||'画像のプリセット').slice(0,30)};for(const k in R){const n=Number(x[k]);o[k]=Number.isFinite(n)?Math.max(R[k][0],Math.min(R[k][1],n)):out[k]}o.imageMotion=MV.includes(x.imageMotion)?x.imageMotion:'flutter';o.pos=fxPosClean(x.pos);return o};
       out.fxPresets=[];
       if(Array.isArray(v.fxPresets)){const seenP=new Set();for(const x of v.fxPresets.slice(0,30)){if(!x||typeof x!=='object'||typeof x.id!=='string'||!/^[a-z0-9]{1,24}$/.test(x.id)||seenP.has(x.id))continue;seenP.add(x.id);out.fxPresets.push(mk(x,x.id,x.name))}}
       else out.fxPresets.push(mk({imageMotion:out.imageMotion},'img','好きな画像'))
@@ -7758,6 +7796,7 @@ function sanitize(v){
     }
 out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     out.light=v.light===true;
+    out.motion=['still','sing','hop','shake','wander','iya'].includes(v.motion)?v.motion:'still';
     out.vidFormat=v.vidFormat==='webm'?'webm':'mp4';
     out.vidQuality=[2.5,4.5,8,16].includes(Number(v.vidQuality))?Number(v.vidQuality):8;
     {const MV=['float','sway','hop','run','shake','still','play','walk'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];
@@ -8465,6 +8504,9 @@ const SB={
   };
   const songKey=(t,a)=>(t||'').trim().toLowerCase()+'\n'+(a||'').trim().toLowerCase();
   const sbId=()=>Math.random().toString(36).slice(2,10);
+  // ラベル：「、」「,」「／」や改行で区切ったものを、重なりを除いて「、」でつなぐ
+  const tagSplit=v=>[...new Set(String(v||'').split(/[、,，\/／\n]/).map(x=>x.trim()).filter(Boolean))].slice(0,12);
+  const tagNorm=v=>tagSplit(v).join('、').slice(0,200);
   function repList(){if(!Array.isArray(state.repertoire))state.repertoire=[];return state.repertoire}
   function logList(){if(!Array.isArray(state.singLog))state.singLog=[];return state.singLog}
   function sbInput(){return {title:SB.title.value.trim(),artist:SB.artist.value.trim(),memo:SB.memo.value.trim(),oke:SB.oke.value.trim(),okeBy:SB.okeBy.value.trim()}}
@@ -8646,13 +8688,13 @@ const SB={
         rowBtn('外す','',()=>{state.songs.splice(i,1);save();renderSet()}));
       SB.set.append(li)
     });
-    if(!state.songs.length)SB.set.append(sbEmpty('li','セトリは空です。上で曲名を入れて「セトリに追加」、または曲リストの「セトリへ」で追加できます'))
+    if(!state.songs.length)SB.set.append(sbEmpty('li','セトリは空です。下の「③ 曲リスト」の「セトリへ」か、「＋ 曲を登録する」の「登録してセトリにも入れる」で追加できます'))
   }
 
   // 曲リスト：行は曲のIDごとに持ち、歌った曲だけ書き換える
   const repRows=new Map();
-  const repInfo=s=>(s.count?'歌った回数 '+s.count+'回':'まだ記録なし')+(s.last?'・最後 '+s.last.slice(0,10):'')+(s.srcs?.length?'・音源 '+s.srcs.length:'')+(s.memo?'・'+s.memo:'');
-  const repHay=s=>sbNorm(s.title+' '+s.artist+' '+(s.memo||'')+' '+(s.w||'')+' '+(s.srcs||[]).map(x=>x.n+' '+x.by+' '+x.u).join(' '));
+  const repInfo=s=>(s.count?'歌った回数 '+s.count+'回':'まだ記録なし')+(s.last?'・最後 '+s.last.slice(0,10):'')+(s.srcs?.length?'・音源 '+s.srcs.length:'')+(s.w?'・作品 '+s.w:'')+(s.tag?'・ラベル '+s.tag:'')+(s.memo?'・'+s.memo:'');
+  const repHay=s=>sbNorm(s.title+' '+s.artist+' '+(s.memo||'')+' '+(s.w||'')+' '+(s.tag||'')+' '+(s.srcs||[]).map(x=>x.n+' '+x.by+' '+x.u).join(' '));
   const repMatch=(s,q)=>!q||q.split(/\s+/).filter(Boolean).every(w=>repHay(s).includes(sbNorm(w)));
   function repRow(s){
     const li=document.createElement('li');
@@ -8669,7 +8711,7 @@ const SB={
     if(li.nextElementSibling?.classList.contains('sb-edit')){li.nextElementSibling.remove();return}
     const box=document.createElement('li');box.className='sb-edit';
     const inp=(label,val,max,type)=>{const l=document.createElement('label');l.className='studio-field';const i=document.createElement('input');i.type=type||'text';i.maxLength=max;i.value=val||'';l.append(label,i);return [l,i]};
-    const [lt,it]=inp('曲名',s.title,200),[la,ia]=inp('アーティスト',s.artist,200),[lm,im]=inp('メモ',s.memo,200);
+    const [lt,it]=inp('曲名',s.title,200),[la,ia]=inp('アーティスト',s.artist,200),[lm,im]=inp('メモ',s.memo,200),[lw,iw]=inp('作品名（アニメ・ゲームなど）',s.w,200),[lg,ig]=inp('ラベル（「、」で区切る。歌枠ルーレットのしぼりこみに使います）',s.tag,200);
     const srcBox=document.createElement('div');srcBox.className='sb-srcs';
     const rows=[];
     const addRow=x=>{
@@ -8700,11 +8742,12 @@ const SB={
         const k0=songKey(s.title,s.artist),k1=songKey(t,a);
         if(k0!==k1){for(const x of logList())if(songKey(x.title,x.artist)===k0){x.title=t;x.artist=a}for(const x of state.songs)if(songKey(x.title,x.artist)===k0){x.title=t;x.artist=a}}
         s.title=t.slice(0,200);s.artist=a.slice(0,200);s.memo=im.value.trim().slice(0,200);s.srcs=srcs;
+        {const w=iw.value.trim().slice(0,200),g=tagNorm(ig.value);if(w)s.w=w;else delete s.w;if(g)s.tag=g;else delete s.tag}
         if(s.useSrc&&!srcs.some(x=>x.n===s.useSrc||x.u===s.useSrc))delete s.useSrc;
         saveNow();box.remove();renderRep();renderSet();if(k0!==k1)renderLog();toast('保存しました',2000)
       }),
       rowBtn('閉じる','',()=>box.remove()));
-    box.append(Object.assign(document.createElement('div'),{className:'studio-inline'}),lm,srcBox,row);
+    {const d2=Object.assign(document.createElement('div'),{className:'studio-inline'});d2.append(lw,lg);box.append(Object.assign(document.createElement('div'),{className:'studio-inline'}),d2,lm,srcBox,row)}
     box.firstChild.append(lt,la);
     li.after(box);it.focus()
   }
@@ -10350,7 +10393,7 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
     for(const s of serifList())if(serifLines(s).length)out.push({id:'s:'+s.id,kind:'serif',label:'💬 '+s.title,s});
     // 0.9.9：スロット・ルーレット・サイコロは常に並べる。お題帳は、中身のある冊をすべて並べる（コメントの冊は「1件流す」）
     out.push({id:'slot',kind:'slot',label:'🎰 スロット'},{id:'wheel',kind:'wheel',label:'🎡 ルーレット'},{id:'dice',kind:'dice',label:'🎲 サイコロ'});
-    for(const d of topicCfg().decks)if(d.items.some(it=>it.st!=='rej'))out.push({id:'topic:'+d.id,kind:'topic',label:(d.mode==='comment'?'💬 '+d.name+'：1件流す':'📌 '+d.name+'：次へ'),d});
+    for(const d of topicCfg().decks)if(d.items.some(it=>it.st!=='rej'))out.push({id:'topic:'+d.id,kind:'topic',label:(d.rand?'🎤 '+d.name+'：引く':d.mode==='comment'?'💬 '+d.name+'：1件流す':'📌 '+d.name+'：次へ'),d});
     for(const a of appList())out.push({id:'a:'+a.id,kind:'app',label:(a.kind==='url'?'🔗 ':'📄 ')+a.name,a});
     return out
   }
@@ -10384,7 +10427,7 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
     else if(it.kind==='wheel')E('wheelSpin').click();
     else if(it.kind==='dice')E('diceRoll').click();
     else if(it.kind==='app')ponApp(it.a);
-    else if(it.kind==='topic')topicNext(it.d,1,true);
+    else if(it.kind==='topic'){topicCfg().sel=it.d.id;topicNext(it.d,1,true)}
     ponState()
   }
   // 画面に出ているもの・開いているアプリのボタンを点灯させる（作り直さずに、印だけ変える）
@@ -10429,7 +10472,7 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
       E('ponPick').replaceChildren(...all.filter(it=>it.kind!=='serif').map(it=>{
         const l=document.createElement('label');l.className='pon-pick';
         const cb=document.createElement('input');cb.type='checkbox';cb.checked=!c.hide.includes(it.id);
-        cb.onchange=()=>{c.hide=cb.checked?c.hide.filter(x=>x!==it.id):[...c.hide,it.id].slice(-300);save();renderPon()};
+        cb.onchange=()=>{c.hide=cb.checked?c.hide.filter(x=>x!==it.id):[...c.hide,it.id].slice(-300);save();renderPon();renderTopicHand()};
         l.append(cb,' '+it.label);return l
       }));
       E('ponApp').value=c.app
@@ -10451,11 +10494,11 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
   E('ponSlotRb').onclick=()=>{slotSpin('b');ponState()};
   E('ponClear').onclick=()=>{play.serif=null;play.slot=null;play.dice=null;play.wheel=null;play.topic=null;renderPlays();ponState()};
   E('ponApp').onchange=e=>{ponCfg().app=e.target.value==='page'?'page':'window';save();renderPon()};
-  E('ponAll').onclick=()=>{ponCfg().hide=[];ponCfg().serif='all';save();renderPon()};
+  E('ponAll').onclick=()=>{ponCfg().hide=[];ponCfg().serif='all';save();renderPon();renderTopicHand()};
   E('ponSerif').onchange=e=>{ponCfg().serif=e.target.value;save();renderPon()};
   setInterval(()=>{if(ponNodes.length||play.serif||play.slot)ponState()},400);
 
-const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版1）\n * 1. 下の OTONOHA_KEY を、自分だけの合言葉に書き換えます（英数字で12文字以上がおすすめ）。\n * 2. デプロイ → 新しいデプロイ → 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」。\n * 3. 出てきたウェブアプリのURLと合言葉を、オトノハの「歌枠管理シートとつなぐ」に入れます。\n * このスクリプトが書き込むのは、手で入力する列（「曲」A・C・E列、「音源」A〜E・G列、「配信一覧」A〜C・F列、「配信ログ」A〜F列）だけです。自動の列には書きません。\n */\nconst OTONOHA_KEY = 'ここに合言葉';\n\nfunction doGet(e) { return out_(handle_((e && e.parameter) || {})); }\nfunction doPost(e) {\n  let body = {};\n  try { body = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return out_({ ok: false, error: '送られた内容が読めません' }); }\n  return out_(handle_(body));\n}\nfunction out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }\n\nfunction handle_(p) {\n  if (!OTONOHA_KEY || OTONOHA_KEY === 'ここに合言葉') return { ok: false, error: 'Apps Script の OTONOHA_KEY に合言葉を書いて、デプロイし直してください' };\n  if (String(p.key || '') !== OTONOHA_KEY) return { ok: false, error: '合言葉が違います' };\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  try {\n    if (p.op === 'ping') return { ok: true, version: 1, name: ss.getName() };\n    if (p.op === 'read') return read_(ss);\n    if (p.op === 'log') {\n      const lock = LockService.getDocumentLock();\n      lock.waitLock(20000);\n      try { return log_(ss, p); } finally { lock.releaseLock(); }\n    }\n    return { ok: false, error: '知らない操作です：' + String(p.op || '') };\n  } catch (err) {\n    return { ok: false, error: String((err && err.message) || err) };\n  }\n}\n\n// 見出しの「始まりの文字」で列を探す（見出しを少し書き足しても動くように）\nfunction tab_(ss, name) {\n  const sh = ss.getSheetByName(name);\n  if (!sh) throw new Error('「' + name + '」タブが見つかりません');\n  const v = sh.getDataRange().getDisplayValues();\n  const head = v[0] || [];\n  const col = function (prefix) { for (let i = 0; i < head.length; i++) if (String(head[i]).indexOf(prefix) === 0) return i; return -1; };\n  return { sh: sh, head: head, body: v.slice(1), col: col };\n}\nfunction cell_(row, i) { return i < 0 ? '' : String(row[i] == null ? '' : row[i]).trim(); }\n// 列の中で、最後に値が入っている行（1始まり）。数式の空文字は値として数えない\nfunction lastRow_(sh, col) {\n  const n = sh.getMaxRows();\n  if (n < 2) return 1;\n  const v = sh.getRange(2, col, n - 1, 1).getDisplayValues();\n  for (let i = v.length - 1; i >= 0; i--) if (String(v[i][0]).trim() !== '') return i + 2;\n  return 1;\n}\n\nfunction read_(ss) {\n  const S = tab_(ss, '曲'), R = tab_(ss, '音源'), P = tab_(ss, '提供者');\n  const sT = S.col('表示用曲名'), sW = S.col('作品名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用');\n  const songs = S.body.filter(function (r) { return cell_(r, sT); }).map(function (r) {\n    return { t: cell_(r, sT), a: cell_(r, sA), w: cell_(r, sW), k: cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA)) };\n  });\n  const rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rKey = R.col('キー'), rU2 = R.col('URL（共有IDなし'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）'), rF = R.col('音源ファイルの保存場所');\n  const srcs = R.body.filter(function (r) { return cell_(r, rN); }).map(function (r) {\n    return { s: cell_(r, rS), n: cell_(r, rN), kind: cell_(r, rKind), key: cell_(r, rKey), u: cell_(r, rU2) || cell_(r, rU), by: cell_(r, rBy), f: cell_(r, rF) };\n  });\n  const pN = P.col('提供者名');\n  const providers = P.body.map(function (r) { return cell_(r, pN); }).filter(String);\n  let accounts = [];\n  try {\n    const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n    accounts = A.body.filter(function (r) { return cell_(r, aI); }).map(function (r) { return { id: cell_(r, aI), name: cell_(r, aN) }; });\n  } catch (err) { }\n  return { ok: true, version: 1, songs: songs, srcs: srcs, providers: providers, accounts: accounts };\n}\n\n// p.stream = {id, date, prof, title, addStream}\n// p.rows = [{n, ts, t, a, k, src:{n, u, by, kind}}]\nfunction log_(ss, p) {\n  const st = p.stream || {}, rows = Array.isArray(p.rows) ? p.rows.slice(0, 300) : [];\n  const id = String(st.id || '').trim().slice(0, 60);\n  if (!id) return { ok: false, error: '配信IDがありません' };\n  if (!rows.length) return { ok: false, error: '送る曲がありません' };\n  const L = tab_(ss, '配信ログ'), lId = L.col('配信ID');\n  if (L.body.some(function (r) { return cell_(r, lId) === id; })) return { ok: false, exists: true, error: '配信ログに、配信ID「' + id + '」の行がもうあります' };\n  const added = { songs: 0, srcs: 0, rows: 0, stream: 0 };\n\n  // 配信一覧：まだない配信IDなら1行足す（配信先・収益化は空欄。シートで選んでください）\n  if (st.addStream) {\n    const T = tab_(ss, '配信一覧'), tId = T.col('配信ID');\n    if (!T.body.some(function (r) { return cell_(r, tId) === id; })) {\n      let acc = '';\n      try {\n        const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n        A.body.forEach(function (r) { if (!acc && st.prof && cell_(r, aN) === String(st.prof)) acc = cell_(r, aI); });\n      } catch (err) { }\n      const r = lastRow_(T.sh, 1) + 1;\n      T.sh.getRange(r, 2).setNumberFormat('@');\n      T.sh.getRange(r, 1, 1, 3).setValues([[id, String(st.date || ''), acc]]);\n      if (st.title) T.sh.getRange(r, 6).setValue(String(st.title).slice(0, 300));\n      added.stream = 1;\n    }\n  }\n\n  // 曲：シートにない曲は「曲」タブに下書きとして足す（曲名・アーティスト・表記の状態）\n  const S = tab_(ss, '曲'), sT = S.col('表示用曲名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用'), sState = S.col('表記の状態');\n  const songKeys = {};\n  S.body.forEach(function (r) { if (cell_(r, sT)) songKeys[cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA))] = 1; });\n  let sNext = lastRow_(S.sh, sT + 1) + 1;\n  rows.forEach(function (x) {\n    const k = String(x.k || (String(x.t || '') + '／' + String(x.a || ''))).slice(0, 420);\n    x.k = k;\n    if (songKeys[k] || !x.t) return;\n    S.sh.getRange(sNext, sT + 1).setValue(String(x.t).slice(0, 200));\n    if (sA >= 0) S.sh.getRange(sNext, sA + 1).setValue(String(x.a || '').slice(0, 200));\n    if (sState >= 0) S.sh.getRange(sNext, sState + 1).setValue('下書き・要確認');\n    songKeys[k] = 1; sNext++; added.songs++;\n  });\n\n  // 音源：シートにない音源は「音源」タブに足す（提供者は、提供者タブにある名前のときだけ入れる）\n  const R = tab_(ss, '音源'), rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）');\n  const P = tab_(ss, '提供者'), pN = P.col('提供者名');\n  const providers = {};\n  P.body.forEach(function (r) { if (cell_(r, pN)) providers[cell_(r, pN)] = 1; });\n  const srcNames = {};\n  R.body.forEach(function (r) { if (cell_(r, rN)) srcNames[cell_(r, rN)] = 1; });\n  let rNext = lastRow_(R.sh, rN + 1) + 1;\n  rows.forEach(function (x) {\n    const s = x.src;\n    if (!s || !s.n) return;\n    s.n = String(s.n).slice(0, 200);\n    if (srcNames[s.n]) return;\n    if (rS >= 0) R.sh.getRange(rNext, rS + 1).setValue(x.k);\n    R.sh.getRange(rNext, rN + 1).setValue(s.n);\n    if (rKind >= 0) R.sh.getRange(rNext, rKind + 1).setValue(/youtube\\.com|youtu\\.be/.test(String(s.u || '')) ? 'YouTube動画' : 'その他');\n    if (rU >= 0 && s.u) R.sh.getRange(rNext, rU + 1).setValue(String(s.u).slice(0, 500));\n    if (rBy >= 0 && s.by && providers[s.by]) R.sh.getRange(rNext, rBy + 1).setValue(s.by);\n    srcNames[s.n] = 1; rNext++; added.srcs++;\n  });\n\n  // 配信ログ：配信ID・順番・タイムスタンプ（文字）・区分「曲」・曲・音源\n  const values = rows.map(function (x, i) {\n    return [id, Number(x.n) || (i + 1), String(x.ts || ''), '曲', x.k, x.src && x.src.n ? x.src.n : ''];\n  });\n  const start = lastRow_(L.sh, 1) + 1;\n  L.sh.getRange(start, 3, values.length, 1).setNumberFormat('@');\n  L.sh.getRange(start, 1, values.length, 6).setValues(values);\n  added.rows = values.length;\n  return { ok: true, added: added, firstRow: start };\n}\n";
+const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版2）\n * 1. 下の OTONOHA_KEY を、自分だけの合言葉に書き換えます（英数字で12文字以上がおすすめ）。\n * 2. デプロイ → 新しいデプロイ → 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」。\n * 3. 出てきたウェブアプリのURLと合言葉を、オトノハの「歌枠管理シートとつなぐ」に入れます。\n * このスクリプトが書き込むのは、手で入力する列（「曲」A・C・E列、「音源」A〜E・G列、「配信一覧」A〜C・F列、「配信ログ」A〜F列）だけです。自動の列には書きません。\n */\nconst OTONOHA_KEY = 'ここに合言葉';\n\nfunction doGet(e) { return out_(handle_((e && e.parameter) || {})); }\nfunction doPost(e) {\n  let body = {};\n  try { body = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return out_({ ok: false, error: '送られた内容が読めません' }); }\n  return out_(handle_(body));\n}\nfunction out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }\n\nfunction handle_(p) {\n  if (!OTONOHA_KEY || OTONOHA_KEY === 'ここに合言葉') return { ok: false, error: 'Apps Script の OTONOHA_KEY に合言葉を書いて、デプロイし直してください' };\n  if (String(p.key || '') !== OTONOHA_KEY) return { ok: false, error: '合言葉が違います' };\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  try {\n    if (p.op === 'ping') return { ok: true, version: 1, name: ss.getName() };\n    if (p.op === 'read') return read_(ss);\n    if (p.op === 'log') {\n      const lock = LockService.getDocumentLock();\n      lock.waitLock(20000);\n      try { return log_(ss, p); } finally { lock.releaseLock(); }\n    }\n    return { ok: false, error: '知らない操作です：' + String(p.op || '') };\n  } catch (err) {\n    return { ok: false, error: String((err && err.message) || err) };\n  }\n}\n\n// 見出しの「始まりの文字」で列を探す（見出しを少し書き足しても動くように）\nfunction tab_(ss, name) {\n  const sh = ss.getSheetByName(name);\n  if (!sh) throw new Error('「' + name + '」タブが見つかりません');\n  const v = sh.getDataRange().getDisplayValues();\n  const head = v[0] || [];\n  const col = function (prefix) { for (let i = 0; i < head.length; i++) if (String(head[i]).indexOf(prefix) === 0) return i; return -1; };\n  return { sh: sh, head: head, body: v.slice(1), col: col };\n}\nfunction cell_(row, i) { return i < 0 ? '' : String(row[i] == null ? '' : row[i]).trim(); }\n// 列の中で、最後に値が入っている行（1始まり）。数式の空文字は値として数えない\nfunction lastRow_(sh, col) {\n  const n = sh.getMaxRows();\n  if (n < 2) return 1;\n  const v = sh.getRange(2, col, n - 1, 1).getDisplayValues();\n  for (let i = v.length - 1; i >= 0; i--) if (String(v[i][0]).trim() !== '') return i + 2;\n  return 1;\n}\n\nfunction read_(ss) {\n  const S = tab_(ss, '曲'), R = tab_(ss, '音源'), P = tab_(ss, '提供者');\n  const sT = S.col('表示用曲名'), sW = S.col('作品名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用'), sG = S.col('ラベル');\n  const songs = S.body.filter(function (r) { return cell_(r, sT); }).map(function (r) {\n    const o = { t: cell_(r, sT), a: cell_(r, sA), w: cell_(r, sW), k: cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA)) };\n    // 「ラベル」で始まる見出しの列があるときだけ、ラベルも送る（歌枠ルーレットのしぼりこみ用）\n    if (sG >= 0) o.g = cell_(r, sG);\n    return o;\n  });\n  const rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rKey = R.col('キー'), rU2 = R.col('URL（共有IDなし'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）'), rF = R.col('音源ファイルの保存場所');\n  const srcs = R.body.filter(function (r) { return cell_(r, rN); }).map(function (r) {\n    return { s: cell_(r, rS), n: cell_(r, rN), kind: cell_(r, rKind), key: cell_(r, rKey), u: cell_(r, rU2) || cell_(r, rU), by: cell_(r, rBy), f: cell_(r, rF) };\n  });\n  const pN = P.col('提供者名');\n  const providers = P.body.map(function (r) { return cell_(r, pN); }).filter(String);\n  let accounts = [];\n  try {\n    const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n    accounts = A.body.filter(function (r) { return cell_(r, aI); }).map(function (r) { return { id: cell_(r, aI), name: cell_(r, aN) }; });\n  } catch (err) { }\n  return { ok: true, version: 1, songs: songs, srcs: srcs, providers: providers, accounts: accounts };\n}\n\n// p.stream = {id, date, prof, title, addStream}\n// p.rows = [{n, ts, t, a, k, src:{n, u, by, kind}}]\nfunction log_(ss, p) {\n  const st = p.stream || {}, rows = Array.isArray(p.rows) ? p.rows.slice(0, 300) : [];\n  const id = String(st.id || '').trim().slice(0, 60);\n  if (!id) return { ok: false, error: '配信IDがありません' };\n  if (!rows.length) return { ok: false, error: '送る曲がありません' };\n  const L = tab_(ss, '配信ログ'), lId = L.col('配信ID');\n  if (L.body.some(function (r) { return cell_(r, lId) === id; })) return { ok: false, exists: true, error: '配信ログに、配信ID「' + id + '」の行がもうあります' };\n  const added = { songs: 0, srcs: 0, rows: 0, stream: 0 };\n\n  // 配信一覧：まだない配信IDなら1行足す（配信先・収益化は空欄。シートで選んでください）\n  if (st.addStream) {\n    const T = tab_(ss, '配信一覧'), tId = T.col('配信ID');\n    if (!T.body.some(function (r) { return cell_(r, tId) === id; })) {\n      let acc = '';\n      try {\n        const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n        A.body.forEach(function (r) { if (!acc && st.prof && cell_(r, aN) === String(st.prof)) acc = cell_(r, aI); });\n      } catch (err) { }\n      const r = lastRow_(T.sh, 1) + 1;\n      T.sh.getRange(r, 2).setNumberFormat('@');\n      T.sh.getRange(r, 1, 1, 3).setValues([[id, String(st.date || ''), acc]]);\n      if (st.title) T.sh.getRange(r, 6).setValue(String(st.title).slice(0, 300));\n      added.stream = 1;\n    }\n  }\n\n  // 曲：シートにない曲は「曲」タブに下書きとして足す（曲名・アーティスト・表記の状態）\n  const S = tab_(ss, '曲'), sT = S.col('表示用曲名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用'), sState = S.col('表記の状態');\n  const songKeys = {};\n  S.body.forEach(function (r) { if (cell_(r, sT)) songKeys[cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA))] = 1; });\n  let sNext = lastRow_(S.sh, sT + 1) + 1;\n  rows.forEach(function (x) {\n    const k = String(x.k || (String(x.t || '') + '／' + String(x.a || ''))).slice(0, 420);\n    x.k = k;\n    if (songKeys[k] || !x.t) return;\n    S.sh.getRange(sNext, sT + 1).setValue(String(x.t).slice(0, 200));\n    if (sA >= 0) S.sh.getRange(sNext, sA + 1).setValue(String(x.a || '').slice(0, 200));\n    if (sState >= 0) S.sh.getRange(sNext, sState + 1).setValue('下書き・要確認');\n    songKeys[k] = 1; sNext++; added.songs++;\n  });\n\n  // 音源：シートにない音源は「音源」タブに足す（提供者は、提供者タブにある名前のときだけ入れる）\n  const R = tab_(ss, '音源'), rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）');\n  const P = tab_(ss, '提供者'), pN = P.col('提供者名');\n  const providers = {};\n  P.body.forEach(function (r) { if (cell_(r, pN)) providers[cell_(r, pN)] = 1; });\n  const srcNames = {};\n  R.body.forEach(function (r) { if (cell_(r, rN)) srcNames[cell_(r, rN)] = 1; });\n  let rNext = lastRow_(R.sh, rN + 1) + 1;\n  rows.forEach(function (x) {\n    const s = x.src;\n    if (!s || !s.n) return;\n    s.n = String(s.n).slice(0, 200);\n    if (srcNames[s.n]) return;\n    if (rS >= 0) R.sh.getRange(rNext, rS + 1).setValue(x.k);\n    R.sh.getRange(rNext, rN + 1).setValue(s.n);\n    if (rKind >= 0) R.sh.getRange(rNext, rKind + 1).setValue(/youtube\\.com|youtu\\.be/.test(String(s.u || '')) ? 'YouTube動画' : 'その他');\n    if (rU >= 0 && s.u) R.sh.getRange(rNext, rU + 1).setValue(String(s.u).slice(0, 500));\n    if (rBy >= 0 && s.by && providers[s.by]) R.sh.getRange(rNext, rBy + 1).setValue(s.by);\n    srcNames[s.n] = 1; rNext++; added.srcs++;\n  });\n\n  // 配信ログ：配信ID・順番・タイムスタンプ（文字）・区分「曲」・曲・音源\n  const values = rows.map(function (x, i) {\n    return [id, Number(x.n) || (i + 1), String(x.ts || ''), '曲', x.k, x.src && x.src.n ? x.src.n : ''];\n  });\n  const start = lastRow_(L.sh, 1) + 1;\n  L.sh.getRange(start, 3, values.length, 1).setNumberFormat('@');\n  L.sh.getRange(start, 1, values.length, 6).setValues(values);\n  added.rows = values.length;\n  return { ok: true, added: added, firstRow: start };\n}\n";
   const SHEET_LS='otonoha-sheet-link';
   // つなぎ先（URLと合言葉）はこのブラウザだけに置く。設定ファイル・書き出しには入れない
   function sheetLink(){try{const v=JSON.parse(localStorage.getItem(SHEET_LS)||'null');return v&&typeof v.url==='string'?v:null}catch(_){return null}}
@@ -10477,7 +10520,7 @@ const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps 
   }
 
   // ---- 読み込み（貼り付け・Apps Script 共通）
-  // songs:[{t,a,w,k}]  srcs:[{s,n,kind,key,u,by,f}]
+  // songs:[{t,a,w,k,g}]（g＝ラベル。シートに「ラベル」で始まる見出しの列があるときだけ）  srcs:[{s,n,kind,key,u,by,f}]
   function sheetImport(songs,srcs){
     const n={songs:0,srcs:0,newSongs:0,skip:0};
     const byKey=new Map();
@@ -10488,7 +10531,7 @@ const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps 
       const had=repFind(t,a),r=repAdd(t,a);
       if(!r)break;
       if(!had)n.newSongs++;
-      r.sk=String(x.k||t+'／'+a).slice(0,420);if(x.w)r.w=String(x.w).slice(0,200);
+      r.sk=String(x.k||t+'／'+a).slice(0,420);if(x.w)r.w=String(x.w).slice(0,200);if(x.g){const g=tagNorm(x.g);if(g)r.tag=g}
       byKey.set(r.sk,r);n.songs++
     }
     for(const x of srcs||[]){
@@ -10523,8 +10566,8 @@ const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps 
     if(rows.length<2)throw Error('見出しの行と、曲の行をいっしょにコピーして貼り付けてください');
     const head=rows[0].map(x=>x.trim()),col=p=>head.findIndex(h=>h.startsWith(p)),c=(r,i)=>i<0?'':String(r[i]??'').trim();
     if(col('表示用曲名')>=0){
-      const t=col('表示用曲名'),a=col('表示用アーティスト'),w=col('作品名'),k=col('選択用');
-      return {kind:'曲',songs:rows.slice(1).map(r=>({t:c(r,t),a:c(r,a),w:c(r,w),k:c(r,k)})).filter(x=>x.t)}
+      const t=col('表示用曲名'),a=col('表示用アーティスト'),w=col('作品名'),k=col('選択用'),gl=col('ラベル');
+      return {kind:'曲',songs:rows.slice(1).map(r=>({t:c(r,t),a:c(r,a),w:c(r,w),k:c(r,k),...(gl>=0?{g:c(r,gl)}:{})})).filter(x=>x.t)}
     }
     if(col('音源名')>=0){
       const s=col('曲（選ぶ）'),nm=col('音源名'),kind=col('種類'),key=col('キー'),u2=col('URL（共有IDなし'),u=col('URL（貼り付け'),by=col('提供者（選ぶ）'),f=col('音源ファイルの保存場所');
@@ -11305,6 +11348,8 @@ const TOPIC_ST={cand:'候補',adopt:'採用・準備中',rec:'収録済み・未
       instr:'配信のコメント欄に流す、架空のガチ恋コメントを作ってください。\n- すべて架空の視聴者。実在の人物や、実際のコメントのように見せない。\n- 配信者が笑って返せる熱量にする。住所などの個人情報・脅し・性的な表現は書かない。\n- 1件40字以内。名前・言い回し・熱量の種類を毎回変える。'},
     chuuni:{name:'架空コメント100本ノック（厨二病）',fields:['名前（架空）','コメント'],head:1,body:-1,who:0,mode:'comment',label:'架空コメント',count:50,autoUse:true,
       instr:'配信のコメント欄に流す、厨二病の視聴者になりきった架空のコメントを作ってください。\n- すべて架空の視聴者。実在の人物や、実際のコメントのように見せない。\n- 大げさな言い回し・設定・二つ名で笑える内容にする。人を傷つける表現は書かない。\n- 1件40字以内。名前・設定・言い回しを毎回変える。'},
+    // 歌枠ルーレット：曲リスト（歌枠ノート）の曲を取り込み、まだ出していない曲からくじ引きで出す。項目の並び（曲名・アーティスト・作品・ラベル・メモ）は取り込みで使うので固定
+    song:{name:'歌枠ルーレット',fields:['曲名','アーティスト','作品','ラベル','メモ'],head:0,body:2,who:1,mode:'card',label:'つぎの曲は…',count:10,autoUse:true,rand:true,instr:''},
     free:{name:'自由なお題',fields:['お題','説明'],head:0,body:1,who:-1,mode:'card',label:'お題',count:10,autoUse:false,instr:''}
   };
   const topicCfg=()=>state.topics||(state.topics={decks:[],sel:''});
@@ -11313,7 +11358,7 @@ const TOPIC_ST={cand:'候補',adopt:'採用・準備中',rec:'収録済み・未
   function topicNew(key){
     const P=TOPIC_PRESETS[key]||TOPIC_PRESETS.free,t=topicCfg();
     if(t.decks.length>=30){toast('お題帳は30冊までです');return null}
-    const d={id:tid(),preset:key,name:P.name,instr:P.instr,theme:'',count:P.count,fields:P.fields.slice(),head:P.head,body:P.body,who:P.who,mode:P.mode,label:P.label,autoUse:P.autoUse,items:[],cur:''};
+    const d={id:tid(),preset:key,name:P.name,instr:P.instr,theme:'',count:P.count,fields:P.fields.slice(),head:P.head,body:P.body,who:P.who,mode:P.mode,label:P.label,autoUse:P.autoUse,rand:!!P.rand,pick:'',items:[],cur:''};
     t.decks.push(d);t.sel=d.id;return d
   }
   const tHead=(d,it)=>String(it.f[d.fields[d.head]]||'').trim();
@@ -11359,15 +11404,25 @@ const TOPIC_ST={cand:'候補',adopt:'採用・準備中',rec:'収録済み・未
     if(d.mode==='comment'){
       audShow([{name:tField(d,it,d.who)||d.label,text:tHead(d,it).slice(0,140),icon:'💬',color:'#f4c6d6',force:true}],'topic')
     }else{
-      play.topic={deck:d.id,item:it.id,at:performance.now()}
+      play.topic={deck:d.id,item:it.id,at:performance.now()};
+      // くじ引きの冊：はじめの1秒ほど、ほかの題をぱらぱら見せてから止める
+      if(d.rand&&d.items.length>1){const pool=d.items.filter(x=>x!==it).map(x=>tHead(d,x)).filter(Boolean),spin=[];for(let i=0;i<10&&pool.length;i++)spin.push(pool[playRnd(pool.length)]);play.topic.spin=spin}
     }
-    if(d.autoUse&&it.st==='cand')it.st='used';
+    if((d.autoUse||d.rand)&&(it.st==='cand'||(d.rand&&it.st==='adopt')))it.st='used';
     save();renderTopics();renderTopicHand()
   }
   function topicNext(d=topicDeck(),dir=1,show=true){
     if(!d||!d.items.length)return;
     const list=d.items.filter(it=>it.st!=='rej');
     if(!list.length)return;
+    if(d.rand&&dir>0){
+      // くじ引き：まだ出していないもの（しぼりこみに合うもの）から1つ。出したものは、手元だけに出したときも「使った」にする
+      const pool=list.filter(it=>(it.st==='cand'||it.st==='adopt')&&topicPickOk(d,it));
+      if(!pool.length){toast(d.pick?'このしぼりこみで出せるものは、もうありません（「↺ リセット」で戻せます）':'出せるものは、もうありません（「↺ リセット」で戻せます）',5000);return}
+      const it=pool[playRnd(pool.length)];
+      if(show)topicShow(d,it);else{d.cur=it.id;it.st='used';save();renderTopics();renderTopicHand()}
+      return
+    }
     let i=list.findIndex(it=>it.id===d.cur);
     // 次へ：まだ使っていない（候補・採用）ものを優先して、並び順に進む
     if(dir>0){
@@ -11379,11 +11434,54 @@ const TOPIC_ST={cand:'候補',adopt:'採用・準備中',rec:'収録済み・未
       if(show)topicShow(d,it);else{d.cur=it.id;save();renderTopicHand()}
     }
   }
+  // ---- くじ引きの冊：しぼりこみ（作品・ラベル）、リセット、曲リストからの取り込み
+  const topicTags=v=>[...new Set(String(v||'').split(/[、,，\/／\n]/).map(x=>x.trim()).filter(Boolean))];
+  function topicPickOk(d,it){
+    const p=d.pick||'';if(!p)return true;
+    const F=d.fields,v=p.slice(2);
+    return p.startsWith('w:')?String(it.f[F[2]]||'').trim()===v:p.startsWith('t:')?topicTags(it.f[F[3]]).includes(v):true
+  }
+  function topicPickOptions(d){
+    const F=d.fields,w=new Map(),t=new Map(),open=it=>it.st==='cand'||it.st==='adopt';
+    for(const it of d.items){if(it.st==='rej')continue;
+      const a=String(it.f[F[2]]||'').trim();if(a){const c=w.get(a)||[0,0];c[0]++;if(open(it))c[1]++;w.set(a,c)}
+      for(const x of topicTags(it.f[F[3]])){const c=t.get(x)||[0,0];c[0]++;if(open(it))c[1]++;t.set(x,c)}}
+    const all=d.items.filter(it=>it.st!=='rej'),srt=m=>[...m].sort((x,y)=>x[0].localeCompare(y[0],'ja'));
+    return [['','すべて（残り '+all.filter(open).length+' / '+all.length+'）'],...srt(t).map(([k,c])=>['t:'+k,'ラベル：'+k+'（残り '+c[1]+' / '+c[0]+'）']),...srt(w).map(([k,c])=>['w:'+k,'作品：'+k+'（残り '+c[1]+' / '+c[0]+'）'])]
+  }
+  function topicPickFill(sel,d){
+    const opts=topicPickOptions(d),sig=JSON.stringify(opts);
+    if(sel.dataset.sig!==sig){sel.dataset.sig=sig;sel.replaceChildren(...opts.map(([v,tx])=>Object.assign(document.createElement('option'),{value:v,textContent:tx})))}
+    if(d.pick&&!opts.some(o=>o[0]===d.pick)){d.pick=''}
+    sel.value=d.pick||''
+  }
+  function topicReset(d){
+    if(!d)return;
+    let n=0;for(const it of d.items)if(it.st==='used'){it.st='cand';n++}
+    d.cur='';if(play.topic?.deck===d.id)play.topic=null;
+    save();renderTopics();toast(n+'件を、まだ出していない状態に戻しました',3500)
+  }
+  function topicSongSync(d){
+    if(!d||d.fields.length<5){toast('この冊は項目が5つより少ないので、曲リストから取り込めません',5000);return}
+    const F=d.fields,by=new Map(d.items.map(it=>[songKey(it.f[F[0]],it.f[F[1]]),it]));let add=0,upd=0,over=0;
+    topicKeep();
+    for(const r of repList()){
+      const v=[r.title,r.artist||'',r.w||'',r.tag||'',r.memo||''],it=by.get(songKey(r.title,r.artist));
+      if(it){let ch=false;for(let i=2;i<5;i++)if((it.f[F[i]]||'')!==v[i]){it.f[F[i]]=v[i];ch=true}if(ch)upd++;continue}
+      if(d.items.length>=2000){over++;continue}
+      const f={};F.forEach((k,i)=>{f[k]=i<5?v[i]:''});
+      const n={id:tid(),f,st:'cand',at:new Date().toISOString()};d.items.push(n);by.set(songKey(r.title,r.artist),n);add++
+    }
+    save();renderTopics();
+    toast(repList().length?'曲リストから、新しく '+add+'曲を入れました'+(upd?'・作品やラベルを '+upd+'曲で更新':'')+(over?'（1冊2000件までのため '+over+'曲は入りません）':''):'曲リストが空です。「🎤 歌枠ノート」で曲を登録するか、歌枠管理シートから読み込んでください',6000)
+  }
+
   function drawTopic(k){
     const tp=play.topic;if(!tp)return;
     const d=topicCfg().decks.find(x=>x.id===tp.deck),it=d?.items.find(x=>x.id===tp.item);
     if(!d||!it){play.topic=null;return}
-    const head=tHead(d,it),body=tField(d,it,d.body),who=tField(d,it,d.who),label=d.label||d.name;
+    let head=tHead(d,it),body=tField(d,it,d.body),who=tField(d,it,d.who);const label=d.label||d.name;
+    if(tp.spin&&tp.spin.length){const el=performance.now()-tp.at;if(el<1100){head=tp.spin[Math.floor(el/110)%tp.spin.length];body='';who=''}else tp.spin=null}
     const acc=(typeof look!=='undefined'&&look.accent)||'#8a5a3b';
     const a=Math.min(1,(performance.now()-tp.at)/220),w=Math.min(W*.74,940*k),pad=30*k;
     const fsL=20*k,fsH=36*k,fsB=23*k,fsW=19*k;
@@ -11415,6 +11513,10 @@ const TOPIC_ST={cand:'候補',adopt:'採用・準備中',rec:'収録済み・未
     if(d)E('topicDeck').value=d.id;
     E('topicBody').hidden=!d;
     if(!d){renderTopicHand();renderPon();return}
+    E('topicBody').toggleAttribute('data-rand',!!d.rand);
+    E('topicBody').toggleAttribute('data-song',d.preset==='song');
+    E('topicRand').checked=!!d.rand;
+    if(d.rand)topicPickFill(E('topicPick'),d);
     E('topicName').value=d.name;E('topicInstr').value=d.instr;E('topicTheme').value=d.theme;E('topicCount').value=d.count;
     E('topicFields').value=d.fields.join('、');E('topicLabel').value=d.label;E('topicMode').value=d.mode;E('topicAutoUse').checked=!!d.autoUse;
     for(const [id,k,none] of [['topicHead','head',false],['topicBodyF','body',true],['topicWho','who',true]]){
@@ -11463,19 +11565,40 @@ const TOPIC_ST={cand:'候補',adopt:'採用・準備中',rec:'収録済み・未
   function renderTopicHand(){
     const d=topicDeck(),it=topicCur(d),box=E('topicHand');
     if(!box)return;
-    box.hidden=!d||!d.items.length;
+    // 「🎲 企画」に並べていない冊は、手元カードも出さない
+    box.hidden=!d||!d.items.length||(ponCfg().hide||[]).includes('topic:'+d.id);
     if(box.hidden)return;
+    box.toggleAttribute('data-rand',!!d.rand);
+    E('topicHandNext').textContent=d.rand?'🎲 引く（手元だけ）':'次へ ▶';
+    E('topicHandPrev').hidden=!!d.rand;
+    E('topicHandRand').hidden=!d.rand;
+    if(d.rand)topicPickFill(E('topicHandPick'),d);
     const open=d.items.filter(x=>x.st==='cand'||x.st==='adopt').length;
     E('topicHandTitle').textContent=d.name+'　未使用 '+open+' / 全 '+d.items.length;
     const body=E('topicHandBody');body.replaceChildren();
-    if(!it){body.textContent='「次へ ▶」で、最初のお題を出します。';return}
+    if(!it){body.textContent=d.rand?'「🎲 引く」で、まだ出していないものから1つ出します。':'「次へ ▶」で、最初のお題を出します。';return}
     for(const f of d.fields){const v=it.f[f];if(!v)continue;const p=document.createElement('p');const b=document.createElement('b');b.textContent=f+'：';p.append(b,document.createTextNode(v));body.append(p)}
+    if(d.rand){
+      // 曲リストにある曲なら、音源を開くボタンと、セトリ・歌い始めのボタンを添える
+      const F=d.fields,r=repFind(it.f[F[0]],it.f[F[1]]),row=document.createElement('div');row.className='studio-row topic-song-row';
+      if(r)row.append(...okeButtons(r));
+      row.append(rowBtn('セトリへ','',()=>{state.songs.push({title:it.f[F[0]],artist:it.f[F[1]]||''});save();renderSet();toast('セトリに追加しました')}),
+        rowBtn('♪ 歌い始め','sb-sing',()=>sing(it.f[F[0]],it.f[F[1]]||''),'この曲を歌い始めた時刻を記録します'));
+      if(!r)row.append(Object.assign(document.createElement('span'),{className:'studio-mini',textContent:'（曲リストに同じ曲が見つからないため、音源のボタンは出ません）'}));
+      body.append(row)
+    }
     E('topicHandSt').value=it.st;
     E('topicHandShow').textContent=d.mode==='comment'?'💬 コメント欄に流す':'📌 配信画面に貼り出す'
   }
   E('topicHandPrev').onclick=()=>topicNext(topicDeck(),-1,false);
   E('topicHandNext').onclick=()=>topicNext(topicDeck(),1,false);
   E('topicHandShow').onclick=()=>{const d=topicDeck(),it=topicCur(d);if(it)topicShow(d,it);else topicNext(d,1,true)};
+  E('topicHandPick').onchange=e=>{const d=topicDeck();if(d){d.pick=e.target.value.slice(0,220);save();renderTopics()}};
+  E('topicHandReset').onclick=e=>armed(e.currentTarget,'もう一度押すとリセット',()=>topicReset(topicDeck()));
+  E('topicPick').onchange=e=>{const d=topicDeck();if(d){d.pick=e.target.value.slice(0,220);save();renderTopics()}};
+  E('topicSongSync').onclick=()=>topicSongSync(topicDeck());
+  E('topicSongReset').onclick=e=>armed(e.currentTarget,'もう一度押すとリセット',()=>topicReset(topicDeck()));
+  E('topicRand').onchange=e=>{const d=topicDeck();if(d){d.rand=e.target.checked;save();renderTopics()}};
   E('topicHandHide').onclick=()=>{play.topic=null;renderPon()};
   E('topicHandSt').onchange=e=>{const it=topicCur();if(it){it.st=e.target.value;save();renderTopics()}};
 
@@ -11576,7 +11699,7 @@ const TOPIC_ST={cand:'候補',adopt:'採用・準備中',rec:'収録済み・未
         items.push({id:iid,f,st:ST.includes(it.st)?it.st:'cand',at:S(it.at,40)})
       }
       out.decks.push({id,preset:S(d.preset,20),name:S(d.name,40)||'お題帳',instr:S(d.instr,20000),theme:S(d.theme,4000),count:Math.max(1,Math.min(100,Math.round(Number(d.count))||7)),
-        fields,head:idx(d.head,false),body:idx(d.body,true),who:idx(d.who,true),mode:d.mode==='comment'?'comment':'card',label:S(d.label,40),autoUse:!!d.autoUse,items,cur:typeof d.cur==='string'&&items.some(x=>x.id===d.cur)?d.cur:''})
+        fields,head:idx(d.head,false),body:idx(d.body,true),who:idx(d.who,true),mode:d.mode==='comment'?'comment':'card',label:S(d.label,40),autoUse:!!d.autoUse,rand:d.rand===true,pick:S(d.pick,220),items,cur:typeof d.cur==='string'&&items.some(x=>x.id===d.cur)?d.cur:''})
     }
     out.sel=typeof v.sel==='string'&&out.decks.some(d=>d.id===v.sel)?v.sel:(out.decks[0]?.id||'');
     return out
@@ -12238,8 +12361,10 @@ function applyAspect(){
     toast(W>H?'横向き（1280×720）にしました':state.aspect==='x34'?'3:4（960×1280）にしました':'縦向き（720×1280）にしました')
   };
 
+  // 選んだ動きは設定に残す（読み込み直しても、直立に戻らない）
   function setMotion(m){
     motion=MOTION_LABEL[m]?m:'still';
+    if(state.motion!==motion){state.motion=motion;save()}
     document.querySelectorAll('[data-motion]').forEach(b=>{
       const on=b.dataset.motion===motion;
       b.classList.toggle('selected',on);
@@ -12305,6 +12430,18 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
     }
     return out
   }
+  // 降らせる演出の控え（量 count・大きさ fxSize）。範囲は 01-sanitize.js のつまみと同じ
+  function fxPosClean(v){
+    const out={};
+    if(!v||typeof v!=='object')return out;
+    for(const a of ['landscape','portrait','x34']){
+      const q=v[a];if(!q||typeof q!=='object')continue;
+      const c=Number(q.count),z=Number(q.fxSize);
+      if(Number.isFinite(c)&&Number.isFinite(z))out[a]={count:Math.max(5,Math.min(100,c)),fxSize:Math.max(35,Math.min(200,z))}
+    }
+    return out
+  }
+  const fxTargets=()=>[...Object.values(state.fxSeason||{}),...(state.fxPresets||[])].filter(t=>t&&typeof t==='object');
   function charPosKeep(c,asp=state.aspect){if(!c)return;if(!c.pos||typeof c.pos!=='object')c.pos={};c.pos[asp]={x:state.x,y:state.y,scale:state.scale}}
   function charPosApply(c,asp=state.aspect){const q=c?.pos?.[asp];if(q){state.x=q.x;state.y=q.y;state.scale=q.scale;c.x=q.x;c.y=q.y;c.scale=q.scale}}
   function aspectStash(asp){
@@ -12312,11 +12449,15 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
     charPosKeep(curChar(),asp);
     for(const m of state.mascots||[]){if(!m.pos||typeof m.pos!=='object')m.pos={};m.pos[asp]={x:m.x,y:m.y,size:m.size,tilt:m.tilt||0}}
     for(const k of ['standby','away','end']){const c=state.scenes[k];if(!c.pos||typeof c.pos!=='object')c.pos={};c.pos[asp]={imgSize:c.imgSize,imgX:c.imgX,imgY:c.imgY}}
+    seasonPut();
+    for(const t of fxTargets()){if(!t.pos||typeof t.pos!=='object')t.pos={};t.pos[asp]={count:t.count,fxSize:t.fxSize}}
   }
   function aspectRestore(asp){
     charPosApply(curChar(),asp);
     for(const m of state.mascots||[]){const r=m.pos?.[asp];if(r){m.x=r.x;m.y=r.y;m.size=r.size;m.tilt=r.tilt}}
     for(const k of ['standby','away','end']){const c=state.scenes[k],r=c.pos?.[asp];if(r){c.imgSize=r.imgSize;c.imgX=r.imgX;c.imgY=r.imgY}}
+    for(const t of fxTargets()){const r=t.pos?.[asp];if(r){t.count=r.count;t.fxSize=r.fxSize}}
+    seasonLoad();
     renderSceneForm();
     // 走る・お散歩の途中の位置は画面の寸法で持っているので、向きを変えたら決めた位置からやり直す
     for(const o of [mscRun,mscWalk,mscPlay])for(const k of Object.keys(o))delete o[k]
@@ -14294,7 +14435,7 @@ applyPerf();
 
   renderValues();
   applyAspect();
-  setMotion('still');
+  setMotion(state.motion);
   renderAssetSlots();
   renderSceneForm();
   renderScene();

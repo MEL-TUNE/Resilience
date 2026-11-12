@@ -8,6 +8,9 @@
   };
   const songKey=(t,a)=>(t||'').trim().toLowerCase()+'\n'+(a||'').trim().toLowerCase();
   const sbId=()=>Math.random().toString(36).slice(2,10);
+  // ラベル：「、」「,」「／」や改行で区切ったものを、重なりを除いて「、」でつなぐ
+  const tagSplit=v=>[...new Set(String(v||'').split(/[、,，\/／\n]/).map(x=>x.trim()).filter(Boolean))].slice(0,12);
+  const tagNorm=v=>tagSplit(v).join('、').slice(0,200);
   function repList(){if(!Array.isArray(state.repertoire))state.repertoire=[];return state.repertoire}
   function logList(){if(!Array.isArray(state.singLog))state.singLog=[];return state.singLog}
   function sbInput(){return {title:SB.title.value.trim(),artist:SB.artist.value.trim(),memo:SB.memo.value.trim(),oke:SB.oke.value.trim(),okeBy:SB.okeBy.value.trim()}}
@@ -189,13 +192,13 @@
         rowBtn('外す','',()=>{state.songs.splice(i,1);save();renderSet()}));
       SB.set.append(li)
     });
-    if(!state.songs.length)SB.set.append(sbEmpty('li','セトリは空です。上で曲名を入れて「セトリに追加」、または曲リストの「セトリへ」で追加できます'))
+    if(!state.songs.length)SB.set.append(sbEmpty('li','セトリは空です。下の「③ 曲リスト」の「セトリへ」か、「＋ 曲を登録する」の「登録してセトリにも入れる」で追加できます'))
   }
 
   // 曲リスト：行は曲のIDごとに持ち、歌った曲だけ書き換える
   const repRows=new Map();
-  const repInfo=s=>(s.count?'歌った回数 '+s.count+'回':'まだ記録なし')+(s.last?'・最後 '+s.last.slice(0,10):'')+(s.srcs?.length?'・音源 '+s.srcs.length:'')+(s.memo?'・'+s.memo:'');
-  const repHay=s=>sbNorm(s.title+' '+s.artist+' '+(s.memo||'')+' '+(s.w||'')+' '+(s.srcs||[]).map(x=>x.n+' '+x.by+' '+x.u).join(' '));
+  const repInfo=s=>(s.count?'歌った回数 '+s.count+'回':'まだ記録なし')+(s.last?'・最後 '+s.last.slice(0,10):'')+(s.srcs?.length?'・音源 '+s.srcs.length:'')+(s.w?'・作品 '+s.w:'')+(s.tag?'・ラベル '+s.tag:'')+(s.memo?'・'+s.memo:'');
+  const repHay=s=>sbNorm(s.title+' '+s.artist+' '+(s.memo||'')+' '+(s.w||'')+' '+(s.tag||'')+' '+(s.srcs||[]).map(x=>x.n+' '+x.by+' '+x.u).join(' '));
   const repMatch=(s,q)=>!q||q.split(/\s+/).filter(Boolean).every(w=>repHay(s).includes(sbNorm(w)));
   function repRow(s){
     const li=document.createElement('li');
@@ -212,7 +215,7 @@
     if(li.nextElementSibling?.classList.contains('sb-edit')){li.nextElementSibling.remove();return}
     const box=document.createElement('li');box.className='sb-edit';
     const inp=(label,val,max,type)=>{const l=document.createElement('label');l.className='studio-field';const i=document.createElement('input');i.type=type||'text';i.maxLength=max;i.value=val||'';l.append(label,i);return [l,i]};
-    const [lt,it]=inp('曲名',s.title,200),[la,ia]=inp('アーティスト',s.artist,200),[lm,im]=inp('メモ',s.memo,200);
+    const [lt,it]=inp('曲名',s.title,200),[la,ia]=inp('アーティスト',s.artist,200),[lm,im]=inp('メモ',s.memo,200),[lw,iw]=inp('作品名（アニメ・ゲームなど）',s.w,200),[lg,ig]=inp('ラベル（「、」で区切る。歌枠ルーレットのしぼりこみに使います）',s.tag,200);
     const srcBox=document.createElement('div');srcBox.className='sb-srcs';
     const rows=[];
     const addRow=x=>{
@@ -243,11 +246,12 @@
         const k0=songKey(s.title,s.artist),k1=songKey(t,a);
         if(k0!==k1){for(const x of logList())if(songKey(x.title,x.artist)===k0){x.title=t;x.artist=a}for(const x of state.songs)if(songKey(x.title,x.artist)===k0){x.title=t;x.artist=a}}
         s.title=t.slice(0,200);s.artist=a.slice(0,200);s.memo=im.value.trim().slice(0,200);s.srcs=srcs;
+        {const w=iw.value.trim().slice(0,200),g=tagNorm(ig.value);if(w)s.w=w;else delete s.w;if(g)s.tag=g;else delete s.tag}
         if(s.useSrc&&!srcs.some(x=>x.n===s.useSrc||x.u===s.useSrc))delete s.useSrc;
         saveNow();box.remove();renderRep();renderSet();if(k0!==k1)renderLog();toast('保存しました',2000)
       }),
       rowBtn('閉じる','',()=>box.remove()));
-    box.append(Object.assign(document.createElement('div'),{className:'studio-inline'}),lm,srcBox,row);
+    {const d2=Object.assign(document.createElement('div'),{className:'studio-inline'});d2.append(lw,lg);box.append(Object.assign(document.createElement('div'),{className:'studio-inline'}),d2,lm,srcBox,row)}
     box.firstChild.append(lt,la);
     li.after(box);it.focus()
   }

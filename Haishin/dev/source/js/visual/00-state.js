@@ -97,6 +97,7 @@
     fxPresets:null,
 fps:30,
     light:false,
+    motion:'still',
     vidFormat:'mp4',
     vidQuality:8,
     imageMotion:'flutter',

@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.0 / 本番と準備に分けた操作盤・収録の途中保存</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.1 / 歌枠ルーレット・セトリを上に・動きとタブの記憶・演出の向きごとの記憶</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -45,12 +45,12 @@
 <button type="button" data-deck="kikaku" data-mode="live" data-level-of="live"><i aria-hidden="true">🎲</i>企画</button>
 <button type="button" data-deck="se" data-mode="live" data-level-of="live"><i aria-hidden="true">🔊</i>効果音</button>
 <button type="button" data-deck="bgm" data-mode="live" data-level-of="live"><i aria-hidden="true">🎵</i>BGM</button>
-<button type="button" data-deck="chara" data-mode="live" data-level-of="live"><i aria-hidden="true">😀</i>表情</button>
+<button type="button" data-deck="chara" data-mode="live" data-level-of="live"><i aria-hidden="true">👗</i>表情</button>
 <button type="button" data-deck="tools" data-mode="live" data-level-of="live"><i aria-hidden="true">🎛</i><span data-modes="video">収録</span><span data-modes="stream">接続</span></button>
 <button type="button" data-deck="all" data-mode="live" data-level-of="live"><i aria-hidden="true">☰</i>全部</button>
 <button type="button" data-deck="plan" data-mode="plan" data-level-of="prep"><i aria-hidden="true">📝</i>企画の準備</button>
 <button type="button" data-deck="songs" data-mode="songs" data-level-of="prep"><i aria-hidden="true">🎤</i>歌枠ノート</button>
-<button type="button" data-deck="aivoice" data-mode="aivoice" data-level-of="prep"><i aria-hidden="true">🤖</i>AIキャラ・声</button>
+<button type="button" data-deck="aivoice" data-mode="aivoice" data-level-of="prep"><i aria-hidden="true">🎧</i>AIキャラ・声</button>
 </nav>
 <div class="deck-panels" id="deckPanels">
 <section class="studio-card deck-panel" data-panel="kikaku" aria-label="企画">
@@ -63,6 +63,7 @@
 </section>
 <p class="pon-hidden" id="ponHidden" hidden></p>
 <section class="topic-hand" id="topicHand" hidden aria-label="お題の手元カード"><div class="pon-head"><strong id="topicHandTitle">お題</strong><span class="studio-mini">手元だけに表示（配信画面には出ません）</span></div>
+<div class="studio-row topic-hand-rand" id="topicHandRand" hidden><label class="studio-field">しぼりこみ<select id="topicHandPick"></select></label><button type="button" id="topicHandReset">↺ リセット</button></div>
 <div class="topic-hand-body" id="topicHandBody"></div>
 <div class="studio-row"><button type="button" id="topicHandPrev">◀ 前</button><button type="button" id="topicHandNext">次へ ▶</button><button type="button" id="topicHandShow" class="accent">📌 配信画面に貼り出す</button><button type="button" id="topicHandHide">下げる</button><label class="studio-field topic-st">状態<select id="topicHandSt"><option value="cand">候補</option><option value="adopt">採用・準備中</option><option value="rec">収録済み・未公開</option><option value="pub">公開済み</option><option value="hold">保留</option><option value="rej">不採用</option><option value="used">使った</option></select></label></div>
 </section>
@@ -148,24 +149,31 @@
 <ul class="sb-list aud-log" id="slotBulkPrev" aria-label="足す内容"></ul>
 </details>
 </details>
-<details class="plan-group" data-pg="topic"><summary><h3>お題帳</h3><small>議題・お悩み相談・ラブレター・コメント100本ノック</small></summary>
+<details class="plan-group" data-pg="topic"><summary><h3>お題帳</h3><small>議題・お悩み相談・ラブレター・コメント100本ノック・歌枠ルーレット</small></summary>
 <p class="studio-note">AIに企画のお題を作ってもらい、一覧（台帳）にためて、配信画面に貼り出します。台帳にある題は、次に頼むときに「既出」として依頼文に添えるので、重なりを避けられます。お題帳は企画ごとに作れます（30冊まで・1冊2000件まで）。架空の相談・手紙・コメントは、架空とわかる見出しで出します。</p>
 <div class="studio-inline"><label class="studio-field">使うお題帳<select id="topicDeck"></select></label>
-<label class="studio-field">新しく作る<select id="topicPreset"><option value="talk">番組の議題</option><option value="consult">架空のお悩み相談</option><option value="letter">ヤンデレラブレター</option><option value="gachi">架空コメント100本ノック（ガチ恋）</option><option value="chuuni">架空コメント100本ノック（厨二病）</option><option value="free">自由なお題</option></select></label></div>
+<label class="studio-field">新しく作る<select id="topicPreset"><option value="talk">番組の議題</option><option value="consult">架空のお悩み相談</option><option value="letter">ヤンデレラブレター</option><option value="gachi">架空コメント100本ノック（ガチ恋）</option><option value="chuuni">架空コメント100本ノック（厨二病）</option><option value="song">歌枠ルーレット（曲リストの曲をくじ引き）</option><option value="free">自由なお題</option></select></label></div>
 <div class="studio-row"><button type="button" id="topicAdd">＋ この形で新しいお題帳を作る</button></div>
 <div id="topicBody" hidden>
+<div class="topic-rand-box" id="topicRandBox">
+<p class="studio-note topic-song-only">歌枠ノートの「曲リスト」（歌枠管理シートから読み込んだ曲も含みます）を取り込み、まだ出していない曲から、くじ引きで1曲ずつ配信画面に出します。出した曲は、リセットするまで出ません。作品名は、シートの「作品名（タイアップ）」の列です。ラベルは、シートの「曲」タブに「ラベル」で始まる見出しの列を足すか、曲リストの「編集」で付けられます（「、」で区切ると、いくつでも付きます）。</p>
+<div class="studio-row topic-song-only"><button type="button" id="topicSongSync" class="accent">曲リストから取り込む・更新する</button></div>
+<div class="studio-inline"><label class="studio-field">しぼりこみ（ここで選んだものだけから引きます）<select id="topicPick"></select></label></div>
+<div class="studio-row"><button type="button" id="topicSongReset">↺ リセット（出したものを、まだ出していない状態に戻す）</button></div>
+</div>
 <details class="sb-opts"><summary>⚙ このお題帳の設定（名前・AIへの指示・テーマ・項目・配信画面での出し方）</summary>
 <div class="studio-inline"><label class="studio-field">名前<input id="topicName" maxlength="40"></label><label class="studio-field">1回に作ってもらう数<input id="topicCount" type="number" min="1" max="100"></label></div>
 <label class="studio-field">AIへの指示（番組の企画書や議題生成のプロンプトを、そのまま貼り付けて使えます）<textarea id="topicInstr" class="studio-textarea" rows="6" maxlength="20000"></textarea></label>
 <label class="studio-field">テーマ・方向（今回だけの注文。例：相談・Help型を多めに／秋の話題）<textarea id="topicTheme" class="studio-textarea" rows="2" maxlength="4000"></textarea></label>
 <label class="studio-field">項目（「、」で区切る。AIはこの名前で返します）<input id="topicFields" maxlength="400"></label>
 <div class="studio-inline"><label class="studio-field">見出しにする項目<select id="topicHead"></select></label><label class="studio-field">貼り出すときの本文<select id="topicBodyF"></select></label><label class="studio-field">名前・差出人の項目<select id="topicWho"></select></label></div>
-<div class="studio-inline"><label class="studio-field">配信画面での出し方<select id="topicMode"><option value="card">お題カード（画面に貼り出す）</option><option value="comment">コメント欄に流す（1件ずつ）</option></select></label><label class="studio-field">カードの見出しラベル<input id="topicLabel" maxlength="40"></label><label class="studio-field"><input type="checkbox" id="topicAutoUse"> 出したら「使った」にする</label></div>
+<div class="studio-inline"><label class="studio-field">配信画面での出し方<select id="topicMode"><option value="card">お題カード（画面に貼り出す）</option><option value="comment">コメント欄に流す（1件ずつ）</option></select></label><label class="studio-field">カードの見出しラベル<input id="topicLabel" maxlength="40"></label><label class="studio-field"><input type="checkbox" id="topicAutoUse"> 出したら「使った」にする</label>
+<label class="studio-field"><input type="checkbox" id="topicRand"> くじ引きにする（まだ出していないものから、順番ではなく、でたらめに1つ。作品・ラベルでしぼりこめます）</label></div>
 <div class="studio-row"><button type="button" id="topicDup">設定だけ写して、新しいお題帳にする</button><button type="button" id="topicDel">このお題帳を削除</button></div>
 </details>
-<div class="studio-row"><button type="button" id="topicPromptCopy" class="accent">AIに頼む文をコピー（既出を添えます）</button></div>
-<label class="studio-field">AIの返答（JSON）を貼り付け<textarea id="topicPaste" class="studio-textarea" rows="3" placeholder='{"items":[{"タイトル":"…"}]}'></textarea></label>
-<div class="studio-row"><button type="button" id="topicPasteCheck">中身を確かめる</button><button type="button" id="topicPasteGo" class="accent" disabled>候補として足す</button><button type="button" id="topicUndo" disabled>↶ 元に戻す</button></div>
+<div class="studio-row topic-ai"><button type="button" id="topicPromptCopy" class="accent">AIに頼む文をコピー（既出を添えます）</button></div>
+<label class="studio-field topic-ai">AIの返答（JSON）を貼り付け<textarea id="topicPaste" class="studio-textarea" rows="3" placeholder='{"items":[{"タイトル":"…"}]}'></textarea></label>
+<div class="studio-row topic-ai2"><button type="button" id="topicPasteCheck">中身を確かめる</button><button type="button" id="topicPasteGo" class="accent" disabled>候補として足す</button><button type="button" id="topicUndo" disabled>↶ 元に戻す</button></div>
 <p class="studio-mini" id="topicPasteInfo" aria-live="polite"></p>
 <details class="sb-opts"><summary>これまでの題を貼り付けて登録する（台帳の取り込み）</summary>
 <label class="studio-field">1行に1題<textarea id="topicPast" class="studio-textarea" rows="4"></textarea></label>
@@ -255,8 +263,10 @@
 </details>
 </section>
 <section class="studio-card mode-section deck-panel" id="studioSongs" data-panel="songs"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore">
-<ol class="sb-flow"><li><b>曲リスト</b>：曲と、カラオケ音源のURLを登録しておく</li><li><b>セトリ</b>：今日歌う曲を並べる</li><li><b>本番</b>：「▶ 音源」でオケを開き、歌い始めに「♪ 歌い始め」</li><li><b>配信のあと</b>：時刻を直して概要欄に。歌枠管理シートへも送れる</li></ol>
-<h3 class="kara-h">① 曲リスト <small id="repCount"></small></h3>
+<ol class="sb-flow"><li><b>セトリ</b>：今日歌う曲。歌い始めに「♪ 歌い始め」を押す</li><li><b>本番</b>：歌唱の記録を始める・取り消す</li><li><b>曲リスト</b>：曲と、カラオケ音源のURLを登録しておく（ここからセトリへ入れる）</li><li><b>配信のあと</b>：時刻を直して概要欄に。歌枠管理シートへも送れる</li></ol>
+<h3 class="kara-h">① セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div>
+<h3 class="kara-h">② 本番：歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびにセトリか曲リストの「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。「▶」で開いた音源も一緒に残ります。</p>
+<h3 class="kara-h">③ 曲リスト <small id="repCount"></small></h3>
 <div class="sb-find"><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・音源・メモで探す" aria-label="曲リストを探す"><label class="studio-field sb-sort">並び<select id="repSort"><option value="recent">最近歌った順</option><option value="name">曲名順</option><option value="count">よく歌う順</option></select></label></div>
 <details class="sb-add" id="sbAdd"><summary>＋ 曲を登録する（曲名・アーティスト・音源のURL）</summary>
 <div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div>
@@ -266,8 +276,6 @@
 <p class="studio-mini">URLの共有ID（?si=…）は外して登録します。YouTubeの動画は「https://www.youtube.com/watch?v=…」の形にそろえます。同じ曲名・アーティストで登録すると、音源が足されます。</p>
 </details>
 <ul id="repList" class="sb-list"></ul>
-<h3 class="kara-h">② セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div>
-<h3 class="kara-h">③ 本番：歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびにセトリか曲リストの「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。「▶」で開いた音源も一緒に残ります。</p>
 <h3 class="kara-h">④ 配信のあと：これまでの記録（回ごと）</h3><div id="singLog"></div>
 <details class="sb-opts" id="sbOpts"><summary>配信画面に曲名を出す・概要欄の形</summary>
 <div class="studio-inline"><label class="studio-field">配信画面（PNGTuber画面）に出す<select id="setlistShow"><option value="off">出さない</option><option value="now">いま歌っている曲</option><option value="list">これまでの曲（最新8曲）</option></select></label>
@@ -341,7 +349,7 @@
 <h3>画面の見方</h3>
 <ul class="help-list">
 <li><strong>▶ 本番</strong>：配信・収録の最中に押すものだけを並べています。映像と、いつも使うボタンの帯は、下へ進めても上に残ります。</li>
-<li><strong>タブ</strong>：🎲 企画（スロット・ルーレット・サイコロ・セリフ・お題・アプリ）／🔊 効果音／🎵 BGM（環境音も）／😀 表情（キャラ・動き）／🎛 収録・接続／☰ 全部。開いていたタブは、このブラウザが覚えます。</li>
+<li><strong>タブ</strong>：🎲 企画（スロット・ルーレット・サイコロ・セリフ・お題・アプリ）／🔊 効果音／🎵 BGM（環境音も）／👗 表情（キャラ・動き）／🎛 収録・接続／☰ 全部。開いていたタブは、このブラウザが覚えます。</li>
 <li><strong>🛠 準備</strong>：前もって登録するものです。企画の準備（セリフ帳・スロット・お題帳・ルーレット・アプリ・AI観客席）、歌枠ノート、AIキャラ・声。ここで登録したものが、本番の「🎲 企画」にボタンとして並びます。</li>
 <li><strong>■ 全音停止</strong>：効果音・ボイス・環境音・BGMをすべて止めます。</li>
 </ul>

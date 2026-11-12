@@ -369,6 +369,7 @@ $('#voiceTabs').onclick=e=>{
   const tab=e.target.closest('[data-voice-tab]');
   if(tab){
     voiceTab=+tab.dataset.voiceTab;
+    soundTabsSave();
     render()
   }
 };
@@ -377,6 +378,7 @@ $('#bgmTabs').onclick=e=>{
   const tab=e.target.closest('[data-bgm-tab]');
   if(tab){
     bgmTab=+tab.dataset.bgmTab;
+    soundTabsSave();
     render()
   }
 };

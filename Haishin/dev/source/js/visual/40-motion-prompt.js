@@ -37,8 +37,10 @@
     toast(W>H?'横向き（1280×720）にしました':state.aspect==='x34'?'3:4（960×1280）にしました':'縦向き（720×1280）にしました')
   };
 
+  // 選んだ動きは設定に残す（読み込み直しても、直立に戻らない）
   function setMotion(m){
     motion=MOTION_LABEL[m]?m:'still';
+    if(state.motion!==motion){state.motion=motion;save()}
     document.querySelectorAll('[data-motion]').forEach(b=>{
       const on=b.dataset.motion===motion;
       b.classList.toggle('selected',on);

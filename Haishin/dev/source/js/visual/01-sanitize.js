@@ -17,7 +17,7 @@
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last),...(()=>{const o={};
        const http=u=>{const t=S(u,500);return /^https?:\/\//i.test(t)?t:''};
        if(Array.isArray(x.srcs))o.srcs=x.srcs.filter(y=>y&&typeof y==='object').slice(0,8).map(y=>({u:http(y.u),n:S(y.n,200),by:S(y.by,120),k:S(y.k,20),kind:S(y.kind,30),f:http(y.f)})).filter(y=>y.u||y.n);
-       if(x.useSrc)o.useSrc=S(x.useSrc,500);if(x.sk)o.sk=S(x.sk,420);if(x.w)o.w=S(x.w,200);return o})()}));
+       if(x.useSrc)o.useSrc=S(x.useSrc,500);if(x.sk)o.sk=S(x.sk,420);if(x.w)o.w=S(x.w,200);if(x.tag)o.tag=S(x.tag,200);return o})()}));
      if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).map(x=>{const o={id:S(x.id,16)||Math.random().toString(36).slice(2,10),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)};if(Number.isFinite(Number(x.off0)))o.off0=Math.max(0,Math.floor(Number(x.off0)));if(x.ts!==null&&x.ts!==undefined&&Number.isFinite(Number(x.ts)))o.ts=Math.max(0,Math.floor(Number(x.ts)));if(x.src)o.src=S(x.src,500);return o});
      if(Array.isArray(v.legacyVideos))out.legacyVideos=v.legacyVideos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,60).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at),missing:x.missing===true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
@@ -100,11 +100,12 @@
           o[k]=Number.isFinite(n)?Math.max(R[k][0],Math.min(R[k][1],n)):out[k]
         }
         o.imageMotion=['flutter','leaf','rise','snow','roll'].includes(x.imageMotion)?x.imageMotion:out.imageMotion;
+        o.pos=fxPosClean(x.pos);
         fs[e]=o
       }
       out.fxSeason=fs;
 
-      const MV=['flutter','leaf','rise','snow','roll'],mk=(x,id,name)=>{const o={id,name:String(name||'画像のプリセット').slice(0,30)};for(const k in R){const n=Number(x[k]);o[k]=Number.isFinite(n)?Math.max(R[k][0],Math.min(R[k][1],n)):out[k]}o.imageMotion=MV.includes(x.imageMotion)?x.imageMotion:'flutter';return o};
+      const MV=['flutter','leaf','rise','snow','roll'],mk=(x,id,name)=>{const o={id,name:String(name||'画像のプリセット').slice(0,30)};for(const k in R){const n=Number(x[k]);o[k]=Number.isFinite(n)?Math.max(R[k][0],Math.min(R[k][1],n)):out[k]}o.imageMotion=MV.includes(x.imageMotion)?x.imageMotion:'flutter';o.pos=fxPosClean(x.pos);return o};
       out.fxPresets=[];
       if(Array.isArray(v.fxPresets)){const seenP=new Set();for(const x of v.fxPresets.slice(0,30)){if(!x||typeof x!=='object'||typeof x.id!=='string'||!/^[a-z0-9]{1,24}$/.test(x.id)||seenP.has(x.id))continue;seenP.add(x.id);out.fxPresets.push(mk(x,x.id,x.name))}}
       else out.fxPresets.push(mk({imageMotion:out.imageMotion},'img','好きな画像'))
@@ -114,6 +115,7 @@
     }
 out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     out.light=v.light===true;
+    out.motion=['still','sing','hop','shake','wander','iya'].includes(v.motion)?v.motion:'still';
     out.vidFormat=v.vidFormat==='webm'?'webm':'mp4';
     out.vidQuality=[2.5,4.5,8,16].includes(Number(v.vidQuality))?Number(v.vidQuality):8;
     {const MV=['float','sway','hop','run','shake','still','play','walk'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];

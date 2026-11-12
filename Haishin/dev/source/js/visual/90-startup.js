@@ -8,7 +8,7 @@
 
   renderValues();
   applyAspect();
-  setMotion('still');
+  setMotion(state.motion);
   renderAssetSlots();
   renderSceneForm();
   renderScene();
