@@ -87,9 +87,22 @@
     popS=0,
     singPh=0,
     hopPh=0,
-    wanPh=0,
-    iyaPh=0;
+    iyaPh=0,
+    shakeT=0,
+    hopRun=false;
   const mw={sing:0,hop:0,shake:0,wander:0,iya:0};
+  // 動きごとの大きさ・速さ。表情に連動した動きは、その表情の値（e.amt・e.spd）を使う。
+  // 表情を切り替えたときに大きさが急に変わらないよう、値もなめらかに寄せる（mk・ms）
+  const MKEY={sing:'Sing',hop:'Hop',shake:'Shake',wander:'Wander',iya:'Iya'};
+  const mk={sing:1,hop:1,shake:1,wander:1,iya:1},ms={sing:1,hop:1,shake:1,wander:1,iya:1};
+  function motionParam(m){
+    const e=curExprObj();
+    if(e&&e.motion===m)return [(Number.isFinite(e.amt)?e.amt:100)/100,(Number.isFinite(e.spd)?e.spd:100)/100];
+    const a=state['motion'+MKEY[m]],sp=state['motion'+MKEY[m]+'Speed'];
+    return [(Number.isFinite(a)?a:100)/100,(Number.isFinite(sp)?sp:100)/100]
+  }
+  // 右往左往の状態：x＝いまの位置（-1〜1。1で歩く幅いっぱい）、v＝速さ、tx＝行き先、lean＝傾き
+  const wan={x:0,v:0,tx:0,next:0,t:0,n:0,step:0,lean:0,dir:1};
 
   function vnoise(x,seed){
     const i=Math.floor(x),
@@ -100,11 +113,14 @@
 
   function avatarPose(now,talking){
     const t=now/1000,
-      u=H/720,
       TAU=Math.PI*2,
       geo=avatarGeom(),
       pv=Math.min(geo.bottom,H*1.04),
-      arm=Math.max(H*.3,pv-geo.faceY);
+      arm=Math.max(H*.3,pv-geo.faceY),
+      // 動きの大きさの物差し：画面に見えている立ち絵の高さ（大きく拡大した立ち絵は画面の高さで頭打ち）。
+      // 立ち絵の大きさを変えても、同じ％なら同じくらいに見える。q＝高さ600pxの立ち絵のときを1とした倍率
+      S=Math.max(H*.2,Math.min(geo.h,H*1.15)),
+      q=S/600;
 
     const dtp=poseLast?Math.min(.1,Math.max(0,(now-poseLast)/1000)):0;
     poseLast=now;
@@ -114,35 +130,43 @@
     {const te=selfSpeak()?talkEnv:0;envS=ease(envS,te,te>envS?.16:.6)}
     popS=ease(popS,talking&&state.bounce?1:0,talking?.05:.12);
 
-    {const em=effMotion();for(const m in mw)mw[m]=ease(mw[m],em===m?1:0,.28)}
+    const em=effMotion();
+    // ぴょんぴょんは、止めても宙に浮いたまま消えないよう、いまの一跳びを着地まで続けてから止める。始めるときは、しゃがむところから
+    if(em==='hop'){if(!hopRun){hopRun=true;if(mw.hop<.05)hopPh=Math.ceil(hopPh)}}
+    else if(hopRun&&hopPh%1>=.82)hopRun=false;
+    for(const m in mw){
+      mw[m]=ease(mw[m],(m==='hop'?hopRun:em===m)?1:0,m==='hop'?.08:.28);
+      const [a,sp]=motionParam(m);mk[m]=ease(mk[m],a,.25);ms[m]=ease(ms[m],sp,.25)
+    }
 
     const k=state.motionAmt/100;
     let dx=0,
       dy=0,
       rot=0;
 
-    dy-=popS*7*u;
+    dy-=popS*7*q;
 
     if(mw.sing>.001){
-      const kS=state.motionSing/100*mw.sing,
-        sp=state.motionSingSpeed/100;
+      const kS=mk.sing*mw.sing,
+        sp=ms.sing;
       singPh+=dtp*TAU/5.6*sp*(.9+.25*envS);
 
       const lean=Math.sin(singPh)*.8+Math.sin(singPh*.47+1.9)*.2;
 
-      const head=lean*11*u*(.75+.45*envS)+Math.sin(singPh*1.63+.6)*1.6*u;
+      const head=lean*11*q*(.75+.45*envS)+Math.sin(singPh*1.63+.6)*1.6*q;
 
       rot+=head/arm*kS;
-      dx+=Math.sin(singPh-.5)*5*u*kS*(.8+.3*envS);
+      dx+=Math.sin(singPh-.5)*5*q*kS*(.8+.3*envS);
 
-      dy-=((Math.cos(singPh*2)*.5+.5)*2.2*u+envS*4*u)*kS
+      dy-=((Math.cos(singPh*2)*.5+.5)*2.2*q+envS*4*q)*kS
     }
 
+    // ぴょんぴょん：しゃがむ→跳ぶ（放物線）→着地で沈む→少し止まる、をくり返す。縦横比は変えず、位置だけで動かす
     if(mw.hop>.001){
-      const kH=state.motionHop/100*mw.hop;
-      hopPh+=dtp/.74;
+      const kH=mk.hop*mw.hop;
+      hopPh+=dtp/.74*ms.hop;
       const ph=hopPh%1,
-        J=Math.max(16*u,Math.min(64*u,geo.h*.055)),
+        J=S*.055,
         D=J*.2;
       let y=0;
       if(ph<.16)y=D*Math.sin(ph/.16*Math.PI);
@@ -151,45 +175,69 @@
       dy+=y*kH
     }
 
-    // 右往左往：周期の違うゆっくりした揺れを重ね、止まらずに左右をうろうろする。速さも向きの変わり目もなめらかに続く
-    if(mw.wander>.001){
-      const kW=state.motionWander/100*mw.wander,R=W*.13;
-      wanPh+=dtp;
-      const p=wanPh,
-        x=.62*Math.sin(p*TAU/7.3)+.28*Math.sin(p*TAU/4.4+1.7)+.10*Math.sin(p*TAU/2.9+.4),
-        v=(.62*Math.cos(p*TAU/7.3)*TAU/7.3+.28*Math.cos(p*TAU/4.4+1.7)*TAU/4.4+.10*Math.cos(p*TAU/2.9+.4)*TAU/2.9);
-      dx+=x*R*kW;
-      rot+=v*.012*kW
+    // 右往左往：行き先を決めて歩いて向かい、着くか着かないかのうちに逆へ向きを変える（あたふた）。ときどき、その場で小さくおろおろする。
+    // 歩くあいだは一歩ごとに少し上下し、進む向きへ少し傾く。止めたとき・表情を戻したときは、まん中まで歩いて戻る（すべって戻らない）
+    {
+      const on=em==='wander',sW=on?ms.wander:1,R=W*.13*mk.wander;
+      wan.t+=dtp*sW;
+      if(on){
+        if(wan.t>=wan.next){
+          const n=++wan.n,r1=rnd(n*1.73+.31),r2=rnd(n*2.31+.97),r3=rnd(n*3.11+.53);
+          if(r2<.22&&Math.abs(wan.x)<.85)wan.tx=Math.max(-1,Math.min(1,wan.x+(r1-.5)*.36));
+          else{wan.dir=wan.x>.15?-1:wan.x<-.15?1:-wan.dir;wan.tx=wan.dir*(.35+.65*r1)}
+          wan.next=wan.t+.75+.85*r3
+        }
+      }else{wan.tx=0;wan.next=0}
+      const h=1/120;let left=dtp*sW;
+      const w0=4.4,vmax=1.7;
+      while(left>1e-6){
+        const st=Math.min(h,left);left-=st;
+        const acc=w0*w0*(wan.tx-wan.x)-2*w0*wan.v;
+        wan.v=Math.max(-vmax,Math.min(vmax,wan.v+acc*st));
+        wan.x+=wan.v*st
+      }
+      if(!on&&Math.abs(wan.x)<.002&&Math.abs(wan.v)<.01){wan.x=0;wan.v=0}
+      const vpx=wan.v*sW*R,
+        g=Math.min(1,Math.abs(vpx)/(S*.4));
+      wan.step+=Math.abs(vpx)*dtp/(S*.12);
+      wan.lean=ease(wan.lean,Math.max(-1,Math.min(1,vpx/(S*.6)))*.05,.18);
+      dx+=wan.x*R;
+      dy-=Math.abs(Math.sin(wan.step*Math.PI))*S*.014*g;
+      rot+=wan.lean
     }
 
-    // いやいや：小刻みに左右へ。速さと大きさをゆっくり変わる揺らぎで少しずつずらし、規則的に見えないようにする
+    // いやいや：足もとを軸に、上半身を左右へ振る。左右の端で少しためてから戻る（規則的に見えないよう、速さと大きさをゆっくりずらす）
     if(mw.iya>.001){
-      const kI=state.motionIya/100*mw.iya;
-      iyaPh+=dtp*TAU*(2.4+.75*vnoise(t*1.1,.23));
-      const amp=.7+.3*vnoise(t*.8,.91),s=Math.sin(iyaPh);
-      dx+=s*amp*6*u*kI;
-      rot+=Math.sin(iyaPh-.5)*amp*7*u/arm*kI
+      const kI=mk.iya*mw.iya;
+      iyaPh+=dtp*TAU*2.1*ms.iya*(1+.15*vnoise(t*1.3,.23));
+      const env=.82+.18*vnoise(t*.9,.91),
+        s=(Math.sin(iyaPh)+.16*Math.sin(3*iyaPh))/1.03;
+      rot+=s*.042*env*kI;
+      dx+=Math.sin(iyaPh-.4)*S*.007*env*kI;
+      dy-=Math.abs(Math.sin(iyaPh))*S*.004*env*kI
     }
 
+    // ガタガタ：細かくふるえる
     if(mw.shake>.001){
-      const kX=state.motionShake/100*mw.shake,
-        f=t*13;
-      dx+=vnoise(f,.1)*6*u*kX;
-      dy+=vnoise(f,.37)*2.6*u*kX;
-      rot+=vnoise(f*.8,.71)*3*u/arm*kX
+      const kX=mk.shake*mw.shake;
+      shakeT+=dtp*13*ms.shake;
+      const f=shakeT;
+      dx+=vnoise(f,.1)*6*q*kX;
+      dy+=vnoise(f,.37)*2.6*q*kX;
+      rot+=vnoise(f*.8,.71)*3*q/arm*kX
     }
 
     const c=curChar();
     if(c){
-      if(c.breath)dy-=(Math.sin(t*TAU/3.8)*.5+.5)*3*u*k;
+      if(c.breath)dy-=(Math.sin(t*TAU/3.8)*.5+.5)*3*q*k;
 
       if(c.mode==='single'){
         const a=Math.max(envS,popS*.5);
 
-        if(c.talk==='hop')dy-=a*10*u*k+(Math.sin(t*TAU*2.3)*.5+.5)*a*6*u*k;
+        if(c.talk==='hop')dy-=a*10*q*k+(Math.sin(t*TAU*2.3)*.5+.5)*a*6*q*k;
    else if(c.talk==='sway'){
-          rot+=Math.sin(t*TAU*1.25)*a*9*u/arm*k;
-          dx+=Math.sin(t*TAU*1.25-.4)*a*5*u*k
+          rot+=Math.sin(t*TAU*1.25)*a*9*q/arm*k;
+          dx+=Math.sin(t*TAU*1.25-.4)*a*5*q*k
         }
       }
     }

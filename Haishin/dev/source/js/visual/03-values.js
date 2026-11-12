@@ -29,6 +29,10 @@
     studioMotionShake:'motionShake',
     studioMotionWander:'motionWander',
     studioMotionIya:'motionIya',
+    studioMotionHopSpeed:'motionHopSpeed',
+    studioMotionShakeSpeed:'motionShakeSpeed',
+    studioMotionWanderSpeed:'motionWanderSpeed',
+    studioMotionIyaSpeed:'motionIyaSpeed',
     studioImageMotion:'imageMotion'
   };
 

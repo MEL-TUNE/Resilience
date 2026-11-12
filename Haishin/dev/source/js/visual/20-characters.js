@@ -9,7 +9,7 @@
       bgMode:['inherit','own','cafe','transparent','green','blue','black'].includes(c.bgMode)?c.bgMode:'inherit',
       trim:c.trim!==false,
       pos:aspectPosClean(c.pos,'char'),
-      exprs:Array.isArray(c.exprs)?c.exprs.filter(e=>e&&typeof e==='object'&&typeof e.id==='string'&&/^[a-z0-9]{1,8}$/.test(e.id)).slice(0,12).map(e=>({id:e.id,name:String(e.name||'表情').slice(0,20),motion:['none','shake','hop','sing'].includes(e.motion)?e.motion:'none'})):[]
+      exprs:Array.isArray(c.exprs)?c.exprs.filter(e=>e&&typeof e==='object'&&typeof e.id==='string'&&/^[a-z0-9]{1,8}$/.test(e.id)).slice(0,12).map(e=>({id:e.id,name:String(e.name||'表情').slice(0,20),motion:['none','shake','hop','sing','wander','iya'].includes(e.motion)?e.motion:'none',amt:Number.isFinite(Number(e.amt))?Math.max(0,Math.min(200,Math.round(Number(e.amt)))):100,spd:Number.isFinite(Number(e.spd))?Math.max(40,Math.min(200,Math.round(Number(e.spd)))):100})):[]
     };
     for(const k of CHAR_KEYS){
       if(k==='blink'||k==='bounce'){
