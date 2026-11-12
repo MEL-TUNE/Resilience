@@ -333,6 +333,12 @@ const ensureTextSlots=config=>layoutVoices(ensureSe(ensureSe(config,'text'),'env
 // ボイスは「標準」＋名義ごとのタブ（owner＝'std' か名義のid）。各タブは最後の行まで埋まると1行増える
 const VOICE_COLS=5,VOICE_MAX=600;
 let voiceOwnerIds=null,voiceTab=0;
+// ボイス・BGM で開いていたタブ（名義）は、このブラウザに覚える。名義の並びが変わってもずれないように、名義のIDで持つ
+const SOUND_TAB_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_sound_tabs';
+let soundTabsRestored=false,soundTabsLastCur=null;
+function soundTabsSave(){
+  try{const ids=voiceOwnerIds||bgmOwnerIds;if(ids)localStorage.setItem(SOUND_TAB_KEY,JSON.stringify({voice:ids[voiceTab]||'std',bgm:(bgmOwnerIds||ids)[bgmTab]||'std'}))}catch(_){}
+}
 const voiceOwnerOf=s=>typeof s.owner==='string'&&s.owner?s.owner:'std';
 function voiceSlotsNeeded(items){
   let max=-1;
@@ -442,7 +448,10 @@ orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(
   const vBefore=vSig();
   voiceOwnerIds=ids;
   layoutVoices(cfg,ids);
-  if(follow&&cur0(ids,curId)>0&&voiceTab>0)voiceTab=cur0(ids,curId);
+  // 名義のタブを追いかけるのは、名義が実際に切り替わったときだけ（起動のときは、前に開いていたタブを優先する）
+  const switched=soundTabsLastCur!==null&&soundTabsLastCur!==curId;
+  soundTabsLastCur=curId;
+  if(follow&&switched&&cur0(ids,curId)>0&&voiceTab>0)voiceTab=cur0(ids,curId);
   if(voiceTab>=ids.length)voiceTab=0;
   const vChanged=vBefore!==vSig();
   const before=JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join();
@@ -450,8 +459,13 @@ orphans=real.filter(b=>!ids.includes(b.owner)).sort((x,y)=>bgmTabOf(x)-bgmTabOf(
   cfg.bgmTabs=list.slice(0,BGM_TAB_MAX).map(p=>String(p.name||'名義').slice(0,40));
   const cur=ids.indexOf(curId);
   bgmCurTab=cur>0?cur:0;
-  if(follow&&cur>0&&bgmTab>0)bgmTab=cur;
+  if(follow&&switched&&cur>0&&bgmTab>0)bgmTab=cur;
   if(bgmTab>=ids.length)bgmTab=0;
+  if(!soundTabsRestored){
+    // 起動して最初の1回だけ、前に開いていたタブに戻す
+    soundTabsRestored=true;
+    try{const s=JSON.parse(localStorage.getItem(SOUND_TAB_KEY)||'null');if(s){const v=ids.indexOf(s.voice),b=ids.indexOf(s.bgm);if(v>=0)voiceTab=v;if(b>=0)bgmTab=b}}catch(_){}
+  }else soundTabsSave();
   if(vChanged||before!==JSON.stringify(cfg.bgms.filter(bgmReal).map(b=>[b.id,b.owner,b.slotIndex]))+cfg.bgms.length+cfg.bgmTabs.join())persist();
   render();
   renderPrograms?.()

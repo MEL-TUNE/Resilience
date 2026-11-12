@@ -160,3 +160,15 @@ body[data-app="radio"] .bgm-now-row,body[data-app="radio"] .live-prog{display:no
 /* ---- 9. 使い方 */
 .studio-help h3{margin:12px 0 6px;font:700 15px var(--title-font)}
 .studio-help .help-list{margin:0 0 10px;padding-left:1.2em;display:grid;gap:6px;font-size:13px;line-height:1.7}
+
+/* ---- 10. お題帳：くじ引きの冊（歌枠ルーレットなど） */
+.topic-rand-box{display:none;margin:0 0 10px;padding:10px 12px;border:2px solid var(--accent);border-radius:12px;background:var(--hi)}
+#topicBody[data-rand] .topic-rand-box{display:block}
+#topicBody:not([data-song]) .topic-song-only{display:none}
+/* 歌枠ルーレットは曲リストから取り込むので、AIに頼む欄は出さない（「元に戻す」は残す） */
+#topicBody[data-song] .topic-ai,#topicBody[data-song] .topic-ai2>:not(#topicUndo){display:none}
+.topic-hand-rand{align-items:flex-end;margin:0 0 6px}
+.topic-hand-rand .studio-field{flex:1 1 180px;min-width:0;margin:0}
+.topic-hand-rand select{max-width:100%;min-width:0}
+.topic-song-row{margin-top:8px}
+.topic-hand[data-rand] .pon-head strong::before{content:'🎤 '}

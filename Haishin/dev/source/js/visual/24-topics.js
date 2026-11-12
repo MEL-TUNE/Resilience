@@ -13,6 +13,8 @@
       instr:'配信のコメント欄に流す、架空のガチ恋コメントを作ってください。\n- すべて架空の視聴者。実在の人物や、実際のコメントのように見せない。\n- 配信者が笑って返せる熱量にする。住所などの個人情報・脅し・性的な表現は書かない。\n- 1件40字以内。名前・言い回し・熱量の種類を毎回変える。'},
     chuuni:{name:'架空コメント100本ノック（厨二病）',fields:['名前（架空）','コメント'],head:1,body:-1,who:0,mode:'comment',label:'架空コメント',count:50,autoUse:true,
       instr:'配信のコメント欄に流す、厨二病の視聴者になりきった架空のコメントを作ってください。\n- すべて架空の視聴者。実在の人物や、実際のコメントのように見せない。\n- 大げさな言い回し・設定・二つ名で笑える内容にする。人を傷つける表現は書かない。\n- 1件40字以内。名前・設定・言い回しを毎回変える。'},
+    // 歌枠ルーレット：曲リスト（歌枠ノート）の曲を取り込み、まだ出していない曲からくじ引きで出す。項目の並び（曲名・アーティスト・作品・ラベル・メモ）は取り込みで使うので固定
+    song:{name:'歌枠ルーレット',fields:['曲名','アーティスト','作品','ラベル','メモ'],head:0,body:2,who:1,mode:'card',label:'つぎの曲は…',count:10,autoUse:true,rand:true,instr:''},
     free:{name:'自由なお題',fields:['お題','説明'],head:0,body:1,who:-1,mode:'card',label:'お題',count:10,autoUse:false,instr:''}
   };
   const topicCfg=()=>state.topics||(state.topics={decks:[],sel:''});
@@ -21,7 +23,7 @@
   function topicNew(key){
     const P=TOPIC_PRESETS[key]||TOPIC_PRESETS.free,t=topicCfg();
     if(t.decks.length>=30){toast('お題帳は30冊までです');return null}
-    const d={id:tid(),preset:key,name:P.name,instr:P.instr,theme:'',count:P.count,fields:P.fields.slice(),head:P.head,body:P.body,who:P.who,mode:P.mode,label:P.label,autoUse:P.autoUse,items:[],cur:''};
+    const d={id:tid(),preset:key,name:P.name,instr:P.instr,theme:'',count:P.count,fields:P.fields.slice(),head:P.head,body:P.body,who:P.who,mode:P.mode,label:P.label,autoUse:P.autoUse,rand:!!P.rand,pick:'',items:[],cur:''};
     t.decks.push(d);t.sel=d.id;return d
   }
   const tHead=(d,it)=>String(it.f[d.fields[d.head]]||'').trim();
@@ -67,15 +69,25 @@
     if(d.mode==='comment'){
       audShow([{name:tField(d,it,d.who)||d.label,text:tHead(d,it).slice(0,140),icon:'💬',color:'#f4c6d6',force:true}],'topic')
     }else{
-      play.topic={deck:d.id,item:it.id,at:performance.now()}
+      play.topic={deck:d.id,item:it.id,at:performance.now()};
+      // くじ引きの冊：はじめの1秒ほど、ほかの題をぱらぱら見せてから止める
+      if(d.rand&&d.items.length>1){const pool=d.items.filter(x=>x!==it).map(x=>tHead(d,x)).filter(Boolean),spin=[];for(let i=0;i<10&&pool.length;i++)spin.push(pool[playRnd(pool.length)]);play.topic.spin=spin}
     }
-    if(d.autoUse&&it.st==='cand')it.st='used';
+    if((d.autoUse||d.rand)&&(it.st==='cand'||(d.rand&&it.st==='adopt')))it.st='used';
     save();renderTopics();renderTopicHand()
   }
   function topicNext(d=topicDeck(),dir=1,show=true){
     if(!d||!d.items.length)return;
     const list=d.items.filter(it=>it.st!=='rej');
     if(!list.length)return;
+    if(d.rand&&dir>0){
+      // くじ引き：まだ出していないもの（しぼりこみに合うもの）から1つ。出したものは、手元だけに出したときも「使った」にする
+      const pool=list.filter(it=>(it.st==='cand'||it.st==='adopt')&&topicPickOk(d,it));
+      if(!pool.length){toast(d.pick?'このしぼりこみで出せるものは、もうありません（「↺ リセット」で戻せます）':'出せるものは、もうありません（「↺ リセット」で戻せます）',5000);return}
+      const it=pool[playRnd(pool.length)];
+      if(show)topicShow(d,it);else{d.cur=it.id;it.st='used';save();renderTopics();renderTopicHand()}
+      return
+    }
     let i=list.findIndex(it=>it.id===d.cur);
     // 次へ：まだ使っていない（候補・採用）ものを優先して、並び順に進む
     if(dir>0){
@@ -87,11 +99,54 @@
       if(show)topicShow(d,it);else{d.cur=it.id;save();renderTopicHand()}
     }
   }
+  // ---- くじ引きの冊：しぼりこみ（作品・ラベル）、リセット、曲リストからの取り込み
+  const topicTags=v=>[...new Set(String(v||'').split(/[、,，\/／\n]/).map(x=>x.trim()).filter(Boolean))];
+  function topicPickOk(d,it){
+    const p=d.pick||'';if(!p)return true;
+    const F=d.fields,v=p.slice(2);
+    return p.startsWith('w:')?String(it.f[F[2]]||'').trim()===v:p.startsWith('t:')?topicTags(it.f[F[3]]).includes(v):true
+  }
+  function topicPickOptions(d){
+    const F=d.fields,w=new Map(),t=new Map(),open=it=>it.st==='cand'||it.st==='adopt';
+    for(const it of d.items){if(it.st==='rej')continue;
+      const a=String(it.f[F[2]]||'').trim();if(a){const c=w.get(a)||[0,0];c[0]++;if(open(it))c[1]++;w.set(a,c)}
+      for(const x of topicTags(it.f[F[3]])){const c=t.get(x)||[0,0];c[0]++;if(open(it))c[1]++;t.set(x,c)}}
+    const all=d.items.filter(it=>it.st!=='rej'),srt=m=>[...m].sort((x,y)=>x[0].localeCompare(y[0],'ja'));
+    return [['','すべて（残り '+all.filter(open).length+' / '+all.length+'）'],...srt(t).map(([k,c])=>['t:'+k,'ラベル：'+k+'（残り '+c[1]+' / '+c[0]+'）']),...srt(w).map(([k,c])=>['w:'+k,'作品：'+k+'（残り '+c[1]+' / '+c[0]+'）'])]
+  }
+  function topicPickFill(sel,d){
+    const opts=topicPickOptions(d),sig=JSON.stringify(opts);
+    if(sel.dataset.sig!==sig){sel.dataset.sig=sig;sel.replaceChildren(...opts.map(([v,tx])=>Object.assign(document.createElement('option'),{value:v,textContent:tx})))}
+    if(d.pick&&!opts.some(o=>o[0]===d.pick)){d.pick=''}
+    sel.value=d.pick||''
+  }
+  function topicReset(d){
+    if(!d)return;
+    let n=0;for(const it of d.items)if(it.st==='used'){it.st='cand';n++}
+    d.cur='';if(play.topic?.deck===d.id)play.topic=null;
+    save();renderTopics();toast(n+'件を、まだ出していない状態に戻しました',3500)
+  }
+  function topicSongSync(d){
+    if(!d||d.fields.length<5){toast('この冊は項目が5つより少ないので、曲リストから取り込めません',5000);return}
+    const F=d.fields,by=new Map(d.items.map(it=>[songKey(it.f[F[0]],it.f[F[1]]),it]));let add=0,upd=0,over=0;
+    topicKeep();
+    for(const r of repList()){
+      const v=[r.title,r.artist||'',r.w||'',r.tag||'',r.memo||''],it=by.get(songKey(r.title,r.artist));
+      if(it){let ch=false;for(let i=2;i<5;i++)if((it.f[F[i]]||'')!==v[i]){it.f[F[i]]=v[i];ch=true}if(ch)upd++;continue}
+      if(d.items.length>=2000){over++;continue}
+      const f={};F.forEach((k,i)=>{f[k]=i<5?v[i]:''});
+      const n={id:tid(),f,st:'cand',at:new Date().toISOString()};d.items.push(n);by.set(songKey(r.title,r.artist),n);add++
+    }
+    save();renderTopics();
+    toast(repList().length?'曲リストから、新しく '+add+'曲を入れました'+(upd?'・作品やラベルを '+upd+'曲で更新':'')+(over?'（1冊2000件までのため '+over+'曲は入りません）':''):'曲リストが空です。「🎤 歌枠ノート」で曲を登録するか、歌枠管理シートから読み込んでください',6000)
+  }
+
   function drawTopic(k){
     const tp=play.topic;if(!tp)return;
     const d=topicCfg().decks.find(x=>x.id===tp.deck),it=d?.items.find(x=>x.id===tp.item);
     if(!d||!it){play.topic=null;return}
-    const head=tHead(d,it),body=tField(d,it,d.body),who=tField(d,it,d.who),label=d.label||d.name;
+    let head=tHead(d,it),body=tField(d,it,d.body),who=tField(d,it,d.who);const label=d.label||d.name;
+    if(tp.spin&&tp.spin.length){const el=performance.now()-tp.at;if(el<1100){head=tp.spin[Math.floor(el/110)%tp.spin.length];body='';who=''}else tp.spin=null}
     const acc=(typeof look!=='undefined'&&look.accent)||'#8a5a3b';
     const a=Math.min(1,(performance.now()-tp.at)/220),w=Math.min(W*.74,940*k),pad=30*k;
     const fsL=20*k,fsH=36*k,fsB=23*k,fsW=19*k;
@@ -123,6 +178,10 @@
     if(d)E('topicDeck').value=d.id;
     E('topicBody').hidden=!d;
     if(!d){renderTopicHand();renderPon();return}
+    E('topicBody').toggleAttribute('data-rand',!!d.rand);
+    E('topicBody').toggleAttribute('data-song',d.preset==='song');
+    E('topicRand').checked=!!d.rand;
+    if(d.rand)topicPickFill(E('topicPick'),d);
     E('topicName').value=d.name;E('topicInstr').value=d.instr;E('topicTheme').value=d.theme;E('topicCount').value=d.count;
     E('topicFields').value=d.fields.join('、');E('topicLabel').value=d.label;E('topicMode').value=d.mode;E('topicAutoUse').checked=!!d.autoUse;
     for(const [id,k,none] of [['topicHead','head',false],['topicBodyF','body',true],['topicWho','who',true]]){
@@ -171,19 +230,40 @@
   function renderTopicHand(){
     const d=topicDeck(),it=topicCur(d),box=E('topicHand');
     if(!box)return;
-    box.hidden=!d||!d.items.length;
+    // 「🎲 企画」に並べていない冊は、手元カードも出さない
+    box.hidden=!d||!d.items.length||(ponCfg().hide||[]).includes('topic:'+d.id);
     if(box.hidden)return;
+    box.toggleAttribute('data-rand',!!d.rand);
+    E('topicHandNext').textContent=d.rand?'🎲 引く（手元だけ）':'次へ ▶';
+    E('topicHandPrev').hidden=!!d.rand;
+    E('topicHandRand').hidden=!d.rand;
+    if(d.rand)topicPickFill(E('topicHandPick'),d);
     const open=d.items.filter(x=>x.st==='cand'||x.st==='adopt').length;
     E('topicHandTitle').textContent=d.name+'　未使用 '+open+' / 全 '+d.items.length;
     const body=E('topicHandBody');body.replaceChildren();
-    if(!it){body.textContent='「次へ ▶」で、最初のお題を出します。';return}
+    if(!it){body.textContent=d.rand?'「🎲 引く」で、まだ出していないものから1つ出します。':'「次へ ▶」で、最初のお題を出します。';return}
     for(const f of d.fields){const v=it.f[f];if(!v)continue;const p=document.createElement('p');const b=document.createElement('b');b.textContent=f+'：';p.append(b,document.createTextNode(v));body.append(p)}
+    if(d.rand){
+      // 曲リストにある曲なら、音源を開くボタンと、セトリ・歌い始めのボタンを添える
+      const F=d.fields,r=repFind(it.f[F[0]],it.f[F[1]]),row=document.createElement('div');row.className='studio-row topic-song-row';
+      if(r)row.append(...okeButtons(r));
+      row.append(rowBtn('セトリへ','',()=>{state.songs.push({title:it.f[F[0]],artist:it.f[F[1]]||''});save();renderSet();toast('セトリに追加しました')}),
+        rowBtn('♪ 歌い始め','sb-sing',()=>sing(it.f[F[0]],it.f[F[1]]||''),'この曲を歌い始めた時刻を記録します'));
+      if(!r)row.append(Object.assign(document.createElement('span'),{className:'studio-mini',textContent:'（曲リストに同じ曲が見つからないため、音源のボタンは出ません）'}));
+      body.append(row)
+    }
     E('topicHandSt').value=it.st;
     E('topicHandShow').textContent=d.mode==='comment'?'💬 コメント欄に流す':'📌 配信画面に貼り出す'
   }
   E('topicHandPrev').onclick=()=>topicNext(topicDeck(),-1,false);
   E('topicHandNext').onclick=()=>topicNext(topicDeck(),1,false);
   E('topicHandShow').onclick=()=>{const d=topicDeck(),it=topicCur(d);if(it)topicShow(d,it);else topicNext(d,1,true)};
+  E('topicHandPick').onchange=e=>{const d=topicDeck();if(d){d.pick=e.target.value.slice(0,220);save();renderTopics()}};
+  E('topicHandReset').onclick=e=>armed(e.currentTarget,'もう一度押すとリセット',()=>topicReset(topicDeck()));
+  E('topicPick').onchange=e=>{const d=topicDeck();if(d){d.pick=e.target.value.slice(0,220);save();renderTopics()}};
+  E('topicSongSync').onclick=()=>topicSongSync(topicDeck());
+  E('topicSongReset').onclick=e=>armed(e.currentTarget,'もう一度押すとリセット',()=>topicReset(topicDeck()));
+  E('topicRand').onchange=e=>{const d=topicDeck();if(d){d.rand=e.target.checked;save();renderTopics()}};
   E('topicHandHide').onclick=()=>{play.topic=null;renderPon()};
   E('topicHandSt').onchange=e=>{const it=topicCur();if(it){it.st=e.target.value;save();renderTopics()}};
 
@@ -284,7 +364,7 @@
         items.push({id:iid,f,st:ST.includes(it.st)?it.st:'cand',at:S(it.at,40)})
       }
       out.decks.push({id,preset:S(d.preset,20),name:S(d.name,40)||'お題帳',instr:S(d.instr,20000),theme:S(d.theme,4000),count:Math.max(1,Math.min(100,Math.round(Number(d.count))||7)),
-        fields,head:idx(d.head,false),body:idx(d.body,true),who:idx(d.who,true),mode:d.mode==='comment'?'comment':'card',label:S(d.label,40),autoUse:!!d.autoUse,items,cur:typeof d.cur==='string'&&items.some(x=>x.id===d.cur)?d.cur:''})
+        fields,head:idx(d.head,false),body:idx(d.body,true),who:idx(d.who,true),mode:d.mode==='comment'?'comment':'card',label:S(d.label,40),autoUse:!!d.autoUse,rand:d.rand===true,pick:S(d.pick,220),items,cur:typeof d.cur==='string'&&items.some(x=>x.id===d.cur)?d.cur:''})
     }
     out.sel=typeof v.sel==='string'&&out.decks.some(d=>d.id===v.sel)?v.sel:(out.decks[0]?.id||'');
     return out
