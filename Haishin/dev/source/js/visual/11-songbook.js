@@ -196,6 +196,42 @@
       SB.set.append(li)
     });
     if(!state.songs.length)SB.set.append(sbEmpty('li','セトリは空です。下の「③ 曲リスト」の「セトリへ」か、「＋ 曲を登録する」の「登録してセトリにも入れる」で追加できます'))
+    renderDeckSet()
+  }
+
+  // 本番の「🎲 企画」タブに出すセトリ（0.10.5）。セトリに曲があるか、歌唱を記録しているときだけ出す。
+  // 「♪ 歌い始め」・音源・記録の開始と終了だけを置き、並べ替えや追加は歌枠ノートで行う
+  let deckSetSig='';
+  const DECK_SET_LS='otonoha-deck-setlist-open';
+  function renderDeckSet(){
+    const box=E('deckSet');if(!box)return;
+    const ss=state.singSess,sung=new Set(ss?logList().filter(x=>x.sess===ss.id).map(x=>songKey(x.title,x.artist)):[]),last=sbLast;
+    const nowK=last&&ss&&last.sess===ss.id?songKey(last.title,last.artist):'';
+    const sig=JSON.stringify([state.songs.map(s=>[s.title,s.artist,(repFind(s.title,s.artist)?.srcs||[]).map(x=>x.u+x.by+(x.kk||'')).join('|'),repFind(s.title,s.artist)?.useSrc||'']),!!ss,[...sung],nowK]);
+    box.hidden=!state.songs.length&&!ss;
+    if(sig===deckSetSig)return;
+    deckSetSig=sig;
+    E('deckSetCount').textContent=state.songs.length?state.songs.length+'曲'+(ss?'・歌った '+state.songs.filter(s=>sung.has(songKey(s.title,s.artist))).length:''):'';
+    E('deckSessBtn').textContent=ss?'■ 記録を終える':'● 歌唱の記録を始める';
+    E('deckSessBtn').classList.toggle('recording',!!ss);
+    E('deckSetUndo').hidden=!(ss&&last&&last.sess===ss.id);
+    E('deckSetNow').textContent=nowK?'いま：'+last.title+(last.artist?' / '+last.artist:''):'';
+    const ol=E('deckSongList');ol.replaceChildren();
+    state.songs.forEach((s,i)=>{
+      const k=songKey(s.title,s.artist),li=document.createElement('li');
+      li.classList.toggle('sung',sung.has(k));li.classList.toggle('now',k===nowK);
+      const no=document.createElement('span');no.className='deck-set-no';no.textContent=sung.has(k)?'✓':String(i+1);
+      li.append(no,rowBtn('♪ 歌い始め','sb-sing',()=>sing(s.title,s.artist),'この曲を歌い始めた時刻を記録します'),songSpan(s.title,s.artist),...okeButtons(repFind(s.title,s.artist)));
+      ol.append(li)
+    });
+    if(!state.songs.length)ol.append(sbEmpty('li','セトリは空です（記録はこのまま続けられます）'))
+  }
+  {
+    const box=E('deckSet');
+    try{if(localStorage.getItem(DECK_SET_LS)!=='0')box.open=true}catch(_){box.open=true}
+    box.addEventListener('toggle',()=>{try{localStorage.setItem(DECK_SET_LS,box.open?'1':'0')}catch(_){}});
+    E('deckSessBtn').onclick=()=>state.singSess?sessEnd():sessStart();
+    E('deckSetUndo').onclick=()=>SB.undo.click()
   }
 
   // 曲リスト：行は曲のIDごとに持ち、歌った曲だけ書き換える
@@ -433,6 +469,7 @@
     const ss=state.singSess;
     SB.sessBtn.textContent=ss?'■ 記録を終える':'● 歌唱の記録を始める';
     SB.sessBtn.classList.toggle('recording',!!ss);
+    renderDeckSet();
     if(!ss){SB.sessState.textContent='記録していません';SB.now.textContent='';SB.undo.hidden=true;return}
     SB.sessState.textContent='記録中 '+hms((Date.now()-new Date(ss.start))/1000)+'（'+localTime(ss.start)+'から）';
     const last=sbLast;

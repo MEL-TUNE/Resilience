@@ -172,3 +172,33 @@ body[data-app="radio"] .bgm-now-row,body[data-app="radio"] .live-prog{display:no
 .topic-hand-rand select{max-width:100%;min-width:0}
 .topic-song-row{margin-top:8px}
 .topic-hand[data-rand] .pon-head strong::before{content:'🎤 '}
+
+/* 本番の「🎲 企画」タブのセトリ（0.10.5） */
+.deck-set{margin:0 0 12px;padding:8px 10px;border:1px solid var(--a-p-45);border-radius:12px;background:var(--hi)}
+.deck-set>summary{display:flex;align-items:baseline;gap:8px;cursor:pointer;font-weight:700;font-size:15px;list-style:none}
+.deck-set>summary::-webkit-details-marker{display:none}
+.deck-set>summary::after{content:"▾";margin-left:auto;color:var(--muted);font-size:12px}
+.deck-set:not([open])>summary::after{content:"▸"}
+.deck-set>summary small{font-weight:400;color:var(--muted);font-size:12px}
+.deck-set-bar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+.deck-set-bar button{border:1px solid var(--a-p-45);border-radius:10px;padding:7px 10px;background:var(--paper);font-size:13px;cursor:pointer;color:var(--ink);min-height:40px}
+.deck-set-bar .sb-sess-btn.recording{background:var(--rec);border-color:var(--rec);color:#fff}
+.deck-set-now{margin:2px 0 4px;font-weight:700}
+.deck-set-now:empty{display:none}
+.deck-setlist{margin:4px 0 6px}
+.deck-setlist li{gap:6px}
+.deck-setlist .deck-set-no{flex:0 0 1.6em;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
+.deck-setlist .sb-sing{min-height:36px}
+.deck-setlist li.sung .sb-name{color:var(--muted)}
+.deck-setlist li.sung .deck-set-no{color:var(--accent);font-weight:700}
+.deck-setlist li.now{background:var(--a-p-12);border-radius:8px;padding-left:4px;padding-right:4px}
+.deck-setlist li.now .sb-name{font-weight:700;color:var(--ink)}
+
+/* 本番の「🎲 企画」タブ（0.10.5）：種類ごとにまとめ、ボタンの高さと文字の行数をそろえる */
+.pon-btn{min-height:54px;display:flex;align-items:center;min-width:0}
+.pon-lb{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;min-width:0}
+.pon-now{margin:0 0 10px;padding:7px 10px;border-radius:10px;background:var(--a-p-6);font-weight:700}
+.pon-sub{margin:0 0 10px}
+.pon-bar+.pon-hidden{margin-top:10px}
+#topicHand{margin-top:12px}
+[data-panel="kikaku"]>.pon-opts{margin-top:14px;padding-top:10px;border-top:1px solid var(--a-p-20)}

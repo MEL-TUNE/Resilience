@@ -23,9 +23,10 @@
     const next=['portrait','x34'].includes(e.target.value)?e.target.value:'landscape';
     if(next===state.aspect)return;
     // いまの向きの立ち絵・マスコットの位置を残して、次の向きの位置に戻す
-    aspectStash(state.aspect);
+    const prev=state.aspect;
+    aspectStash(prev);
     state.aspect=next;
-    aspectRestore(next);
+    aspectRestore(next,prev);
     save();
     applyAspect();
     renderValues();

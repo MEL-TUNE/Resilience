@@ -245,8 +245,24 @@ body[data-view="stream"] [data-modes]:not([data-modes~="stream"]),body[data-view
 .outwin-note button{margin-left:8px;border:1px solid var(--a-p-45);border-radius:8px;padding:5px 10px;background:var(--hi);font-size:12px;cursor:pointer}
 body[data-outwin] .outwin-note{display:block}
 body[data-outwin]:not([data-pv-on]) #studioStageWrap{display:none}
-.scene-pv{position:sticky;top:calc(var(--mini-h,0px) + 6px);z-index:3;background:var(--paper);padding:8px 0 4px;margin-bottom:8px;border-bottom:1px solid var(--a-p-20)}
-.scene-pv canvas{display:block;width:100%;max-width:520px;height:auto;margin:0 auto 8px;border-radius:10px;background:repeating-conic-gradient(#e2e8df 0% 25%,#f5f7f1 0% 50%) 50% / 20px 20px}
+/* 準備中・離席中・配信終了の画面（0.10.5）：広い画面では確認用の画面を左の列に置き、設定と重ねない。
+   狭い画面では流れるままにして、「上に残す」を押したときだけ小さくして上に貼る */
+.scene-layout{display:grid;grid-template-columns:minmax(240px,400px) minmax(0,1fr);gap:16px;align-items:start}
+.scene-pv{position:sticky;top:calc(var(--mini-h,0px) + 10px);padding:4px 0}
+.scene-pv canvas{display:block;width:100%;height:auto;max-height:60vh;object-fit:contain;margin:0 auto 8px;border-radius:10px;background:repeating-conic-gradient(#e2e8df 0% 25%,#f5f7f1 0% 50%) 50% / 20px 20px}
+.scene-pin{display:none}
+@media(max-width:860px){
+  .scene-layout{display:block}
+  .scene-pv{position:static;margin-bottom:10px;padding:4px 0 8px;border-bottom:1px solid var(--a-p-20)}
+  .scene-pv canvas{max-height:26vh;width:auto;max-width:100%}
+  .scene-pin{display:block;margin:6px auto 0;border:1px solid var(--a-p-45);border-radius:999px;padding:6px 12px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer}
+  .scene-pin[aria-pressed="true"]{background:var(--a-p-20);font-weight:700}
+  .scene-pv.pinned{position:sticky;top:var(--mini-h,0px);z-index:3;background:var(--paper);box-shadow:0 6px 8px -6px rgba(0,0,0,.25)}
+  .scene-pv.pinned canvas{max-height:18vh;margin-bottom:6px}
+  .scene-pv.pinned .studio-note{display:none}
+  .scene-pv.pinned .scene-switch-sm button{padding:6px 2px;font-size:13px}
+  .scene-pv.pinned .scene-pin{margin-top:4px;padding:3px 10px}
+}
 .scene-switch-sm button{padding:9px 4px;font-size:14px}
 #settingsShell{--grp-v:#4f7fb8;--grp-a:#c0663c;--grp-c:#8a8f86}
 #settingsShell .grp-visual,#settingsShell .grp-audio,#settingsShell .grp-common{position:relative;border-left-width:7px!important;border-left-style:solid!important}
@@ -336,6 +352,9 @@ ol.studio-setlist.sb-list{padding-left:0;line-height:1.5}
 .pon-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
 .pon-head strong{font-size:17px;letter-spacing:.06em}
 .pon-clear{border:2px solid var(--ink);border-radius:10px;padding:8px 12px;font-weight:700;background:var(--ink);color:var(--paper);cursor:pointer}
+.pon-groups{display:grid;gap:12px}
+.pon-group{min-width:0}
+.pon-gh{margin:0 0 5px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em}
 .pon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .pon-btn{border:2px solid var(--accent);border-radius:12px;padding:12px 8px;font-size:15px;font-weight:700;background:var(--hi);color:var(--ink);cursor:pointer;text-align:center;line-height:1.35;overflow-wrap:anywhere}
 .pon-btn.on{background:var(--accent);color:var(--on-accent);box-shadow:0 3px 0 color-mix(in srgb,var(--accent) 55%,#000)}

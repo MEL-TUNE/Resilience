@@ -227,3 +227,17 @@
   - シートの値で曲リストを上書きするのは、シートに書いた項目だけ（sxSyncSong の wrote）。
 - 曲リストのメモは、シートには送らない（シートのメモを上書きしないため）。音源を外しても、シートの行は消さない（行を消す働きはない）。
 - Apps Script：「編集の記録」の時刻を、いつも日本時間に（【試験用】シートのタイムゾーンが America/Los_Angeles だったため）。版の番号は3のまま。この直しは、作者がコードを貼り直すまでシートには入らない。
+
+## 2026-11-13 追記（STUDIO 0.10.5：本番のセトリ、企画タブの並び、場面の設定画面、向きごとの大きさ）
+
+- 作者の報告（4件）と直したこと：
+  1. 設定の「準備中・離席中・配信終了の画面」：`.scene-pv` が `position:sticky` で、プレビュー（最大520px幅）と切り替えボタンが画面の半分ほどを覆ったまま貼り付き、下の設定が操作できなかった（375px・1280px で再現）。index.html で `.scene-layout`（`.scene-pv`＋`.scene-body`）に包み、861px 以上は2列（左がプレビュー、sticky でも重ならない。設定画面の `.ss-grid` と同じ考え方）。860px 以下は流れるまま。`#scenePin`「📌 確認用の画面を上に残す」で `.pinned`（sticky、canvas 最大18vh）。localStorage `otonoha-scene-pv-pin`（50-scenes.js の末尾）。
+  2. マスコット・ミニキャラの大きさ：作者に確かめたところ「映像の向きを切り替えたとき」。大きさは H に対する％（`81-mascots.js` drawMascots、場面の画像は drawSceneImage）。横720→縦・3:4 1280 で同じ％のまま約1.78倍。初めての向きは横の値がそのまま写り、自分で直していないマスコットは写しのまま残るので、何体もあると毎回大きく出ていた。
+     - `41-aspect-memory.js`：`aspectRestore(asp, prev)`（呼び出しは 40-motion-prompt.js の1か所。prev を渡す）。控えの `t`（1＝その向きで大きさを直した、0＝直していない、なし＝0.10.4 まで）。直していないものは `aspSizeConv`（H の比で換算、小数4桁まで。丸めると往復でずれるため）。t なしの控えは「前の向きと大きさが同じなら写し」とみなす。
+     - つまみで大きさを直した時点で、いまの向きの控えに t:1 を書く（`aspMarkSize`。81-mascots.js の mscSize、50-scenes.js の scene_*_imgSize）。切り替える前に読み込み直しても印が消えないように。
+     - sanitize：`aspectPosClean`（msc）と `sceneClean` の pos が t（0/1）を通す。表示は `Math.round`（mscSizeVal）。
+  3. 本番にセトリ：`#deckSet`（企画パネルの先頭の details）。`11-songbook.js` の `renderDeckSet()`（renderSet と renderSess から呼ぶ。シグネチャが同じなら作り直さない）。セトリが空で記録もしていなければ hidden。開閉は localStorage `otonoha-deck-setlist-open`。並べ替え・追加・外すは歌枠ノートだけ。
+  4. 企画タブの並び：`#ponGrid` は `.pon-groups`（中に `.pon-group`＞`.pon-gh`＋`.pon-grid`）。`18-pon.js` の `PON_GROUPS`（serif／slot・wheel・dice／topic／app）。ボタンの文字は `.pon-lb`（2行で切る）、title に全文。`#ponNow`・`.pon-sub` を見出しの直後へ、`.pon-opts` を `#topicHand` の後ろ（パネルの最後）へ移した（id はそのまま）。
+- 0.10.2〜0.10.4 の節が README.md になかったので、短く足した。`dev/STRUCTURE.md` の「state（IndexedDB）」は誤りだったので直した（localStorage の1キー）。
+- テスト：添付のテスト一式に `t0105.js` を足した（作者に渡す zip。リポジトリには入れない）。iPhone の実機・OBS では見ていない。
+- 作者の方針（2026-11-13）：Live2D は保留（自分で使うだけなら良さそう、とのこと）。AITuber（彼岸リオ）は「企画と一緒に切り替える」「リオと2人で並ぶ」の両方を、必要なときに足せる形で。設計はこれから。
