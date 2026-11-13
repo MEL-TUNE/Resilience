@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>オトノハ｜保存データの確認（見るだけ）</title>
+<style>
+body{margin:0;font:16px/1.7 system-ui,-apple-system,"Hiragino Sans","Yu Gothic UI",sans-serif;background:#f5f7f1;color:#22302a}
+main{max-width:760px;margin:auto;padding:20px}
+h1{font-size:1.35rem;margin:.2em 0 .4em}
+p{margin:.4em 0}
+.note{color:#56645c;font-size:.92rem}
+button{font:inherit;font-weight:700;padding:.8em 1.4em;border-radius:12px;border:1px solid #234c40;background:#234c40;color:#fff;cursor:pointer;margin:.6em .4em .6em 0}
+button.sub{background:#fff;color:#234c40}
+button:disabled{opacity:.5;cursor:default}
+section{background:#fff;border:1px solid #d6ddd2;border-radius:14px;padding:14px 16px;margin:14px 0}
+h2{font-size:1.05rem;margin:0 0 .4em}
+ul{margin:.2em 0;padding-left:1.3em}
+.ok{color:#1d6b46;font-weight:700}
+.warn{color:#9a4a12;font-weight:700}
+#verdict{font-size:1.05rem}
+</style>
+</head>
+<body>
+<main>
+<h1>オトノハ｜保存データの確認</h1>
+<p>このページは、このブラウザに保存されているオトノハのデータを<strong>読むだけ</strong>です。書き込み・削除はしません。</p>
+<p class="note">いつもオトノハを使っているのと同じブラウザで開いてください。</p>
+<button id="go">確かめる</button><button id="dl" class="sub" disabled>この内容をファイルに保存する</button>
+<div id="out"></div>
+</main>
+<script>
+'use strict';
+const KEYS={visual:'haishin-visual-studio-v1',audio:'meltune-haishin-studio-config-v1'},DB='meltune-haishin-studio-db';
+let dump=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const n=v=>Array.isArray(v)?v.length:0;
+const parse=t=>{try{return JSON.parse(t)}catch(_){return null}};
+function summarizeVisual(s){
+  if(!s||typeof s!=='object')return null;
+  const chars=s.chars&&typeof s.chars==='object'?Object.values(s.chars).map(c=>c&&c.name||'（名前なし）'):[];
+  return {
+    profiles:Array.isArray(s.profiles)?s.profiles.map(p=>p&&p.name||'（名前なし）'):[],
+    chars,
+    mascots:Array.isArray(s.mascots)?s.mascots.map(m=>m&&m.name||'（名前なし）'):[],
+    songs:n(s.songs),repertoire:n(s.repertoire),singLog:n(s.singLog),
+    topics:s.topics&&Array.isArray(s.topics.decks)?s.topics.decks.map(d=>d&&d.name||''):[],
+    serifs:n(s.serifs),fmt:s.fmt||1
+  };
+}
+function visualHtml(v){
+  return '<ul>'
+    +'<li>名義：'+(v.profiles.length?esc(v.profiles.join('、')):'なし')+'</li>'
+    +'<li>キャラクター：'+v.chars.length+'体'+(v.chars.length?'（'+esc(v.chars.join('、'))+'）':'')+'</li>'
+    +'<li>マスコット：'+v.mascots.length+'体'+(v.mascots.length?'（'+esc(v.mascots.join('、'))+'）':'')+'</li>'
+    +'<li>歌枠ノート：曲リスト '+v.repertoire+'曲・セトリ '+v.songs+'曲・歌唱の記録 '+v.singLog+'件</li>'
+    +'<li>お題帳：'+v.topics.length+'冊'+(v.topics.length?'（'+esc(v.topics.join('、'))+'）':'')+'・セリフ帳 '+v.serifs+'件</li>'
+    +'</ul>';
+}
+function openDbReadOnly(){
+  return new Promise(async res=>{
+    try{
+      if(indexedDB.databases){const list=await indexedDB.databases();if(!list.some(d=>d.name===DB))return res(null)}
+    }catch(_){}
+    const r=indexedDB.open(DB);
+    // 無いときに新しく作らないよう、作りかけたら取り消す
+    r.onupgradeneeded=()=>{try{r.transaction.abort()}catch(_){}};
+    r.onsuccess=()=>res(r.result);
+    r.onerror=()=>res(null);
+  });
+}
+function req(q){return new Promise(res=>{q.onsuccess=()=>res(q.result);q.onerror=()=>res(null)})}
+$('go').onclick=async()=>{
+  $('go').disabled=true;
+  const out=[],ls={};
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/haishin|otonoha|meltune|kissa/i.test(k))ls[k]=localStorage.getItem(k)}
+  const vRaw=ls[KEYS.visual],aRaw=ls[KEYS.audio],v=summarizeVisual(parse(vRaw));
+  let assets=0,images=0,sounds=0,covers=0,other=0,takes=0,backups={};
+  const db=await openDbReadOnly();
+  if(db){
+    try{
+      const keys=(await req(db.transaction('assets','readonly').objectStore('assets').getAllKeys()))||[];
+      assets=keys.length;
+      for(const k of keys.map(String)){
+        if(k.startsWith('backup:')){const val=await req(db.transaction('assets','readonly').objectStore('assets').get(k));backups[k]=typeof val==='string'?val:'（文字ではない控え）'}
+        else if(k.startsWith('cover:'))covers++;
+        else if(k.startsWith('visual-studio:'))images++;
+        else if(/^[0-9a-f]{8}-/.test(k))sounds++;
+        else other++;
+      }
+      if(db.objectStoreNames.contains('takes'))takes=(await req(db.transaction('takes','readonly').objectStore('takes').count()))||0;
+    }catch(e){out.push('<p class="warn">素材の一覧を読めませんでした：'+esc(e&&e.message||e)+'</p>')}
+    db.close();
+  }
+  // 初めの状態でも名義は2つ・キャラクターは2体あるので、それ以外で見る
+  const rich=v&&(v.chars.length>2||v.repertoire>0||v.songs>0||v.singLog>0||v.mascots.length>0||v.topics.length>0||v.serifs>0);
+  out.unshift('<section><h2>結果</h2><p id="verdict">'
+    +(!vRaw?'<span class="warn">映像・キャラクターの設定が、このブラウザには見つかりません。</span>'
+      :rich?'<span class="ok">映像・キャラクターの設定は残っています。</span>オトノハの読み込みのほうで、うまく出せていない可能性が高いです。'
+      :'<span class="warn">映像・キャラクターの設定は、初めの状態に近い中身です。</span>')
+    +'</p></section>');
+  out.push('<section><h2>映像・キャラクター・名義・歌枠ノートの設定</h2>'
+    +(vRaw?'<p>保存の大きさ：約'+vRaw.length.toLocaleString()+'文字（形式 '+esc(v?v.fmt:'？')+'）</p>'+(v?visualHtml(v):'<p class="warn">中身を読めませんでした。</p>'):'<p class="warn">ありません</p>')+'</section>');
+  out.push('<section><h2>効果音・BGM・ラジオ側の設定</h2>'+(aRaw?'<p>保存の大きさ：約'+aRaw.length.toLocaleString()+'文字</p>':'<p class="warn">ありません</p>')+'</section>');
+  out.push('<section><h2>素材（画像・音）</h2>'+(db?'<ul><li>全部で '+assets+'件</li><li>立ち絵・背景などの画像：'+images+'件</li><li>効果音・BGM などの音：'+sounds+'件</li><li>番組のカバー画像：'+covers+'件</li><li>そのほか：'+other+'件</li><li>録音したテイク：'+takes+'件</li></ul>':'<p class="warn">素材の保存場所が見つかりません</p>')+'</section>');
+  const bk=Object.entries(backups);
+  out.push('<section><h2>以前の設定の控え</h2>'+(bk.length?bk.map(([k,t])=>{const b=summarizeVisual(parse(t));return '<p><strong>'+esc(k)+'</strong>（約'+t.length.toLocaleString()+'文字）</p>'+(b?visualHtml(b):'')}).join(''):'<p>ありません</p>')+'</section>');
+  out.push('<p class="note">この結果を、スクリーンショットか、そのまま写して送ってください。下のボタンで、設定と控え（文字の部分だけ。画像・音は入りません）をファイルにして手元に残すこともできます。</p>');
+  $('out').innerHTML=out.join('');
+  dump={at:new Date().toISOString(),page:location.href,localStorage:ls,backups};
+  $('dl').disabled=false;$('go').disabled=false;
+};
+$('dl').onclick=()=>{
+  if(!dump)return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(dump)],{type:'application/json'}));
+  a.download='otonoha-hozon-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+};
+</script>
+</body>
+</html>
