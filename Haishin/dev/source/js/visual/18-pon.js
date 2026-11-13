@@ -82,15 +82,6 @@
         g.append(h,grid);return g
       }).filter(Boolean));
       E('ponEmpty').hidden=shown.length>0;
-      // 並べていない企画があるときは、何が外れているかを見せて、その場で戻せるようにする
-      {
-        const off=all.filter(it=>!shown.includes(it)),ph=E('ponHidden');
-        ph.hidden=!off.length;
-        if(off.length){
-          const b=document.createElement('button');b.type='button';b.textContent='すべて並べる';b.onclick=()=>E('ponAll').click();
-          ph.replaceChildren('いま並べていない企画：'+off.slice(0,8).map(it=>it.label).join('、')+(off.length>8?' ほか'+(off.length-8)+'個':'')+' ',b)
-        }
-      }
       // 並べるものの選択
       const sel=E('ponSerif'),ser=all.filter(it=>it.kind==='serif');
       sel.replaceChildren(...[['none','今回は使用しない'],['all','すべて並べる（'+ser.length+'個）'],...ser.map(it=>['s:'+it.s.id,it.label.replace(/^💬 /,'')])].map(([v,t])=>Object.assign(document.createElement('option'),{value:v,textContent:t})));
