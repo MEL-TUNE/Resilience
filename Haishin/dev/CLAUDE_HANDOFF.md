@@ -247,3 +247,11 @@
     - `22-stage-controls.js`：`outSize`（画面の空き availWidth/Height から枠の分を引いた中に、W:H を保って収める）、`outResize`（resizeBy で中身の寸法に合わせ、幅と高さの両方が1px以内なら済み）。popup の resize を 350ms 待ってから、幅に合わせて高さを直す（自分で変えた直後の 700ms は見ない）。開くときも画面に収まる大きさで開く。
     - `40-motion-prompt.js`：向きの切り替えは `__fitDone=false; fitOutputWindow()`。
     - テスト：`t0105w.js`（画面のあるブラウザが要る。xvfb-run、1920×1080 で、縦 583×1037・横 1280×720・3:4 778×1037、端を動かしても比率に戻る）。Playwright は viewport を当てると別窓の大きさも固定されるので viewport:null。Windows・Mac の実機の Chrome、OBS のウインドウキャプチャでは見ていない。
+
+## 2026-11-13 追記（公開の手順：作者に Merge を押させない）
+
+- 作者の指摘：新しいチャットで、毎回「Merge pull request」を押させられて、とても使いづらい。
+- これまでどおり、**PR のマージは Claude が行う**。作者にマージを頼まない。
+  - `gh api -X PUT repos/MEL-TUNE/Resilience/pulls/<番号>/merge -f merge_method=merge`
+  - そのあと `gh api "repos/MEL-TUNE/Resilience/deployments?sha=<マージのsha>"` の状態が `success` になるのを待ち、`gh api -H "Accept: application/vnd.github.raw" "repos/MEL-TUNE/Resilience/contents/Haishin/index.html?ref=main"` で版の文字列を確かめる。
+- マージがその環境で断られるときは、作者に押してもらう前に、そのことと理由（断られた内容）をそのまま伝え、どうするかを作者に聞く。
