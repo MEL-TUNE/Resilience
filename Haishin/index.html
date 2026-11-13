@@ -1320,7 +1320,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.5 / 本番にセトリ、企画タブの並び、場面の設定とマスコットの大きさの直し</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.6 / 歌枠管理シートへ送った記録があると起動が止まる不具合の直し</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -7759,7 +7759,7 @@ fps:30,
     trimCache=new WeakMap();
   // 保存形式の版。1＝0.6.8まで（動画一覧を設定内に保持）、2＝動画の目録を設定から分離。
   const STATE_FMT=2;
-  let stateRawBackup=null,stateRawFmt=0;
+  let stateRawBackup=null,stateRawFmt=0,stateLoadBroken='';
   function migrateState(s){
     if(!s||typeof s!=='object'||Array.isArray(s))return s;
     const f=Number(s.fmt)||1;
@@ -7789,6 +7789,7 @@ fps:30,
   let saveTm=0,saveFirst=0,saveSt='saved',saveBig=false;
   function saveWrite(){
     clearTimeout(saveTm);saveTm=0;saveFirst=0;
+    if(stateLoadBroken){saveSt='failed';saveBadge?.();return false}
     try{
       const json=JSON.stringify(state);
       localStorage.setItem(KEY_S,json);
@@ -7856,7 +7857,7 @@ function sanitize(v){
     if(Array.isArray(v.karaChannels))out.karaChannels=v.karaChannels.slice(0,60).filter(x=>x&&typeof x==='object').map(x=>({name:String(x.name||'').slice(0,80),url:String(x.url||'').slice(0,300),memo:String(x.memo||'').slice(0,300)}));
     if(['popup','tab','newtab'].includes(v.karaOpen))out.karaOpen=v.karaOpen;
     if(['recent','name','count'].includes(v.repSort))out.repSort=v.repSort;
-    {const S=(x,n)=>String(x??'').slice(0,n);
+    {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
     out.sessInfo={};
     if(v.sessInfo&&typeof v.sessInfo==='object'&&!Array.isArray(v.sessInfo))for(const [k,x] of Object.entries(v.sessInfo).slice(0,2000))if(/^[a-z0-9]{1,16}$/.test(k)&&x&&typeof x==='object'){out.sessInfo[k]={url:S(x.url,500)};if(x.sheet&&typeof x.sheet==='object')out.sessInfo[k].sheet={id:S(x.sheet.id,60),at:iso(x.sheet.at)}}
     if(typeof v.descHead==='string')out.descHead=v.descHead.slice(0,200);
@@ -7876,7 +7877,7 @@ function sanitize(v){
         cast:a.cast.filter(c=>c&&typeof c.id==='string'&&c.core&&typeof c.core==='object').slice(0,5).map(c=>({id:S(c.id,24),enabled:c.enabled!==false,core:Object.fromEntries(['name','role','firstPerson','secondPerson','voice','summary','boundaries'].map(k=>[k,S(c.core[k],500)])),display:{icon:S(c.display?.icon,4),color:/^#[0-9a-f]{6}$/i.test(c.display?.color)?c.display.color:'#f4e6d8'},tuning:Object.fromEntries(Object.entries(c.tuning||{}).filter(([k,x])=>/^[a-z]{2,20}$/.test(k)).map(([k,x])=>[k,Math.max(0,Math.min(100,Number(x)||0))])),lexicon:Object.fromEntries(Object.entries(c.lexicon||{}).filter(([k,x])=>/^[a-z]{2,20}$/.test(k)&&Array.isArray(x)).map(([k,x])=>[k,x.slice(0,20).map(s=>S(s,120))]))}))}
     }
     if(v.slot&&typeof v.slot==='object'){const c=v.slot;out.slot={aName:S(c.aName,20)||'役柄',bName:S(c.bName,20)||'セリフ',dur:Math.max(0,Math.min(10,Number(c.dur)||0)),se:S(c.se,40),use:(Array.isArray(c.use)?c.use:[]).filter(x=>typeof x==='string'&&/^[a-z0-9]{1,16}$/.test(x)).slice(0,100),look:c.look==='bubble'?'bubble':'machine',aiNote:S(c.aiNote,2000),pos:['left','right'].includes(c.pos)?c.pos:'center',size:Math.max(30,Math.min(90,Math.round(Number(c.size)||62))),color:['theme','custom'].includes(c.color)?c.color:'classic',colors:(Array.isArray(c.colors)?c.colors:[]).slice(0,5).map(x=>/^#[0-9a-f]{6}$/i.test(x)?x.toLowerCase():'#000000')}}
-    if(v.pon&&typeof v.pon==='object'){const c=v.pon;out.pon={hide:(Array.isArray(c.hide)?c.hide:[]).filter(x=>typeof x==='string'&&/^(?:[sa]:[a-z0-9]{1,16}|slot|wheel|dice|topic)$/.test(x)).slice(0,300),app:c.app==='page'?'page':'window',serif:typeof c.serif==='string'&&/^(?:none|all|s:[a-z0-9]{1,16})$/.test(c.serif)?c.serif:'all'}}
+    if(v.pon&&typeof v.pon==='object'){const c=v.pon;out.pon={hide:(Array.isArray(c.hide)?c.hide:[]).filter(x=>typeof x==='string'&&/^(?:[sa]:[a-z0-9]{1,16}|topic:[a-z0-9]{1,16}|slot|wheel|dice|topic)$/.test(x)).slice(0,300),app:c.app==='page'?'page':'window',serif:typeof c.serif==='string'&&/^(?:none|all|s:[a-z0-9]{1,16})$/.test(c.serif)?c.serif:'all'}}
     if(v.vr&&typeof v.vr==='object'&&Array.isArray(v.vr.lines)){
       const r=v.vr;
       out.vr={speaker:S(r.speaker,30)||'speaker',trim:r.trim!==false,autoNext:r.autoNext!==false,lines:r.lines.filter(l=>l&&/^[a-z0-9]{1,16}$/.test(l.id)).slice(0,2000).map(l=>({id:l.id,text:S(l.text,300),...(l.done?{done:true,secs:Number(l.secs)||0,rate:Number(l.rate)||48000,notes:(Array.isArray(l.notes)?l.notes:[]).slice(0,4).map(n=>S(n,40))}:{})}))};
@@ -7965,7 +7966,13 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     return out
   }
 
-  state=sanitize(state);
+  // 保存された設定の点検に失敗しても、画面は初期の状態で立ち上げる。そのとき映像側の設定は保存せず、
+  // 保存されている設定を上書きしない（0.10.6。.live を読み込んで入れ替えたら、保存を再び始める）
+  try{state=sanitize(state)}catch(err){
+    stateLoadBroken=String(err&&err.message||err).slice(0,200);
+    try{state=sanitize({})}catch(_){state={...defaults}}
+    setTimeout(()=>toast('保存されている映像・キャラクターの設定をうまく読めませんでした。上書きしないよう、映像側の設定の保存を止めています（データは消えていません）',15000),1500)
+  }
 
 function assetName(id){
     return ['png0','png1','png2','png3'].includes(id)?slotNames[+id.slice(-1)]:id.startsWith('particle')?'降らせる画像'+(id==='particle'?1:+id.slice(8)+1):id.startsWith('fxp-')?'降らせる画像'+(+id.slice(-1)+1):id.startsWith('scene-')?'画面の画像':id.startsWith('msc-')?'マスコットの画像':'背景画像'
@@ -14488,6 +14495,7 @@ function studioAssetId(id){return ['png0','png1','png2','png3',...PARTICLE_IDS,'
   }
   async function studioApply(rawState,decoded){
       const clean=sanitize(rawState);
+      stateLoadBroken='';
       clean.legacyVideos=state.legacyVideos||[];
       // アプリのファイル：今のものを外し、読み込むファイルに置き換える
       {const appIds=Object.keys(decoded).filter(id=>id.startsWith('app-'));
@@ -15266,7 +15274,10 @@ const BG_MAX=10,BG_ASPECTS={landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'};
   }
   async function bgThumb(b){
     if(bgThumbs.has(b.id))return bgThumbs.get(b.id);
-    const blob=assetBlobs['bgi-'+b.id]||await getAsset(ASSET+'bgi-'+b.id);
+    // 起動直後で保存場所の準備がまだなら、整うまで待つ（0.10.6）
+    for(let i=0;i<100&&!db;i++)await new Promise(r=>setTimeout(r,50));
+    let blob=assetBlobs['bgi-'+b.id];
+    if(!blob&&db)try{blob=await getAsset(ASSET+'bgi-'+b.id)}catch(_){}
     if(!blob)return '';
     const u=URL.createObjectURL(blob);bgThumbs.set(b.id,u);return u
   }

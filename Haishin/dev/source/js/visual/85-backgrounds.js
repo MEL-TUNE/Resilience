@@ -22,7 +22,10 @@
   }
   async function bgThumb(b){
     if(bgThumbs.has(b.id))return bgThumbs.get(b.id);
-    const blob=assetBlobs['bgi-'+b.id]||await getAsset(ASSET+'bgi-'+b.id);
+    // 起動直後で保存場所の準備がまだなら、整うまで待つ（0.10.6）
+    for(let i=0;i<100&&!db;i++)await new Promise(r=>setTimeout(r,50));
+    let blob=assetBlobs['bgi-'+b.id];
+    if(!blob&&db)try{blob=await getAsset(ASSET+'bgi-'+b.id)}catch(_){}
     if(!blob)return '';
     const u=URL.createObjectURL(blob);bgThumbs.set(b.id,u);return u
   }
