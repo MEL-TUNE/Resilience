@@ -97,8 +97,6 @@ body[data-view="video"] .deck-strip{grid-template-columns:minmax(0,1.2fr) minmax
 /* 音のお品書きの見出しは、タブの中では小さくする */
 body[data-app="live"] #boardShell .menu-heading{padding-bottom:8px;margin-bottom:12px}
 body[data-app="live"] #boardShell .menu-heading span{font-size:15px}
-.pon-hidden{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:var(--a-p-6);font-size:12px;line-height:1.7}
-.pon-hidden button{margin-left:6px;border:1px solid var(--a-p-45);border-radius:8px;padding:5px 10px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer}
 .topic-hand{margin:12px 0 0}
 @media(max-width:520px){.pon-grid{grid-template-columns:1fr 1fr;gap:6px}.pon-btn{padding:10px 6px;font-size:14px}}
 .deck-panel[data-panel="tools"] h3{margin:0 0 8px;font:700 15px var(--title-font)}
@@ -199,6 +197,5 @@ body[data-app="radio"] .bgm-now-row,body[data-app="radio"] .live-prog{display:no
 .pon-lb{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;min-width:0}
 .pon-now{margin:0 0 10px;padding:7px 10px;border-radius:10px;background:var(--a-p-6);font-weight:700}
 .pon-sub{margin:0 0 10px}
-.pon-bar+.pon-hidden{margin-top:10px}
 #topicHand{margin-top:12px}
 [data-panel="kikaku"]>.pon-opts{margin-top:14px;padding-top:10px;border-top:1px solid var(--a-p-20)}

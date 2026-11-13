@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.6 / 歌枠管理シートへ送った記録があると起動が止まる不具合の直し</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.7 / 本番の企画タブから「いま並べていない企画」の表示を外す</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -60,7 +60,6 @@
 <div class="pon-groups" id="ponGrid" role="group" aria-label="企画"></div>
 <p class="studio-mini" id="ponEmpty" hidden>「🛠 準備」の「企画の準備」でセリフ帳・お題帳・アプリを登録すると、ここにボタンが並びます。</p>
 </section>
-<p class="pon-hidden" id="ponHidden" hidden></p>
 <details class="deck-set" id="deckSet" hidden><summary><span>🎤 セトリ</span><small id="deckSetCount"></small></summary><div class="deck-set-bar"><button type="button" id="deckSessBtn" class="sb-sess-btn">● 歌唱の記録を始める</button><button type="button" id="deckSetUndo" hidden>直前の記録を取り消す</button></div><p class="studio-mini deck-set-now" id="deckSetNow" aria-live="polite"></p><ol class="sb-list deck-setlist" id="deckSongList"></ol><p class="studio-mini">並べ替え・追加・外すのは「🛠 準備」の「🎤 歌枠ノート」でできます。</p></details>
 <section class="topic-hand" id="topicHand" hidden aria-label="お題の手元カード"><div class="pon-head"><strong id="topicHandTitle">お題</strong><span class="studio-mini">手元だけに表示（配信画面には出ません）</span></div>
 <div class="studio-row topic-hand-rand" id="topicHandRand" hidden><label class="studio-field">しぼりこみ<select id="topicHandPick"></select></label><button type="button" id="topicHandReset">↺ リセット</button></div>

@@ -1107,8 +1107,6 @@ body[data-view="video"] .deck-strip{grid-template-columns:minmax(0,1.2fr) minmax
 /* 音のお品書きの見出しは、タブの中では小さくする */
 body[data-app="live"] #boardShell .menu-heading{padding-bottom:8px;margin-bottom:12px}
 body[data-app="live"] #boardShell .menu-heading span{font-size:15px}
-.pon-hidden{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:var(--a-p-6);font-size:12px;line-height:1.7}
-.pon-hidden button{margin-left:6px;border:1px solid var(--a-p-45);border-radius:8px;padding:5px 10px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer}
 .topic-hand{margin:12px 0 0}
 @media(max-width:520px){.pon-grid{grid-template-columns:1fr 1fr;gap:6px}.pon-btn{padding:10px 6px;font-size:14px}}
 .deck-panel[data-panel="tools"] h3{margin:0 0 8px;font:700 15px var(--title-font)}
@@ -1209,7 +1207,6 @@ body[data-app="radio"] .bgm-now-row,body[data-app="radio"] .live-prog{display:no
 .pon-lb{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;min-width:0}
 .pon-now{margin:0 0 10px;padding:7px 10px;border-radius:10px;background:var(--a-p-6);font-weight:700}
 .pon-sub{margin:0 0 10px}
-.pon-bar+.pon-hidden{margin-top:10px}
 #topicHand{margin-top:12px}
 [data-panel="kikaku"]>.pon-opts{margin-top:14px;padding-top:10px;border-top:1px solid var(--a-p-20)}
 
@@ -1320,7 +1317,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.6 / 歌枠管理シートへ送った記録があると起動が止まる不具合の直し</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.7 / 本番の企画タブから「いま並べていない企画」の表示を外す</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1368,7 +1365,6 @@ lookPaint(look);
 <div class="pon-groups" id="ponGrid" role="group" aria-label="企画"></div>
 <p class="studio-mini" id="ponEmpty" hidden>「🛠 準備」の「企画の準備」でセリフ帳・お題帳・アプリを登録すると、ここにボタンが並びます。</p>
 </section>
-<p class="pon-hidden" id="ponHidden" hidden></p>
 <details class="deck-set" id="deckSet" hidden><summary><span>🎤 セトリ</span><small id="deckSetCount"></small></summary><div class="deck-set-bar"><button type="button" id="deckSessBtn" class="sb-sess-btn">● 歌唱の記録を始める</button><button type="button" id="deckSetUndo" hidden>直前の記録を取り消す</button></div><p class="studio-mini deck-set-now" id="deckSetNow" aria-live="polite"></p><ol class="sb-list deck-setlist" id="deckSongList"></ol><p class="studio-mini">並べ替え・追加・外すのは「🛠 準備」の「🎤 歌枠ノート」でできます。</p></details>
 <section class="topic-hand" id="topicHand" hidden aria-label="お題の手元カード"><div class="pon-head"><strong id="topicHandTitle">お題</strong><span class="studio-mini">手元だけに表示（配信画面には出ません）</span></div>
 <div class="studio-row topic-hand-rand" id="topicHandRand" hidden><label class="studio-field">しぼりこみ<select id="topicHandPick"></select></label><button type="button" id="topicHandReset">↺ リセット</button></div>
@@ -10655,15 +10651,6 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
         g.append(h,grid);return g
       }).filter(Boolean));
       E('ponEmpty').hidden=shown.length>0;
-      // 並べていない企画があるときは、何が外れているかを見せて、その場で戻せるようにする
-      {
-        const off=all.filter(it=>!shown.includes(it)),ph=E('ponHidden');
-        ph.hidden=!off.length;
-        if(off.length){
-          const b=document.createElement('button');b.type='button';b.textContent='すべて並べる';b.onclick=()=>E('ponAll').click();
-          ph.replaceChildren('いま並べていない企画：'+off.slice(0,8).map(it=>it.label).join('、')+(off.length>8?' ほか'+(off.length-8)+'個':'')+' ',b)
-        }
-      }
       // 並べるものの選択
       const sel=E('ponSerif'),ser=all.filter(it=>it.kind==='serif');
       sel.replaceChildren(...[['none','今回は使用しない'],['all','すべて並べる（'+ser.length+'個）'],...ser.map(it=>['s:'+it.s.id,it.label.replace(/^💬 /,'')])].map(([v,t])=>Object.assign(document.createElement('option'),{value:v,textContent:t})));
