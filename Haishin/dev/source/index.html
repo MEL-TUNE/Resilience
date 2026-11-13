@@ -54,7 +54,6 @@
 </nav>
 <div class="deck-panels" id="deckPanels">
 <section class="studio-card deck-panel" data-panel="kikaku" aria-label="企画">
-<details class="deck-set" id="deckSet" hidden><summary><span>🎤 セトリ</span><small id="deckSetCount"></small></summary><div class="deck-set-bar"><button type="button" id="deckSessBtn" class="sb-sess-btn">● 歌唱の記録を始める</button><button type="button" id="deckSetUndo" hidden>直前の記録を取り消す</button></div><p class="studio-mini deck-set-now" id="deckSetNow" aria-live="polite"></p><ol class="sb-list deck-setlist" id="deckSongList"></ol><p class="studio-mini">並べ替え・追加・外すのは「🛠 準備」の「🎤 歌枠ノート」でできます。</p></details>
 <section class="pon-bar" id="ponBar" aria-label="企画"><div class="pon-head"><strong>企画</strong><button type="button" class="pon-clear" id="ponClear">画面から消す</button></div>
 <p class="pon-now" title="いま配信画面に出ているもの" id="ponNow" aria-live="polite"></p>
 <div class="pon-sub"><button type="button" id="ponSlotRe" hidden>🎰 役柄だけ引き直す</button><button type="button" id="ponSlotRb" hidden>🎰 セリフだけ引き直す</button></div>
@@ -62,6 +61,7 @@
 <p class="studio-mini" id="ponEmpty" hidden>「🛠 準備」の「企画の準備」でセリフ帳・お題帳・アプリを登録すると、ここにボタンが並びます。</p>
 </section>
 <p class="pon-hidden" id="ponHidden" hidden></p>
+<details class="deck-set" id="deckSet" hidden><summary><span>🎤 セトリ</span><small id="deckSetCount"></small></summary><div class="deck-set-bar"><button type="button" id="deckSessBtn" class="sb-sess-btn">● 歌唱の記録を始める</button><button type="button" id="deckSetUndo" hidden>直前の記録を取り消す</button></div><p class="studio-mini deck-set-now" id="deckSetNow" aria-live="polite"></p><ol class="sb-list deck-setlist" id="deckSongList"></ol><p class="studio-mini">並べ替え・追加・外すのは「🛠 準備」の「🎤 歌枠ノート」でできます。</p></details>
 <section class="topic-hand" id="topicHand" hidden aria-label="お題の手元カード"><div class="pon-head"><strong id="topicHandTitle">お題</strong><span class="studio-mini">手元だけに表示（配信画面には出ません）</span></div>
 <div class="studio-row topic-hand-rand" id="topicHandRand" hidden><label class="studio-field">しぼりこみ<select id="topicHandPick"></select></label><button type="button" id="topicHandReset">↺ リセット</button></div>
 <div class="topic-hand-body" id="topicHandBody"></div>

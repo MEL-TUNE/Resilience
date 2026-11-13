@@ -236,8 +236,14 @@
      - `41-aspect-memory.js`：`aspectRestore(asp, prev)`（呼び出しは 40-motion-prompt.js の1か所。prev を渡す）。控えの `t`（1＝その向きで大きさを直した、0＝直していない、なし＝0.10.4 まで）。直していないものは `aspSizeConv`（H の比で換算、小数4桁まで。丸めると往復でずれるため）。t なしの控えは「前の向きと大きさが同じなら写し」とみなす。
      - つまみで大きさを直した時点で、いまの向きの控えに t:1 を書く（`aspMarkSize`。81-mascots.js の mscSize、50-scenes.js の scene_*_imgSize）。切り替える前に読み込み直しても印が消えないように。
      - sanitize：`aspectPosClean`（msc）と `sceneClean` の pos が t（0/1）を通す。表示は `Math.round`（mscSizeVal）。
-  3. 本番にセトリ：`#deckSet`（企画パネルの先頭の details）。`11-songbook.js` の `renderDeckSet()`（renderSet と renderSess から呼ぶ。シグネチャが同じなら作り直さない）。セトリが空で記録もしていなければ hidden。開閉は localStorage `otonoha-deck-setlist-open`。並べ替え・追加・外すは歌枠ノートだけ。
+  3. 本番にセトリ：`#deckSet`（企画パネルの details。作者の希望で、企画のボタン（`#ponBar`・`#ponHidden`）の下、手元カードの上）。`11-songbook.js` の `renderDeckSet()`（renderSet と renderSess から呼ぶ。シグネチャが同じなら作り直さない）。セトリが空で記録もしていなければ hidden。開閉は localStorage `otonoha-deck-setlist-open`。並べ替え・追加・外すは歌枠ノートだけ。
   4. 企画タブの並び：`#ponGrid` は `.pon-groups`（中に `.pon-group`＞`.pon-gh`＋`.pon-grid`）。`18-pon.js` の `PON_GROUPS`（serif／slot・wheel・dice／topic／app）。ボタンの文字は `.pon-lb`（2行で切る）、title に全文。`#ponNow`・`.pon-sub` を見出しの直後へ、`.pon-opts` を `#topicHand` の後ろ（パネルの最後）へ移した（id はそのまま）。
 - 0.10.2〜0.10.4 の節が README.md になかったので、短く足した。`dev/STRUCTURE.md` の「state（IndexedDB）」は誤りだったので直した（localStorage の1キー）。
 - テスト：添付のテスト一式に `t0105.js` を足した（作者に渡す zip。リポジトリには入れない）。iPhone の実機・OBS では見ていない。
 - 作者の方針（2026-11-13）：Live2D は保留（自分で使うだけなら良さそう、とのこと）。AITuber（彼岸リオ）は「企画と一緒に切り替える」「リオと2人で並ぶ」の両方を、必要なときに足せる形で。設計はこれから。
+- 同じ 0.10.5 で、作者の追加の希望（2件）：
+  - セトリを企画のボタンの下へ（上記 3）。
+  - 配信用ウインドウを、縦なら 9:16 の比率で開く：これまでは W/dpr×H/dpr（縦は 720×1280）で開き、画面に入らず高さが縮められて比率が崩れていた。合わせ直し（fitOutputWindow）は幅だけで「済み」と判定していた。向きの切り替えは resizeTo(450,840) などの外枠の固定値（9:16 ではない）。
+    - `22-stage-controls.js`：`outSize`（画面の空き availWidth/Height から枠の分を引いた中に、W:H を保って収める）、`outResize`（resizeBy で中身の寸法に合わせ、幅と高さの両方が1px以内なら済み）。popup の resize を 350ms 待ってから、幅に合わせて高さを直す（自分で変えた直後の 700ms は見ない）。開くときも画面に収まる大きさで開く。
+    - `40-motion-prompt.js`：向きの切り替えは `__fitDone=false; fitOutputWindow()`。
+    - テスト：`t0105w.js`（画面のあるブラウザが要る。xvfb-run、1920×1080 で、縦 583×1037・横 1280×720・3:4 778×1037、端を動かしても比率に戻る）。Playwright は viewport を当てると別窓の大きさも固定されるので viewport:null。Windows・Mac の実機の Chrome、OBS のウインドウキャプチャでは見ていない。

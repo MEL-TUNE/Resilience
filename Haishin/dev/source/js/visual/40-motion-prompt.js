@@ -33,7 +33,7 @@
     renderMascotUI();
     renderBgList();
     if(outputWindow&&!outputWindow.closed)try{
-      outputWindow.resizeTo(W>H?1280:state.aspect==='x34'?630:450,W>H?760:840)
+      {outputWindow.__fitDone=false;fitOutputWindow()}
     }catch(_){}
     toast(W>H?'横向き（1280×720）にしました':state.aspect==='x34'?'3:4（960×1280）にしました':'縦向き（720×1280）にしました')
   };
