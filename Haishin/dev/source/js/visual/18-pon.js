@@ -56,6 +56,7 @@
     return false
   }
   let ponSig='',ponNodes=[];
+  const PON_GROUPS=[['💬 セリフ帳',['serif']],['🎲 くじ・サイコロ',['slot','wheel','dice']],['📌 お題帳',['topic']],['📄 アプリ',['app']]];
   function renderPon(){
     const c=ponCfg(),all=ponItems(),sv=c.serif||'all';
     // シチュエーションは、ドロップダウンで選んだもの（すべて／1つ／使わない）。ほかはチェックボックス
@@ -64,12 +65,22 @@
     if(sig!==ponSig){
       ponSig=sig;
       ponNodes=shown.map(it=>{
-        const b=document.createElement('button');b.type='button';b.className='pon-btn pon-'+it.kind;b.textContent=it.label;
+        const b=document.createElement('button');b.type='button';b.className='pon-btn pon-'+it.kind;
+        {const lb=document.createElement('span');lb.className='pon-lb';lb.textContent=it.label;b.append(lb)}
         b.title=it.kind==='serif'?'押すたびに、このシチュエーションのセリフを1つ出します（全部出し終えるまで同じセリフは出ません）':it.kind==='app'?(c.app==='page'?'「企画の準備」の中で開きます':'アプリと立ち絵のウインドウで開きます'):'';
+        b.title=it.label+(b.title?'\n'+b.title:'');
         b.onclick=()=>ponRun(it);
         return {it,b}
       });
-      E('ponGrid').replaceChildren(...ponNodes.map(n=>n.b));
+      // 種類ごとにまとめて並べる（0.10.5）。並べる順は、セリフ帳・くじ・お題帳・アプリ
+      E('ponGrid').replaceChildren(...PON_GROUPS.map(([name,kinds])=>{
+        const ns=ponNodes.filter(n=>kinds.includes(n.it.kind));
+        if(!ns.length)return null;
+        const g=document.createElement('div');g.className='pon-group';
+        const h=document.createElement('p');h.className='pon-gh';h.textContent=name;
+        const grid=document.createElement('div');grid.className='pon-grid';grid.append(...ns.map(n=>n.b));
+        g.append(h,grid);return g
+      }).filter(Boolean));
       E('ponEmpty').hidden=shown.length>0;
       // 並べていない企画があるときは、何が外れているかを見せて、その場で戻せるようにする
       {

@@ -166,7 +166,7 @@
       E('mscTilt').value=m.tilt||0;E('mscTiltVal').textContent=(m.tilt||0)+'°';
       E('mscShow').checked=m.show;E('mscTalk').checked=m.talk;E('mscMotion').value=m.motion;
       for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])if(document.activeElement!==E(id))E(id).value=m[k];
-      E('mscAmpVal').textContent=m.amp+'%';E('mscSpeedVal').textContent=m.speed+'%';E('mscSizeVal').textContent=m.size+'%';
+      E('mscAmpVal').textContent=m.amp+'%';E('mscSpeedVal').textContent=m.speed+'%';E('mscSizeVal').textContent=Math.round(m.size)+'%';
       E('mscFileName').textContent=assetBlobs['msc-'+m.id]?(state.assetNames['msc-'+m.id]||'画像'):'未登録'
     }
     renderSpeakerBar();
@@ -265,4 +265,4 @@
   E('mscMotion').onchange=e=>{const m=mscCur();if(m){m.motion=e.target.value;save()}};
   E('mscTilt').addEventListener('input',e=>{const m=mscCur();if(m){m.tilt=Math.max(-180,Math.min(180,Number(e.target.value)||0));E('mscTiltVal').textContent=m.tilt+'°';save()}});
   E('mscTilt').addEventListener('dblclick',()=>{const m=mscCur();if(m){m.tilt=0;E('mscTilt').value=0;E('mscTiltVal').textContent='0°';save()}});
-  for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])E(id).addEventListener('input',e=>{const m=mscCur();if(m){m[k]=Number(e.target.value);save();renderMascotUI()}});
+  for(const [id,k] of [['mscAmp','amp'],['mscSpeed','speed'],['mscSize','size'],['mscX','x'],['mscY','y']])E(id).addEventListener('input',e=>{const m=mscCur();if(m){m[k]=Number(e.target.value);if(k==='size')aspMarkSize(m,{x:m.x,y:m.y,size:m.size,tilt:m.tilt||0});save();renderMascotUI()}});

@@ -134,6 +134,7 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     const el=E(`scene_${k}_${f}`);
     el.addEventListener(el.tagName==='SELECT'||el.type==='checkbox'?'change':'input',()=>{
       state.scenes[k][f]=el.type==='checkbox'?el.checked:el.type==='range'?Number(el.value):el.value.slice(0,200);
+      if(f==='imgSize'){const c=state.scenes[k];aspMarkSize(c,{imgSize:c.imgSize,imgX:c.imgX,imgY:c.imgY})}
       save();
       if(f==='bgm'&&scene===k&&ready){
         if(el.value==='stop'){
@@ -322,3 +323,12 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
   };
 
   navigator.mediaDevices?.addEventListener?.('devicechange',listSinks);
+
+  // 準備中・離席中・配信終了の設定：狭い画面で、確認用の画面を上に残すかどうか（0.10.5、この端末だけに覚える）
+  {
+    const pv=document.querySelector('#sceneSettings .scene-pv'),pin=E('scenePin'),PIN_LS='otonoha-scene-pv-pin';
+    const setPin=on=>{pv.classList.toggle('pinned',on);pin.setAttribute('aria-pressed',on?'true':'false');pin.textContent=on?'📌 上に残すのをやめる':'📌 確認用の画面を上に残す'};
+    let on=false;try{on=localStorage.getItem(PIN_LS)==='1'}catch(_){}
+    setPin(on);
+    pin.onclick=()=>{on=!on;setPin(on);try{localStorage.setItem(PIN_LS,on?'1':'0')}catch(_){}}
+  }

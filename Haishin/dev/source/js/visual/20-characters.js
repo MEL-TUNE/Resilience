@@ -82,7 +82,7 @@
         const out={};
         for(const asp of ['landscape','portrait','x34']){
           const q=x.pos&&typeof x.pos==='object'?x.pos[asp]:null;
-          if(q&&typeof q==='object'&&['imgSize','imgX','imgY'].every(f=>Number.isFinite(Number(q[f]))))out[asp]={imgSize:num(q.imgSize,10,150,60),imgX:num(q.imgX,-100,100,0),imgY:num(q.imgY,-100,100,0)}
+          if(q&&typeof q==='object'&&['imgSize','imgX','imgY'].every(f=>Number.isFinite(Number(q[f]))))out[asp]={imgSize:num(q.imgSize,10,150,60),imgX:num(q.imgX,-100,100,0),imgY:num(q.imgY,-100,100,0),...(q.t===0||q.t===1?{t:q.t}:{})}
         }
         return out
       })()
