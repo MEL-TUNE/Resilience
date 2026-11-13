@@ -39,7 +39,7 @@
     if(Array.isArray(v.karaChannels))out.karaChannels=v.karaChannels.slice(0,60).filter(x=>x&&typeof x==='object').map(x=>({name:String(x.name||'').slice(0,80),url:String(x.url||'').slice(0,300),memo:String(x.memo||'').slice(0,300)}));
     if(['popup','tab','newtab'].includes(v.karaOpen))out.karaOpen=v.karaOpen;
     if(['recent','name','count'].includes(v.repSort))out.repSort=v.repSort;
-    {const S=(x,n)=>String(x??'').slice(0,n);
+    {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
     out.sessInfo={};
     if(v.sessInfo&&typeof v.sessInfo==='object'&&!Array.isArray(v.sessInfo))for(const [k,x] of Object.entries(v.sessInfo).slice(0,2000))if(/^[a-z0-9]{1,16}$/.test(k)&&x&&typeof x==='object'){out.sessInfo[k]={url:S(x.url,500)};if(x.sheet&&typeof x.sheet==='object')out.sessInfo[k].sheet={id:S(x.sheet.id,60),at:iso(x.sheet.at)}}
     if(typeof v.descHead==='string')out.descHead=v.descHead.slice(0,200);
@@ -59,7 +59,7 @@
         cast:a.cast.filter(c=>c&&typeof c.id==='string'&&c.core&&typeof c.core==='object').slice(0,5).map(c=>({id:S(c.id,24),enabled:c.enabled!==false,core:Object.fromEntries(['name','role','firstPerson','secondPerson','voice','summary','boundaries'].map(k=>[k,S(c.core[k],500)])),display:{icon:S(c.display?.icon,4),color:/^#[0-9a-f]{6}$/i.test(c.display?.color)?c.display.color:'#f4e6d8'},tuning:Object.fromEntries(Object.entries(c.tuning||{}).filter(([k,x])=>/^[a-z]{2,20}$/.test(k)).map(([k,x])=>[k,Math.max(0,Math.min(100,Number(x)||0))])),lexicon:Object.fromEntries(Object.entries(c.lexicon||{}).filter(([k,x])=>/^[a-z]{2,20}$/.test(k)&&Array.isArray(x)).map(([k,x])=>[k,x.slice(0,20).map(s=>S(s,120))]))}))}
     }
     if(v.slot&&typeof v.slot==='object'){const c=v.slot;out.slot={aName:S(c.aName,20)||'役柄',bName:S(c.bName,20)||'セリフ',dur:Math.max(0,Math.min(10,Number(c.dur)||0)),se:S(c.se,40),use:(Array.isArray(c.use)?c.use:[]).filter(x=>typeof x==='string'&&/^[a-z0-9]{1,16}$/.test(x)).slice(0,100),look:c.look==='bubble'?'bubble':'machine',aiNote:S(c.aiNote,2000),pos:['left','right'].includes(c.pos)?c.pos:'center',size:Math.max(30,Math.min(90,Math.round(Number(c.size)||62))),color:['theme','custom'].includes(c.color)?c.color:'classic',colors:(Array.isArray(c.colors)?c.colors:[]).slice(0,5).map(x=>/^#[0-9a-f]{6}$/i.test(x)?x.toLowerCase():'#000000')}}
-    if(v.pon&&typeof v.pon==='object'){const c=v.pon;out.pon={hide:(Array.isArray(c.hide)?c.hide:[]).filter(x=>typeof x==='string'&&/^(?:[sa]:[a-z0-9]{1,16}|slot|wheel|dice|topic)$/.test(x)).slice(0,300),app:c.app==='page'?'page':'window',serif:typeof c.serif==='string'&&/^(?:none|all|s:[a-z0-9]{1,16})$/.test(c.serif)?c.serif:'all'}}
+    if(v.pon&&typeof v.pon==='object'){const c=v.pon;out.pon={hide:(Array.isArray(c.hide)?c.hide:[]).filter(x=>typeof x==='string'&&/^(?:[sa]:[a-z0-9]{1,16}|topic:[a-z0-9]{1,16}|slot|wheel|dice|topic)$/.test(x)).slice(0,300),app:c.app==='page'?'page':'window',serif:typeof c.serif==='string'&&/^(?:none|all|s:[a-z0-9]{1,16})$/.test(c.serif)?c.serif:'all'}}
     if(v.vr&&typeof v.vr==='object'&&Array.isArray(v.vr.lines)){
       const r=v.vr;
       out.vr={speaker:S(r.speaker,30)||'speaker',trim:r.trim!==false,autoNext:r.autoNext!==false,lines:r.lines.filter(l=>l&&/^[a-z0-9]{1,16}$/.test(l.id)).slice(0,2000).map(l=>({id:l.id,text:S(l.text,300),...(l.done?{done:true,secs:Number(l.secs)||0,rate:Number(l.rate)||48000,notes:(Array.isArray(l.notes)?l.notes:[]).slice(0,4).map(n=>S(n,40))}:{})}))};
@@ -148,4 +148,10 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     return out
   }
 
-  state=sanitize(state);
+  // 保存された設定の点検に失敗しても、画面は初期の状態で立ち上げる。そのとき映像側の設定は保存せず、
+  // 保存されている設定を上書きしない（0.10.6。.live を読み込んで入れ替えたら、保存を再び始める）
+  try{state=sanitize(state)}catch(err){
+    stateLoadBroken=String(err&&err.message||err).slice(0,200);
+    try{state=sanitize({})}catch(_){state={...defaults}}
+    setTimeout(()=>toast('保存されている映像・キャラクターの設定をうまく読めませんでした。上書きしないよう、映像側の設定の保存を止めています（データは消えていません）',15000),1500)
+  }

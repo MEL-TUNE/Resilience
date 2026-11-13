@@ -255,3 +255,15 @@
   - `gh api -X PUT repos/MEL-TUNE/Resilience/pulls/<番号>/merge -f merge_method=merge`
   - そのあと `gh api "repos/MEL-TUNE/Resilience/deployments?sha=<マージのsha>"` の状態が `success` になるのを待ち、`gh api -H "Accept: application/vnd.github.raw" "repos/MEL-TUNE/Resilience/contents/Haishin/index.html?ref=main"` で版の文字列を確かめる。
 - マージがその環境で断られるときは、作者に押してもらう前に、そのことと理由（断られた内容）をそのまま伝え、どうするかを作者に聞く。
+
+## 2026-11-13 追記（STUDIO 0.10.6：起動が止まる不具合）
+
+- 作者の報告：「ページを開いたら保存データが全部消えている」。作者の保存データ（check.html で書き出した JSON）を試験用ブラウザに入れて再現：`01-sanitize.js` の sessInfo の行（0.9.4 で入った）が、別の区画でしか定義されていない `iso` を呼び、ReferenceError。sanitize はファイルの最上位で呼ばれているので、映像側の初期化がまるごと止まり、何も表示されなかった。sessInfo に sheet（歌枠管理シートへ送った記録）があるときだけ通る行で、作者がその日に初めてシートへ送ったことで表に出た。データ（localStorage・IndexedDB）は消えていなかった。
+- 直したこと：
+  - sessInfo の区画にも `iso` を置いた。
+  - `state=sanitize(state)` を try で包み、失敗したら初期の状態で立ち上げ、`stateLoadBroken` を立てて `saveWrite` で映像側の設定を書かない（上書き防止）。知らせを出す。`.live` を読み込む `studioApply` で解除。
+  - `pon.hide` の点検が `topic:ID` を通していなかった（並べないお題帳が読み込み直すと戻る）。
+  - `bgThumb`：起動直後、db の準備前に getAsset を呼んで例外になっていた。db を待つ。
+- `Haishin/check.html`（PR #59）：localStorage と IndexedDB を読むだけで数を表示し、設定と控え（文字）を JSON に書き出す。DB が無いときは作らない（onupgradeneeded で取り消す）。初めの状態でも名義2つ・キャラクター2体があるので、判定には使わない。
+- テスト：`t0106.js`（作者の保存データ `data/otonoha-hozon-2026-11-13.json` で起動。zip のみ、公開リポジトリには入れない）。
+- 反省として残すこと：sanitize の中の区画ごとの補助関数（S・iso）の定義の範囲。テストに「シートへ送った記録つき」のデータがなかった。点検に失敗したときに何も知らせず初期の状態で始まり、保存で上書きしうる作りだった（今回で防いだ）。

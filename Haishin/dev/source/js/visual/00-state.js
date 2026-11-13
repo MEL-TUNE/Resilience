@@ -168,7 +168,7 @@ fps:30,
     trimCache=new WeakMap();
   // 保存形式の版。1＝0.6.8まで（動画一覧を設定内に保持）、2＝動画の目録を設定から分離。
   const STATE_FMT=2;
-  let stateRawBackup=null,stateRawFmt=0;
+  let stateRawBackup=null,stateRawFmt=0,stateLoadBroken='';
   function migrateState(s){
     if(!s||typeof s!=='object'||Array.isArray(s))return s;
     const f=Number(s.fmt)||1;
@@ -198,6 +198,7 @@ fps:30,
   let saveTm=0,saveFirst=0,saveSt='saved',saveBig=false;
   function saveWrite(){
     clearTimeout(saveTm);saveTm=0;saveFirst=0;
+    if(stateLoadBroken){saveSt='failed';saveBadge?.();return false}
     try{
       const json=JSON.stringify(state);
       localStorage.setItem(KEY_S,json);

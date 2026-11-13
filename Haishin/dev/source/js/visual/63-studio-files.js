@@ -17,6 +17,7 @@
   }
   async function studioApply(rawState,decoded){
       const clean=sanitize(rawState);
+      stateLoadBroken='';
       clean.legacyVideos=state.legacyVideos||[];
       // アプリのファイル：今のものを外し、読み込むファイルに置き換える
       {const appIds=Object.keys(decoded).filter(id=>id.startsWith('app-'));
