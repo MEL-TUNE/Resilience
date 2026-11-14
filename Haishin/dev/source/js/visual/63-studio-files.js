@@ -65,6 +65,7 @@
       renderExprUI();
       paragraph=0;
       renderValues();
+      if(typeof renderKk==='function')renderKk();
       saveNow();
   }
   function studioCollect(){syncChar();const assets={};for(const[id,b]of Object.entries(assetBlobs))if(!/^png[0-3]$/.test(id))assets[id]=b;for(const[id,b]of Object.entries(charBlobs))assets[id]=b;const out=JSON.parse(JSON.stringify(state));delete out.legacyVideos;delete out.videos;return {state:out,assets}}

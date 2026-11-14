@@ -62,6 +62,13 @@
     }
     if(v.descV!==2&&v.descEmpty==='blank')out.descEmpty='rec';
     out.descV=2;
+    // 0.10.9：リオと掛け合い（人格・口調の設定。会話の履歴は IndexedDB の ai:キャラ:企画 に置き、ここには入れない）
+    if(v.ai&&typeof v.ai==='object'&&!Array.isArray(v.ai)){
+      const a=v.ai,T=(x,n)=>typeof x==='string'?x.slice(0,n):'';
+      const chars=(Array.isArray(a.chars)?a.chars:[]).slice(0,12).filter(c=>c&&typeof c==='object'&&/^[\w-]{1,40}$/.test(c.id)).map(c=>({id:c.id,name:T(c.name,40).trim()||'名前なし',persona:T(c.persona,4000),style:T(c.style,4000),call:T(c.call,40),love:[0,1,2].includes(c.love)?c.love:0}));
+      const ids=new Set();const uniq=chars.filter(c=>!ids.has(c.id)&&ids.add(c.id));
+      if(uniq.length)out.ai={chars:uniq,cur:ids.has(a.cur)?a.cur:uniq[0].id,plan:['chat','rp','love','podcast','meeting'].includes(a.plan)?a.plan:'chat',ctx:[4,8,12,20].includes(a.ctx)?a.ctx:8,me:T(a.me,40),pos:['bottom','top','left','right'].includes(a.pos)?a.pos:''}
+    }
     if(['off','now','list'].includes(v.setlistShow))out.setlistShow=v.setlistShow;
     if(['tl','tr','bl','br'].includes(v.setlistPos))out.setlistPos=v.setlistPos;
     if([0,15,30,60,120].includes(v.setlistTime))out.setlistTime=v.setlistTime;
