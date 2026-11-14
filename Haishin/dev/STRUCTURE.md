@@ -83,7 +83,7 @@
 | 20-characters.js | 名義とキャラクターのデータ、切り替え |
 | 21-character-ui.js | キャラクター・名義の編集画面 |
 | 22-stage-controls.js | 表示モード・マイク・全画面・配信用ウインドウ |
-| 23-kakeai.js | AIキャラ・声の「リオと掛け合い（文字と手渡し）」：人格・口調（state.ai）、依頼文、返答を字幕の行に分ける（kkSplit）、字幕（play.serif）、本番の #kkLive、会話の記録（IndexedDB ai:キャラ:企画） |
+| 23-kakeai.js | AIキャラ・声の「リオと掛け合い（文字と手渡し）」：人格・口調（state.ai）、依頼文、返答を字幕の行に分ける（kkSplit）、字幕（play.serif）、本番の #kkLive、会話の記録（IndexedDB ai:キャラ:企画）、Claude・ChatGPT の API にそのまま送る（kkCall。キーは localStorage だけ） |
 | 29-autumn-art.js | 秋・冬の演出の絵 |
 | 30-drawing.js | 立ち絵の位置と動き（avatarGeom／avatarPose／drawAvatar）、降らせる演出、背景 |
 | 40-motion-prompt.js | 映像の向きの切り替え、動きのボタン、画像生成 AI 用のプロンプト |

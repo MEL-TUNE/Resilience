@@ -312,3 +312,13 @@
 - テスト：zip に `t0109.js`（作者の保存データ、1100px・375px、36件）。run.sh の先頭に入れた。
 - 決めていないこと（作者の答え待ち）：リオを主役にするか2人並べるか／合成エンジン／手渡しだけかAPIもか／履歴を .live に入れるか。設計は `dev/AITUBER_RESUME.md`。
 - 確かめていないこと：作者のブラウザでの表示、OBS・配信用ウインドウでの字幕の見え方（実機）。
+
+## 2026-11-15 追記（STUDIO 0.10.10：掛け合いを API でそのまま送る／番組の削除ボタンの文字）
+
+- 作者の希望：手渡しでない仕組みに（Claude でそのままずっと会話できるのが理想）。音声収録の番組設定で、消した番組について「押したら削除」が出続ける。
+- claude.ai・chatgpt.com の会話の画面（月額プラン）を外のページから使う公式の仕組みはないので、API（Anthropic Messages API・OpenAI Chat Completions）をブラウザから直接呼ぶ形にした。料金は API の従量課金で別。
+- `23-kakeai.js`：つなぎ方 `kkConn`（localStorage `otonoha-ai-conn`＝{via:hand/claude/openai, auto, model{claude,openai}}）。キーは localStorage `otonoha-ai-key-claude`・`otonoha-ai-key-openai`（.live・state に入れない）。`kkSystem()`（人格・口調・相手・企画・恋愛・返し方）、`kkMessages(say)`（記録の直近 ctx 件を user/assistant に、同じ側が続けばまとめ、user から始める）、`kkCall`（Claude は `anthropic-dangerous-direct-browser-access: true`・`anthropic-version: 2023-06-01`、max_tokens 800。OpenAI は max_completion_tokens 2000。60秒で打ち切り）、`kkErrText`（401/403・404・429・400・5xx・つながらない・空）。`kkTakeLines` を手渡しと共用。`kkSend` のあと auto なら `kkNext()`。
+- 画面：`#kkVia`、`#kkAuto`、`#kkHandBox`（API のときは隠す）、`#kkConnBox`（キー・モデル・つながるか試す・キーを消す）。本番の `#kkLive` に `#kkLiveSendBox`（`#kkLiveIn`・`#kkLiveSend`、API のときだけ。字幕の行がなくても `#kkLive` を出す）。`lsGet` は 86-deck.js と名前がぶつかるので `kkLsGet`・`kkLsSet`。
+- 番組：`09-board.js` の `armButton` が2回目で文字を戻していなかった（`#progDel` はモーダルの中で使い回すので、消した番組の名前が残った）。`disarmButton` を足し、2回目の押下と `#progEdit` を開くときに戻す。
+- テスト：zip に `t0110.js`（番組の削除ボタン、API はまね。作者の保存データ、1100px・375px、52件）。
+- 確かめていないこと：本物の Anthropic・OpenAI の API（キーがないため、まねでだけ確かめた）。モデル名 gpt-5.6-terra は OpenAI のモデル一覧のページで見た名前で、実際に呼んではいない。

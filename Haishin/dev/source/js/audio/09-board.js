@@ -209,11 +209,18 @@ async function copyText(text){
   askConfirm(text,'閉じる','この画面ではコピーできないため、下の記録を選んでコピーしてください');
 }
 
+// 押す前の文字に戻す（2回目を押したあと・画面を開き直したとき）
+function disarmButton(btn){
+  if(!btn||btn.dataset.armed!=='1')return;
+  clearTimeout(btn._armTimer);
+  btn.dataset.armed='';
+  if(btn.dataset.orig!=null)btn.textContent=btn.dataset.orig;
+  btn.classList.remove('armed')
+}
+
 function armButton(btn,label='もう一度押すと削除'){
   if(btn.dataset.armed==='1'){
-    clearTimeout(btn._armTimer);
-    btn.dataset.armed='';
-    btn.classList.remove('armed');
+    disarmButton(btn);
     return true
   }
 

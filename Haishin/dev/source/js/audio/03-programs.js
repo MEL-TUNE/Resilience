@@ -114,6 +114,7 @@ $('#progBgm').onclick=e=>{
 };
 
 $('#progEdit').onclick=async()=>{
+  disarmButton($('#progDel'));
   if(isFree())return;
 
   const pr=curProgram();
