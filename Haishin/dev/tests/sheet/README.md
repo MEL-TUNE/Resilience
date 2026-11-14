@@ -6,3 +6,7 @@
   2. `../../index.html` を `page.html` として写し、そのフォルダで `python3 -m http.server 8765`
   3. `W=390 H=844 node t_ui.cjs`（スマホの幅）／`W=1280 H=900 TAG=d node t_ui.cjs`（パソコンの幅）。前回の Chrome のデータ（/tmp/chx*）を消してから動かす。
 - どちらも、本物の Google の上での動きを確かめたものではありません。
+
+## 版4（0.10.8）
+
+- `t_gas4.cjs`：配信ログへ送るところ（配信先・収益化・枠タイトル、オープニング・エンディングの行、送り直し）。小さな作りもののシートで動くので、`fx_part.json` は要りません。`node t_gas4.cjs`
