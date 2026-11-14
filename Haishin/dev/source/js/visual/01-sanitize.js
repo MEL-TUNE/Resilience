@@ -41,9 +41,27 @@
     if(['recent','name','count'].includes(v.repSort))out.repSort=v.repSort;
     {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
     out.sessInfo={};
-    if(v.sessInfo&&typeof v.sessInfo==='object'&&!Array.isArray(v.sessInfo))for(const [k,x] of Object.entries(v.sessInfo).slice(0,2000))if(/^[a-z0-9]{1,16}$/.test(k)&&x&&typeof x==='object'){out.sessInfo[k]={url:S(x.url,500)};if(x.sheet&&typeof x.sheet==='object')out.sessInfo[k].sheet={id:S(x.sheet.id,60),at:iso(x.sheet.at)}}
+    if(v.sessInfo&&typeof v.sessInfo==='object'&&!Array.isArray(v.sessInfo))for(const [k,x] of Object.entries(v.sessInfo).slice(0,2000))if(/^[a-z0-9]{1,16}$/.test(k)&&x&&typeof x==='object'){const o=out.sessInfo[k]={url:S(x.url,500)};if(x.sheet&&typeof x.sheet==='object')o.sheet={id:S(x.sheet.id,60),at:iso(x.sheet.at)};
+      // 0.10.8：概要欄用（全体をずらす秒・オープニングを載せない印・エンディングの時刻・足した行）と、配信一覧に送る値
+      const I=(n,lo,hi)=>{n=Number(n);return Number.isFinite(n)?Math.max(lo,Math.min(hi,Math.round(n))):null};
+      if(I(x.shift,-36000,36000))o.shift=I(x.shift,-36000,36000);
+      if(x.op===0)o.op=0;
+      if(I(x.end,0,360000)!==null&&x.end!==null&&x.end!=='')o.end=I(x.end,0,360000);
+      if(I(x.endRec,0,360000)!==null&&x.endRec!==null&&x.endRec!=='')o.endRec=I(x.endRec,0,360000);
+      if(Array.isArray(x.extra)){const ex=x.extra.slice(0,30).filter(y=>y&&typeof y==='object'&&I(y.ts,0,360000)!==null&&S(y.t,120).trim()).map(y=>({ts:I(y.ts,0,360000),t:S(y.t,120)}));if(ex.length)o.extra=ex}
+      for(const kk of ['tt','dest','mon'])if(typeof x[kk]==='string'&&x[kk])o[kk]=S(x[kk],kk==='tt'?300:20)}
     if(typeof v.descHead==='string')out.descHead=v.descHead.slice(0,200);
     if(['blank','rec','skip'].includes(v.descEmpty))out.descEmpty=v.descEmpty;
+    // 0.10.8：概要欄の形。0.10.7 までの設定（desc がない）は、時刻を入れていない曲の初めの値「曲名だけ」を「記録した時刻を使う」に読み替える
+    out.desc={...defaults.desc};
+    if(v.desc&&typeof v.desc==='object'&&!Array.isArray(v.desc)){
+      const d=v.desc;
+      if(['work','plain'].includes(d.fmt))out.desc.fmt=d.fmt;
+      for(const [k,n] of [['sep',80],['srcHead',200],['pm',8],['sm',8],['op',40],['ed',40]])if(typeof d[k]==='string')out.desc[k]=d[k].slice(0,n);
+      for(const k of ['sama','purl','pad'])if(typeof d[k]==='boolean')out.desc[k]=d[k]
+    }
+    if(v.descV!==2&&v.descEmpty==='blank')out.descEmpty='rec';
+    out.descV=2;
     if(['off','now','list'].includes(v.setlistShow))out.setlistShow=v.setlistShow;
     if(['tl','tr','bl','br'].includes(v.setlistPos))out.setlistPos=v.setlistPos;
     if([0,15,30,60,120].includes(v.setlistTime))out.setlistTime=v.setlistTime;

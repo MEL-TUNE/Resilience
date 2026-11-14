@@ -289,7 +289,31 @@ body[data-outwin]:not([data-pv-on]) #studioStageWrap{display:none}
 .msc-owner button.selected{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .sb-list{list-style:none;padding:0;margin:6px 0 10px;font-size:13px}
 .sb-list li{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--a-p-20)}
-.sb-list .sb-name{flex:1 1 180px;min-width:0}
+.sb-list .sb-name{flex:1 1 200px;min-width:0;overflow-wrap:anywhere}
+/* 行の中のまとまり（0.10.8）：音源のボタンと、操作のボタンは、それぞれまとまって折り返す。音源が2つ以上の曲は、音源を下の行にそろえる */
+.sb-list li>.sb-okes{display:flex;flex-wrap:wrap;gap:6px;flex:0 1 auto;min-width:0;max-width:100%}
+.sb-list li>.sb-okes:empty{display:none}
+.sb-list li>.sb-acts{display:flex;flex-wrap:nowrap;gap:6px;flex:0 0 auto;margin-left:auto}
+.sb-list li.sb-many>.sb-okes{order:3;flex:1 1 100%}
+.sb-list li.sb-many>.sb-acts{order:2}
+.sb-list .sb-oke{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 4px;padding:8px 10px;border:1px solid var(--a-p-30);border-radius:10px;background:var(--a-p-6);font-size:12px}
+.sheet-bar .sheet-bar-say{flex:1 1 220px;min-width:0;line-height:1.6}
+.sheet-bar button{border:1px solid var(--a-p-45);border-radius:8px;padding:5px 9px;background:var(--hi);font-size:12px;cursor:pointer;color:var(--ink)}
+.sb-tags{margin:2px 0 8px;font-size:12px}
+.sb-tags>summary{cursor:pointer;color:var(--muted)}
+.sb-tag-box{display:flex;flex-wrap:wrap;gap:6px;padding:8px 0 2px}
+.sb-tag{border:1px solid var(--a-p-45);border-radius:999px;padding:4px 10px;background:var(--hi);color:var(--ink);font-size:12px;cursor:pointer}
+.sb-tag.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
+.sb-add .sb-src-row:first-child{border-top:0}
+.sb-check{display:flex!important;align-items:flex-start;gap:6px;line-height:1.5}
+.sb-check input{flex:0 0 auto;width:auto;margin-top:3px}
+.sb-desc-opts{margin:10px 0 2px;font-size:12px}
+.sb-desc-opts>summary{cursor:pointer;color:var(--muted)}
+.sb-desc-list .sb-used{flex:1 1 180px;min-width:0;max-width:100%;font-size:12px}
+.sb-desc-extra .sb-extra-text{flex:1 1 200px;min-width:0}
+.sb-desc-warn:empty{display:none}
+.sb-shift{max-width:8em}
 .sb-list .sb-name small{display:block;color:var(--muted);font-size:11px}
 .sb-list button,.sb-sess li button{border:1px solid var(--a-p-45);border-radius:8px;padding:5px 9px;background:var(--hi);font-size:12px;cursor:pointer;color:var(--ink)}
 .sb-list .sb-sing{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}

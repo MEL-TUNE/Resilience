@@ -1,20 +1,22 @@
 /**
- * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版3）
+ * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版4）
  * @OnlyCurrentDoc  … このスクリプトが触れられるのは、このスプレッドシートだけです（ドライブのほかのファイルには触れません）
  *
  * 1. 下の OTONOHA_KEY を、自分だけの合言葉に書き換えます（英数字で12文字以上がおすすめ）。
  * 2. デプロイ → 新しいデプロイ → 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」。
- *    版2から入れ替えるときは、デプロイ → デプロイを管理 → 鉛筆の印 → バージョン「新バージョン」→ デプロイ（URLは変わりません）。
+ *    版2・版3から入れ替えるときは、デプロイ → デプロイを管理 → 鉛筆の印 → バージョン「新バージョン」→ デプロイ（URLは変わりません）。
  * 3. 出てきたウェブアプリのURLと合言葉を、オトノハの「歌枠管理シートとつなぐ」に入れます。
  *
  * 書き込むのは、1行目に数式がない列（手で入力する列）だけです。1行目が数式の列（自動の列）には書きません。
  * 版3で足したこと：シートの編集（曲・音源・提供者を足す・直す）、ラベル（「ラベル一覧」タブと「曲」タブのラベル列）、
  *   「編集の記録」タブ（オトノハから直した項目の、前と後の値）、控え（「曲」「音源」「提供者」「ラベル一覧」タブを、このシートの中に写して隠す）。
  * 曲名・アーティスト・音源名・提供者名を直したときは、それを選んでいる「音源」「配信ログ」の行も新しい名前に付け替えます。
- * 行を消す働きはありません（消すときは、シートで行を選んで消します）。
+ * 版4で足したこと（配信ログへ送るところ）：配信一覧の「配信先」「収益化」「枠タイトル」も書く、
+ *   オープニング・エンディング・トーク・企画の行も送る、同じ配信IDを送り直す（その配信IDの配信ログの行を入れ替える）。
+ * 曲・音源・提供者の行を消す働きはありません（消すときは、シートで行を選んで消します）。
  */
 const OTONOHA_KEY = 'ここに合言葉';
-const GAS_VERSION = 3;
+const GAS_VERSION = 4;
 
 function doGet(e) { return out_(handle_((e && e.parameter) || {})); }
 function doPost(e) {
@@ -94,40 +96,54 @@ function read_(ss) {
   return { ok: true, version: 1, songs: songs, srcs: srcs, providers: providers, accounts: accounts };
 }
 
-// p.stream = {id, date, prof, title, addStream}
-// p.rows = [{n, ts, t, a, k, src:{n, u, by, kind}}]
+// p.stream = {id, date, prof, title, addStream, dest, mon, replace}
+// p.rows = [{n, ts, kind, t, a, k, src:{n, u, by}}]。kind は「曲」（空も曲）か、オープニング・エンディング・トーク・企画
+const LOG_KINDS_ = { 'オープニング': 1, 'エンディング': 1, 'トーク・企画': 1 };
 function log_(ss, p) {
   const st = p.stream || {}, rows = Array.isArray(p.rows) ? p.rows.slice(0, 300) : [];
   const id = String(st.id || '').trim().slice(0, 60);
   if (!id) return { ok: false, error: '配信IDがありません' };
   if (!rows.length) return { ok: false, error: '送る曲がありません' };
-  const L = tab_(ss, '配信ログ'), lId = L.col('配信ID');
-  if (L.body.some(function (r) { return cell_(r, lId) === id; })) return { ok: false, exists: true, error: '配信ログに、配信ID「' + id + '」の行がもうあります' };
-  const added = { songs: 0, srcs: 0, rows: 0, stream: 0 };
+  let L = tab_(ss, '配信ログ');
+  const lId = L.col('配信ID');
+  const added = { songs: 0, srcs: 0, rows: 0, stream: 0, replaced: 0 };
+  const has = [];
+  L.body.forEach(function (r, i) { if (cell_(r, lId) === id) has.push(i + 2); });
+  if (has.length && !st.replace) return { ok: false, exists: true, error: '配信ログに、配信ID「' + id + '」の行がもうあります' };
+  // 送り直し：その配信IDの行を消してから入れる（下の行から消す）
+  for (let i = has.length - 1; i >= 0; i--) { L.sh.deleteRow(has[i]); added.replaced++; }
+  if (has.length) L = tab_(ss, '配信ログ');
 
-  // 配信一覧：まだない配信IDなら1行足す（配信先・収益化は空欄。シートで選んでください）
-  if (st.addStream) {
-    const T = tab_(ss, '配信一覧'), tId = T.col('配信ID');
-    if (!T.body.some(function (r) { return cell_(r, tId) === id; })) {
+  // 配信一覧：まだない配信IDなら1行足す。配信先・収益化・枠タイトルは、送られてきたものだけ書く（空のものは、いまの値を残す）
+  {
+    const T = tab_(ss, '配信一覧'), tId = T.col('配信ID'), tDate = T.col('配信日'), tAcc = T.col('アカウントID'), tDest = T.col('配信先'), tMon = T.col('収益化'), tTitle = T.col('枠タイトル');
+    let r = 0;
+    T.body.forEach(function (x, i) { if (!r && cell_(x, tId) === id) r = i + 2; });
+    if (!r && st.addStream) {
       let acc = '';
       try {
         const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');
-        A.body.forEach(function (r) { if (!acc && st.prof && cell_(r, aN) === String(st.prof)) acc = cell_(r, aI); });
+        A.body.forEach(function (x) { if (!acc && st.prof && cell_(x, aN) === String(st.prof)) acc = cell_(x, aI); });
       } catch (err) { }
-      const r = lastRow_(T.sh, 1) + 1;
-      T.sh.getRange(r, 2).setNumberFormat('@');
-      T.sh.getRange(r, 1, 1, 3).setValues([[id, String(st.date || ''), acc]]);
-      if (st.title) T.sh.getRange(r, 6).setValue(String(st.title).slice(0, 300));
+      r = lastRow_(T.sh, tId + 1) + 1;
+      T.sh.getRange(r, tId + 1).setValue(id);
+      if (tDate >= 0) { T.sh.getRange(r, tDate + 1).setNumberFormat('@'); T.sh.getRange(r, tDate + 1).setValue(String(st.date || '')); }
+      if (tAcc >= 0 && acc) T.sh.getRange(r, tAcc + 1).setValue(acc);
       added.stream = 1;
     }
+    if (r) {
+      const put = function (c, v) { v = String(v == null ? '' : v).trim(); if (c >= 0 && v && !T.auto[c]) T.sh.getRange(r, c + 1).setValue(text_(v.slice(0, 300))); };
+      put(tDest, st.dest); put(tMon, st.mon); put(tTitle, st.title);
+    }
   }
+  const songRows = rows.filter(function (x) { return !LOG_KINDS_[String(x.kind || '')]; });
 
   // 曲：シートにない曲は「曲」タブに下書きとして足す（曲名・アーティスト・表記の状態）
   const S = tab_(ss, '曲'), sT = S.col('表示用曲名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用'), sState = S.col('表記の状態');
   const songKeys = {};
   S.body.forEach(function (r) { if (cell_(r, sT)) songKeys[cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA))] = 1; });
   let sNext = lastRow_(S.sh, sT + 1) + 1;
-  rows.forEach(function (x) {
+  songRows.forEach(function (x) {
     const k = String(x.k || (String(x.t || '') + '／' + String(x.a || ''))).slice(0, 420);
     x.k = k;
     if (songKeys[k] || !x.t) return;
@@ -145,7 +161,7 @@ function log_(ss, p) {
   const srcNames = {};
   R.body.forEach(function (r) { if (cell_(r, rN)) srcNames[cell_(r, rN)] = 1; });
   let rNext = lastRow_(R.sh, rN + 1) + 1;
-  rows.forEach(function (x) {
+  songRows.forEach(function (x) {
     const s = x.src;
     if (!s || !s.n) return;
     s.n = String(s.n).slice(0, 200);
@@ -160,6 +176,8 @@ function log_(ss, p) {
 
   // 配信ログ：配信ID・順番・タイムスタンプ（文字）・区分「曲」・曲・音源
   const values = rows.map(function (x, i) {
+    const kind = String(x.kind || '');
+    if (LOG_KINDS_[kind]) return [id, Number(x.n) || (i + 1), String(x.ts || ''), kind, '', ''];
     return [id, Number(x.n) || (i + 1), String(x.ts || ''), '曲', x.k, x.src && x.src.n ? x.src.n : ''];
   });
   const start = lastRow_(L.sh, 1) + 1;

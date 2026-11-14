@@ -274,3 +274,29 @@
 - `#ponHidden`（index.html の `<p class="pon-hidden">`）、`18-pon.js` の renderPon の中でそれを作っていた区画、`deck.css` の `.pon-hidden` の3行を外した。0.10.0 で足したもの。
 - 並べる設定（`ponCfg().hide`・`serif`）と「すべて並べる」（`#ponAll`、`.pon-opts` の中、企画パネルのいちばん下）は変えていない。
 - テスト：`t0107.js`（作者の保存データ、375px・1280px、12件）。`t0100d`・`t0101` の「すべて並べる」を `#ponHidden button` から `#ponAll` に。
+
+## 2026-11-14 追記（STUDIO 0.10.8：歌枠ノートの概要欄・曲の登録欄・歌枠管理シートまわり）
+
+- 作者の希望（3件）：①「＋ 曲を登録する」を「編集」と同じ項目に。保存したらシートにも。音源のボタンが多い行の崩れを直す。② 歌唱の記録のあと、概要欄のセトリと音源リンクを一度にコピーしたい（配信ログがおかしい）。③ 歌枠管理シートまわりを使いやすく組み直し、【試験用】を確定のシートにしたい。
+- 「配信ログがおかしい」で見つけたこと（シートを Google Sheets の道具で読んで確かめた）：
+  - 曲リストの提供者が「歌っちゃ王」（45件）と「カラオケ歌っちゃ王」（28件）に割れていた。0.10.4 の「提供者タブにない提供者は名前だけで足す」が、シートに「歌っちゃ王」（URLなし・未確認）の行を作り、2026/11/13 の配信ログの提供者行が「歌っちゃ王」（URLなし）、配信先での使用が「未確認」になっていた。
+  - 配信一覧の配信先・収益化が空で、判定が「要確認」。オープニング・エンディングの行は送っていなかった。同じ配信IDは送り直せなかった。
+  - 概要欄は、曲ごとに時刻を入れないと時刻が付かなかった（descEmpty の初めの値が「曲名だけ」）。音源の行はなかった。
+- `11-songbook.js`：
+  - 概要欄：`descRows`（op／song／extra／ed）・`descParts`（set・prov・src・miss）・`descFull`・`descSetText`・`descSrcText`・`descOpts`（概要欄の形）・`descBuild`。時刻は `tsOf(x,info)`＝手の時刻 `x.ts`、なければ `recTs`＝`x.off＋info.shift`。使った音源は `usedSrc(x)`（`x.src`、なければ音源が1つならそれ）。時刻の書き方 `descTs`（pad のときは、1時間を超えた行だけ時を付ける。作者の概要欄と同じ）。
+  - `state.desc`＝{fmt（work／plain）, sep, srcHead, pm, sm, op, ed, sama, purl, pad}。初めの値は作者の概要欄の形。`state.descV=2`（sanitize が付ける。ない設定＝0.10.7 までで、descEmpty が blank なら rec に読み替える。初めの値にも入れないこと：読み込みが初めの値を先に混ぜるため、初めの値に入れると読み替えが働かない）。
+  - `state.sessInfo[回]` に `shift`（秒）・`op`（0＝オープニングを入れない）・`end`（エンディングの秒）・`endRec`（記録を終えた秒）・`extra`[{ts,t}]・`tt`・`dest`・`mon`。sanitize の sessInfo の区画の中だけで点検している（`I` を同じ区画に置いた）。
+  - 曲を登録する欄：`formApply`（作品名・ラベル・音源いくつでも）。音源の欄は `srcRowUI`／`srcRowsRead`（「編集」と同じ部品）。ラベルを選ぶ欄 `tagChips`。行のまとまり `rowGroup`（`.sb-okes`／`.sb-acts`、音源2つ以上の行は `li.sb-many`）。
+  - 提供者：`sheetCache()`（localStorage `otonoha-sheet-cache`＝{at, provs[{n,url}], labels[]}）、`provCanon`（シートにそのままあればそれ。なければ、その名前で終わる・始まるシートの提供者が1つだけのとき、そちら）、`provAlign`（曲リストをまとめてそろえて知らせる）、`provUrl`。
+- `19-sheet.js`：`renderSheetBar`（`#sheetBar`）、`sheetLinkInfo`（つなぎ先に name・id・ver・at を足す。URLと合言葉はそのまま）、`sheetRows(s,full)`（full＝オープニング・エンディング・足した行も。版4から）、`sheetBox`（配信先・収益化・送り直し。初めの値は localStorage `otonoha-sheet-stream`）。`SHEET_NEED=4`。
+- `19s-sheet-edit.js`：`sxFetch` のあとに控えを書いて `provAlign`。`sheetWarm`（起動の7秒後に一度。つないでいて、控えが6時間より古いときだけ `sheet` を読む）。`sxPlanExtras`・`sxSrcFields` は `provCanon` を通す。音源の「キーの区分」も、その場の書き込みで送る。
+- Apps Script 版4（`dev/otonoha-sheet.gs`、`SHEET_GAS` も同じ中身）：`log_` が、stream の `dest`・`mon`・`title` を配信一覧の見出しの列へ（送られてきたものだけ）、`replace` で同じ配信IDの配信ログの行を消してから入れる、rows の `kind`（オープニング・エンディング・トーク・企画）はそのまま区分に（曲・音源タブには足さない）。版3までの送り方もそのまま通る。
+- 画面の置き場所（index.html）：`#sxBox` と `#sbSheet` を、④ のあとの「⑤ 歌枠管理シート」へ。`#sbSheet` の中には details を入れていない（テストが `#sbSheet summary` を1つだけと見ているため）。
+- テスト：`tests/sheet/t_gas4.cjs`（版4の log、9件。作りもののシートなのでリポジトリに入れた）。zip に `t0108.js`（作者の保存データ。2026/11/13 の回の概要欄が、作者が実際に貼った概要欄と一字一句同じになること、ほか。937px・375px、38件）、`t0108s.js`（版4のまね `gas/mock4.js`・8791 番につないだときの動き）。`t074` の概要欄の2件を新しい形に。
+- 歌枠管理シート（Google ドライブの MEL-TUNE フォルダ。Claude が Google Sheets・Drive の道具で直接したこと）：
+  - 【試験用】歌枠管理シート（ID 1YnCKq1WXp_0Dz6Kt2_qj4D0sCfFSX2WQTiBuV9eK3CE）を、確定のシートにした：名前を「歌枠管理シート」に、タイムゾーンを日本に、タブの並びを 使い方・曲・音源・提供者・ラベル一覧・配信一覧・配信ログ・概要欄・配信アカウント・編集の記録 に。ファイルは同じなので、Apps Script のURLと合言葉は変わらない。
+  - 音源タブの提供者「歌っちゃ王」38行を「カラオケ歌っちゃ王」に付け替え、提供者タブの「歌っちゃ王」の行を消した。配信一覧 20261113-2057 の配信先を YouTube に（収益化は入れていない）。「編集の記録」に1行残した。
+  - 直す前の写し：「【控え 2026-11-14】歌枠管理シート（確定にする前の写し）」（ID 1r_pzdQ9wf58p9XGG_JXuMDEF4rDVgmmsjFSx2bUCZa8）。
+  - 前からあった「歌枠管理シート」（ID 12Yy__n0ObIdhvtC3YY9CwpoWkciJlwTXrV3YbFP87bo）は、名前を「【旧】歌枠管理シート（2026-11-11 までの版・いまは使いません）」に変えただけ。中身は触っていない。
+  - 版4のコードは、シートには入れていない（Claude の道具では Apps Script を入れられない）。シートに入っているのは作者が入れた版3。
+- 確かめていないこと：本物の Google の上での版4（まねでだけ動かした）。作者のブラウザでの表示。iPhone の実機。
