@@ -177,7 +177,7 @@
     const lines=wrapLines(s.text,maxW-60*k,4),lh=fs*1.5;
     const name=s.who||(state.serifName?((state.profiles||[]).find(p=>p.id===state.profileId)?.name||''):'');
     const w=Math.min(maxW,Math.max(...lines.map(l=>g.measureText(l).width))+60*k),h=lines.length*lh+40*k+(name?fs*.9:0);
-    const pos=state.serifPos,L=audL?audW:0,Rr=audW&&!audL?audW:0,x=pos==='left'?40*k+L:pos==='right'?W-40*k-w-Rr:L+(W-L-Rr-w)/2,y=pos==='top'?40*k:H-60*k-h-(pos==='bottom'?0:H*.18);
+    const pos=s.pos||state.serifPos,L=audL?audW:0,Rr=audW&&!audL?audW:0,x=pos==='left'?40*k+L:pos==='right'?W-40*k-w-Rr:L+(W-L-Rr-w)/2,y=pos==='top'?40*k:H-60*k-h-(pos==='bottom'?0:H*.18);
     g.fillStyle='rgba(255,251,244,.94)';g.strokeStyle='rgba(60,40,30,.35)';g.lineWidth=2*k;
     g.beginPath();g.roundRect(x,y,w,h,22*k);g.fill();g.stroke();
     let yy=y+22*k;

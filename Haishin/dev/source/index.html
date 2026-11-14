@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.8 / 歌枠ノート：概要欄をまとめてコピー、曲の登録欄、歌枠管理シートまわりの組み直し</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.9 / AIキャラ・声：リオと掛け合い（文字と手渡し）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -60,6 +60,7 @@
 <div class="pon-groups" id="ponGrid" role="group" aria-label="企画"></div>
 <p class="studio-mini" id="ponEmpty" hidden>「🛠 準備」の「企画の準備」でセリフ帳・お題帳・アプリを登録すると、ここにボタンが並びます。</p>
 </section>
+<div class="kk-live" id="kkLive" hidden><span class="kk-live-say" id="kkLiveSay"></span><button type="button" id="kkLiveNext" class="accent">💬 次の字幕 ▶</button><button type="button" id="kkLiveHide">字幕を消す</button></div>
 <details class="deck-set" id="deckSet" hidden><summary><span>🎤 セトリ</span><small id="deckSetCount"></small></summary><div class="deck-set-bar"><button type="button" id="deckSessBtn" class="sb-sess-btn">● 歌唱の記録を始める</button><button type="button" id="deckSetUndo" hidden>直前の記録を取り消す</button></div><p class="studio-mini deck-set-now" id="deckSetNow" aria-live="polite"></p><ol class="sb-list deck-setlist" id="deckSongList"></ol><p class="studio-mini">並べ替え・追加・外すのは「🛠 準備」の「🎤 歌枠ノート」でできます。</p></details>
 <section class="topic-hand" id="topicHand" hidden aria-label="お題の手元カード"><div class="pon-head"><strong id="topicHandTitle">お題</strong><span class="studio-mini">手元だけに表示（配信画面には出ません）</span></div>
 <div class="studio-row topic-hand-rand" id="topicHandRand" hidden><label class="studio-field">しぼりこみ<select id="topicHandPick"></select></label><button type="button" id="topicHandReset">↺ リセット</button></div>
@@ -331,6 +332,25 @@
 <p class="studio-kicker">AI CHARACTER / VOICE</p>
 <h2>AIキャラ・声</h2>
 <p class="studio-note">AIキャラクター（たとえば彼岸リオ）に話してもらうための、声の準備の場所です。声の合成エンジン（AivisSpeech など）とのつなぎ込みと、AIキャラクターの口パクは、これから順に足していきます。</p>
+<h3>リオと掛け合い（文字と手渡し）</h3>
+<p class="studio-note">AIキャラクターとの会話を、配信画面に話者名つきの字幕で出します。いまは「手渡し」です：① 依頼文をコピーして、ChatGPT や Claude の会話に貼る → ② 返ってきた文を貼って取り込む → ③ 字幕を1文ずつ出す。外へは何も送りません。声で話させる機能は、このあと足していきます。</p>
+<div class="studio-inline"><label class="studio-field">キャラクター<select id="kkChar"></select></label><label class="studio-field">企画<select id="kkPlan"><option value="chat">普段の会話</option><option value="rp">ロールプレイ</option><option value="love">恋愛合戦</option><option value="podcast">ポッドキャスト</option><option value="meeting">企画会議</option></select></label></div>
+<label class="studio-field">あなたの発言（空でも送れます。そのときは、キャラクターから話を振ってもらいます）<textarea id="kkSay" class="studio-textarea" rows="2" maxlength="2000"></textarea></label>
+<div class="studio-row play-big"><button type="button" id="kkMake" class="accent">① 依頼文をコピー</button><button type="button" id="kkMine">あなたの発言を字幕に出す</button></div>
+<label class="studio-field">② 返ってきた文を貼る<textarea id="kkReply" class="studio-textarea" rows="3" maxlength="6000" placeholder="AIの返答をそのまま貼り付け"></textarea></label>
+<div class="studio-row"><button type="button" id="kkTake" class="accent">② 取り込む（字幕に分ける）</button></div>
+<p class="studio-mini" id="kkInfo" aria-live="polite"></p>
+<ol class="sb-list kk-lines" id="kkLines"></ol>
+<div class="studio-row play-big"><button type="button" id="kkNext" class="accent">③ 次の字幕を出す ▶</button><button type="button" id="kkHide">字幕を消す</button></div>
+<details class="sb-opts" id="kkLogBox"><summary>これまでの会話（キャラクター×企画ごと）</summary><ol class="sb-list kk-log" id="kkLog"></ol><div class="studio-row"><button type="button" id="kkLogCopy">テキストでコピー</button><button type="button" id="kkLogSave">テキストファイルに保存</button><button type="button" id="kkLogClear">この会話の記録を消す</button></div><p class="studio-mini">会話の記録は、このブラウザの中だけに残します（キャラクター×企画ごとに、新しいもの40発言まで）。設定ファイル（.live）には入りません。</p></details>
+<details class="sb-opts" id="kkCharBox"><summary>キャラクターの設定（人格・口調・呼び方）</summary>
+<div class="studio-inline"><label class="studio-field">名前<input id="kkName" type="text" maxlength="40"></label><label class="studio-field">あなたの呼び名（このキャラクターからの呼ばれ方）<input id="kkCall" type="text" maxlength="40"></label></div>
+<div class="studio-inline"><label class="studio-field">配信でのあなたの名前（空なら、いまの名義）<input id="kkMe" type="text" maxlength="40"></label><label class="studio-field">恋愛の会話<select id="kkLove"><option value="0">しない（恋愛合戦の企画でも、からかい程度）</option><option value="1">軽く（冗談の範囲）</option><option value="2">しっかり（企画として演じる）</option></select></label></div>
+<label class="studio-field">人格・関係性<textarea id="kkPersona" class="studio-textarea" rows="5" maxlength="4000"></textarea></label>
+<label class="studio-field">口調<textarea id="kkStyle" class="studio-textarea" rows="5" maxlength="4000"></textarea></label>
+<div class="studio-inline"><label class="studio-field">依頼文に添える会話の数<select id="kkCtx"><option value="4">直近4発言</option><option value="8">直近8発言</option><option value="12">直近12発言</option><option value="20">直近20発言</option></select></label><label class="studio-field">字幕の位置<select id="kkPos"><option value="">セリフ帳と同じ</option><option value="bottom">下</option><option value="top">上</option><option value="left">左</option><option value="right">右</option></select></label></div>
+<div class="studio-row"><button type="button" id="kkDup">別のキャラクターとして複製</button><button type="button" id="kkReset">彼岸リオの初めの設定に戻す</button><button type="button" id="kkDel">このキャラクターを消す</button></div>
+</details>
 <h3>ボイス録り（音声モデルの学習用の録音）</h3>
 <p class="studio-note">読み上げる文を1文ずつ表示して録音し、音割れ・声の小ささ・雑音・短すぎをその場で確かめます。録った声は、1文1ファイルのWAVと「ファイル名|話者名|JP|文」の一覧（Style-Bert-VITS2 などの学習用の形式）にまとめて、ZIPで書き出せます。声のモデルを作る（学習する）作業は、GPUのあるPCや Google Colab などで別に行います。マイクは、ブラウザの音声加工（エコー除去・雑音抑制・自動音量）を切った状態で開きます。</p>
 <div class="studio-inline"><label class="studio-field">話者名（声の種類ごとに分けると、声質ごとの録音セットになります）<input id="vrSpeaker" maxlength="30"></label><label class="studio-field"><input type="checkbox" id="vrTrim"> 前後の無音を自動で詰める</label><label class="studio-field"><input type="checkbox" id="vrAuto"> 問題がなければ次の文へ進む</label></div>
