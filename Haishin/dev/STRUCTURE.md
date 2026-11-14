@@ -18,7 +18,7 @@
   - `data-deck`（開いているタブ：kikaku／se／bgm／chara／tools／all、準備は plan／songs／aivoice）
 - 上に残るもの（`#deckSide`）：映像（`#stagePreview`）と、いつも使う操作の帯（`#deckStrip`）。その下にタブ（`#deckNav`）。
 - 帯の中身：動画は「収録開始・停止して保存・マイク・全音停止」、配信は「配信中・準備中・離席中・配信終了・全音停止」。場面のボタン（`.scene-switch`）と番組の行（`.prog-row`）だけは、画面の種類で置き場所を移します（`deckPlace`）。
-- このブラウザだけに覚えるもの（localStorage）：`otonoha-deck`（開いていたタブ）、`otonoha-pv-pin`（映像を上に残すか）、`otonoha-plan-open`（企画の準備で開いていた見出し）。.live には入れません。
+- このブラウザだけに覚えるもの（localStorage）：`otonoha-sheet-cache`（歌枠管理シートの提供者・ラベルの控え）、`otonoha-sheet-stream`（配信先・収益化の前回の値）、`otonoha-deck`（開いていたタブ）、`otonoha-pv-pin`（映像を上に残すか）、`otonoha-plan-open`（企画の準備で開いていた見出し）。.live には入れません。
 - CSS は3枚です。`base.css`（音声側と共通の土台）、`studio.css`（部品ごとの見た目）、`deck.css`（配信・動画の並べ方）。
 
 ## 収録した動画の置き場所（IndexedDB の assets）
@@ -69,7 +69,7 @@
 | 02-assets.js | 画像の登録（installAsset／removeAsset） |
 | 03-values.js | 設定画面と値の結び付け（renderValues）、企画メモ |
 | 10-karaoke.js | カラオケ音源の検索 |
-| 11-songbook.js | 歌枠ノート：曲リスト（音源 URL）・セトリ・歌唱の記録・概要欄 |
+| 11-songbook.js | 歌枠ノート：曲リスト（音源 URL）・セトリ・歌唱の記録・概要欄（セトリ＋使用音源。0.10.8）、曲を登録する欄、提供者の名前をそろえる（provCanon） |
 | 12-apps.js | 企画卓のアプリ、アプリと立ち絵のウインドウ、キャラクターだけの表示 |
 | 13-plays.js | セリフ帳・ルーレット・サイコロ |
 | 14-bridge.js | オトノハ連携（Otonoha Bridge 1） |
@@ -77,7 +77,7 @@
 | 16-voicerec.js | ボイス録り |
 | 17-slot.js | スロット（役柄×セリフ） |
 | 18-pon.js | 企画のポン出し |
-| 19-sheet.js | 歌枠管理シートとつなぐ（Apps Script のコードは `dev/otonoha-sheet.gs` と同じ内容） |
+| 19-sheet.js | 歌枠管理シートとつなぐ（Apps Script のコードは `dev/otonoha-sheet.gs` と同じ内容。版4）、いちばん上の帯（`#sheetBar`）、配信ログへ送る |
 | 19s-sheet-edit.js | 歌枠管理シートを編集する（歌枠ノートの「📝 歌枠管理シートの曲を足す・直す」。曲・音源・提供者・ラベル・変更の記録。Apps Script 版3 を使う） |
 | 24-topics.js | お題帳（AIに作ってもらったお題の台帳・貼り出し・手元カード） |
 | 20-characters.js | 名義とキャラクターのデータ、切り替え |

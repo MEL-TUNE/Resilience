@@ -42,7 +42,7 @@ function build() {
 let G = build(), j;
 const ok = (name, f) => { try { f(); console.log('PASS', name); } catch (e) { console.log('FAIL', name, '\n  ', e.message); process.exitCode = 1; } };
 
-ok('ping は版3と、シートのIDを返す', () => { j = G.call({ op: 'ping' }); assert.equal(j.version, 3); assert.equal(j.id, 'TESTID'); });
+ok('ping は版4と、シートのIDを返す', () => { j = G.call({ op: 'ping' }); assert.equal(j.version, 4); assert.equal(j.id, 'TESTID'); });
 ok('合言葉が違うと断る', () => { j = JSON.parse(G.api.doPost({ postData: { contents: JSON.stringify({ op: 'sheet', key: 'x' }) } })); assert.equal(j.ok, false); });
 let D;
 ok('sheet：手で入れる列だけを読む（自動の列は入らない）', () => {

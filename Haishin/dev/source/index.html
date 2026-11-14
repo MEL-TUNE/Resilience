@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.7 / 本番の企画タブから「いま並べていない企画」の表示を外す</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.8 / 歌枠ノート：概要欄をまとめてコピー、曲の登録欄、歌枠管理シートまわりの組み直し</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -263,22 +263,43 @@
 </details>
 </section>
 <section class="studio-card mode-section deck-panel" id="studioSongs" data-panel="songs"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore">
-<ol class="sb-flow"><li><b>セトリ</b>：今日歌う曲。歌い始めに「♪ 歌い始め」を押す</li><li><b>本番</b>：歌唱の記録を始める・取り消す</li><li><b>曲リスト</b>：曲と、カラオケ音源のURLを登録しておく（ここからセトリへ入れる）</li><li><b>配信のあと</b>：時刻を直して概要欄に。歌枠管理シートへも送れる</li></ol>
+<ol class="sb-flow"><li><b>セトリ</b>：今日歌う曲。歌い始めに「♪ 歌い始め」を押す</li><li><b>本番</b>：歌唱の記録を始める・取り消す</li><li><b>曲リスト</b>：曲と、カラオケ音源のURLを登録しておく（ここからセトリへ入れる）</li><li><b>配信のあと</b>：概要欄（セトリ＋使用音源）をコピー。歌枠管理シートへも送れる</li><li><b>歌枠管理シート</b>：つなぐ・シートの曲や音源を直す</li></ol>
+<div class="sheet-bar" id="sheetBar"></div>
 <h3 class="kara-h">① セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div>
 <h3 class="kara-h">② 本番：歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびにセトリか曲リストの「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。「▶」で開いた音源も一緒に残ります。</p>
 <h3 class="kara-h">③ 曲リスト <small id="repCount"></small></h3>
 <div class="sb-find"><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・音源・メモで探す" aria-label="曲リストを探す"><label class="studio-field sb-sort">並び<select id="repSort"><option value="recent">最近歌った順</option><option value="name">曲名順</option><option value="count">よく歌う順</option></select></label></div>
-<details class="sx-box" id="sxBox"><summary>📝 歌枠管理シート（曲リストとそろえる・曲・音源・提供者・ラベル）</summary><div id="sxBody" class="sx-body"></div></details>
-<details class="sb-add" id="sbAdd"><summary>＋ 曲を登録する（曲名・アーティスト・音源のURL）</summary>
+<details class="sb-add" id="sbAdd"><summary>＋ 曲を登録する（曲名・アーティスト・作品名・ラベル・音源）</summary>
 <div class="studio-inline"><label class="studio-field">曲名<input id="songTitle" type="text" maxlength="200"></label><label class="studio-field">アーティスト<input id="songArtist" type="text" maxlength="200"></label></div>
-<div class="studio-inline"><label class="studio-field">カラオケ音源のURL（共有リンクのまま貼れます）<input id="songOke" type="url" maxlength="500" placeholder="https://youtu.be/…?si=…"></label><label class="studio-field">音源の名前・提供者（任意）<input id="songOkeBy" type="text" maxlength="120" placeholder="例：OKE-sound"></label></div>
+<div class="studio-inline"><label class="studio-field">作品名（アニメ・ゲームなど。概要欄の『作品 / 曲名』に使います）<input id="songWork" type="text" maxlength="200"></label><label class="studio-field">ラベル（「、」で区切る。歌枠ルーレットのしぼりこみに使います）<input id="songTag" type="text" maxlength="200"></label></div>
+<div class="sb-srcs"><div class="sb-src-row"><label class="studio-field">カラオケ音源のURL（共有リンクのまま貼れます）<input id="songOke" type="url" maxlength="500" placeholder="https://youtu.be/…?si=…"></label><label class="studio-field">提供者（チャンネル名）<input id="songOkeBy" type="text" maxlength="120" placeholder="例：OKE-sound" list="provList" autocomplete="off"></label><label class="studio-field">音源の名前（動画のタイトル。空なら自動）<input id="songOkeName" type="text" maxlength="200"></label><label class="studio-field">キーの区分<select id="songOkeKk"><option>原曲キー</option><option>女性キー</option><option>男性キー</option><option>その他</option></select></label></div><div id="songMoreSrcs"></div></div>
+<div class="studio-row"><button id="songSrcMore" type="button">＋ 音源を足す</button></div>
 <label class="studio-field">メモ（キー・原曲など、任意）<input id="songMemo" type="text" maxlength="200"></label>
 <div class="studio-row"><button id="repAdd" class="accent" type="button">曲リストに登録</button><button id="songAdd" type="button">登録してセトリにも入れる</button><button id="singNowBtn" type="button">♪ この曲を歌い始め</button><button id="songSearch" type="button">曲名＋歌詞でWeb検索</button><button id="songOkeFind" type="button">この曲のカラオケ音源を探す</button></div>
-<p class="studio-mini">URLの共有ID（?si=…）は外して登録します。YouTubeの動画は「https://www.youtube.com/watch?v=…」の形にそろえます。同じ曲名・アーティストで登録すると、音源が足されます。</p>
+<p class="studio-mini">登録した曲の「編集」と同じ項目です。歌枠管理シートとつないでいるときは、登録するとシートの「曲」「音源」タブにも入ります。提供者は、シートの提供者タブにある名前から選べます（似た名前は、シートの名前にそろえます）。URLの共有ID（?si=…）は外し、YouTubeの動画は「https://www.youtube.com/watch?v=…」の形にそろえます。同じ曲名・アーティストで登録すると、音源・ラベルが足されます。</p>
+<datalist id="provList"></datalist>
 </details>
 <ul id="repList" class="sb-list"></ul>
 <h3 class="kara-h">④ 配信のあと：これまでの記録（回ごと）</h3><div id="singLog"></div>
-<details class="sb-opts" id="sbOpts"><summary>配信画面に曲名を出す・概要欄の形</summary>
+<h3 class="kara-h">⑤ 歌枠管理シート</h3>
+<details class="sx-box" id="sxBox"><summary>📝 シートを直す（曲リストとそろえる・曲と音源・提供者・ラベル・変更の記録）</summary><div id="sxBody" class="sx-body"></div></details>
+<details class="sb-opts" id="sbSheet"><summary>🔗 歌枠管理シートとつなぐ（つなぎ先・はじめての手順・貼り付けで読み込む）</summary><div id="sheetBox">
+<p class="studio-note">歌枠管理シート（Googleスプレッドシート）とつなぐと、曲リストで足した曲・音源・ラベルがシートにも入り、配信のあとに配信ログへ送れます。つなぎ先は、端末ごと（パソコン・スマホ）に一度ずつ入れます。</p>
+<div class="studio-inline"><label class="studio-field">ウェブアプリのURL<input id="sheetUrl" type="url" maxlength="300" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></label><label class="studio-field">合言葉<input id="sheetKey" type="password" maxlength="200" autocomplete="off"></label></div>
+<div class="studio-row"><button type="button" id="sheetSave" class="accent">保存して確かめる</button><button type="button" id="sheetRead">シートから曲・音源を読み込む</button><button type="button" id="sheetForget">つなぎ先を消す</button></div>
+<p class="studio-mini" id="sheetInfo" aria-live="polite"></p>
+<p class="studio-mini">URLと合言葉は、このブラウザの中だけに保存します（設定ファイルや書き出しには入りません）。URLと合言葉を知っている人は誰でもシートを読み書きできるので、人に見せないでください。シートに書き込むのは手で入力する列だけで、自動で計算する列には書きません。</p>
+<h4 class="sb-h4">はじめてつなぐ・Apps Script のコードを入れ替える</h4>
+<p class="studio-mini">いまのコードは版4です（版3に、配信一覧の配信先・収益化・枠タイトル、オープニング・エンディングの行、同じ配信の送り直しを足したもの）。版2・版3をお使いなら、Apps Script のコードを全部置き換えて保存し、「デプロイ」→「デプロイを管理」→ 鉛筆の印 → バージョン「新バージョン」→「デプロイ」で入れ替えます（URLと合言葉はそのままです。合言葉の行は、いまの合言葉に直してから保存します）。版3のままでも、曲・音源の読み書きと、曲の行だけの配信ログは使えます。</p>
+<ol class="studio-mini sb-steps"><li>シートを開き、メニューの「拡張機能」→「Apps Script」を開きます。</li><li>下の「コードをコピー」で写したコードを、最初からあるコードと全部置き換えて貼り付けます。</li><li>コードの中の <code>ここに合言葉</code> を、自分だけの合言葉（英数字で12文字以上がおすすめ）に書き換えて保存します。</li><li>「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」でデプロイし、表示される許可の画面で許可します。</li><li>出てきた「ウェブアプリ」のURL（…/exec）と合言葉を、上に入れて「保存して確かめる」を押します。</li></ol>
+<div class="studio-row"><button type="button" id="sheetGasCopy">コードをコピー</button><button type="button" id="sheetGasSave">コードをファイルに保存</button></div>
+<h4 class="sb-h4">つながずに、貼り付けで読み込む</h4>
+<p class="studio-mini">シートの「曲」タブか「音源」タブで、見出しの行から最後の行まで（列はAから最後まで）選んでコピーし、下に貼り付けて「読み込む」を押します。曲タブ→音源タブの順に読み込むと、シートの表記のまま曲と音源がつながります。同じ曲・同じ音源は重ねて登録しません。</p>
+<textarea id="sheetPaste" class="studio-textarea" rows="3" placeholder="シートからコピーした表をここに貼り付け"></textarea>
+<div class="studio-row"><button type="button" id="sheetPasteGo" class="accent">読み込む</button></div>
+<p class="studio-mini" id="sheetPasteInfo" aria-live="polite"></p>
+</div></details>
+<details class="sb-opts" id="sbOpts"><summary>配信画面に曲名を出す・概要欄の見出し</summary>
 <div class="studio-inline"><label class="studio-field">配信画面（PNGTuber画面）に出す<select id="setlistShow"><option value="off">出さない</option><option value="now">いま歌っている曲</option><option value="list">これまでの曲（最新8曲）</option></select></label>
 <label class="studio-field">位置<select id="setlistPos"><option value="tl">左上</option><option value="tr">右上</option><option value="bl">左下</option><option value="br">右下</option></select></label></div>
 <div class="studio-inline"><label class="studio-field">出しておく時間（いま歌っている曲）<select id="setlistTime"><option value="0">歌い終えるまで（次の曲まで）</option><option value="15">歌い始めから15秒</option><option value="30">歌い始めから30秒</option><option value="60">歌い始めから1分</option><option value="120">歌い始めから2分</option></select></label>
@@ -286,24 +307,8 @@
 <div class="studio-row"><button type="button" id="setlistHideBtn">画面の曲名をいったん消す</button></div>
 <p class="studio-mini">「♪ 歌い始め」を押すと、曲名と歌手名が配信画面・配信用ウインドウ・収録する動画に出ます。文字は「準備中・離席中の画面」と同じフォントです。</p>
 <div class="studio-inline"><label class="studio-field">概要欄の見出し<input id="descHead" type="text" maxlength="200"></label>
-<label class="studio-field">時刻を入れていない曲<select id="descEmpty"><option value="blank">曲名だけ載せる</option><option value="rec">記録した経過時間を使う</option><option value="skip">載せない</option></select></label></div>
+<label class="studio-field">時刻を入れていない曲<select id="descEmpty"><option value="rec">記録した時刻を使う</option><option value="blank">曲名だけ載せる</option><option value="skip">載せない</option></select></label></div>
 </details>
-<details class="sb-opts" id="sbSheet"><summary>歌枠管理シートとつなぐ（曲・音源の読み込み、配信ログへの書き込み）</summary><div id="sheetBox">
-<p class="studio-note">歌枠管理シート（Googleスプレッドシート）の曲と音源を、曲リストに読み込めます。読み込んだ曲は、セトリ・曲リストの「▶」から音源へ飛べます。方法は2つあります。</p>
-<h4 class="sb-h4">A. 貼り付けで読み込む（準備なし）</h4>
-<p class="studio-mini">シートの「曲」タブか「音源」タブで、見出しの行から最後の行まで（列はAから最後まで）選んでコピーし、下に貼り付けて「読み込む」を押します。曲タブ→音源タブの順に読み込むと、シートの表記のまま曲と音源がつながります。同じ曲・同じ音源は重ねて登録しません。</p>
-<textarea id="sheetPaste" class="studio-textarea" rows="3" placeholder="シートからコピーした表をここに貼り付け"></textarea>
-<div class="studio-row"><button type="button" id="sheetPasteGo" class="accent">読み込む</button></div>
-<p class="studio-mini" id="sheetPasteInfo" aria-live="polite"></p>
-<h4 class="sb-h4">B. Apps Script でつなぐ（読み込み、配信ログへの書き込み、シートの編集）</h4>
-<p class="studio-mini">いまのコードは版3です（シートの編集・ラベル・編集の記録・控え）。版2をお使いなら、Apps Script のコードを全部置き換えて保存し、「デプロイ」→「デプロイを管理」→ 鉛筆の印 → バージョン「新バージョン」→「デプロイ」で入れ替えます（URLと合言葉はそのままです。合言葉の行は、書き換えた合言葉に直してから保存します）。</p>
-<ol class="studio-mini sb-steps"><li>シートを開き、メニューの「拡張機能」→「Apps Script」を開きます。</li><li>下の「コードをコピー」で写したコードを、最初からあるコードと全部置き換えて貼り付けます。</li><li>コードの中の <code>ここに合言葉</code> を、自分だけの合言葉（英数字で12文字以上がおすすめ）に書き換えて保存します。</li><li>「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」でデプロイし、表示される許可の画面で許可します。</li><li>出てきた「ウェブアプリ」のURL（…/exec）と合言葉を、下に入れて「保存して確かめる」を押します。</li></ol>
-<div class="studio-row"><button type="button" id="sheetGasCopy">コードをコピー</button><button type="button" id="sheetGasSave">コードをファイルに保存</button></div>
-<div class="studio-inline"><label class="studio-field">ウェブアプリのURL<input id="sheetUrl" type="url" maxlength="300" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></label><label class="studio-field">合言葉<input id="sheetKey" type="password" maxlength="200" autocomplete="off"></label></div>
-<div class="studio-row"><button type="button" id="sheetSave" class="accent">保存して確かめる</button><button type="button" id="sheetRead">シートから曲・音源を読み込む</button><button type="button" id="sheetForget">つなぎ先を消す</button></div>
-<p class="studio-mini" id="sheetInfo" aria-live="polite"></p>
-<p class="studio-mini">URLと合言葉は、このブラウザの中だけに保存します（設定ファイルや書き出しには入りません）。URLと合言葉を知っている人は誰でもシートを読み書きできるので、人に見せないでください。配信が終わったら「④ これまでの記録」の回を開き、「歌枠管理シートへ」から配信ログに送れます。シートに書き込むのは手で入力する列だけで、自動で計算する列には書きません。</p>
-</div></details>
 </div></div>
 <div class="kara-block" id="karaBlock">
 <hr class="studio-divider">

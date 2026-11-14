@@ -72,11 +72,24 @@
   // 画面を作り直さずに、シートを読み直す
   async function sxFetch(){
     let j;
-    try{j=await sxCall('sheet')}catch(e){if(/知らない操作/.test(e.message))e.message='Apps Script が古い版です。下の「歌枠管理シートとつなぐ」の「コードをコピー」で版3に入れ替えて、デプロイを「新バージョン」にしてください';throw e}
-    if(!(j.version>=3))throw Error('Apps Script が古い版です（版'+(j.version||'?')+'）。下の「歌枠管理シートとつなぐ」の「コードをコピー」で版3に入れ替えて、デプロイを「新バージョン」にしてください');
+    try{j=await sxCall('sheet')}catch(e){if(/知らない操作/.test(e.message))e.message='Apps Script が古い版です。下の「歌枠管理シートとつなぐ」の「コードをコピー」で新しい版に入れ替えて、デプロイを「新バージョン」にしてください';throw e}
+    if(!(j.version>=3))throw Error('Apps Script が古い版です（版'+(j.version||'?')+'）。下の「歌枠管理シートとつなぐ」の「コードをコピー」で新しい版に入れ替えて、デプロイを「新バージョン」にしてください');
     SX.data=j;SX.at=new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
+    sheetLinkInfo(j);sheetCacheSet(j);provAlign();renderSheetBar();
     return j
   }
+  // 起動のあとに一度だけ（つないでいるときだけ）：シートの提供者・ラベルの控えを取り直す。控えが6時間より新しければ何もしない。
+  // 提供者の名前をそろえる・概要欄の提供者の行・ラベルを選ぶ欄に使う。編集の画面（SX.data）は作り直さない
+  let sheetWarmBusy=false;
+  async function sheetWarm(force){
+    if(!sheetLink()||sheetWarmBusy||SX.busy)return;
+    const c=sheetCache(),l=sheetLink();
+    if(!force&&c&&l.ver&&Date.now()-c.at<6*3600*1000)return;
+    sheetWarmBusy=true;
+    try{const j=await sheetCall('sheet');if(j.version>=3){sheetLinkInfo(j);sheetCacheSet(j);provAlign();renderSheetBar()}}catch(_){}
+    sheetWarmBusy=false
+  }
+  setTimeout(()=>sheetWarm(false),7000);
   async function sxLoad(quiet){
     const say=SX.body.querySelector('.sx-status');
     if(say&&!quiet)sxSay(say,'シートを読んでいます…');
@@ -84,7 +97,7 @@
       await sxFetch();
       sxRender()
     }catch(e){
-      if(/知らない操作/.test(e.message))e.message='Apps Script が古い版です。下の「歌枠管理シートとつなぐ」の「コードをコピー」で版3に入れ替えて、デプロイを「新バージョン」にしてください';
+      if(/知らない操作/.test(e.message))e.message='Apps Script が古い版です。下の「歌枠管理シートとつなぐ」の「コードをコピー」で新しい版に入れ替えて、デプロイを「新バージョン」にしてください';
       SX.data=null;sxRender(e.message)
     }
   }
@@ -552,7 +565,7 @@
   }
   function sxSrcFields(sk,t,x){
     const u=x.u?okeNorm(x.u)||'':'';
-    const f={s:sk,u,by:x.by||'',key:x.k||'',kk:x.kk||'原曲キー',kind:x.kind||(/youtube\.com|youtu\.be/.test(u)?'YouTube動画':''),f:x.f||'',lyr:x.ly||''};
+    const f={s:sk,u,by:provCanon(x.by)||'',key:x.k||'',kk:x.kk||'原曲キー',kind:x.kind||(/youtube\.com|youtu\.be/.test(u)?'YouTube動画':''),f:x.f||'',lyr:x.ly||''};
     f.n=x.n||sxSrcName({t},f);
     return f
   }
@@ -591,7 +604,8 @@
       if(before&&!all&&prev){
         const f={};
         if(x.u&&prev.u!==x.u&&sxVid(hit.u)!==sxVid(x.u))f.u=okeNorm(x.u)||'';
-        if((prev.by||'')!==(x.by||'')&&(hit.by||'')!==(x.by||''))f.by=x.by||'';
+        if((prev.by||'')!==(x.by||'')&&(hit.by||'')!==provCanon(x.by))f.by=provCanon(x.by);
+        if((prev.kk||'原曲キー')!==(x.kk||'原曲キー')&&(hit.kk||'原曲キー')!==(x.kk||'原曲キー')&&sxHas('音源','kk'))f.kk=x.kk||'原曲キー';
         if((prev.n||'')!==(x.n||'')&&x.n&&hit.n!==x.n)f.n=x.n;
         if(Object.keys(f).length)items.push({kind:'srcset',label:'音源を直す',text:hit.n+'：'+Object.keys(f).map(k=>SX_NAMES['音源'][k]+'「'+f[k]+'」').join('、'),s,x,rec:hit,f,on:true})
       }
@@ -607,7 +621,7 @@
       if(need.size)out.push({kind:'labels',label:'ラベル一覧に足す',text:[...need].join('、')+'（分類は「未分類」。あとで「🏷 ラベルの項目」で直せます）',names:[...need],on:true})
     }
     const pv=new Set(SX.data.provs.map(x=>x.n)),needP=new Set();
-    for(const it of items){const by=it.kind==='src'?it.x.by:it.kind==='srcset'?it.f.by:'';if(by&&!pv.has(by))needP.add(by)}
+    for(const it of items){const by=provCanon(it.kind==='src'?it.x.by:it.kind==='srcset'?it.f.by:'');if(by&&!pv.has(by))needP.add(by)}
     for(const n of needP)out.push({kind:'prov',label:'提供者を足す',text:n+'（名前だけ。使ってよい配信は「未確認」）',name:n,on:true});
     return out
   }

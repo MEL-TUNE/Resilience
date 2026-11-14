@@ -40,6 +40,7 @@ function mkSheet(name, rows, opt = {}) {
       return rg;
     },
     insertRowBefore(r) { g.splice(r - 1, 0, []); sh.maxRows++; sh.log.push(['insertBefore', r]); },
+    deleteRow(r) { g.splice(r - 1, 1); sh.log.push(['deleteRow', r]); },
     insertRowAfter(r) { g.splice(r, 0, []); sh.maxRows++; },
     insertColumnAfter() { sh.maxCols++; },
     setFrozenRows() { },
