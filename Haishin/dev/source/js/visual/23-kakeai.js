@@ -1,5 +1,6 @@
-/* リオと掛け合い（0.10.9・段階1）：文字と手渡しで、AIキャラクターの返答を話者名つきの字幕として出す。
-   人格・口調は state.ai（.live に入る）。会話の記録は IndexedDB の ai:キャラ:企画（.live に入らない）。外へは何も送らない */
+/* リオと掛け合い（0.10.9・段階1、0.10.10 で API）：AIキャラクターの返答を話者名つきの字幕として出す。
+   人格・口調は state.ai（.live に入る）。会話の記録は IndexedDB の ai:キャラ:企画（.live に入らない）。
+   つなぎ方（手渡し／Claude／ChatGPT）・モデル・APIキーは localStorage だけ（otonoha-ai-conn・otonoha-ai-key-claude・otonoha-ai-key-openai。.live に入れない） */
 
   const KK_PLANS={
     chat:['普段の会話','肩の力を抜いた雑談。話題を広げすぎず、相手の話を受けて返す。'],
@@ -40,7 +41,69 @@
     try{await putAsset(k,v)}catch(_){toast('会話の記録を保存できませんでした',4000)}
   }
 
-  // ---- 依頼文
+  // ---- つなぎ方（localStorage だけ）
+  const KK_MODEL={claude:'claude-sonnet-5-5',openai:'gpt-5.6-terra'};
+  const kkLsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}};
+  const kkLsSet=(k,v)=>{try{v==null||v===''?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(_){}};
+  const kkConn=(()=>{let c={};try{c=JSON.parse(kkLsGet('otonoha-ai-conn')||'{}')||{}}catch(_){}
+    return{via:['hand','claude','openai'].includes(c.via)?c.via:'hand',auto:c.auto!==false,model:{claude:typeof c.model?.claude==='string'&&c.model.claude.trim()?c.model.claude.trim().slice(0,80):KK_MODEL.claude,openai:typeof c.model?.openai==='string'&&c.model.openai.trim()?c.model.openai.trim().slice(0,80):KK_MODEL.openai}}})();
+  const kkConnSave=()=>kkLsSet('otonoha-ai-conn',JSON.stringify(kkConn));
+  const kkKeyOf=v=>(kkLsGet('otonoha-ai-key-'+v)||'').trim();
+  const kkApi=()=>kkConn.via!=='hand';
+  const KK_VIA={claude:'Claude',openai:'ChatGPT'};
+
+  // 人格・口調・企画・返し方（API ではこれを system に、手渡しでは依頼文の頭に）
+  function kkSystem(){
+    const a=kkState(),c=kkChar(),me=kkMe(),[pl,pd]=KK_PLANS[a.plan];
+    return ['あなたは「'+c.name+'」として、配信の掛け合いで、相手の発言に一言ずつ返します。',
+      '','【人格・関係性】',c.persona.trim()||'（設定なし）',
+      '','【口調】',c.style.trim()||'（設定なし）',
+      '','【相手】',me+(c.call.trim()?'（'+c.name+'からの呼び方：'+c.call.trim()+'）':''),
+      '','【企画】',pl+'：'+pd,
+      '','【恋愛の会話】',KK_LOVE[c.love||0],
+      '','【返し方】',
+      '- '+c.name+'のセリフだけを書く。名前、かぎかっこ、ト書き、説明、前置きは付けない。',
+      '- 配信で声に出して読む前提。ふだんは2〜4文。説明を求められたときは長くしてよい。',
+      '- 絵文字は使わない。実在の人を傷つける内容、個人情報、配信のルールに反する内容は言わない。'
+    ].join('\n')
+  }
+  // API に渡す会話：記録の直近 ctx 件＋いまの発言。同じ側が続いたらまとめ、相手の発言から始める
+  function kkMessages(say){
+    const a=kkState(),c=kkChar(),msgs=[];
+    const add=(role,t)=>{const l=msgs[msgs.length-1];if(l&&l.role===role)l.content+='\n'+t;else msgs.push({role,content:t})};
+    for(const t of kkLog().slice(-a.ctx))add(t.who==='me'?'user':'assistant',t.t);
+    add('user',say.trim()||'（発言なし。'+c.name+'から話を振ってください）');
+    if(msgs[0].role!=='user')msgs.unshift({role:'user',content:'（配信が始まりました）'});
+    return msgs
+  }
+  async function kkCall(via,system,messages,max){
+    const key=kkKeyOf(via);
+    if(!key)throw new Error('nokey');
+    const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),60000);
+    let r;
+    try{
+      if(via==='claude')r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:ac.signal,headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:kkConn.model.claude,max_tokens:max||800,system,messages})});
+      else r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',signal:ac.signal,headers:{'content-type':'application/json','authorization':'Bearer '+key},body:JSON.stringify({model:kkConn.model.openai,max_completion_tokens:max||2000,messages:[{role:'system',content:system},...messages]})});
+    }catch(e){clearTimeout(tm);throw new Error(e.name==='AbortError'?'timeout':'net')}
+    clearTimeout(tm);
+    let j=null;try{j=await r.json()}catch(_){}
+    if(!r.ok){const m=j?.error?.message||'';const e=new Error('http');e.status=r.status;e.detail=String(m).slice(0,200);throw e}
+    const text=via==='claude'?(j?.content||[]).filter(x=>x.type==='text').map(x=>x.text).join(''):(j?.choices?.[0]?.message?.content||'');
+    if(!String(text).trim())throw new Error('empty');
+    return String(text)
+  }
+  function kkErrText(e,via){
+    const v=KK_VIA[via]||via;
+    if(e.message==='nokey')return v+' の APIキーが入っていません（「Claude・ChatGPT とのつなぎ方」で入れます）';
+    if(e.message==='timeout')return v+' から60秒たっても返事がありませんでした';
+    if(e.message==='net')return v+' につながりませんでした（ネットの接続を確かめてください）';
+    if(e.message==='empty')return v+' の返事が空でした';
+    const s=e.status;
+    const why=s===401||s===403?'APIキーが違うか、使えない状態です':s===404?'モデルの名前が見つかりません（'+kkConn.model[via]+'）':s===429?'混み合っているか、利用の上限・残高を超えています':s===400?'送った内容を受け付けませんでした':s>=500?v+' 側の不具合です。少しおいて送り直してください':'エラーが返りました';
+    return v+'：'+why+'（'+s+(e.detail?'：'+e.detail:'')+'）'
+  }
+
+  // ---- 依頼文（手渡し）
   function kkPrompt(say){
     const a=kkState(),c=kkChar(),me=kkMe(),[pl,pd]=KK_PLANS[a.plan];
     const recent=kkLog().slice(-a.ctx).map(t=>(t.who==='me'?me:c.name)+'：'+t.t.replace(/\n+/g,' ')).join('\n');
@@ -99,7 +162,9 @@
       li.append(sp,rowBtn('▶ 出す','',()=>{kkShow(t,kkChar().name);kkI=i+1;renderKkLines()}));return li}));
     const left=kkQ.length-kkI;
     E('kkNext').textContent=left>0?'③ 次の字幕を出す ▶（あと'+left+'）':'③ 次の字幕を出す ▶';
-    const live=E('kkLive');live.hidden=!kkQ.length;
+    const live=E('kkLive');live.hidden=!kkQ.length&&!kkApi();
+    E('kkLiveSendBox').hidden=!kkApi();E('kkLiveIn').placeholder=kkChar().name+'に話しかける（空なら、話を振ってもらう）';
+    E('kkLiveSay').hidden=!kkQ.length;E('kkLiveNext').hidden=E('kkLiveHide').hidden=!kkQ.length;
     if(kkQ.length){E('kkLiveSay').textContent=kkChar().name+'：'+(left>0?'次「'+kkQ[kkI].slice(0,40)+(kkQ[kkI].length>40?'…':'')+'」（あと'+left+'）':'全部出しました');E('kkLiveNext').disabled=left<=0}
   }
   function renderKkLog(){
@@ -113,9 +178,30 @@
     E('kkPlan').value=a.plan;E('kkCtx').value=String(a.ctx);E('kkPos').value=a.pos||'';E('kkMe').value=a.me;E('kkMe').placeholder=(state.profiles||[]).find(p=>p.id===state.profileId)?.name||'';
     E('kkName').value=c.name;E('kkCall').value=c.call;E('kkLove').value=String(c.love||0);E('kkPersona').value=c.persona;E('kkStyle').value=c.style;
     E('kkDel').disabled=a.chars.length<2;
-    renderKkLines();kkLoad()
+    renderKkConn();renderKkLines();kkLoad()
   }
   const kkLogText=()=>{const c=kkChar(),me=kkMe();return kkLog().map(t=>(t.who==='me'?me:c.name)+'：'+t.t).join('\n')};
+
+  function renderKkConn(){
+    E('kkVia').value=kkConn.via;E('kkAuto').checked=kkConn.auto;
+    E('kkHandBox').hidden=kkApi();E('kkAuto').closest('label').hidden=!kkApi();
+    E('kkModelClaude').value=kkConn.model.claude;E('kkModelOpenai').value=kkConn.model.openai;
+    E('kkKeyClaude').value=kkKeyOf('claude');E('kkKeyOpenai').value=kkKeyOf('openai');
+    renderKkBusy()
+  }
+  E('kkVia').onchange=e=>{kkConn.via=e.target.value;kkConnSave();renderKkConn();renderKkLines();
+    E('kkInfo').textContent=kkApi()?(kkKeyOf(kkConn.via)?'「① '+KK_VIA[kkConn.via]+' に送る」で、返事が字幕の行になります。':KK_VIA[kkConn.via]+' の APIキーがまだありません。下の「Claude・ChatGPT とのつなぎ方」で入れます。'):''};
+  E('kkAuto').onchange=e=>{kkConn.auto=e.target.checked;kkConnSave()};
+  for(const [id,v] of [['kkKeyClaude','claude'],['kkKeyOpenai','openai']])E(id).onchange=e=>{kkLsSet('otonoha-ai-key-'+v,e.target.value.trim());E('kkConnInfo').textContent=e.target.value.trim()?KK_VIA[v]+' のキーを、このブラウザに置きました':''};
+  for(const [id,v] of [['kkModelClaude','claude'],['kkModelOpenai','openai']])E(id).onchange=e=>{kkConn.model[v]=e.target.value.trim().slice(0,80)||KK_MODEL[v];e.target.value=kkConn.model[v];kkConnSave()};
+  E('kkKeyTest').onclick=async e=>{
+    const via=kkApi()?kkConn.via:(kkKeyOf('claude')?'claude':'openai'),b=e.currentTarget;
+    b.disabled=true;E('kkConnInfo').textContent=KK_VIA[via]+' に試しに送っています…';
+    try{await kkCall(via,'短く返事をしてください。',[{role:'user',content:'テストです。「つながりました」とだけ返してください。'}],50);E('kkConnInfo').textContent=KK_VIA[via]+' につながりました（モデル：'+kkConn.model[via]+'）'}
+    catch(err){E('kkConnInfo').textContent=kkErrText(err,via)}
+    finally{b.disabled=false}
+  };
+  E('kkKeyDel').onclick=e=>armed(e.currentTarget,'もう一度押すと、Claude と ChatGPT のキーをこのブラウザから消す',()=>{kkLsSet('otonoha-ai-key-claude','');kkLsSet('otonoha-ai-key-openai','');renderKkConn();E('kkConnInfo').textContent='キーを消しました'});
 
   E('kkChar').onchange=e=>{kkState().cur=e.target.value;save();kkQ=[];kkI=0;renderKk()};
   E('kkPlan').onchange=e=>{kkState().plan=e.target.value;save();renderKk()};
@@ -127,22 +213,50 @@
   E('kkName').onchange=()=>{if(!kkChar().name.trim()){kkChar().name='名前なし';renderKk();save()}};
   E('kkLove').onchange=e=>{kkChar().love=Number(e.target.value)||0;save()};
   E('kkMake').onclick=async()=>{
+    if(kkApi()){await kkSend(E('kkSay').value.trim(),E('kkSay'));return}
     kkPending=E('kkSay').value.trim();
     await copy(kkPrompt(kkPending));
     E('kkInfo').textContent='依頼文をコピーしました。ChatGPT や Claude の会話に貼って送り、返ってきた文を「② 返ってきた文を貼る」に貼ります。'
   };
   E('kkMine').onclick=()=>{const t=E('kkSay').value.trim();if(!t){toast('あなたの発言が空です');return}kkShow(t.slice(0,600),kkMe())};
+  async function kkTakeLines(lines,say){
+    const log=kkLog();
+    if(say)log.push({who:'me',t:say.slice(0,2000),at:new Date().toISOString()});
+    log.push({who:'ai',t:lines.join(''),at:new Date().toISOString()});
+    kkLogs.set(kkKey(),log.slice(-40));await kkLogSave();
+    kkQ=lines;kkI=0;renderKkLines();renderKkLog();
+    E('kkInfo').textContent='字幕を'+lines.length+'行に分けました。「③ 次の字幕を出す」か、本番の「🎲 企画」タブの「💬 次の字幕」で1行ずつ出します。'
+  }
   E('kkTake').onclick=async()=>{
     const raw=E('kkReply').value,lines=kkSplit(raw);
     if(!lines.length){toast('返ってきた文が空です');return}
-    const log=kkLog();
-    if(kkPending)log.push({who:'me',t:kkPending.slice(0,2000),at:new Date().toISOString()});
-    log.push({who:'ai',t:lines.join(''),at:new Date().toISOString()});
-    kkLogs.set(kkKey(),log.slice(-40));await kkLogSave();
+    await kkTakeLines(lines,kkPending);
     kkPending='';E('kkSay').value='';E('kkReply').value='';
-    kkQ=lines;kkI=0;renderKkLines();renderKkLog();
-    E('kkInfo').textContent='字幕を'+lines.length+'行に分けました。「③ 次の字幕を出す」か、本番の「🎲 企画」タブの「💬 次の字幕」で1行ずつ出します。'
   };
+  // ---- そのまま送る（Claude／ChatGPT）
+  let kkBusy=false;
+  async function kkSend(say,from){
+    if(kkBusy)return;
+    const via=kkConn.via,c=kkChar();
+    kkBusy=true;renderKkBusy();
+    E('kkInfo').textContent=KK_VIA[via]+' に送っています…';
+    try{
+      const text=await kkCall(via,kkSystem(),kkMessages(say));
+      const lines=kkSplit(text);
+      if(!lines.length)throw new Error('empty');
+      await kkTakeLines(lines,say);
+      if(from)from.value='';
+      if(kkConn.auto)kkNext()
+    }catch(e){const m=kkErrText(e,via);E('kkInfo').textContent=m;toast(m,6000)}
+    finally{kkBusy=false;renderKkBusy()}
+  }
+  function renderKkBusy(){
+    for(const id of ['kkMake','kkLiveSend'])E(id).disabled=kkBusy;
+    E('kkMake').textContent=kkApi()?(kkBusy?'返事を待っています…':'① '+KK_VIA[kkConn.via]+' に送る'):'① 依頼文をコピー';
+    E('kkLiveSend').textContent=kkBusy?'待っています…':'送る'
+  }
+  E('kkLiveSend').onclick=()=>kkSend(E('kkLiveIn').value.trim(),E('kkLiveIn'));
+  E('kkLiveIn').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();E('kkLiveSend').click()}};
   E('kkNext').onclick=kkNext;E('kkLiveNext').onclick=kkNext;
   E('kkHide').onclick=kkHide;E('kkLiveHide').onclick=kkHide;
   E('kkLogCopy').onclick=()=>{const t=kkLogText();if(!t){toast('まだ記録はありません');return}copy(t)};
