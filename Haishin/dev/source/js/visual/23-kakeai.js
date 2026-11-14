@@ -70,7 +70,7 @@
       for(let p of parts){
         p=p.trim();if(!p)continue;
         const last=out[out.length-1];
-        if(!first&&last&&(p.length<6||last.length<6)&&(last+p).length<=90)out[out.length-1]=last+p;else out.push(p);
+        if(last&&(p.length<6||(!first&&last.length<6))&&(last+p).length<=90)out[out.length-1]=last+p;else out.push(p);
         first=false
       }
     }
