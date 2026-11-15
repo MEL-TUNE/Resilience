@@ -1251,35 +1251,35 @@ body[data-app="radio"] .bgm-now-row,body[data-app="radio"] .live-prog{display:no
 #topicHand{margin-top:12px}
 [data-panel="kikaku"]>.pon-opts{margin-top:14px;padding-top:10px;border-top:1px solid var(--a-p-20)}
 
-/* 0.10.11：効果音のタブの BGM の帯（効果音のタブを開いているときだけ）と、テロップ（配信・動画のときだけ） */
+/* 効果音のタブの上：BGM の帯（効果音のタブを開いているときだけ）、テロップ・リアクション（配信・動画のときだけ）、漫符のボタン */
 .se-bgmbar{display:none}
-body[data-app="live"][data-deck="se"] #boardShell .se-bgmbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px;padding:8px 10px;border:1px solid var(--a-p-30,rgba(0,0,0,.15));border-radius:10px}
-.se-bgmbar .se-bgm-name{flex:1 1 160px;min-width:0;display:flex;gap:6px;font-size:13px;overflow:hidden}
+body[data-app="live"][data-deck="se"] #boardShell .se-bgmbar{display:flex;align-items:center;gap:6px;margin:0 0 12px;padding:6px 8px;border:1px solid var(--a-p-30,rgba(0,0,0,.15));border-radius:10px}
+.se-bgmbar .se-bgm-name{flex:1 1 60px;min-width:0;display:flex;gap:6px;font-size:13px;overflow:hidden}
 .se-bgmbar .se-bgm-name span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.se-bgmbar .btn{padding:6px 10px;font-size:13px}
+.se-bgmbar .btn{flex:0 0 auto;padding:6px 9px;font-size:13px;white-space:nowrap}
 .se-bgmbar .btn.on{outline:2px solid currentColor}
 body:not([data-app="live"]) #telopSec{display:none!important}
+body:not([data-app="live"]) #telopSec+.section{padding-top:0;margin-top:15px;border-top:0}
+#telopSec{margin-bottom:6px}
+#telopBody[hidden]{display:none}
 .telop-type{display:flex;gap:6px;min-width:0}
 .telop-type input{flex:1 1 auto;min-width:0;padding:9px 10px;border:1px solid var(--a-p-30,rgba(0,0,0,.2));border-radius:8px;font-size:15px}
-.telop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:8px}
+.telop-type .btn{flex:0 0 auto;white-space:nowrap}
+.telop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-top:8px}
 .telop-btn{min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--a-p-45,rgba(0,0,0,.25));border-radius:10px;background:var(--hi,#fff);color:var(--ink,#222);font-size:14px;line-height:1.35;text-align:left;overflow-wrap:anywhere;cursor:pointer;-webkit-touch-callout:none;user-select:none}
 .telop-btn.telop-add{border-style:dashed;color:var(--muted,#777);text-align:center}
 .telop-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
-.telop-now{flex:1 1 180px;min-width:0;font-size:13px;color:var(--muted,#666);overflow-wrap:anywhere}
+.telop-now{flex:1 1 80px;min-width:0;font-size:12px;color:var(--muted,#666);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .telop-sp{flex:1 1 auto}
+.deco-row .btn{min-height:40px;white-space:nowrap}
 .telop-edit{margin-top:10px;padding:10px;border:1px solid var(--a-p-30,rgba(0,0,0,.2));border-radius:10px}
 .telop-edit[hidden]{display:none}
 .telop-edit h3{margin:0 0 8px;font-size:15px}
 .telop-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
 .telop-fields select,.telop-edit input{max-width:100%;min-width:0}
 .telop-fields label[hidden],.telop-edit label[hidden]{display:none}
-#telopSec{margin-bottom:6px}
-body:not([data-app="live"]) #telopSec+.section{padding-top:0;margin-top:15px;border-top:0}
-/* 0.10.12：漫符のボタン・リアクション・自分の画像にする欄 */
 .manpu-bar{flex-wrap:wrap;align-items:center;gap:6px}
 .manpu-bar button[aria-pressed="true"]{outline:2px solid currentColor;font-weight:700}
-.telop-lab{font-size:13px;color:var(--muted,#666)}
-.deco-row .btn{min-height:40px}
 .deco-imgs-box{margin-top:8px}
 .deco-imgs-box summary{cursor:pointer;font-size:13px}
 .deco-img-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}
@@ -1392,7 +1392,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.13 / 漫符の量・大きさ・位置、文字を増やす</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.14 / 整頓：軽くする・テロップの欄を小さく</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1450,20 +1450,19 @@ lookPaint(look);
 <details class="pon-opts"><summary>ここに並べるものを選ぶ・アプリの開き方</summary><label class="studio-field">セリフ帳のシチュエーション<select id="ponSerif"></select></label><div class="pon-picks" id="ponPick"></div><div class="studio-row"><button type="button" id="ponAll">すべて並べる</button><label class="studio-field">アプリの開き方<select id="ponApp"><option value="window">アプリと立ち絵のウインドウ（OBS用）で開く</option><option value="page">「企画の準備」の中で開く</option></select></label></div><p class="studio-mini">シチュエーションのボタンは、押すたびにそのシチュエーションのセリフを1つ出します。全部出し終えるまで同じセリフは出ません。セリフ・役柄は「🛠 準備」の「企画の準備」のセリフ帳で、前もって登録します。</p></details>
 </section>
 <main class="shell in-workspace" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span><label class="pad-size">ボタンの大きさ<select id="padSize"><option value="s">小</option><option value="m">中</option><option value="l">大</option></select></label></div>
-<div data-panel="se" class="se-bgmbar" id="seBgmBar"><span class="se-bgm-name"><span aria-hidden="true">♪</span><span id="seBgmName">BGM：なし</span></span><button type="button" class="btn" id="seBgmStop">▶ 初期BGM</button><button type="button" class="btn" id="seBgmLow">小さく</button><button type="button" class="btn" id="seBgmFade">フェードアウト</button></div>
-<section data-panel="se" class="section telop-sec" id="telopSec"><div class="section-title"><h2>テロップ <span>TELOP</span></h2></div>
-<div class="telop-type"><input id="telopIn" type="text" maxlength="80" placeholder="打ち込んで Enter で、配信画面に出す" enterkeyhint="send"><button type="button" class="btn primary" id="telopShow">出す</button></div>
+<div data-panel="se" class="se-bgmbar" id="seBgmBar"><span class="se-bgm-name"><span aria-hidden="true">♪</span><span id="seBgmName">BGM：なし</span></span><button type="button" class="btn" id="seBgmStop">▶ 初期BGM</button><button type="button" class="btn" id="seBgmLow" title="BGMを小さくする／元の音量へ">小さく</button><button type="button" class="btn" id="seBgmFade" title="BGMをフェードアウト">フェード</button></div>
+<section data-panel="se" class="section telop-sec" id="telopSec"><div class="section-title"><h2>テロップ <span>TELOP / REACTION</span></h2><button class="btn gold" type="button" id="telopFold" aria-expanded="true">たたむ</button></div>
+<div id="telopBody">
+<div class="telop-type"><input id="telopIn" type="text" maxlength="80" placeholder="打ち込んで Enter で、配信画面に出す" enterkeyhint="send"><button type="button" class="btn primary" id="telopShow">出す</button><button type="button" class="btn" id="telopKeep" title="打ち込んだ文を、決まり文句のボタンにします">＋ボタンに</button></div>
 <div class="telop-grid" id="telopGrid"></div>
-<div class="telop-row"><span class="telop-now" id="telopNow" aria-live="polite"></span><button type="button" class="btn" id="telopClear">テロップ・演出を消す</button></div>
-<div class="telop-row deco-row" role="group" aria-label="リアクション"><span class="telop-lab">リアクション</span><button type="button" class="btn" id="decoGrass">🌿 草（ころころ）</button><button type="button" class="btn" id="decoHeart">💗 ハート（ふわふわ）</button></div>
-<div class="telop-row telop-sub"><button type="button" class="btn" id="telopKeep">打ち込んだ文をボタンにする</button><button type="button" class="btn" id="telopTyped">打ち込みの見た目</button></div>
+<div class="telop-row deco-row"><button type="button" class="btn" id="decoGrass" title="草がぴょんぴょん跳ねていきます">🌿 草</button><button type="button" class="btn" id="decoHeart" title="ハートがふわふわ上がります">💗 ハート</button><span class="telop-now" id="telopNow" aria-live="polite"></span><button type="button" class="btn" id="telopClear" title="テロップ・漫符・草・ハートを全部消します">演出を消す</button></div>
 <div class="telop-edit" id="telopEdit" hidden><h3 id="telopEditTitle">ボタンの編集</h3>
 <label class="studio-field">文<input id="telopFText" type="text" maxlength="80"></label>
 <div class="telop-fields"><label class="studio-field">出し方<select id="telopFAnim"></select></label><label class="studio-field">色<select id="telopFColor"></select></label><label class="studio-field">位置<select id="telopFPos"></select></label><label class="studio-field">出しておく秒数<select id="telopFSec"><option value="2">2秒</option><option value="3">3秒</option><option value="4">4秒</option><option value="5">5秒</option><option value="6">6秒</option><option value="8">8秒</option><option value="10">10秒</option><option value="15">15秒</option></select></label><label class="studio-field">散らす数<select id="telopFN"><option value="3">3</option><option value="5">5</option><option value="8">8</option><option value="12">12</option><option value="16">16</option></select></label><label class="studio-field">文字<select id="telopFFont"></select></label><label class="studio-field">一緒に鳴らす効果音<select id="telopFSe"></select></label><label class="studio-field">一緒に切り替える表情<select id="telopFExpr"></select></label><label class="studio-field">一緒に出す漫符<select id="telopFMp"><option value="">出さない</option><option value="sweat">汗</option><option value="spark">きらめき（笑い）</option><option value="heart">ハート</option></select></label></div>
 <div class="telop-row"><button type="button" class="btn" id="telopFTry">試しに出す</button><button type="button" class="btn" id="telopFUp">← 前へ</button><button type="button" class="btn" id="telopFDown">後ろへ →</button><button type="button" class="btn danger" id="telopFDel">このボタンを消す</button><span class="telop-sp"></span><button type="button" class="btn" id="telopFClose">閉じる</button><button type="button" class="btn primary" id="telopFSave">保存</button></div>
 <p class="section-help">効果音は「音のお品書き」に登録したものから選べます。テロップは配信画面・配信用ウインドウ・収録した動画に映ります（配信中の画面のときだけ。準備中・離席中の画面には出ません）。</p></div>
-<details class="deco-imgs-box"><summary>リアクションの設定・自分の画像にする</summary><div class="telop-fields"><label class="studio-field">1回押して出す数<select id="decoN"><option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="8">8</option><option value="12">12</option></select></label><label class="studio-field">大きさ<select id="decoSize"><option value="50">小さめ（50%）</option><option value="75">やや小さめ（75%）</option><option value="100">ふつう</option><option value="130">やや大きめ（130%）</option><option value="160">大きめ（160%）</option><option value="200">とても大きく（200%）</option></select></label><label class="studio-field">ハートが消えるまで<select id="decoSec"><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option></select></label><label class="studio-field"><input type="checkbox" id="decoSing"> 歌い始め（歌枠ノートの「♪ 歌い始め」）で、漫符・草・ハートを止める</label></div><div data-deco-imgs="deco-grass,deco-heart"></div></details>
-<p class="section-help">決まり文句のボタンは、押すと出ます。長押し・右クリックで、文・出し方・色・秒数・一緒に鳴らす効果音を変えられます。</p></section>
+<details class="deco-imgs-box" id="telopOpts"><summary>テロップ・リアクションの設定</summary><p class="section-help">決まり文句のボタンは、長押し・右クリックで、文・出し方・色・秒数・一緒に鳴らす効果音などを変えられます。</p><div class="telop-row"><button type="button" class="btn" id="telopTyped">打ち込んで出すときの見た目</button></div><div class="telop-fields"><label class="studio-field">草・ハートを1回で出す数<select id="decoN"><option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="8">8</option><option value="12">12</option></select></label><label class="studio-field">草・ハートの大きさ<select id="decoSize"><option value="50">小さめ（50%）</option><option value="75">やや小さめ（75%）</option><option value="100">ふつう</option><option value="130">やや大きめ（130%）</option><option value="160">大きめ（160%）</option><option value="200">とても大きく（200%）</option></select></label><label class="studio-field">ハートが消えるまで<select id="decoSec"><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option></select></label><label class="studio-field"><input type="checkbox" id="decoSing"> 歌い始め（歌枠ノートの「♪ 歌い始め」）で、漫符・草・ハートを止める</label></div><div data-deco-imgs="deco-grass,deco-heart"></div></details>
+</div></section>
 <section data-panel="se" class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
 <section data-panel="se" class="section sec-join"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
 <section data-panel="se" class="section sec-join"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="bgm-tabs voice-tabs" id="voiceTabs" role="tablist" aria-label="ボイスの名義" hidden></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
@@ -1726,9 +1725,9 @@ lookPaint(look);
 <section class="studio-card mode-section deck-panel" id="studioAiVoice" data-panel="aivoice">
 <p class="studio-kicker">AI CHARACTER / VOICE</p>
 <h2>AIキャラ・声</h2>
-<p class="studio-note">AIキャラクター（たとえば彼岸リオ）に話してもらうための、声の準備の場所です。声の合成エンジン（AivisSpeech など）とのつなぎ込みと、AIキャラクターの口パクは、これから順に足していきます。</p>
+<p class="studio-note">AIキャラクターとの掛け合いと、声の準備の場所です。</p>
 <h3>リオと掛け合い</h3>
-<p class="studio-note">AIキャラクターとの会話を、配信画面に話者名つきの字幕で出します。「つなぎ方」で、Claude か ChatGPT にそのまま送る（APIキーが要ります。下の「Claude・ChatGPT とのつなぎ方」）か、手渡し（依頼文をコピーして会話に貼り、返事を貼って取り込む）かを選べます。声で話させる機能は、このあと足していきます。</p>
+<p class="studio-note">AIキャラクターの返事を、配信画面に名前つきの字幕で出します。つなぎ方は、手渡し（コピーと貼り付け）か、Claude・ChatGPT にそのまま送る（APIキーが要ります）かを選べます。</p>
 <div class="studio-inline"><label class="studio-field">キャラクター<select id="kkChar"></select></label><label class="studio-field">企画<select id="kkPlan"><option value="chat">普段の会話</option><option value="rp">ロールプレイ</option><option value="love">恋愛合戦</option><option value="podcast">ポッドキャスト</option><option value="meeting">企画会議</option></select></label><label class="studio-field">つなぎ方<select id="kkVia"><option value="claude">Claude にそのまま送る</option><option value="openai">ChatGPT にそのまま送る</option><option value="hand">手渡し（コピーと貼り付け）</option></select></label></div>
 <label class="studio-field">あなたの発言（空でも送れます。そのときは、キャラクターから話を振ってもらいます）<textarea id="kkSay" class="studio-textarea" rows="2" maxlength="2000"></textarea></label>
 <div class="studio-row play-big"><button type="button" id="kkMake" class="accent">① 依頼文をコピー</button><button type="button" id="kkMine">あなたの発言を字幕に出す</button></div>
@@ -13404,60 +13403,64 @@ const TELOP_ANIM={band:'帯で出す（テロップ）',pop:'中央にどん',sc
     g.lineJoin='round';g.lineWidth=Math.max(2,fs*.18);g.strokeStyle=c.line;g.strokeText(text,x,y);
     g.fillStyle=c.fill;g.fillText(text,x,y)
   }
+  // 文字の大きさ・折り返し・幅は、出すときに一度だけ測って覚えておく（毎コマ測り直さない）。
+  // 文字（フォント）が遅れて読み込まれることがあるので、0.7秒ごとと、画面の大きさが変わったときに測り直す
+  function telopLay(t,now,k){
+    const key=W+'x'+H;
+    if(t.lay&&t.lay.key===key&&now-t.lay.at<700)return t.lay;
+    const fs=(t.anim==='band'?34:t.anim==='pop'?72:t.anim==='scatter'?48:52)*k,font=telopFont(t,fs);
+    g.font=font;
+    const L={key,at:now,fs,font};
+    if(t.anim==='scatter'){L.text=t.text.slice(0,24);L.tw=g.measureText(L.text).width}
+    else{
+      L.lines=wrapLines(t.text,t.anim==='band'?W*.86-60*k:t.anim==='pop'?W*.84:W*.8,2);
+      if(t.anim==='band')L.w=Math.min(W*.86,Math.max(...L.lines.map(l=>g.measureText(l).width))+70*k)
+    }
+    return t.lay=L
+  }
   function drawTelops(now){
     if(!telops.length)return;
     telops=telops.filter(t=>now-t.at<t.dur+(t.anim==='scatter'?t.parts.length*110:0));
     if(!telops.length){renderTelopNow();return}
     const k=Math.min(W,H)/720;
     for(const t of telops){
-      const el=now-t.at,c=TELOP_COLOR[t.color];
+      const el=now-t.at,c=TELOP_COLOR[t.color],L=telopLay(t,now,k),fs=L.fs;
       const out=Math.max(0,Math.min(1,(t.dur-el)/400));
-      g.save();g.textAlign='center';g.textBaseline='middle';
+      g.save();g.textAlign='center';g.textBaseline='middle';g.font=L.font;
       if(t.anim==='band'){
-        const fs=34*k,maxW=W*.86;
-        g.font=telopFont(t,fs);
-        const lines=wrapLines(t.text,maxW-60*k,2),lh=fs*1.4;
-        const w=Math.min(maxW,Math.max(...lines.map(l=>g.measureText(l).width))+70*k),h=lines.length*lh+28*k;
+        const lh=fs*1.4,w=L.w,h=L.lines.length*lh+28*k;
         const y=t.pos==='top'?40*k:t.pos==='center'?(H-h)/2:H-70*k-h;
         const inP=easeOut(Math.min(1,el/320));
         g.globalAlpha=Math.min(inP,out);
         g.translate((1-inP)*-W*.25,0);
-        const x=(W-w)/2;
-        g.fillStyle=c.bg;g.beginPath();g.roundRect(x,y,w,h,14*k);g.fill();
-        g.font=telopFont(t,fs);
-        lines.forEach((l,i)=>{g.fillStyle=c.fill;g.fillText(l,W/2,y+14*k+lh*i+lh/2)});
+        g.fillStyle=c.bg;g.beginPath();g.roundRect((W-w)/2,y,w,h,14*k);g.fill();
+        g.fillStyle=c.fill;
+        L.lines.forEach((l,i)=>g.fillText(l,W/2,y+14*k+lh*i+lh/2))
       }else if(t.anim==='pop'){
-        const fs=72*k;
-        g.font=telopFont(t,fs);
-        const lines=wrapLines(t.text,W*.84,2),lh=fs*1.25;
-        const cy=t.pos==='top'?H*.22:t.pos==='bottom'?H*.72:H*.45;
+        const lh=fs*1.25,cy=t.pos==='top'?H*.22:t.pos==='bottom'?H*.72:H*.45;
         const sc=el<380?.45+.55*backOut(el/380):1;
         g.globalAlpha=Math.min(1,el/150,out);
         g.translate(W/2,cy);g.scale(sc,sc);
-        lines.forEach((l,i)=>outlined(t,l,0,(i-(lines.length-1)/2)*lh,fs));
+        L.lines.forEach((l,i)=>outlined(t,l,0,(i-(L.lines.length-1)/2)*lh,fs))
       }else if(t.anim==='scatter'){
+        // 文字の大きさは1つに決めておき、1つずつは縦横同じ倍率で大きさを変える（升の幅に収まるまで縮め、端で切れない位置に寄せる）
+        const cw=W/(W>H?4:2),lim=cw*.86;
         for(const p of t.parts){
           const e=el-p.d;if(e<0)continue;
-          const tx=t.text.slice(0,24),cw=W/(W>H?4:2);
-          let fs=48*k*p.s;g.font=telopFont(t,fs);
-          // 升の幅に収まる大きさまで縮め（隣と重ならない）、画面の端で切れない位置に寄せる
-          const tw=g.measureText(tx).width,lim=cw*.86;if(tw>lim){fs*=lim/tw;g.font=telopFont(t,fs)}
-          const hw=Math.min(tw,lim)/2+fs*.2,x=Math.max(hw+10*k,Math.min(W-hw-10*k,p.x*W)),y=Math.max(fs+10*k,Math.min(H-fs-10*k,p.y*H));
-          const sc=e<260?.3+.7*backOut(e/260):1;
+          const f=p.s*Math.min(1,lim/(L.tw*p.s)),hw=L.tw*f/2+fs*f*.2,hh=fs*f;
+          const x=Math.max(hw+10*k,Math.min(W-hw-10*k,p.x*W)),y=Math.max(hh+10*k,Math.min(H-hh-10*k,p.y*H));
+          const sc=f*(e<260?.3+.7*backOut(e/260):1);
           g.save();
           g.globalAlpha=Math.min(1,e/120,Math.max(0,Math.min(1,(t.dur-e)/400)));
           g.translate(x,y);g.rotate(p.r);g.scale(sc,sc);
-          outlined(t,tx,0,0,fs);
+          outlined(t,L.text,0,0,fs);
           g.restore()
         }
       }else{
-        const fs=52*k;
-        g.font=telopFont(t,fs);
-        const lines=wrapLines(t.text,W*.8,2),lh=fs*1.25;
-        const p=Math.min(1,el/t.dur),cy=(t.pos==='top'?H*.34:t.pos==='center'?H*.55:H*.78)-p*140*k;
+        const lh=fs*1.25,p=Math.min(1,el/t.dur),cy=(t.pos==='top'?H*.34:t.pos==='center'?H*.55:H*.78)-p*140*k;
         g.globalAlpha=Math.min(1,el/300,out);
         g.translate(W/2+Math.sin(el/420)*14*k,cy);
-        lines.forEach((l,i)=>outlined(t,l,0,(i-(lines.length-1)/2)*lh,fs));
+        L.lines.forEach((l,i)=>outlined(t,l,0,(i-(L.lines.length-1)/2)*lh,fs))
       }
       g.restore()
     }
@@ -13466,7 +13469,7 @@ const TELOP_ANIM={band:'帯で出す（テロップ）',pop:'中央にどん',sc
   // ---- 画面（本番の「🔊 効果音」タブ）
   function renderTelopNow(){
     const n=telops.length,el=E('telopNow');
-    const txt=n?'表示中：'+telops.map(t=>t.text.slice(0,20)).join('／'):'テロップは出ていません';
+    const txt=n?'表示中：'+telops.map(t=>t.text.slice(0,20)).join('／'):'';
     if(el.textContent!==txt)el.textContent=txt;
     E('telopClear').disabled=!n&&!decoBusy()
   }
@@ -13527,6 +13530,10 @@ const TELOP_ANIM={band:'帯で出す（テロップ）',pop:'中央にどん',sc
     c.items.push({id:'t'+Date.now().toString(36),text:t,...JSON.parse(JSON.stringify(c.typed))});save();renderTelop();E('telopIn').value='';toast('「'+t.slice(0,20)+'」をボタンにしました')
   };
   E('telopTyped').onclick=()=>telopEditOpen('typed');
+  // たたむ・ひらく（効果音のボタンをすぐ押したいとき用。このブラウザに覚える）
+  function telopFoldSet(f){E('telopBody').hidden=f;const b=E('telopFold');b.textContent=f?'ひらく':'たたむ';b.setAttribute('aria-expanded',String(!f))}
+  E('telopFold').onclick=()=>{const f=!E('telopBody').hidden;telopFoldSet(f);try{localStorage.setItem('otonoha-telop-fold',f?'1':'0')}catch(_){}};
+  try{telopFoldSet(localStorage.getItem('otonoha-telop-fold')==='1')}catch(_){}
   E('telopClear').onclick=telopClear;
   E('telopFAnim').onchange=telopFormSync;
   E('telopFSave').onclick=()=>{
@@ -13592,7 +13599,15 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
   function decoPaint(id,art,size,extra){
     const im=images[id];
     if(im&&im.width&&im.height){const f=size/Math.max(im.width,im.height);g.drawImage(im,-im.width*f/2,-im.height*f/2,im.width*f,im.height*f);return}
+    // 初めの絵は、一度だけ小さなキャンバスに描いておき、毎コマはそれを貼るだけにする（グラデーションや曲線を毎コマ描き直さない）
+    if(size<=ART_PX*1.25){const sp=artSprite(art,extra),d=size*ART_BOX/ART_PX;g.drawImage(sp,-d/2,-d/2,d,d);return}
     g.save();g.scale(size,size);art(g,extra);g.restore()
+  }
+  const ART_PX=144,ART_BOX=160,artSprites=new Map();
+  function artSprite(art,extra){
+    const key=art.name+(extra?'+':'');let c=artSprites.get(key);
+    if(!c){c=document.createElement('canvas');c.width=c.height=ART_BOX;const x=c.getContext('2d');x.translate(ART_BOX/2,ART_BOX/2);x.scale(ART_PX,ART_PX);art(x,extra);artSprites.set(key,c)}
+    return c
   }
 
   // ---- 漫符
@@ -13625,8 +13640,8 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
     }
     if(id==='spark'){
       // きらめき：頭の上で、細い光の線と星がはじける
-      manpuParts.push({kind:id,at:now,life:1100,ray:1,a:-Math.PI/2,r:1.0,sz:.75});
-      for(let i=0;i<n;i++){const a=(-160+140*(n===1?.5:i/(n-1))+(Math.random()-.5)*10)*Math.PI/180;manpuParts.push({kind:id,at:now+60+i*50,life:1000,a,r:1.0+Math.random()*.25,sz:.22+Math.random()*.1,rot:Math.random()*.6,star:1,out:.2})}
+      manpuParts.push({kind:id,at:now,life:1100,ray:1,sz:.75});
+      for(let i=0;i<n;i++){const a=(-160+140*(n===1?.5:i/(n-1))+(Math.random()-.5)*10)*Math.PI/180;manpuParts.push({kind:id,at:now+60+i*50,life:1000,a,r:1.0+Math.random()*.25,sz:.22+Math.random()*.1,rot:Math.random()*.6,out:.2})}
       return 1500
     }
     // ハート：頭の上の幅いっぱいから、まんべんなく上へ
@@ -13672,8 +13687,11 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
       g.translate(c.x,c.y);g.rotate(avHead.rot);
       if(p.ray){
         const r0=hu*.18,r1=r0+p.sz*hu*easeOut(Math.min(1,t*1.6));
-        g.lineCap='round';g.lineWidth=Math.max(1,hu*.02);
-        for(let i=0;i<9;i++){const a=-Math.PI+i*Math.PI/8,gr=g.createLinearGradient(Math.cos(a)*r0,Math.sin(a)*r0,Math.cos(a)*r1,Math.sin(a)*r1);gr.addColorStop(0,'rgba(255,246,214,.0)');gr.addColorStop(1,'rgba(255,232,170,.9)');g.strokeStyle=gr;g.beginPath();g.moveTo(Math.cos(a)*r0,Math.sin(a)*r0);g.lineTo(Math.cos(a)*r1,Math.sin(a)*r1);g.stroke()}
+        // 9本の光の線を、1つのグラデーション・1回の線描きで（内側は透明、外側が金色）
+        const gr=g.createRadialGradient(0,0,r0,0,0,r1);gr.addColorStop(0,'rgba(255,246,214,0)');gr.addColorStop(1,'rgba(255,232,170,.9)');
+        g.lineCap='round';g.lineWidth=Math.max(1,hu*.02);g.strokeStyle=gr;g.beginPath();
+        for(let i=0;i<9;i++){const a=-Math.PI+i*Math.PI/8,ca=Math.cos(a),sa=Math.sin(a);g.moveTo(ca*r0,sa*r0);g.lineTo(ca*r1,sa*r1)}
+        g.stroke()
       }else{
         g.rotate(p.kind==='sweat'?rot:(p.rot||0));
         if(p.kind==='sweat')decoPaint('deco-sweat',artDrop,size);
@@ -15114,13 +15132,16 @@ let frameToken=0,
       E('studioMic').textContent=ready&&micLive()?'マイクを再接続':'マイクを接続';
       if(mediaRecorder&&mediaRecorder.state==='recording'&&!mediaRecorder.__ending)E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
     }
-    perfWatch(performance.now()-now);
+    {const c=performance.now()-now;perfStat.n++;perfStat.sum+=c;if(c>perfStat.max)perfStat.max=c;perfWatch(c)}
     scheduleFrame()
   }
 
   // 描くのが追いつかない状態が数秒つづいたら、軽くする方法を一度だけ知らせる（勝手には変えない）
   // 重さは「遅いコマが続いた時間」で数える（コマ数で数えると、遅い端末ほど知らせが遅れる）
   let slowMs=0,slowLast=0,slowTold=false;
+  // 1コマを描くのにかかった時間の集計（重さを確かめる用。読むと0に戻る）
+  const perfStat={n:0,sum:0,max:0};
+  window.__otonohaPerf=()=>{const r={n:perfStat.n,avg:perfStat.n?perfStat.sum/perfStat.n:0,max:perfStat.max};perfStat.n=0;perfStat.sum=0;perfStat.max=0;return r};
   function perfWatch(cost){
     if(slowTold||(state.light&&(state.fps||30)<=15))return;
     const t=performance.now(),dt=slowLast?Math.min(1000,t-slowLast):0;
@@ -16425,7 +16446,7 @@ E('gotoFilm').onclick=()=>{E('navSettings').click();setTimeout(()=>E('filmTitle'
   E('pvToggle').onclick=()=>{const on=!document.body.hasAttribute('data-pv-on');document.body.toggleAttribute('data-pv-on',on);E('pvToggle').textContent=on?'プレビューを隠す':'プレビューも表示する'};
 
 const BG_MAX=10,BG_ASPECTS={landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'};
-  const bgLoading=new Set(),bgThumbs=new Map();
+  const bgLoading=new Set(),bgThumbs=new Map(),bgMiss=new Map();
   function bgProf(){const p=curProfile();if(!p)return null;if(!p.bgs||typeof p.bgs!=='object')p.bgs={};if(!p.bgSel||typeof p.bgSel!=='object')p.bgSel={};return p}
   function bgList(p=bgProf(),asp=state.aspect){if(!p)return [];if(!Array.isArray(p.bgs[asp]))p.bgs[asp]=[];return p.bgs[asp]}
   function bgCur(){const p=bgProf();if(!p)return null;const l=bgList(p);return l.find(b=>b.id===p.bgSel[state.aspect])||l[0]||null}
@@ -16433,9 +16454,11 @@ const BG_MAX=10,BG_ASPECTS={landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'};
   function bgImage(b){
     const id='bgi-'+b.id;
     if(images[id])return images[id];
-    if(!bgLoading.has(id)){
+    // 保存場所に画像がなかったとき・読めなかったときは、5秒おいてから探し直す（毎コマ探しに行かない）
+    const miss=bgMiss.get(id);
+    if(!bgLoading.has(id)&&ready&&!(miss&&performance.now()-miss<5000)){
       bgLoading.add(id);
-      getAsset(ASSET+id).then(async blob=>{if(blob){images[id]=await decode(blob);assetBlobs[id]=blob}}).catch(()=>{}).finally(()=>bgLoading.delete(id))
+      getAsset(ASSET+id).then(async blob=>{if(blob){images[id]=await decode(blob);assetBlobs[id]=blob;bgMiss.delete(id)}else bgMiss.set(id,performance.now())}).catch(()=>{bgMiss.set(id,performance.now())}).finally(()=>bgLoading.delete(id))
     }
     return null
   }

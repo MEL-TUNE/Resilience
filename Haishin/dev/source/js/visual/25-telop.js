@@ -56,60 +56,64 @@
     g.lineJoin='round';g.lineWidth=Math.max(2,fs*.18);g.strokeStyle=c.line;g.strokeText(text,x,y);
     g.fillStyle=c.fill;g.fillText(text,x,y)
   }
+  // 文字の大きさ・折り返し・幅は、出すときに一度だけ測って覚えておく（毎コマ測り直さない）。
+  // 文字（フォント）が遅れて読み込まれることがあるので、0.7秒ごとと、画面の大きさが変わったときに測り直す
+  function telopLay(t,now,k){
+    const key=W+'x'+H;
+    if(t.lay&&t.lay.key===key&&now-t.lay.at<700)return t.lay;
+    const fs=(t.anim==='band'?34:t.anim==='pop'?72:t.anim==='scatter'?48:52)*k,font=telopFont(t,fs);
+    g.font=font;
+    const L={key,at:now,fs,font};
+    if(t.anim==='scatter'){L.text=t.text.slice(0,24);L.tw=g.measureText(L.text).width}
+    else{
+      L.lines=wrapLines(t.text,t.anim==='band'?W*.86-60*k:t.anim==='pop'?W*.84:W*.8,2);
+      if(t.anim==='band')L.w=Math.min(W*.86,Math.max(...L.lines.map(l=>g.measureText(l).width))+70*k)
+    }
+    return t.lay=L
+  }
   function drawTelops(now){
     if(!telops.length)return;
     telops=telops.filter(t=>now-t.at<t.dur+(t.anim==='scatter'?t.parts.length*110:0));
     if(!telops.length){renderTelopNow();return}
     const k=Math.min(W,H)/720;
     for(const t of telops){
-      const el=now-t.at,c=TELOP_COLOR[t.color];
+      const el=now-t.at,c=TELOP_COLOR[t.color],L=telopLay(t,now,k),fs=L.fs;
       const out=Math.max(0,Math.min(1,(t.dur-el)/400));
-      g.save();g.textAlign='center';g.textBaseline='middle';
+      g.save();g.textAlign='center';g.textBaseline='middle';g.font=L.font;
       if(t.anim==='band'){
-        const fs=34*k,maxW=W*.86;
-        g.font=telopFont(t,fs);
-        const lines=wrapLines(t.text,maxW-60*k,2),lh=fs*1.4;
-        const w=Math.min(maxW,Math.max(...lines.map(l=>g.measureText(l).width))+70*k),h=lines.length*lh+28*k;
+        const lh=fs*1.4,w=L.w,h=L.lines.length*lh+28*k;
         const y=t.pos==='top'?40*k:t.pos==='center'?(H-h)/2:H-70*k-h;
         const inP=easeOut(Math.min(1,el/320));
         g.globalAlpha=Math.min(inP,out);
         g.translate((1-inP)*-W*.25,0);
-        const x=(W-w)/2;
-        g.fillStyle=c.bg;g.beginPath();g.roundRect(x,y,w,h,14*k);g.fill();
-        g.font=telopFont(t,fs);
-        lines.forEach((l,i)=>{g.fillStyle=c.fill;g.fillText(l,W/2,y+14*k+lh*i+lh/2)});
+        g.fillStyle=c.bg;g.beginPath();g.roundRect((W-w)/2,y,w,h,14*k);g.fill();
+        g.fillStyle=c.fill;
+        L.lines.forEach((l,i)=>g.fillText(l,W/2,y+14*k+lh*i+lh/2))
       }else if(t.anim==='pop'){
-        const fs=72*k;
-        g.font=telopFont(t,fs);
-        const lines=wrapLines(t.text,W*.84,2),lh=fs*1.25;
-        const cy=t.pos==='top'?H*.22:t.pos==='bottom'?H*.72:H*.45;
+        const lh=fs*1.25,cy=t.pos==='top'?H*.22:t.pos==='bottom'?H*.72:H*.45;
         const sc=el<380?.45+.55*backOut(el/380):1;
         g.globalAlpha=Math.min(1,el/150,out);
         g.translate(W/2,cy);g.scale(sc,sc);
-        lines.forEach((l,i)=>outlined(t,l,0,(i-(lines.length-1)/2)*lh,fs));
+        L.lines.forEach((l,i)=>outlined(t,l,0,(i-(L.lines.length-1)/2)*lh,fs))
       }else if(t.anim==='scatter'){
+        // 文字の大きさは1つに決めておき、1つずつは縦横同じ倍率で大きさを変える（升の幅に収まるまで縮め、端で切れない位置に寄せる）
+        const cw=W/(W>H?4:2),lim=cw*.86;
         for(const p of t.parts){
           const e=el-p.d;if(e<0)continue;
-          const tx=t.text.slice(0,24),cw=W/(W>H?4:2);
-          let fs=48*k*p.s;g.font=telopFont(t,fs);
-          // 升の幅に収まる大きさまで縮め（隣と重ならない）、画面の端で切れない位置に寄せる
-          const tw=g.measureText(tx).width,lim=cw*.86;if(tw>lim){fs*=lim/tw;g.font=telopFont(t,fs)}
-          const hw=Math.min(tw,lim)/2+fs*.2,x=Math.max(hw+10*k,Math.min(W-hw-10*k,p.x*W)),y=Math.max(fs+10*k,Math.min(H-fs-10*k,p.y*H));
-          const sc=e<260?.3+.7*backOut(e/260):1;
+          const f=p.s*Math.min(1,lim/(L.tw*p.s)),hw=L.tw*f/2+fs*f*.2,hh=fs*f;
+          const x=Math.max(hw+10*k,Math.min(W-hw-10*k,p.x*W)),y=Math.max(hh+10*k,Math.min(H-hh-10*k,p.y*H));
+          const sc=f*(e<260?.3+.7*backOut(e/260):1);
           g.save();
           g.globalAlpha=Math.min(1,e/120,Math.max(0,Math.min(1,(t.dur-e)/400)));
           g.translate(x,y);g.rotate(p.r);g.scale(sc,sc);
-          outlined(t,tx,0,0,fs);
+          outlined(t,L.text,0,0,fs);
           g.restore()
         }
       }else{
-        const fs=52*k;
-        g.font=telopFont(t,fs);
-        const lines=wrapLines(t.text,W*.8,2),lh=fs*1.25;
-        const p=Math.min(1,el/t.dur),cy=(t.pos==='top'?H*.34:t.pos==='center'?H*.55:H*.78)-p*140*k;
+        const lh=fs*1.25,p=Math.min(1,el/t.dur),cy=(t.pos==='top'?H*.34:t.pos==='center'?H*.55:H*.78)-p*140*k;
         g.globalAlpha=Math.min(1,el/300,out);
         g.translate(W/2+Math.sin(el/420)*14*k,cy);
-        lines.forEach((l,i)=>outlined(t,l,0,(i-(lines.length-1)/2)*lh,fs));
+        L.lines.forEach((l,i)=>outlined(t,l,0,(i-(L.lines.length-1)/2)*lh,fs))
       }
       g.restore()
     }
@@ -118,7 +122,7 @@
   // ---- 画面（本番の「🔊 効果音」タブ）
   function renderTelopNow(){
     const n=telops.length,el=E('telopNow');
-    const txt=n?'表示中：'+telops.map(t=>t.text.slice(0,20)).join('／'):'テロップは出ていません';
+    const txt=n?'表示中：'+telops.map(t=>t.text.slice(0,20)).join('／'):'';
     if(el.textContent!==txt)el.textContent=txt;
     E('telopClear').disabled=!n&&!decoBusy()
   }
@@ -179,6 +183,10 @@
     c.items.push({id:'t'+Date.now().toString(36),text:t,...JSON.parse(JSON.stringify(c.typed))});save();renderTelop();E('telopIn').value='';toast('「'+t.slice(0,20)+'」をボタンにしました')
   };
   E('telopTyped').onclick=()=>telopEditOpen('typed');
+  // たたむ・ひらく（効果音のボタンをすぐ押したいとき用。このブラウザに覚える）
+  function telopFoldSet(f){E('telopBody').hidden=f;const b=E('telopFold');b.textContent=f?'ひらく':'たたむ';b.setAttribute('aria-expanded',String(!f))}
+  E('telopFold').onclick=()=>{const f=!E('telopBody').hidden;telopFoldSet(f);try{localStorage.setItem('otonoha-telop-fold',f?'1':'0')}catch(_){}};
+  try{telopFoldSet(localStorage.getItem('otonoha-telop-fold')==='1')}catch(_){}
   E('telopClear').onclick=telopClear;
   E('telopFAnim').onchange=telopFormSync;
   E('telopFSave').onclick=()=>{
