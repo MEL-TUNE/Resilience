@@ -394,3 +394,12 @@
 - 見送ったこと：起動時に全キャラクターの画像を読む `loadAllChars` を「いまのキャラクターだけ」にする案。書き出し（.live）と表情の見本に全キャラクターの元データが要ること、切り替えた瞬間に絵が出ない危うさがあること、ブラウザは画像を描くときに展開するのでメモリの得が確かでないことから、今回は変えていない。設定の localStorage を分ける案も今回は触っていない。
 - 画面：`#telopSec` を組み直し（`#telopFold`・`#telopBody`、`#telopKeep` は入力欄の右、`#decoGrass`・`#decoHeart`・`#telopNow`・`#telopClear` を1行、`#telopOpts` に `#telopTyped` と草・ハートの設定）。たたむ状態は localStorage `otonoha-telop-fold`。`#telopNow` は何も出ていないとき空。deck.css の 0.10.11〜0.10.13 で継ぎ足した部分を1つのまとまりに書き直した。
 - テスト：t0111 を新しい置き場所に合わせ、たたむ・ひらくの2件を足した（58件）。
+
+## 2026-11-15 追記（STUDIO 0.10.15：本番は押すものだけに）
+
+- 作者の決まり：「本番」は基本的に配信・収録中に押すもの。設定は「設定」の画面（#settingsShell）へ。音のお品書き（効果音）はいちばんよく使うので、テロップより上。漫符はキャラクターごと・漫符ごとに大きさ・量・位置を持つ。草・ハートもそれぞれに数・大きさ・秒数を持つ。
+- 画面：`#telopSec` は `#voiceGrid` の section の後ろ（効果音の下）。中身は `#telopIn`・`#telopShow`・`#telopGrid`（押すと出すだけ。空なら隠す）・`#decoGrass`・`#decoHeart`・`#telopNow`・`#telopClear`。`#manpuOpts`・`#telopOpts`・`#telopKeep`・`#telopFold`（と localStorage `otonoha-telop-fold`）は外した。
+- 設定の画面：`.expr-edit` の後ろに `#decoSet`（`#mpKind`・`#manpuAmt`・`#manpuSize`・`#manpuY`・`#manpuX`・`#manpuTry`・`#manpuReset`・`#mpWho`、漫符の絵の差し替え、`#rcKind`・`#decoN`・`#decoSize`・`#decoSec`（`#decoSecLab`）・`#rcTry`・`#decoSing`、草・ハートの絵の差し替え、`#telopSetGrid`（押すと編集・＋で登録）・`#telopTyped`・`#telopEdit`）。
+- データ：キャラクターに `mp`＝{sweat|spark|heart:{s(30〜300),a(few/mid/many),x,y(−300〜300)}}（cleanChar で点検。ないときは前の版の `state.deco` の msize・mamt・mx・my を使う＝`mpCfg(kind)`）。`state.deco.r`＝{grass:{n,s,sec},heart:{n,s,sec}}（sanitize で前の版の n・rsize・sec から作る。sec は 3・5・8・12）。草の sec は端から端までの秒数（速さ v＝(W+2sz)/sec、1つずつ ±15%）。
+- `drawManpu` は漫符ごとに頭の大きさ・中心・はみ出しのずらしを計算する。`activateChar` で `renderManpuOpts()`（`decoReady` のあとだけ）。
+- テスト：t0111（56件）・t0112（54件）・t0113（62件）を設定の画面での操作に合わせて直した。t092a はテロップがボイスの下になったことに合わせた。

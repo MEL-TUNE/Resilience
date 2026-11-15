@@ -8,6 +8,20 @@
   const DECO_IMG_IDS=['deco-sweat','deco-spark','deco-mheart','deco-grass','deco-heart'];
   const DECO_IMG_NAME={'deco-sweat':'汗','deco-spark':'きらめき（笑い）','deco-mheart':'漫符のハート','deco-grass':'草（ころころ）','deco-heart':'ハート（ふわふわ）'};
   const decoCfg=()=>state.deco||(state.deco={n:5,sec:5,sing:true});
+  // 漫符の大きさ・量・位置：いまのキャラクターの、その漫符の値（まだ決めていなければ、前の版の共通の値）
+  function mpCfg(kind){
+    const m=curChar()?.mp?.[kind];if(m)return m;
+    const d=decoCfg();return {s:d.msize||100,a:d.mamt||'mid',x:d.mx||0,y:d.my||0}
+  }
+  function mpSet(kind,patch){
+    const c=curChar();if(!c)return;
+    c.mp=c.mp||{};c.mp[kind]=Object.assign({},mpCfg(kind),patch)
+  }
+  // 草・ハート：それぞれの数・大きさ・秒数
+  function rcCfg(kind){
+    const d=decoCfg();d.r=d.r||{};
+    return d.r[kind]||(d.r[kind]={n:d.n||5,s:d.rsize||100,sec:kind==='heart'?(d.sec||5):5})
+  }
 
   // ---- 初めの絵（中心が 0,0、大きさ 1 くらいで描く。呼ぶ側で縦横同じ倍率に拡大する）
   function artDrop(c){
@@ -78,10 +92,10 @@
   // 漫符の量：少なめ（2〜3コ）／ふつう／多め（とても焦る様子）
   const MANPU_AMT={few:{sweat:3,spark:3,heart:2},mid:{sweat:5,spark:5,heart:3},many:{sweat:8,spark:7,heart:5}};
   function manpuEmit(id,now){
-    const amt=MANPU_AMT[decoCfg().mamt]||MANPU_AMT.mid,n=Math.max(1,Math.round(amt[id]*(state.light?.6:1)));
+    const mc=mpCfg(id),amt=MANPU_AMT[mc.a]||MANPU_AMT.mid,n=Math.max(1,Math.round(amt[id]*(state.light?.6:1)));
     if(id==='sweat'){
       // 汗：頭のまわり（顔の外）に、上半分の弧に沿って並べる。しずくの先はキャラクター（頭の中心）へ向ける。ぴ・ぴ・ぴと順に出る
-      const few=decoCfg().mamt==='few';
+      const few=mc.a==='few';
       const a0=few?-62:-168,a1=few?-14:-12;
       for(let i=0;i<n;i++){
         const t=n===1?.5:i/(n-1),a=(a0+(a1-a0)*t+(Math.random()-.5)*8)*Math.PI/180;
@@ -107,19 +121,26 @@
     }
     manpuParts=manpuParts.filter(p=>now-p.at<p.life);
     if(!avHead)return;
-    const dc=decoCfg();
-    // 頭の大きさのめやす：八頭身なら立ち絵の高さの 1/8 くらい。「大きさ」で全体を拡大・縮小する
-    const hu=avHead.h/7.5*(dc.msize||100)/100,cos=Math.cos(avHead.rot),sin=Math.sin(avHead.rot);
+    const cos=Math.cos(avHead.rot),sin=Math.sin(avHead.rot);
     const at=(dx,dy)=>({x:avHead.x+dx*cos-dy*sin,y:avHead.y+dx*sin+dy*cos});
-    // 頭の中心（てっぺんから少し下）。「位置」で上下・左右にずらす（頭の大きさに対する％）
-    let cx0=(dc.mx||0)/100*hu,cy0=hu*.55+(dc.my||0)/100*hu;
-    // 頭が画面の上（または左右）からはみ出しているときは、並びの形を保ったまま、まとめて画面の内側へずらす
-    {const top=at(cx0,cy0-hu*1.05),mg=hu*.35+6;
-     if(top.y<mg)cy0+=(mg-top.y)/Math.max(.3,cos);
-     const lf=at(cx0-hu*.95,cy0).x,rt=at(cx0+hu*.95,cy0).x;
-     if(lf<mg)cx0+=(mg-lf);else if(rt>W-mg)cx0-=(rt-(W-mg))}
+    // 漫符ごとに、大きさ・位置を決める（このキャラクターの、その漫符の設定）
+    const lay={};
+    for(const kind of ['sweat','spark','heart']){
+      const mc=mpCfg(kind);
+      // 頭の大きさのめやす：八頭身なら立ち絵の高さの 1/8 くらい。「大きさ」で拡大・縮小する
+      const hu=avHead.h/7.5*mc.s/100;
+      // 頭の中心（てっぺんから少し下）。「位置」で上下・左右にずらす（頭の大きさに対する％）
+      let cx0=mc.x/100*hu,cy0=hu*.55+mc.y/100*hu;
+      // 頭が画面の上（または左右）からはみ出しているときは、並びの形を保ったまま、まとめて画面の内側へずらす
+      const top=at(cx0,cy0-hu*1.05),mg=hu*.35+6;
+      if(top.y<mg)cy0+=(mg-top.y)/Math.max(.3,cos);
+      const lf=at(cx0-hu*.95,cy0).x,rt=at(cx0+hu*.95,cy0).x;
+      if(lf<mg)cx0+=(mg-lf);else if(rt>W-mg)cx0-=(rt-(W-mg));
+      lay[kind]={hu,cx0,cy0}
+    }
     for(const p of manpuParts){
       const e=now-p.at;if(e<0)continue;
+      const {hu,cx0,cy0}=lay[p.kind];
       const t=e/p.life,fade=Math.min(1,(p.life-e)/280);
       g.save();g.globalAlpha=Math.min(1,e/120,fade);
       let lx,ly,rot=0;
@@ -160,14 +181,15 @@
   function decoBusy(){return !!decoReady&&(decos.length>0||manpuOn.size>0)}
   function decoClear(){decos=[];if(typeof renderTelopNow==='function')renderTelopNow()}
   function decoSpawn(kind){
-    const now=performance.now(),k=Math.min(W,H)/720,n=Math.min(decoCfg().n,state.light?5:12),rs=(decoCfg().rsize||100)/100;
+    const rc=rcCfg(kind),now=performance.now(),k=Math.min(W,H)/720,n=Math.min(rc.n,state.light?5:12),rs=rc.s/100;
     for(let i=0;i<n;i++){
       if(kind==='grass'){
+        // 秒数：画面の端から端まで跳ねていくのにかかる時間（1つずつ少しずつ違う）
         const fromL=Math.random()<.5,sz=(46+Math.random()*26)*k*rs;
-        decos.push({kind,at:now+i*180,fromL,sz,y:H-sz*.6-Math.random()*60*k,v:(230+Math.random()*90)*k,T:.34+Math.random()*.08,hh:.5+Math.random()*.25})
+        decos.push({kind,at:now+i*180,fromL,sz,y:H-sz*.6-Math.random()*60*k,v:(W+sz*2)/(rc.sec*(.85+Math.random()*.3)),T:.34+Math.random()*.08,hh:.5+Math.random()*.25})
       }else{
         const sz=(34+Math.random()*30)*k*rs;
-        decos.push({kind,at:now+i*140,sz,x:W*(.12+Math.random()*.76),y0:H+sz,v:(70+Math.random()*50)*k,life:decoCfg().sec*1000,ph:Math.random()*Math.PI*2})
+        decos.push({kind,at:now+i*140,sz,x:W*(.12+Math.random()*.76),y0:H+sz,v:(70+Math.random()*50)*k,life:rc.sec*1000,ph:Math.random()*Math.PI*2})
       }
     }
     if(decos.length>80)decos=decos.slice(-80);
@@ -217,25 +239,34 @@
       Object.assign(document.createElement('button'),{type:'button',id:'manpuStop',textContent:'漫符を止める',onclick:()=>manpuStop()}));
     renderManpuBar()
   }
+  // ---- 設定（設定の画面の「表情と演出」）：漫符はこのキャラクターの漫符ごと、草・ハートはそれぞれ
   function renderManpuOpts(){
-    const d=decoCfg();
-    E('manpuSize').value=d.msize||100;E('manpuSizeOut').textContent=(d.msize||100)+'%';
-    E('manpuAmt').value=d.mamt||'mid';
-    E('manpuY').value=d.my||0;E('manpuYOut').textContent=(d.my>0?'下へ ':d.my<0?'上へ ':'')+Math.abs(d.my||0)+'%';
-    E('manpuX').value=d.mx||0;E('manpuXOut').textContent=(d.mx>0?'右へ ':d.mx<0?'左へ ':'')+Math.abs(d.mx||0)+'%'
+    const kind=E('mpKind').value||'sweat',m=mpCfg(kind);
+    E('mpWho').textContent=curChar()?.name||'';
+    E('manpuSize').value=m.s;E('manpuSizeOut').textContent=m.s+'%';
+    E('manpuAmt').value=m.a;
+    E('manpuY').value=m.y;E('manpuYOut').textContent=(m.y>0?'下へ ':m.y<0?'上へ ':'')+Math.abs(m.y)+'%';
+    E('manpuX').value=m.x;E('manpuXOut').textContent=(m.x>0?'右へ ':m.x<0?'左へ ':'')+Math.abs(m.x)+'%'
   }
-  for(const [id,k] of [['manpuSize','msize'],['manpuY','my'],['manpuX','mx']])E(id).oninput=e=>{decoCfg()[k]=Number(e.target.value)||0;if(k==='msize'&&!decoCfg()[k])decoCfg()[k]=100;renderManpuOpts();save()};
-  E('manpuAmt').onchange=e=>{decoCfg().mamt=e.target.value;save()};
-  E('manpuTry').onclick=()=>manpuStart('sweat',3200);
-  E('manpuReset').onclick=()=>{Object.assign(decoCfg(),{msize:100,mx:0,my:0});renderManpuOpts();save()};
+  E('mpKind').onchange=renderManpuOpts;
+  for(const [id,k] of [['manpuSize','s'],['manpuY','y'],['manpuX','x']])E(id).oninput=e=>{mpSet(E('mpKind').value,{[k]:Number(e.target.value)||(k==='s'?100:0)});renderManpuOpts();save()};
+  E('manpuAmt').onchange=e=>{mpSet(E('mpKind').value,{a:e.target.value});save()};
+  E('manpuTry').onclick=()=>manpuStart(E('mpKind').value,3200);
+  E('manpuReset').onclick=()=>{mpSet(E('mpKind').value,{s:100,a:'mid',x:0,y:0});renderManpuOpts();save()};
   renderManpuOpts();
-  E('decoSize').value=String(decoCfg().rsize||100);E('decoSize').onchange=e=>{decoCfg().rsize=Number(e.target.value)||100;save()};
+  function renderRcOpts(){
+    const kind=E('rcKind').value||'grass',r=rcCfg(kind);
+    E('decoN').value=String(r.n);E('decoSize').value=String(r.s);E('decoSec').value=String(r.sec);
+    E('decoSecLab').firstChild.textContent=kind==='grass'?'画面を横切る秒数':'消えるまでの秒数'
+  }
+  E('rcKind').onchange=renderRcOpts;
+  for(const [id,k] of [['decoN','n'],['decoSize','s'],['decoSec','sec']])E(id).onchange=e=>{rcCfg(E('rcKind').value)[k]=Number(e.target.value);save()};
+  E('rcTry').onclick=()=>decoSpawn(E('rcKind').value);
+  renderRcOpts();
   E('decoGrass').onclick=()=>decoSpawn('grass');
   E('decoHeart').onclick=()=>decoSpawn('heart');
-  E('decoN').value=String(decoCfg().n);E('decoN').onchange=e=>{decoCfg().n=Number(e.target.value)||5;save()};
-  E('decoSec').value=String(decoCfg().sec);E('decoSec').onchange=e=>{decoCfg().sec=Number(e.target.value)||5;save()};
   E('decoSing').checked=decoCfg().sing!==false;E('decoSing').onchange=e=>{decoCfg().sing=e.target.checked;save()};
-  // 自分の画像に差し替える欄（漫符は表情のタブ、草・ハートは効果音のタブ）
+  // 自分の画像に差し替える欄（設定の画面）
   function renderDecoImgs(){
     for(const box of document.querySelectorAll('[data-deco-imgs]')){
       box.replaceChildren(...box.dataset.decoImgs.split(',').map(id=>{
@@ -251,4 +282,4 @@
   }
   renderDecoImgs();
   decoReady=true;renderTelopNow();
-  window.__otonohaDeco={manpu:()=>[...manpuOn.keys()],parts:()=>manpuParts.length,decos:()=>decos.map(d=>d.kind),head:()=>avHead&&{x:Math.round(avHead.x),y:Math.round(avHead.y),h:Math.round(avHead.h)},renderImgs:renderDecoImgs};
+  window.__otonohaDeco={mp:k=>mpCfg(k),rc:k=>rcCfg(k),manpu:()=>[...manpuOn.keys()],parts:()=>manpuParts.length,decos:()=>decos.map(d=>d.kind),head:()=>avHead&&{x:Math.round(avHead.x),y:Math.round(avHead.y),h:Math.round(avHead.h)},renderImgs:renderDecoImgs};

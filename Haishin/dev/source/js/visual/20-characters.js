@@ -11,6 +11,8 @@
       pos:aspectPosClean(c.pos,'char'),
       exprs:Array.isArray(c.exprs)?c.exprs.filter(e=>e&&typeof e==='object'&&typeof e.id==='string'&&/^[a-z0-9]{1,8}$/.test(e.id)).slice(0,12).map(e=>({id:e.id,name:String(e.name||'表情').slice(0,20),motion:['none','shake','hop','sing','wander','iya'].includes(e.motion)?e.motion:'none',amt:Number.isFinite(Number(e.amt))?Math.max(0,Math.min(200,Math.round(Number(e.amt)))):100,spd:Number.isFinite(Number(e.spd))?Math.max(40,Math.min(200,Math.round(Number(e.spd)))):100,manpu:['sweat','spark','heart'].includes(e.manpu)?e.manpu:''})):[]
     };
+    // 0.10.15：漫符の大きさ・量・位置（このキャラクター、漫符ごと）
+    if(c.mp&&typeof c.mp==='object'){o.mp={};for(const k of ['sweat','spark','heart']){const m=c.mp[k];if(!m||typeof m!=='object')continue;const R=(x,a,b,df)=>Number.isFinite(Number(x))?Math.max(a,Math.min(b,Math.round(Number(x)))):df;o.mp[k]={s:R(m.s,30,300,100),a:['few','mid','many'].includes(m.a)?m.a:'mid',x:R(m.x,-300,300,0),y:R(m.y,-300,300,0)}}}
     for(const k of CHAR_KEYS){
       if(k==='blink'||k==='bounce'){
         o[k]=typeof c[k]==='boolean'?c[k]:defaults[k];
@@ -171,6 +173,7 @@
     if(!state.chars||!state.chars[cid])return;
     if(!quiet&&cid!==state.charId)syncChar();
     state.charId=cid;
+    if(typeof decoReady!=='undefined'&&decoReady)renderManpuOpts();
     const c=state.chars[cid];
     for(const k of CHAR_KEYS)state[k]=c[k];
     charPosApply(c);

@@ -77,7 +77,9 @@
       out.telop={items,typed:TS(v.telop.typed)}
     }else out.telop=JSON.parse(JSON.stringify(defaults.telop));
     // 0.10.12：漫符・草・ハート（1回で出す数・ハートの秒数・歌い始めで止めるか）
-    {const d=v.deco&&typeof v.deco==='object'?v.deco:{};const R=(x,a,b,df)=>Number.isFinite(Number(x))?Math.max(a,Math.min(b,Math.round(Number(x)))):df;out.deco={n:[1,3,5,8,12].includes(d.n)?d.n:5,sec:[3,5,8].includes(d.sec)?d.sec:5,sing:d.sing!==false,msize:R(d.msize,30,300,100),mamt:['few','mid','many'].includes(d.mamt)?d.mamt:'mid',mx:R(d.mx,-300,300,0),my:R(d.my,-300,300,0),rsize:R(d.rsize,50,200,100)}}
+    {const d=v.deco&&typeof v.deco==='object'?v.deco:{};const R=(x,a,b,df)=>Number.isFinite(Number(x))?Math.max(a,Math.min(b,Math.round(Number(x)))):df;out.deco={n:[1,3,5,8,12].includes(d.n)?d.n:5,sec:[3,5,8].includes(d.sec)?d.sec:5,sing:d.sing!==false,msize:R(d.msize,30,300,100),mamt:['few','mid','many'].includes(d.mamt)?d.mamt:'mid',mx:R(d.mx,-300,300,0),my:R(d.my,-300,300,0),rsize:R(d.rsize,50,200,100)};
+    // 0.10.15：草・ハートは、それぞれ数・大きさ・秒数を持つ（前の版の共通の値を初めの値に）
+    {const r=d.r&&typeof d.r==='object'?d.r:{},RK=(m,dsec)=>{m=m&&typeof m==='object'?m:{};return {n:[1,3,5,8,12].includes(m.n)?m.n:out.deco.n,s:[50,75,100,130,160,200].includes(m.s)?m.s:([50,75,100,130,160,200].includes(out.deco.rsize)?out.deco.rsize:100),sec:[3,5,8,12].includes(m.sec)?m.sec:dsec}};out.deco.r={grass:RK(r.grass,5),heart:RK(r.heart,out.deco.sec)}}}
     if(['off','now','list'].includes(v.setlistShow))out.setlistShow=v.setlistShow;
     if(['tl','tr','bl','br'].includes(v.setlistPos))out.setlistPos=v.setlistPos;
     if([0,15,30,60,120].includes(v.setlistTime))out.setlistTime=v.setlistTime;
