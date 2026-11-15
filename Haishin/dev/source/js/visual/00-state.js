@@ -59,6 +59,7 @@
     serifs:[],
     serifSel:'',
     serifPos:'bottom',
+    telop:{items:[{id:'tjoke',text:'彼女は冗談を言っています',anim:'band',color:'white',pos:'bottom',sec:4,n:8,font:'',se:''}],typed:{anim:'band',color:'white',pos:'bottom',sec:5,n:8,font:'',se:''}},
     serifName:true,
     diceN:1,
     diceF:6,

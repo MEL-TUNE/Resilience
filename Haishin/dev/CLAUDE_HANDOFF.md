@@ -338,3 +338,14 @@
 - 画面いっぱいの演出（赤スパラッシュ・スロット台のような）：保留。いつかやりたい項目。声（音声ファイル）と効果音と画像の組み合わせ。動画（透明つき WebM）・GIF・APNG をキャンバスに描いたときの重さ・動き方は未確認。
 - 守ること：効果音の設定は .kissa に入っているので形式を変えない。演出の設定は映像側に別に持ち、効果音は「指名する」形にする。
 - 作者の声：過日の配信中、本番の「🔊 効果音」と「🎵 BGM」のタブが分かれていて、とっさに切り替えづらかった。
+## 2026-11-15 追記（STUDIO 0.10.11：テロップ／効果音のタブの BGM の帯）
+
+- 作者の希望の控え（同じ日の追記）の「① 文字つきのアニメとテロップ」を作った。漫符・草とハート・画面いっぱいの演出はまだ。
+- `js/visual/25-telop.js`（新規）：`state.telop`＝{items[{id,text,anim(band/pop/scatter/rise),color(white/pink/yellow/sky/dark),pos(bottom/top/center),sec(1〜15),n(散らす数 1〜16),font(SCENE_FONTS のキー、空＝場面と同じ),se(cfg.sounds の id)}], typed{同じ形・text なし}}。初めの値は「彼女は冗談を言っています」1つ（00-state.js の defaults）。sanitize は 01-sanitize.js の ai の区画のあと（区画の中だけで TS を定義。v.telop がないときは defaults を写す。defaults の物をそのまま共有しないため）。
+- 描画：`drawTelops(now)`、60-frame.js で `drawPlays` のあと（scene==='live' のときだけ）。同時に6つまで。帯・中央は同じ出し方の前のものと入れ替わる。散らすは画面を升目（横長 4×4・縦長 2×8）に分け、重ならない升に1つずつ。升の幅の 0.86 倍に収まるまで文字を縮め、端で切れない位置に寄せる。軽量モードでは散らす数を半分に。
+- 効果音：`playSound(cfg.sounds の物)` を呼ぶだけ（.kissa は変えない）。
+- `50-scenes.js`：`sceneFontCss(size,text,fkey)`（3つ目でフォントを指名できる。`key` の名前は中で使っているのでぶつからないように fkey）。
+- 画面：`#telopSec`（効果音のタブのいちばん上、`#seBgmBar` の下。`body:not([data-app="live"])` では隠す）、`#telopIn`・`#telopShow`・`#telopGrid`（長押し 600ms・右クリックで編集）・`#telopNow`・`#telopClear`・`#telopKeep`・`#telopTyped`・`#telopEdit`（`#telopF*`）。`window.__otonohaTelop`＝{active, render}（テスト用）。
+- 効果音のタブの BGM の帯：`#seBgmBar`（`#seBgmName`・`#seBgmStop`・`#seBgmLow`・`#seBgmFade`）。13-minibar.js の `syncConsole` で表示を合わせ、押したときは `#consoleBgmStop`・`setBgmLow`・`#bgmFadeBtn` と同じ働き。deck.css で `body[data-app="live"][data-deck="se"]` のときだけ出す。
+- テスト：zip に `t0111.js`（作者の保存データ、1100px・375px、54件。描いた画面を out/ に PNG で残す）。
+- 確かめていないこと：OBS・実機での見え方、低スペック機での重さ、iPhone での長押し。

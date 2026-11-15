@@ -127,7 +127,7 @@
     }else appLayerEmpty=true;
     drawSceneImage(now);
     effects(dt,now,'front');
-    if(scene==='live'){caption();drawPlays(now);drawSetlist()}else sceneCaption();
+    if(scene==='live'){caption();drawPlays(now);drawTelops(now);drawSetlist()}else sceneCaption();
     drawAudience(now);
     if(outputWindow&&!outputWindow.closed&&outContext){
       try{

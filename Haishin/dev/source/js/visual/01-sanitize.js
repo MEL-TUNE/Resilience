@@ -69,6 +69,13 @@
       const ids=new Set();const uniq=chars.filter(c=>!ids.has(c.id)&&ids.add(c.id));
       if(uniq.length)out.ai={chars:uniq,cur:ids.has(a.cur)?a.cur:uniq[0].id,plan:['chat','rp','love','podcast','meeting'].includes(a.plan)?a.plan:'chat',ctx:[4,8,12,20].includes(a.ctx)?a.ctx:8,me:T(a.me,40),pos:['bottom','top','left','right'].includes(a.pos)?a.pos:''}
     }
+    // 0.10.11：テロップ（効果音は音の id で指名するだけ）
+    if(v.telop&&typeof v.telop==='object'&&!Array.isArray(v.telop)){
+      const TS=x=>{x=x&&typeof x==='object'?x:{};return {anim:['band','pop','scatter','rise'].includes(x.anim)?x.anim:'band',color:['white','pink','yellow','sky','dark'].includes(x.color)?x.color:'white',pos:['bottom','top','center'].includes(x.pos)?x.pos:'bottom',sec:Math.max(1,Math.min(15,Math.round(Number(x.sec)||4))),n:Math.max(1,Math.min(16,Math.round(Number(x.n)||8))),font:typeof x.font==='string'&&/^[a-z]{0,16}$/.test(x.font)?x.font:'',se:typeof x.se==='string'?x.se.slice(0,80):''}};
+      const tids=new Set();
+      const items=(Array.isArray(v.telop.items)?v.telop.items:[]).filter(x=>x&&typeof x==='object'&&typeof x.text==='string'&&x.text.trim()&&/^[\w-]{1,40}$/.test(x.id)&&!tids.has(x.id)&&tids.add(x.id)).slice(0,60).map(x=>({id:x.id,text:x.text.trim().slice(0,80),...TS(x)}));
+      out.telop={items,typed:TS(v.telop.typed)}
+    }else out.telop=JSON.parse(JSON.stringify(defaults.telop));
     if(['off','now','list'].includes(v.setlistShow))out.setlistShow=v.setlistShow;
     if(['tl','tr','bl','br'].includes(v.setlistPos))out.setlistPos=v.setlistPos;
     if([0,15,30,60,120].includes(v.setlistTime))out.setlistTime=v.setlistTime;
