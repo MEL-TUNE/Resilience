@@ -274,6 +274,12 @@
   // cx：描く先（ふだんは配信画面。アプリ表示でキャラクターだけを使うときは、透過のレイヤー）
   // cx：描く先。view を渡すと、同じ動き（pose）のまま、別の場所・倍率 k で描く（アプリ表示のキャラクターだけ用）。
   // 倍率は縦横同じ。戻り値の pose を view に渡すと、動きの計算を1フレームに1回で済ませられる
+  // 漫符の位置の元：いま描いた立ち絵のいちばん上（頭の上）の真ん中と、立ち絵の高さ（画面の座標）
+  let avHead=null;
+  function avHeadSet(cx,h,w){
+    const m=cx.getTransform(),t=m.transformPoint(new DOMPoint(0,-h)),b=m.transformPoint(new DOMPoint(0,0));
+    avHead={x:t.x,y:t.y,h:Math.hypot(t.x-b.x,t.y-b.y),w:w*Math.hypot(m.a,m.b),rot:Math.atan2(m.b,m.a)}
+  }
   function drawAvatar(now,talking,blink,cx=g,view=null){
     const __c=curChar(),
       __single=!!(__c&&__c.mode==='single'),
@@ -302,11 +308,13 @@
         const r=charRect(ref),
           f=Math.min(W/r.w,H/r.h)*state.scale/100*k;
         const sp=avSprite(im,r,f);
+        if(cx===g&&!view)avHeadSet(cx,sp?sp.dh:r.h*f,sp?sp.dw:r.w*f);
         if(sp)cx.drawImage(sp.c,-sp.dw/2,-sp.dh);else cx.drawImage(im,r.x,r.y,r.w,r.h,-r.w*f/2,-r.h*f,r.w*f,r.h*f)
       }else{
         const factor=Math.min(W/ref.width,H/ref.height)*state.scale/100*k;
         const w=im.width*factor,
           h=im.height*factor;
+        if(cx===g&&!view)avHeadSet(cx,h,w);
         cx.drawImage(im,-w/2,-h,w,h)
       }
       cx.restore();
@@ -316,6 +324,7 @@
     const s=state.scale/85*k;
     cx.scale(s,s);
     cx.translate(0,-243);
+    if(cx===g&&!view){const m=cx.getTransform(),t=m.transformPoint(new DOMPoint(0,-146)),b=m.transformPoint(new DOMPoint(0,243));avHead={x:t.x,y:t.y,h:Math.hypot(t.x-b.x,t.y-b.y),w:216*Math.hypot(m.a,m.b),rot:Math.atan2(m.b,m.a)}}
     cx.fillStyle='#6b8b79';
     cx.beginPath();
     cx.roundRect(-108,38,216,205,[60,60,18,18]);

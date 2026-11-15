@@ -27,6 +27,8 @@
   }
   function setExpr(id){
     curExpr=id||'';
+    // 表情を切り替えたら、出ている漫符は止める。その表情に漫符が付いていれば、それを出し続ける
+    manpuStop();{const e=curExprObj();if(e&&e.manpu)manpuStart(e.manpu,0)}
     switchAt=performance.now();
     renderExprBar();
     // 表情の設定の「この表情を試す」の表示も合わせる
@@ -60,13 +62,15 @@
     c.exprs.forEach((e,i)=>{
       const row=document.createElement('div');row.className='expr-row';row.dataset.id=e.id;
       const u1=exprThumb(state.charId,'x'+e.id),u2=exprThumb(state.charId,'y'+e.id);
-      row.innerHTML=`<div class="studio-inline"><label class="studio-field">表情の名前<input type="text" maxlength="20" data-k="name"></label><label class="studio-field">連動する動き<select data-k="motion">${EXPR_MOTION.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></label></div>`
+      row.innerHTML=`<div class="studio-inline"><label class="studio-field">表情の名前<input type="text" maxlength="20" data-k="name"></label><label class="studio-field">連動する動き<select data-k="motion">${EXPR_MOTION.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></label><label class="studio-field">この表情のときに出す漫符<select data-k="manpu"><option value="">なし</option>${Object.entries(MANPU).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('')}</select></label></div>`
         +`<div class="expr-motion"><div class="studio-inline"><label class="studio-field"><span data-l="amt">動きの大きさ</span> <output data-o="amt"></output><input type="range" min="0" max="200" step="5" data-k="amt"></label><label class="studio-field">動きの速さ <output data-o="spd"></output><input type="range" min="40" max="200" step="5" data-k="spd"></label></div>`
         +`<div class="studio-row"><button type="button" data-a="try" aria-pressed="false">この表情を試す</button><button type="button" data-a="base">キャラの設定の値を写す</button></div><p class="studio-mini">この表情のときだけ使う値です（100％＝ふつう）。「試す」を押すと、プレビューでこの表情に切り替わり、動かしながら調整できます。</p></div>`
         +`<div class="expr-imgs"><label>表情の画像 ${u1?`<img src="${u1}" alt="">`:'（未登録）'}<input type="file" accept="image/png,image/webp,image/jpeg" data-f="x"></label><label>口を開いた画像（任意） ${u2?`<img src="${u2}" alt="">`:'（なし）'}<input type="file" accept="image/png,image/webp,image/jpeg" data-f="y"></label></div>`
         +`<div class="studio-row"><button type="button" data-a="del">この表情を削除</button>${u2?'<button type="button" data-a="dely">口を開いた画像を外す</button>':''}</div>`;
       row.querySelector('[data-k=name]').value=e.name;
       row.querySelector('[data-k=motion]').value=e.motion;
+      row.querySelector('[data-k=manpu]').value=e.manpu||'';
+      row.querySelector('[data-k=manpu]').onchange=ev=>{e.manpu=ev.target.value;save();if(curExpr===e.id){manpuStop();if(e.manpu)manpuStart(e.manpu,0)}};
       row.querySelector('[data-k=name]').oninput=ev=>{e.name=ev.target.value.slice(0,20)||'表情';save();renderExprBar()};
       const mbox=row.querySelector('.expr-motion'),
         AMT_L={shake:'ガタガタの大きさ',hop:'ぴょんぴょんの高さ',sing:'歌うゆらぎの大きさ',wander:'右往左往の歩く幅',iya:'いやいやの大きさ'},

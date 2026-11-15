@@ -29,12 +29,13 @@
       if(!(await getAsset(k)))await putAsset(k,stateRawBackup);
       if(stateRawFmt>STATE_FMT)toast('新しい版で保存された映像設定を読み込みました。元の設定はブラウザ内に控えています',8000)
     }catch(_){}
-    for(const id of new Set([...PARTICLE_IDS,'background',...presetImageIds(),'scene-standby','scene-away','scene-end',...(state.mascots||[]).map(m=>'msc-'+m.id)]))try{
+    for(const id of new Set([...PARTICLE_IDS,'background',...presetImageIds(),'scene-standby','scene-away','scene-end',...DECO_IMG_IDS,...(state.mascots||[]).map(m=>'msc-'+m.id)]))try{
       const b=await getAsset(ASSET+id);
       if(b)await installAsset(id,b,state.assetNames[id],false)
     }catch(err){
       toast(assetName(id)+'を復元できませんでした',4000)
     }
+    renderDecoImgs();
     ensureProfiles();
     await loadAllChars();
     activateChar(state.charId,true);
