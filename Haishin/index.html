@@ -1392,7 +1392,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.12 / 漫符・草・ハート</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.13 / 漫符の量・大きさ・位置、文字を増やす</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1459,10 +1459,10 @@ lookPaint(look);
 <div class="telop-row telop-sub"><button type="button" class="btn" id="telopKeep">打ち込んだ文をボタンにする</button><button type="button" class="btn" id="telopTyped">打ち込みの見た目</button></div>
 <div class="telop-edit" id="telopEdit" hidden><h3 id="telopEditTitle">ボタンの編集</h3>
 <label class="studio-field">文<input id="telopFText" type="text" maxlength="80"></label>
-<div class="telop-fields"><label class="studio-field">出し方<select id="telopFAnim"></select></label><label class="studio-field">色<select id="telopFColor"></select></label><label class="studio-field">位置<select id="telopFPos"></select></label><label class="studio-field">出しておく秒数<select id="telopFSec"><option value="2">2秒</option><option value="3">3秒</option><option value="4">4秒</option><option value="5">5秒</option><option value="6">6秒</option><option value="8">8秒</option><option value="10">10秒</option><option value="15">15秒</option></select></label><label class="studio-field">散らす数<select id="telopFN"><option value="3">3</option><option value="5">5</option><option value="8">8</option><option value="12">12</option><option value="16">16</option></select></label><label class="studio-field">文字<select id="telopFFont"></select></label><label class="studio-field">一緒に鳴らす効果音<select id="telopFSe"></select></label></div>
+<div class="telop-fields"><label class="studio-field">出し方<select id="telopFAnim"></select></label><label class="studio-field">色<select id="telopFColor"></select></label><label class="studio-field">位置<select id="telopFPos"></select></label><label class="studio-field">出しておく秒数<select id="telopFSec"><option value="2">2秒</option><option value="3">3秒</option><option value="4">4秒</option><option value="5">5秒</option><option value="6">6秒</option><option value="8">8秒</option><option value="10">10秒</option><option value="15">15秒</option></select></label><label class="studio-field">散らす数<select id="telopFN"><option value="3">3</option><option value="5">5</option><option value="8">8</option><option value="12">12</option><option value="16">16</option></select></label><label class="studio-field">文字<select id="telopFFont"></select></label><label class="studio-field">一緒に鳴らす効果音<select id="telopFSe"></select></label><label class="studio-field">一緒に切り替える表情<select id="telopFExpr"></select></label><label class="studio-field">一緒に出す漫符<select id="telopFMp"><option value="">出さない</option><option value="sweat">汗</option><option value="spark">きらめき（笑い）</option><option value="heart">ハート</option></select></label></div>
 <div class="telop-row"><button type="button" class="btn" id="telopFTry">試しに出す</button><button type="button" class="btn" id="telopFUp">← 前へ</button><button type="button" class="btn" id="telopFDown">後ろへ →</button><button type="button" class="btn danger" id="telopFDel">このボタンを消す</button><span class="telop-sp"></span><button type="button" class="btn" id="telopFClose">閉じる</button><button type="button" class="btn primary" id="telopFSave">保存</button></div>
 <p class="section-help">効果音は「音のお品書き」に登録したものから選べます。テロップは配信画面・配信用ウインドウ・収録した動画に映ります（配信中の画面のときだけ。準備中・離席中の画面には出ません）。</p></div>
-<details class="deco-imgs-box"><summary>リアクションの設定・自分の画像にする</summary><div class="telop-fields"><label class="studio-field">1回押して出す数<select id="decoN"><option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="8">8</option><option value="12">12</option></select></label><label class="studio-field">ハートが消えるまで<select id="decoSec"><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option></select></label><label class="studio-field"><input type="checkbox" id="decoSing"> 歌い始め（歌枠ノートの「♪ 歌い始め」）で、漫符・草・ハートを止める</label></div><div data-deco-imgs="deco-grass,deco-heart"></div></details>
+<details class="deco-imgs-box"><summary>リアクションの設定・自分の画像にする</summary><div class="telop-fields"><label class="studio-field">1回押して出す数<select id="decoN"><option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="8">8</option><option value="12">12</option></select></label><label class="studio-field">大きさ<select id="decoSize"><option value="50">小さめ（50%）</option><option value="75">やや小さめ（75%）</option><option value="100">ふつう</option><option value="130">やや大きめ（130%）</option><option value="160">大きめ（160%）</option><option value="200">とても大きく（200%）</option></select></label><label class="studio-field">ハートが消えるまで<select id="decoSec"><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option></select></label><label class="studio-field"><input type="checkbox" id="decoSing"> 歌い始め（歌枠ノートの「♪ 歌い始め」）で、漫符・草・ハートを止める</label></div><div data-deco-imgs="deco-grass,deco-heart"></div></details>
 <p class="section-help">決まり文句のボタンは、押すと出ます。長押し・右クリックで、文・出し方・色・秒数・一緒に鳴らす効果音を変えられます。</p></section>
 <section data-panel="se" class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
 <section data-panel="se" class="section sec-join"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
@@ -1472,7 +1472,7 @@ lookPaint(look);
 <section data-panel="bgm" class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="bgm-now-row"><div class="sound-now"><span aria-hidden="true">♪</span><span id="consoleBgmName">BGM：なし</span></div><button type="button" class="stop-btn" id="consoleBgmStop" disabled>▶ 初期BGM</button></div><div class="live-prog" id="liveProgSlot" aria-label="番組"><span class="live-prog-label">番組</span></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは「標準」と名義ごとのタブです。名義専用のタブを開いているときに名義を切り替えると、その名義のタブに移ります。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
 </div></main>
 <section class="studio-card deck-panel" data-panel="chara" aria-label="表情・キャラ・動き">
-<div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row manpu-bar" role="group" aria-label="漫符" id="manpuBar"></div><details class="deco-imgs-box"><summary>漫符の絵を自分の画像にする</summary><div data-deco-imgs="deco-sweat,deco-spark,deco-mheart"></div><p class="studio-mini">PNG・WebP（透明つき）を選べます。縦横の比はそのままで、頭の上に出します。表情の設定（準備の「立ち絵」の表情）で、表情ごとに出す漫符を決めておくこともできます。</p></details><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook" class="ghost-btn">⚙ キャラの設定へ</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button><button data-motion="wander" aria-pressed="false">右往左往</button><button data-motion="iya" aria-pressed="false">いやいや</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
+<div class="stage-group"><div class="studio-row expr-bar" role="group" aria-label="表情" id="exprBar" hidden></div><div class="studio-row manpu-bar" role="group" aria-label="漫符" id="manpuBar"></div><details class="deco-imgs-box" id="manpuOpts"><summary>漫符の大きさ・量・位置、自分の画像にする</summary><div class="telop-fields"><label class="studio-field">大きさ <output id="manpuSizeOut"></output><input type="range" id="manpuSize" min="30" max="300" step="10"></label><label class="studio-field">量<select id="manpuAmt"><option value="few">少なめ（2〜3コ）</option><option value="mid">ふつう</option><option value="many">多め（とても焦る様子）</option></select></label><label class="studio-field">上下 <output id="manpuYOut"></output><input type="range" id="manpuY" min="-300" max="300" step="10"></label><label class="studio-field">左右 <output id="manpuXOut"></output><input type="range" id="manpuX" min="-300" max="300" step="10"></label></div><div class="studio-row"><button type="button" id="manpuTry">いまの設定で汗を出してみる</button><button type="button" id="manpuReset">大きさ・位置を初めに戻す</button></div><p class="studio-mini">漫符は頭のまわりの顔の外に出し、画面の端では内側へ寄せます。位置がずれるとき（髪飾りなどで立ち絵のいちばん上が頭のてっぺんと違うとき）は「上下」「左右」で合わせます。大きさ・位置は、頭の大きさに対する割合です。</p><div data-deco-imgs="deco-sweat,deco-spark,deco-mheart"></div><p class="studio-mini">PNG・WebP（透明つき）を選べます。縦横の比はそのままで、頭の上に出します。表情の設定（準備の「立ち絵」の表情）で、表情ごとに出す漫符を決めておくこともできます。</p></details><div class="studio-row char-bar" role="group" aria-label="キャラクター"><span class="studio-mini">キャラ</span><span id="charQuick" class="char-chips"></span><button type="button" id="gotoLook" class="ghost-btn">⚙ キャラの設定へ</button></div><div class="studio-row motion-bar" role="group" aria-label="立ち絵の動き"><span class="studio-mini">立ち絵の動き</span><button data-motion="still" aria-pressed="true" class="selected">直立</button><button data-motion="sing" aria-pressed="false">歌うゆらぎ</button><button data-motion="hop" aria-pressed="false">ぴょんぴょん</button><button data-motion="shake" aria-pressed="false">ガタガタ</button><button data-motion="wander" aria-pressed="false">右往左往</button><button data-motion="iya" aria-pressed="false">いやいや</button></div><div class="studio-row speaker-bar" role="group" aria-label="話者" id="speakerBar" hidden></div></div>
 <div class="studio-row drag-row"><button type="button" id="dragFree" class="drag-btn" aria-pressed="false">✋ ドラッグで動かす：オフ</button><span class="studio-mini" id="dragHint">オンにすると、プレビューの立ち絵・マスコット・スロット・ルーレット・サイコロを指やマウスで動かせます</span></div>
 <details class="scene-details" id="quickTune"><summary>見た目をその場で調整（開いているあいだも、ドラッグで動かせます）</summary><div id="quickTuneBody" class="qt-grid"></div><p class="studio-note">この欄を閉じると位置はロックされ、プレビューに触れても動きません。ここで変えた値は「設定」の同じ項目と同じもので、キャラクターごと（演出は季節・プリセットごと）に保存されます。</p></details>
 </section>
@@ -7790,7 +7790,7 @@ $('#seBgmFade').onclick=()=>{$('#bgmFadeBtn').onclick();syncConsole()};
     serifs:[],
     serifSel:'',
     serifPos:'bottom',
-    deco:{n:5,sec:5,sing:true},
+    deco:{n:5,sec:5,sing:true,msize:100,mamt:'mid',mx:0,my:0,rsize:100},
     telop:{items:[{id:'tjoke',text:'彼女は冗談を言っています',anim:'band',color:'white',pos:'bottom',sec:4,n:8,font:'',se:''}],typed:{anim:'band',color:'white',pos:'bottom',sec:5,n:8,font:'',se:''}},
     serifName:true,
     diceN:1,
@@ -8032,13 +8032,13 @@ function sanitize(v){
     }
     // 0.10.11：テロップ（効果音は音の id で指名するだけ）
     if(v.telop&&typeof v.telop==='object'&&!Array.isArray(v.telop)){
-      const TS=x=>{x=x&&typeof x==='object'?x:{};return {anim:['band','pop','scatter','rise'].includes(x.anim)?x.anim:'band',color:['white','pink','yellow','sky','dark'].includes(x.color)?x.color:'white',pos:['bottom','top','center'].includes(x.pos)?x.pos:'bottom',sec:Math.max(1,Math.min(15,Math.round(Number(x.sec)||4))),n:Math.max(1,Math.min(16,Math.round(Number(x.n)||8))),font:typeof x.font==='string'&&/^[a-z]{0,16}$/.test(x.font)?x.font:'',se:typeof x.se==='string'?x.se.slice(0,80):''}};
+      const TS=x=>{x=x&&typeof x==='object'?x:{};return {anim:['band','pop','scatter','rise'].includes(x.anim)?x.anim:'band',color:['white','pink','yellow','sky','dark'].includes(x.color)?x.color:'white',pos:['bottom','top','center'].includes(x.pos)?x.pos:'bottom',sec:Math.max(1,Math.min(15,Math.round(Number(x.sec)||4))),n:Math.max(1,Math.min(16,Math.round(Number(x.n)||8))),font:typeof x.font==='string'&&/^[a-z]{0,16}$/.test(x.font)?x.font:'',se:typeof x.se==='string'?x.se.slice(0,80):'',expr:typeof x.expr==='string'&&/^[a-z0-9]{0,8}$/.test(x.expr)?x.expr:'',mp:['sweat','spark','heart'].includes(x.mp)?x.mp:''}};
       const tids=new Set();
       const items=(Array.isArray(v.telop.items)?v.telop.items:[]).filter(x=>x&&typeof x==='object'&&typeof x.text==='string'&&x.text.trim()&&/^[\w-]{1,40}$/.test(x.id)&&!tids.has(x.id)&&tids.add(x.id)).slice(0,60).map(x=>({id:x.id,text:x.text.trim().slice(0,80),...TS(x)}));
       out.telop={items,typed:TS(v.telop.typed)}
     }else out.telop=JSON.parse(JSON.stringify(defaults.telop));
     // 0.10.12：漫符・草・ハート（1回で出す数・ハートの秒数・歌い始めで止めるか）
-    {const d=v.deco&&typeof v.deco==='object'?v.deco:{};out.deco={n:[1,3,5,8,12].includes(d.n)?d.n:5,sec:[3,5,8].includes(d.sec)?d.sec:5,sing:d.sing!==false}}
+    {const d=v.deco&&typeof v.deco==='object'?v.deco:{};const R=(x,a,b,df)=>Number.isFinite(Number(x))?Math.max(a,Math.min(b,Math.round(Number(x)))):df;out.deco={n:[1,3,5,8,12].includes(d.n)?d.n:5,sec:[3,5,8].includes(d.sec)?d.sec:5,sing:d.sing!==false,msize:R(d.msize,30,300,100),mamt:['few','mid','many'].includes(d.mamt)?d.mamt:'mid',mx:R(d.mx,-300,300,0),my:R(d.my,-300,300,0),rsize:R(d.rsize,50,200,100)}}
     if(['off','now','list'].includes(v.setlistShow))out.setlistShow=v.setlistShow;
     if(['tl','tr','bl','br'].includes(v.setlistPos))out.setlistPos=v.setlistPos;
     if([0,15,30,60,120].includes(v.setlistTime))out.setlistTime=v.setlistTime;
@@ -13387,6 +13387,9 @@ const TELOP_ANIM={band:'帯で出す（テロップ）',pop:'中央にどん',sc
     for(let i=0;i<cnt;i++){const [cx,cy]=cells[i%cells.length];parts.push({x:(cx+.5+(Math.random()-.5)*.16)/cols,y:.1+.8*(cy+.5+(Math.random()-.5)*.3)/rows,r:(Math.random()-.5)*.3,s:.8+Math.random()*.4,d:i*110})}
     telops.push({text,anim,color:TELOP_COLOR[st.color]?st.color:'white',font:st.font||'',pos:TELOP_POS[st.pos]?st.pos:'bottom',at:now,dur:Math.max(1,Math.min(15,st.sec||4))*1000,parts});
     if(telops.length>6)telops=telops.slice(-6);
+    // 一緒に切り替える表情・一緒に出す漫符（表情を切り替えると漫符は止まるので、表情が先）
+    if(st.expr&&typeof setExpr==='function'){const c=curChar();if(c&&(c.exprs||[]).some(e=>e.id===st.expr))setExpr(st.expr)}
+    if(st.mp&&typeof manpuStart==='function')manpuStart(st.mp,Math.max(1,Math.min(15,st.sec||4))*1000);
     const s=telopSound(st.se);
     if(s&&typeof playSound==='function'){try{playSound(s)}catch(_){}}
     renderTelopNow()
@@ -13481,6 +13484,9 @@ const TELOP_ANIM={band:'帯で出す（テロップ）',pop:'中央にどん',sc
     const snd=(typeof cfg!=='undefined'&&cfg?cfg.sounds:[]).filter(s=>s.assetId);
     E('telopFSe').replaceChildren(new Option('鳴らさない',''),...snd.map(s=>new Option((s.type==='emoji'?'絵文字 ':s.type==='voice'?'ボイス ':'文字 ')+(s.label||'（名前なし）'),s.id)));
     E('telopFSe').value=snd.some(s=>s.id===it.se)?it.se:'';
+    const ex=(curChar()?.exprs)||[];
+    E('telopFExpr').replaceChildren(new Option('変えない',''),...ex.map(e=>new Option(e.name,e.id)));E('telopFExpr').value=ex.some(e=>e.id===it.expr)?it.expr:'';
+    E('telopFMp').value=it.mp||'';
     telopFormSync();
     E('telopEdit').scrollIntoView?.({block:'nearest'});
     if(target!=='typed')E('telopFText').focus()
@@ -13488,7 +13494,7 @@ const TELOP_ANIM={band:'帯で出す（テロップ）',pop:'中央にどん',sc
   let telopEditing='';
   function telopFormSync(){E('telopFN').closest('label').hidden=E('telopFAnim').value!=='scatter'}
   function telopFormRead(){
-    return {anim:E('telopFAnim').value,color:E('telopFColor').value,pos:E('telopFPos').value,sec:Number(E('telopFSec').value)||4,n:Number(E('telopFN').value)||8,font:E('telopFFont').value,se:E('telopFSe').value}
+    return {anim:E('telopFAnim').value,color:E('telopFColor').value,pos:E('telopFPos').value,sec:Number(E('telopFSec').value)||4,n:Number(E('telopFN').value)||8,font:E('telopFFont').value,se:E('telopFSe').value,expr:E('telopFExpr').value,mp:E('telopFMp').value}
   }
   function renderTelop(){
     const c=telopCfg();
@@ -13603,24 +13609,29 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
     else{manpuOn.clear();manpuParts=[]}
     renderManpuBar()
   }
+  // 漫符の量：少なめ（2〜3コ）／ふつう／多め（とても焦る様子）
+  const MANPU_AMT={few:{sweat:3,spark:3,heart:2},mid:{sweat:5,spark:5,heart:3},many:{sweat:8,spark:7,heart:5}};
   function manpuEmit(id,now){
-    const L=state.light?.6:1;
+    const amt=MANPU_AMT[decoCfg().mamt]||MANPU_AMT.mid,n=Math.max(1,Math.round(amt[id]*(state.light?.6:1)));
     if(id==='sweat'){
-      // 頭の上の右側から、ぴ・ぴ・ぴと3つ（外へ向かって飛ぶ）
-      [-1.35,-.75,-.15].forEach((a,i)=>manpuParts.push({kind:id,at:now+i*130,life:900,ox:.055,oy:-.005,a,dist:.12,sz:.045,rot:a+Math.PI/2}));
-      return 1100
+      // 汗：頭のまわり（顔の外）に、上半分の弧に沿って並べる。しずくの先はキャラクター（頭の中心）へ向ける。ぴ・ぴ・ぴと順に出る
+      const few=decoCfg().mamt==='few';
+      const a0=few?-62:-168,a1=few?-14:-12;
+      for(let i=0;i<n;i++){
+        const t=n===1?.5:i/(n-1),a=(a0+(a1-a0)*t+(Math.random()-.5)*8)*Math.PI/180;
+        manpuParts.push({kind:id,at:now+i*70,life:850,a,r:1.02+Math.random()*.1,sz:.3+Math.random()*.06})
+      }
+      return 1050
     }
     if(id==='spark'){
-      // 頭の上で、きらめきがはじける（細い光の線と星）
-      manpuParts.push({kind:id,at:now,life:1100,ox:0,oy:-.04,ray:1,sz:.12});
-      const n=Math.round(5*L);
-      for(let i=0;i<n;i++){const a=-Math.PI/2+(i-(n-1)/2)*.55;manpuParts.push({kind:id,at:now+60+i*50,life:1000,ox:0,oy:-.03,a,dist:.09+Math.random()*.04,sz:.035+Math.random()*.02,rot:Math.random()*.6,star:1})}
+      // きらめき：頭の上で、細い光の線と星がはじける
+      manpuParts.push({kind:id,at:now,life:1100,ray:1,a:-Math.PI/2,r:1.0,sz:.75});
+      for(let i=0;i<n;i++){const a=(-160+140*(n===1?.5:i/(n-1))+(Math.random()-.5)*10)*Math.PI/180;manpuParts.push({kind:id,at:now+60+i*50,life:1000,a,r:1.0+Math.random()*.25,sz:.22+Math.random()*.1,rot:Math.random()*.6,star:1,out:.2})}
       return 1500
     }
-    // ハート：頭の上の左側から、ゆれながら上へ
-    const n=state.light?1:2;
-    for(let i=0;i<n;i++)manpuParts.push({kind:id,at:now+i*380,life:1500,ox:-.05-Math.random()*.03,oy:-.01,a:-Math.PI/2-.25,dist:.1,sz:.04+Math.random()*.012,sway:1});
-    return 900
+    // ハート：頭の上の幅いっぱいから、まんべんなく上へ
+    for(let i=0;i<n;i++){const t=n===1?.5:i/(n-1);manpuParts.push({kind:id,at:now+i*160+Math.random()*80,life:1600,hx:(t-.5)*1.3+(Math.random()-.5)*.15,up:1,sz:.24+Math.random()*.06})}
+    return 1200
   }
   function drawManpu(now){
     if(!manpuOn.size&&!manpuParts.length)return;
@@ -13630,25 +13641,41 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
     }
     manpuParts=manpuParts.filter(p=>now-p.at<p.life);
     if(!avHead)return;
-    const H0=avHead.h,cos=Math.cos(avHead.rot),sin=Math.sin(avHead.rot);
-    // 立ち絵の傾きに合わせて、頭の上の位置を回す
+    const dc=decoCfg();
+    // 頭の大きさのめやす：八頭身なら立ち絵の高さの 1/8 くらい。「大きさ」で全体を拡大・縮小する
+    const hu=avHead.h/7.5*(dc.msize||100)/100,cos=Math.cos(avHead.rot),sin=Math.sin(avHead.rot);
     const at=(dx,dy)=>({x:avHead.x+dx*cos-dy*sin,y:avHead.y+dx*sin+dy*cos});
+    // 頭の中心（てっぺんから少し下）。「位置」で上下・左右にずらす（頭の大きさに対する％）
+    let cx0=(dc.mx||0)/100*hu,cy0=hu*.55+(dc.my||0)/100*hu;
+    // 頭が画面の上（または左右）からはみ出しているときは、並びの形を保ったまま、まとめて画面の内側へずらす
+    {const top=at(cx0,cy0-hu*1.05),mg=hu*.35+6;
+     if(top.y<mg)cy0+=(mg-top.y)/Math.max(.3,cos);
+     const lf=at(cx0-hu*.95,cy0).x,rt=at(cx0+hu*.95,cy0).x;
+     if(lf<mg)cx0+=(mg-lf);else if(rt>W-mg)cx0-=(rt-(W-mg))}
     for(const p of manpuParts){
       const e=now-p.at;if(e<0)continue;
-      const t=e/p.life,inT=Math.min(1,e/160),fade=Math.min(1,(p.life-e)/300);
-      g.save();g.globalAlpha=Math.min(inT,fade);
+      const t=e/p.life,fade=Math.min(1,(p.life-e)/280);
+      g.save();g.globalAlpha=Math.min(1,e/120,fade);
+      let lx,ly,rot=0;
+      if(p.up){lx=cx0+p.hx*hu*.5+Math.sin(e/260+p.hx*3)*hu*.06;ly=cy0-hu*.75-easeOut(Math.min(1,t*1.2))*hu*.9}
+      else if(p.ray){lx=cx0;ly=cy0-hu*.95}
+      else{
+        // 頭の中心から、顔の外（頭の大きさの 0.75 倍くらい）へ。出るときに少し外へ動く
+        const r=hu*(.12+.62*(p.r+(p.out||0)*easeOut(Math.min(1,t*1.5))+.06*easeOut(Math.min(1,e/220))));
+        lx=cx0+Math.cos(p.a)*r;ly=cy0+Math.sin(p.a)*r;
+        rot=p.a-Math.PI/2   // しずくの先（絵の上）を、頭の中心へ向ける
+      }
+      let c=at(lx,ly);
+      const size=Math.max(8,p.sz*hu)*(e<200?.4+.6*backOut(e/200):1);
+      // 画面の端で見切れないように、内側へ寄せる
+      const m=size*.6+4;c={x:Math.max(m,Math.min(W-m,c.x)),y:Math.max(m,Math.min(H-m,c.y))};
+      g.translate(c.x,c.y);g.rotate(avHead.rot);
       if(p.ray){
-        // 細い光の線：外へ伸びて消える（線の太さは変えず、長さで見せる）
-        const c=at(p.ox*H0,p.oy*H0),r0=.035*H0,r1=r0+p.sz*H0*easeOut(Math.min(1,t*1.6));
-        g.translate(c.x,c.y);g.rotate(avHead.rot);
-        g.lineCap='round';g.lineWidth=Math.max(1,H0*.0035);
+        const r0=hu*.18,r1=r0+p.sz*hu*easeOut(Math.min(1,t*1.6));
+        g.lineCap='round';g.lineWidth=Math.max(1,hu*.02);
         for(let i=0;i<9;i++){const a=-Math.PI+i*Math.PI/8,gr=g.createLinearGradient(Math.cos(a)*r0,Math.sin(a)*r0,Math.cos(a)*r1,Math.sin(a)*r1);gr.addColorStop(0,'rgba(255,246,214,.0)');gr.addColorStop(1,'rgba(255,232,170,.9)');g.strokeStyle=gr;g.beginPath();g.moveTo(Math.cos(a)*r0,Math.sin(a)*r0);g.lineTo(Math.cos(a)*r1,Math.sin(a)*r1);g.stroke()}
       }else{
-        const d=easeOut(Math.min(1,t*1.4))*p.dist*H0,sw=p.sway?Math.sin(e/240)*.012*H0:0;
-        const c=at(p.ox*H0+Math.cos(p.a)*d+sw,p.oy*H0+Math.sin(p.a)*d);
-        const sc=e<200?.4+.6*backOut(e/200):1;
-        g.translate(c.x,c.y);g.rotate(avHead.rot+(p.rot||0));
-        const size=Math.max(10,p.sz*H0)*sc;
+        g.rotate(p.kind==='sweat'?rot:(p.rot||0));
         if(p.kind==='sweat')decoPaint('deco-sweat',artDrop,size);
         else if(p.kind==='spark')decoPaint('deco-spark',artStar,size);
         else decoPaint('deco-mheart',artHeart,size,1)
@@ -13664,13 +13691,13 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
   function decoBusy(){return !!decoReady&&(decos.length>0||manpuOn.size>0)}
   function decoClear(){decos=[];if(typeof renderTelopNow==='function')renderTelopNow()}
   function decoSpawn(kind){
-    const now=performance.now(),k=Math.min(W,H)/720,n=Math.min(decoCfg().n,state.light?5:12);
+    const now=performance.now(),k=Math.min(W,H)/720,n=Math.min(decoCfg().n,state.light?5:12),rs=(decoCfg().rsize||100)/100;
     for(let i=0;i<n;i++){
       if(kind==='grass'){
-        const fromL=Math.random()<.5,sz=(46+Math.random()*26)*k;
-        decos.push({kind,at:now+i*160,fromL,sz,y:H-sz*.55-Math.random()*70*k,v:(150+Math.random()*90)*k,hop:Math.random()*Math.PI*2})
+        const fromL=Math.random()<.5,sz=(46+Math.random()*26)*k*rs;
+        decos.push({kind,at:now+i*180,fromL,sz,y:H-sz*.6-Math.random()*60*k,v:(230+Math.random()*90)*k,T:.34+Math.random()*.08,hh:.5+Math.random()*.25})
       }else{
-        const sz=(34+Math.random()*30)*k;
+        const sz=(34+Math.random()*30)*k*rs;
         decos.push({kind,at:now+i*140,sz,x:W*(.12+Math.random()*.76),y0:H+sz,v:(70+Math.random()*50)*k,life:decoCfg().sec*1000,ph:Math.random()*Math.PI*2})
       }
     }
@@ -13690,10 +13717,11 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
       const e=(now-d.at)/1000;if(e<0)continue;
       g.save();
       if(d.kind==='grass'){
-        // ころころ：横へ進んだ道のりのぶんだけ回る（転がる）。小さく弾む
-        const dist=e*d.v,x=d.fromL?-d.sz+dist:W+d.sz-dist,y=d.y-Math.abs(Math.sin(e*5+d.hop))*d.sz*.12;
-        g.globalAlpha=Math.min(1,e*4);
-        g.translate(x,y);g.rotate((d.fromL?1:-1)*dist/(d.sz*.5));
+        // ぴょんぴょん：テンポよく跳ねながら横へ進む。1回跳ぶごとに、くるっと4分の1回る
+        const dist=e*d.v,x=d.fromL?-d.sz+dist:W+d.sz-dist,ph=e/d.T,hop=Math.floor(ph),f=ph-hop;
+        const y=d.y-4*f*(1-f)*d.sz*d.hh;
+        g.globalAlpha=Math.min(1,e*5);
+        g.translate(x,y);g.rotate((d.fromL?1:-1)*(hop+(f<.5?2*f*f:1-2*(1-f)*(1-f)))*Math.PI/2);
         decoPaint('deco-grass',artGrass,d.sz)
       }else{
         // ふわふわ：ゆっくり上がりながら左右にゆれ、決めた秒数で消える
@@ -13720,6 +13748,19 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
       Object.assign(document.createElement('button'),{type:'button',id:'manpuStop',textContent:'漫符を止める',onclick:()=>manpuStop()}));
     renderManpuBar()
   }
+  function renderManpuOpts(){
+    const d=decoCfg();
+    E('manpuSize').value=d.msize||100;E('manpuSizeOut').textContent=(d.msize||100)+'%';
+    E('manpuAmt').value=d.mamt||'mid';
+    E('manpuY').value=d.my||0;E('manpuYOut').textContent=(d.my>0?'下へ ':d.my<0?'上へ ':'')+Math.abs(d.my||0)+'%';
+    E('manpuX').value=d.mx||0;E('manpuXOut').textContent=(d.mx>0?'右へ ':d.mx<0?'左へ ':'')+Math.abs(d.mx||0)+'%'
+  }
+  for(const [id,k] of [['manpuSize','msize'],['manpuY','my'],['manpuX','mx']])E(id).oninput=e=>{decoCfg()[k]=Number(e.target.value)||0;if(k==='msize'&&!decoCfg()[k])decoCfg()[k]=100;renderManpuOpts();save()};
+  E('manpuAmt').onchange=e=>{decoCfg().mamt=e.target.value;save()};
+  E('manpuTry').onclick=()=>manpuStart('sweat',3200);
+  E('manpuReset').onclick=()=>{Object.assign(decoCfg(),{msize:100,mx:0,my:0});renderManpuOpts();save()};
+  renderManpuOpts();
+  E('decoSize').value=String(decoCfg().rsize||100);E('decoSize').onchange=e=>{decoCfg().rsize=Number(e.target.value)||100;save()};
   E('decoGrass').onclick=()=>decoSpawn('grass');
   E('decoHeart').onclick=()=>decoSpawn('heart');
   E('decoN').value=String(decoCfg().n);E('decoN').onchange=e=>{decoCfg().n=Number(e.target.value)||5;save()};
@@ -14742,6 +14783,14 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     decol:{name:'昭和レトロ（Kaisei Decol）',fam:'Kaisei Decol',weight:500,q:'Kaisei+Decol:wght@500',fb:'serif'},
     dot:{name:'ドット文字（DotGothic16）',fam:'DotGothic16',weight:400,q:'DotGothic16',fb:'round'},
     kiwi:{name:'やわらか丸（Kiwi Maru）',fam:'Kiwi Maru',weight:500,q:'Kiwi+Maru:wght@500',fb:'round'},
+    hina:{name:'ひな明朝（細く繊細な明朝）',fam:'Hina Mincho',weight:400,q:'Hina+Mincho',fb:'serif'},
+    shippori:{name:'しっぽり明朝（上品な明朝）',fam:'Shippori Mincho',weight:600,q:'Shippori+Mincho:wght@600',fb:'serif'},
+    kurenaido:{name:'くれないど（やわらかな手書き）',fam:'Zen Kurenaido',weight:400,q:'Zen+Kurenaido',fb:'round'},
+    klee:{name:'クレー（えんぴつの手書き）',fam:'Klee One',weight:600,q:'Klee+One:wght@600',fb:'round'},
+    yomogi:{name:'よもぎ（ふんわり手書き）',fam:'Yomogi',weight:400,q:'Yomogi',fb:'round'},
+    yusei:{name:'ゆうせいマジック（ペンの手書き）',fam:'Yusei Magic',weight:400,q:'Yusei+Magic',fb:'round'},
+    mochiy:{name:'もちっとポップ（まるい太字）',fam:'Mochiy Pop One',weight:400,q:'Mochiy+Pop+One',fb:'round'},
+    zenmaru:{name:'ゼン丸ゴシック（やさしい丸）',fam:'Zen Maru Gothic',weight:500,q:'Zen+Maru+Gothic:wght@500',fb:'round'},
     system:{name:'端末の明朝体（読み込みなし）',fam:'',weight:500,q:'',fb:'serif'}
   };
   const FONT_FALLBACK={round:'"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif',serif:'"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif'};
