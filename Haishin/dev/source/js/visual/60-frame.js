@@ -152,13 +152,16 @@
       E('studioMic').textContent=ready&&micLive()?'マイクを再接続':'マイクを接続';
       if(mediaRecorder&&mediaRecorder.state==='recording'&&!mediaRecorder.__ending)E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
     }
-    perfWatch(performance.now()-now);
+    {const c=performance.now()-now;perfStat.n++;perfStat.sum+=c;if(c>perfStat.max)perfStat.max=c;perfWatch(c)}
     scheduleFrame()
   }
 
   // 描くのが追いつかない状態が数秒つづいたら、軽くする方法を一度だけ知らせる（勝手には変えない）
   // 重さは「遅いコマが続いた時間」で数える（コマ数で数えると、遅い端末ほど知らせが遅れる）
   let slowMs=0,slowLast=0,slowTold=false;
+  // 1コマを描くのにかかった時間の集計（重さを確かめる用。読むと0に戻る）
+  const perfStat={n:0,sum:0,max:0};
+  window.__otonohaPerf=()=>{const r={n:perfStat.n,avg:perfStat.n?perfStat.sum/perfStat.n:0,max:perfStat.max};perfStat.n=0;perfStat.sum=0;perfStat.max=0;return r};
   function perfWatch(cost){
     if(slowTold||(state.light&&(state.fps||30)<=15))return;
     const t=performance.now(),dt=slowLast?Math.min(1000,t-slowLast):0;

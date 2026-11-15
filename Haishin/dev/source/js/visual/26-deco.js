@@ -50,7 +50,15 @@
   function decoPaint(id,art,size,extra){
     const im=images[id];
     if(im&&im.width&&im.height){const f=size/Math.max(im.width,im.height);g.drawImage(im,-im.width*f/2,-im.height*f/2,im.width*f,im.height*f);return}
+    // 初めの絵は、一度だけ小さなキャンバスに描いておき、毎コマはそれを貼るだけにする（グラデーションや曲線を毎コマ描き直さない）
+    if(size<=ART_PX*1.25){const sp=artSprite(art,extra),d=size*ART_BOX/ART_PX;g.drawImage(sp,-d/2,-d/2,d,d);return}
     g.save();g.scale(size,size);art(g,extra);g.restore()
+  }
+  const ART_PX=144,ART_BOX=160,artSprites=new Map();
+  function artSprite(art,extra){
+    const key=art.name+(extra?'+':'');let c=artSprites.get(key);
+    if(!c){c=document.createElement('canvas');c.width=c.height=ART_BOX;const x=c.getContext('2d');x.translate(ART_BOX/2,ART_BOX/2);x.scale(ART_PX,ART_PX);art(x,extra);artSprites.set(key,c)}
+    return c
   }
 
   // ---- 漫符
@@ -83,8 +91,8 @@
     }
     if(id==='spark'){
       // きらめき：頭の上で、細い光の線と星がはじける
-      manpuParts.push({kind:id,at:now,life:1100,ray:1,a:-Math.PI/2,r:1.0,sz:.75});
-      for(let i=0;i<n;i++){const a=(-160+140*(n===1?.5:i/(n-1))+(Math.random()-.5)*10)*Math.PI/180;manpuParts.push({kind:id,at:now+60+i*50,life:1000,a,r:1.0+Math.random()*.25,sz:.22+Math.random()*.1,rot:Math.random()*.6,star:1,out:.2})}
+      manpuParts.push({kind:id,at:now,life:1100,ray:1,sz:.75});
+      for(let i=0;i<n;i++){const a=(-160+140*(n===1?.5:i/(n-1))+(Math.random()-.5)*10)*Math.PI/180;manpuParts.push({kind:id,at:now+60+i*50,life:1000,a,r:1.0+Math.random()*.25,sz:.22+Math.random()*.1,rot:Math.random()*.6,out:.2})}
       return 1500
     }
     // ハート：頭の上の幅いっぱいから、まんべんなく上へ
@@ -130,8 +138,11 @@
       g.translate(c.x,c.y);g.rotate(avHead.rot);
       if(p.ray){
         const r0=hu*.18,r1=r0+p.sz*hu*easeOut(Math.min(1,t*1.6));
-        g.lineCap='round';g.lineWidth=Math.max(1,hu*.02);
-        for(let i=0;i<9;i++){const a=-Math.PI+i*Math.PI/8,gr=g.createLinearGradient(Math.cos(a)*r0,Math.sin(a)*r0,Math.cos(a)*r1,Math.sin(a)*r1);gr.addColorStop(0,'rgba(255,246,214,.0)');gr.addColorStop(1,'rgba(255,232,170,.9)');g.strokeStyle=gr;g.beginPath();g.moveTo(Math.cos(a)*r0,Math.sin(a)*r0);g.lineTo(Math.cos(a)*r1,Math.sin(a)*r1);g.stroke()}
+        // 9本の光の線を、1つのグラデーション・1回の線描きで（内側は透明、外側が金色）
+        const gr=g.createRadialGradient(0,0,r0,0,0,r1);gr.addColorStop(0,'rgba(255,246,214,0)');gr.addColorStop(1,'rgba(255,232,170,.9)');
+        g.lineCap='round';g.lineWidth=Math.max(1,hu*.02);g.strokeStyle=gr;g.beginPath();
+        for(let i=0;i<9;i++){const a=-Math.PI+i*Math.PI/8,ca=Math.cos(a),sa=Math.sin(a);g.moveTo(ca*r0,sa*r0);g.lineTo(ca*r1,sa*r1)}
+        g.stroke()
       }else{
         g.rotate(p.kind==='sweat'?rot:(p.rot||0));
         if(p.kind==='sweat')decoPaint('deco-sweat',artDrop,size);

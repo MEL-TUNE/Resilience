@@ -1,7 +1,7 @@
 /* 背景画像：名義ごと・映像の向き（横 16:9／縦 9:16／3:4）ごとに10枚まで。位置と拡大は画像ごとに保存する */
 
   const BG_MAX=10,BG_ASPECTS={landscape:'横 16:9',portrait:'縦 9:16',x34:'3:4'};
-  const bgLoading=new Set(),bgThumbs=new Map();
+  const bgLoading=new Set(),bgThumbs=new Map(),bgMiss=new Map();
   function bgProf(){const p=curProfile();if(!p)return null;if(!p.bgs||typeof p.bgs!=='object')p.bgs={};if(!p.bgSel||typeof p.bgSel!=='object')p.bgSel={};return p}
   function bgList(p=bgProf(),asp=state.aspect){if(!p)return [];if(!Array.isArray(p.bgs[asp]))p.bgs[asp]=[];return p.bgs[asp]}
   function bgCur(){const p=bgProf();if(!p)return null;const l=bgList(p);return l.find(b=>b.id===p.bgSel[state.aspect])||l[0]||null}
@@ -9,9 +9,11 @@
   function bgImage(b){
     const id='bgi-'+b.id;
     if(images[id])return images[id];
-    if(!bgLoading.has(id)){
+    // 保存場所に画像がなかったとき・読めなかったときは、5秒おいてから探し直す（毎コマ探しに行かない）
+    const miss=bgMiss.get(id);
+    if(!bgLoading.has(id)&&ready&&!(miss&&performance.now()-miss<5000)){
       bgLoading.add(id);
-      getAsset(ASSET+id).then(async blob=>{if(blob){images[id]=await decode(blob);assetBlobs[id]=blob}}).catch(()=>{}).finally(()=>bgLoading.delete(id))
+      getAsset(ASSET+id).then(async blob=>{if(blob){images[id]=await decode(blob);assetBlobs[id]=blob;bgMiss.delete(id)}else bgMiss.set(id,performance.now())}).catch(()=>{bgMiss.set(id,performance.now())}).finally(()=>bgLoading.delete(id))
     }
     return null
   }
