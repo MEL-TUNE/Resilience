@@ -167,8 +167,8 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
   const FONT_FALLBACK={round:'"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif',serif:'"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif'};
   const fontSheets={},fontLoads=new Set();
   function sceneFont(){return SCENE_FONTS[state.sceneFont]||SCENE_FONTS.hachimaru}
-  function sceneFontCss(size,text){
-    const f=sceneFont(),css=`${f.weight} ${size}px ${f.fam?`"${f.fam}",`:''}${FONT_FALLBACK[f.fb]}`;
+  function sceneFontCss(size,text,fkey){
+    const f=(fkey&&SCENE_FONTS[fkey])||sceneFont(),css=`${f.weight} ${size}px ${f.fam?`"${f.fam}",`:''}${FONT_FALLBACK[f.fb]}`;
     if(!f.q)return css;
     let sheet=fontSheets[f.q];
     if(!sheet){

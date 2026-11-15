@@ -199,3 +199,28 @@ body[data-app="radio"] .bgm-now-row,body[data-app="radio"] .live-prog{display:no
 .pon-sub{margin:0 0 10px}
 #topicHand{margin-top:12px}
 [data-panel="kikaku"]>.pon-opts{margin-top:14px;padding-top:10px;border-top:1px solid var(--a-p-20)}
+
+/* 0.10.11：効果音のタブの BGM の帯（効果音のタブを開いているときだけ）と、テロップ（配信・動画のときだけ） */
+.se-bgmbar{display:none}
+body[data-app="live"][data-deck="se"] #boardShell .se-bgmbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px;padding:8px 10px;border:1px solid var(--a-p-30,rgba(0,0,0,.15));border-radius:10px}
+.se-bgmbar .se-bgm-name{flex:1 1 160px;min-width:0;display:flex;gap:6px;font-size:13px;overflow:hidden}
+.se-bgmbar .se-bgm-name span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.se-bgmbar .btn{padding:6px 10px;font-size:13px}
+.se-bgmbar .btn.on{outline:2px solid currentColor}
+body:not([data-app="live"]) #telopSec{display:none!important}
+.telop-type{display:flex;gap:6px;min-width:0}
+.telop-type input{flex:1 1 auto;min-width:0;padding:9px 10px;border:1px solid var(--a-p-30,rgba(0,0,0,.2));border-radius:8px;font-size:15px}
+.telop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:8px}
+.telop-btn{min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--a-p-45,rgba(0,0,0,.25));border-radius:10px;background:var(--hi,#fff);color:var(--ink,#222);font-size:14px;line-height:1.35;text-align:left;overflow-wrap:anywhere;cursor:pointer;-webkit-touch-callout:none;user-select:none}
+.telop-btn.telop-add{border-style:dashed;color:var(--muted,#777);text-align:center}
+.telop-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+.telop-now{flex:1 1 180px;min-width:0;font-size:13px;color:var(--muted,#666);overflow-wrap:anywhere}
+.telop-sp{flex:1 1 auto}
+.telop-edit{margin-top:10px;padding:10px;border:1px solid var(--a-p-30,rgba(0,0,0,.2));border-radius:10px}
+.telop-edit[hidden]{display:none}
+.telop-edit h3{margin:0 0 8px;font-size:15px}
+.telop-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.telop-fields select,.telop-edit input{max-width:100%;min-width:0}
+.telop-fields label[hidden],.telop-edit label[hidden]{display:none}
+#telopSec{margin-bottom:6px}
+body:not([data-app="live"]) #telopSec+.section{padding-top:0;margin-top:15px;border-top:0}

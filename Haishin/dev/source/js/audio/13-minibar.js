@@ -173,6 +173,14 @@ function syncConsole(){
   if(btn.textContent!==txt)btn.textContent=txt;
   btn.classList.toggle('playing',on);
   btn.disabled=!on&&!consoleBgm();
+  // 効果音のタブの BGM の帯（0.10.11）
+  const sn=$('#seBgmName');
+  if(sn){
+    if(sn.textContent!==nm)sn.textContent=nm;
+    const sb=$('#seBgmStop');if(sb.textContent!==txt)sb.textContent=txt;sb.classList.toggle('playing',on);sb.disabled=!on&&!consoleBgm();
+    const lw=$('#seBgmLow'),lt=bgmLow?'元の音量へ':'小さく';if(lw.textContent!==lt)lw.textContent=lt;lw.classList.toggle('on',!!bgmLow);
+    $('#seBgmFade').disabled=!bgmPlaying
+  }
   // BGM が流れているあいだ、BGM のタブに印を付ける
   const tab=document.querySelector('#deckNav [data-deck="bgm"]');
   if(tab&&tab.classList.contains('playing')!==on)tab.classList.toggle('playing',on)
@@ -196,3 +204,6 @@ $('#consoleBgmStop').onclick=()=>{
   if(b){ensureRunning();playBgm(b,{restart:true})}
 };
 $('#consoleAllStop').onclick=()=>stopAll();
+$('#seBgmStop').onclick=()=>{$('#consoleBgmStop').onclick();syncConsole()};
+$('#seBgmLow').onclick=()=>{setBgmLow(!bgmLow);syncConsole()};
+$('#seBgmFade').onclick=()=>{$('#bgmFadeBtn').onclick();syncConsole()};
