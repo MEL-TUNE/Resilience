@@ -152,41 +152,29 @@
   function telopFormRead(){
     return {anim:E('telopFAnim').value,color:E('telopFColor').value,pos:E('telopFPos').value,sec:Number(E('telopFSec').value)||4,n:Number(E('telopFN').value)||8,font:E('telopFFont').value,se:E('telopFSe').value,expr:E('telopFExpr').value,mp:E('telopFMp').value}
   }
+  // 本番の「🔊 効果音」タブ：押すと出すボタンだけ。設定の画面：押すと編集、＋で登録
   function renderTelop(){
     const c=telopCfg();
-    E('telopGrid').replaceChildren(...c.items.map(it=>{
-      const b=document.createElement('button');b.type='button';b.className='telop-btn';b.dataset.telop=it.id;b.textContent=it.text;b.title=it.text+'（長押し・右クリックで編集）';
-      return b}),Object.assign(document.createElement('button'),{type:'button',className:'telop-btn telop-add',textContent:'＋ 決まり文句を登録'}));
+    const mk=(it,edit)=>{const b=document.createElement('button');b.type='button';b.className='telop-btn';b.dataset.telop=it.id;b.textContent=it.text;b.title=edit?it.text+'（押すと編集）':it.text;return b};
+    E('telopGrid').replaceChildren(...c.items.map(it=>mk(it,false)));
+    E('telopGrid').hidden=!c.items.length;
+    E('telopSetGrid').replaceChildren(...c.items.map(it=>mk(it,true)),Object.assign(document.createElement('button'),{type:'button',className:'telop-btn telop-add',textContent:'＋ 決まり文句を登録'}));
     renderTelopNow()
   }
-  // 押す：出す。長押し・右クリック：編集
-  {
-    const grid=E('telopGrid');let lp=null,skip=false;
-    grid.addEventListener('click',e=>{
-      const b=e.target.closest('button');if(!b)return;
-      if(skip){skip=false;return}
-      if(b.classList.contains('telop-add')){
-        const c=telopCfg();if(c.items.length>=60){toast('テロップのボタンは60個までです');return}
-        const it={id:'t'+Date.now().toString(36),text:'新しいテロップ',...JSON.parse(JSON.stringify(c.typed))};c.items.push(it);save();renderTelop();telopEditOpen(it.id);E('telopFText').select();return}
-      const it=telopCfg().items.find(x=>x.id===b.dataset.telop);if(it)telopShow(it.text,it)
-    });
-    grid.addEventListener('contextmenu',e=>{const b=e.target.closest('[data-telop]');if(!b)return;e.preventDefault();telopEditOpen(b.dataset.telop)});
-    grid.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-telop]');if(!b||e.button!==0)return;clearTimeout(lp);lp=setTimeout(()=>{skip=true;telopEditOpen(b.dataset.telop)},600)});
-    for(const ev of ['pointerup','pointerleave','pointercancel'])grid.addEventListener(ev,()=>clearTimeout(lp));
-  }
+  E('telopGrid').addEventListener('click',e=>{
+    const b=e.target.closest('[data-telop]');if(!b)return;
+    const it=telopCfg().items.find(x=>x.id===b.dataset.telop);if(it)telopShow(it.text,it)
+  });
+  E('telopSetGrid').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.classList.contains('telop-add')){
+      const c=telopCfg();if(c.items.length>=60){toast('テロップのボタンは60個までです');return}
+      const it={id:'t'+Date.now().toString(36),text:'新しいテロップ',...JSON.parse(JSON.stringify(c.typed))};c.items.push(it);save();renderTelop();telopEditOpen(it.id);E('telopFText').select();return}
+    telopEditOpen(b.dataset.telop)
+  });
   E('telopShow').onclick=()=>{const t=E('telopIn').value.trim();if(!t){toast('出す文を打ち込んでください');E('telopIn').focus();return}telopShow(t,telopCfg().typed);E('telopIn').value=''};
   E('telopIn').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();E('telopShow').click()}};
-  E('telopKeep').onclick=()=>{
-    const t=E('telopIn').value.trim().slice(0,80),c=telopCfg();
-    if(!t){toast('ボタンにする文を打ち込んでください');E('telopIn').focus();return}
-    if(c.items.length>=60){toast('テロップのボタンは60個までです');return}
-    c.items.push({id:'t'+Date.now().toString(36),text:t,...JSON.parse(JSON.stringify(c.typed))});save();renderTelop();E('telopIn').value='';toast('「'+t.slice(0,20)+'」をボタンにしました')
-  };
   E('telopTyped').onclick=()=>telopEditOpen('typed');
-  // たたむ・ひらく（効果音のボタンをすぐ押したいとき用。このブラウザに覚える）
-  function telopFoldSet(f){E('telopBody').hidden=f;const b=E('telopFold');b.textContent=f?'ひらく':'たたむ';b.setAttribute('aria-expanded',String(!f))}
-  E('telopFold').onclick=()=>{const f=!E('telopBody').hidden;telopFoldSet(f);try{localStorage.setItem('otonoha-telop-fold',f?'1':'0')}catch(_){}};
-  try{telopFoldSet(localStorage.getItem('otonoha-telop-fold')==='1')}catch(_){}
   E('telopClear').onclick=telopClear;
   E('telopFAnim').onchange=telopFormSync;
   E('telopFSave').onclick=()=>{

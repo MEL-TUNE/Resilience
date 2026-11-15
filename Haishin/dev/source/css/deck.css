@@ -208,12 +208,13 @@ body[data-app="live"][data-deck="se"] #boardShell .se-bgmbar{display:flex;align-
 .se-bgmbar .btn{flex:0 0 auto;padding:6px 9px;font-size:13px;white-space:nowrap}
 .se-bgmbar .btn.on{outline:2px solid currentColor}
 body:not([data-app="live"]) #telopSec{display:none!important}
-body:not([data-app="live"]) #telopSec+.section{padding-top:0;margin-top:15px;border-top:0}
-#telopSec{margin-bottom:6px}
-#telopBody[hidden]{display:none}
+#telopGrid[hidden]{display:none}
 .telop-type{display:flex;gap:6px;min-width:0}
 .telop-type input{flex:1 1 auto;min-width:0;padding:9px 10px;border:1px solid var(--a-p-30,rgba(0,0,0,.2));border-radius:8px;font-size:15px}
 .telop-type .btn{flex:0 0 auto;white-space:nowrap}
+.deco-set{margin-top:14px}
+.deco-set .studio-header-line{margin-top:12px}
+#telopSetGrid{margin:6px 0}
 .telop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-top:8px}
 .telop-btn{min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--a-p-45,rgba(0,0,0,.25));border-radius:10px;background:var(--hi,#fff);color:var(--ink,#222);font-size:14px;line-height:1.35;text-align:left;overflow-wrap:anywhere;cursor:pointer;-webkit-touch-callout:none;user-select:none}
 .telop-btn.telop-add{border-style:dashed;color:var(--muted,#777);text-align:center}
