@@ -39,6 +39,9 @@
     for(let i=0;i<cnt;i++){const [cx,cy]=cells[i%cells.length];parts.push({x:(cx+.5+(Math.random()-.5)*.16)/cols,y:.1+.8*(cy+.5+(Math.random()-.5)*.3)/rows,r:(Math.random()-.5)*.3,s:.8+Math.random()*.4,d:i*110})}
     telops.push({text,anim,color:TELOP_COLOR[st.color]?st.color:'white',font:st.font||'',pos:TELOP_POS[st.pos]?st.pos:'bottom',at:now,dur:Math.max(1,Math.min(15,st.sec||4))*1000,parts});
     if(telops.length>6)telops=telops.slice(-6);
+    // 一緒に切り替える表情・一緒に出す漫符（表情を切り替えると漫符は止まるので、表情が先）
+    if(st.expr&&typeof setExpr==='function'){const c=curChar();if(c&&(c.exprs||[]).some(e=>e.id===st.expr))setExpr(st.expr)}
+    if(st.mp&&typeof manpuStart==='function')manpuStart(st.mp,Math.max(1,Math.min(15,st.sec||4))*1000);
     const s=telopSound(st.se);
     if(s&&typeof playSound==='function'){try{playSound(s)}catch(_){}}
     renderTelopNow()
@@ -133,6 +136,9 @@
     const snd=(typeof cfg!=='undefined'&&cfg?cfg.sounds:[]).filter(s=>s.assetId);
     E('telopFSe').replaceChildren(new Option('鳴らさない',''),...snd.map(s=>new Option((s.type==='emoji'?'絵文字 ':s.type==='voice'?'ボイス ':'文字 ')+(s.label||'（名前なし）'),s.id)));
     E('telopFSe').value=snd.some(s=>s.id===it.se)?it.se:'';
+    const ex=(curChar()?.exprs)||[];
+    E('telopFExpr').replaceChildren(new Option('変えない',''),...ex.map(e=>new Option(e.name,e.id)));E('telopFExpr').value=ex.some(e=>e.id===it.expr)?it.expr:'';
+    E('telopFMp').value=it.mp||'';
     telopFormSync();
     E('telopEdit').scrollIntoView?.({block:'nearest'});
     if(target!=='typed')E('telopFText').focus()
@@ -140,7 +146,7 @@
   let telopEditing='';
   function telopFormSync(){E('telopFN').closest('label').hidden=E('telopFAnim').value!=='scatter'}
   function telopFormRead(){
-    return {anim:E('telopFAnim').value,color:E('telopFColor').value,pos:E('telopFPos').value,sec:Number(E('telopFSec').value)||4,n:Number(E('telopFN').value)||8,font:E('telopFFont').value,se:E('telopFSe').value}
+    return {anim:E('telopFAnim').value,color:E('telopFColor').value,pos:E('telopFPos').value,sec:Number(E('telopFSec').value)||4,n:Number(E('telopFN').value)||8,font:E('telopFFont').value,se:E('telopFSe').value,expr:E('telopFExpr').value,mp:E('telopFMp').value}
   }
   function renderTelop(){
     const c=telopCfg();

@@ -162,6 +162,14 @@ for(const k of ['standby','away','end'])for(const f of SCENE_FIELDS){
     decol:{name:'昭和レトロ（Kaisei Decol）',fam:'Kaisei Decol',weight:500,q:'Kaisei+Decol:wght@500',fb:'serif'},
     dot:{name:'ドット文字（DotGothic16）',fam:'DotGothic16',weight:400,q:'DotGothic16',fb:'round'},
     kiwi:{name:'やわらか丸（Kiwi Maru）',fam:'Kiwi Maru',weight:500,q:'Kiwi+Maru:wght@500',fb:'round'},
+    hina:{name:'ひな明朝（細く繊細な明朝）',fam:'Hina Mincho',weight:400,q:'Hina+Mincho',fb:'serif'},
+    shippori:{name:'しっぽり明朝（上品な明朝）',fam:'Shippori Mincho',weight:600,q:'Shippori+Mincho:wght@600',fb:'serif'},
+    kurenaido:{name:'くれないど（やわらかな手書き）',fam:'Zen Kurenaido',weight:400,q:'Zen+Kurenaido',fb:'round'},
+    klee:{name:'クレー（えんぴつの手書き）',fam:'Klee One',weight:600,q:'Klee+One:wght@600',fb:'round'},
+    yomogi:{name:'よもぎ（ふんわり手書き）',fam:'Yomogi',weight:400,q:'Yomogi',fb:'round'},
+    yusei:{name:'ゆうせいマジック（ペンの手書き）',fam:'Yusei Magic',weight:400,q:'Yusei+Magic',fb:'round'},
+    mochiy:{name:'もちっとポップ（まるい太字）',fam:'Mochiy Pop One',weight:400,q:'Mochiy+Pop+One',fb:'round'},
+    zenmaru:{name:'ゼン丸ゴシック（やさしい丸）',fam:'Zen Maru Gothic',weight:500,q:'Zen+Maru+Gothic:wght@500',fb:'round'},
     system:{name:'端末の明朝体（読み込みなし）',fam:'',weight:500,q:'',fb:'serif'}
   };
   const FONT_FALLBACK={round:'"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic","Noto Sans JP",sans-serif',serif:'"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif'};

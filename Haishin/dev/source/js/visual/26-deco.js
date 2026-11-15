@@ -67,24 +67,29 @@
     else{manpuOn.clear();manpuParts=[]}
     renderManpuBar()
   }
+  // 漫符の量：少なめ（2〜3コ）／ふつう／多め（とても焦る様子）
+  const MANPU_AMT={few:{sweat:3,spark:3,heart:2},mid:{sweat:5,spark:5,heart:3},many:{sweat:8,spark:7,heart:5}};
   function manpuEmit(id,now){
-    const L=state.light?.6:1;
+    const amt=MANPU_AMT[decoCfg().mamt]||MANPU_AMT.mid,n=Math.max(1,Math.round(amt[id]*(state.light?.6:1)));
     if(id==='sweat'){
-      // 頭の上の右側から、ぴ・ぴ・ぴと3つ（外へ向かって飛ぶ）
-      [-1.35,-.75,-.15].forEach((a,i)=>manpuParts.push({kind:id,at:now+i*130,life:900,ox:.055,oy:-.005,a,dist:.12,sz:.045,rot:a+Math.PI/2}));
-      return 1100
+      // 汗：頭のまわり（顔の外）に、上半分の弧に沿って並べる。しずくの先はキャラクター（頭の中心）へ向ける。ぴ・ぴ・ぴと順に出る
+      const few=decoCfg().mamt==='few';
+      const a0=few?-62:-168,a1=few?-14:-12;
+      for(let i=0;i<n;i++){
+        const t=n===1?.5:i/(n-1),a=(a0+(a1-a0)*t+(Math.random()-.5)*8)*Math.PI/180;
+        manpuParts.push({kind:id,at:now+i*70,life:850,a,r:1.02+Math.random()*.1,sz:.3+Math.random()*.06})
+      }
+      return 1050
     }
     if(id==='spark'){
-      // 頭の上で、きらめきがはじける（細い光の線と星）
-      manpuParts.push({kind:id,at:now,life:1100,ox:0,oy:-.04,ray:1,sz:.12});
-      const n=Math.round(5*L);
-      for(let i=0;i<n;i++){const a=-Math.PI/2+(i-(n-1)/2)*.55;manpuParts.push({kind:id,at:now+60+i*50,life:1000,ox:0,oy:-.03,a,dist:.09+Math.random()*.04,sz:.035+Math.random()*.02,rot:Math.random()*.6,star:1})}
+      // きらめき：頭の上で、細い光の線と星がはじける
+      manpuParts.push({kind:id,at:now,life:1100,ray:1,a:-Math.PI/2,r:1.0,sz:.75});
+      for(let i=0;i<n;i++){const a=(-160+140*(n===1?.5:i/(n-1))+(Math.random()-.5)*10)*Math.PI/180;manpuParts.push({kind:id,at:now+60+i*50,life:1000,a,r:1.0+Math.random()*.25,sz:.22+Math.random()*.1,rot:Math.random()*.6,star:1,out:.2})}
       return 1500
     }
-    // ハート：頭の上の左側から、ゆれながら上へ
-    const n=state.light?1:2;
-    for(let i=0;i<n;i++)manpuParts.push({kind:id,at:now+i*380,life:1500,ox:-.05-Math.random()*.03,oy:-.01,a:-Math.PI/2-.25,dist:.1,sz:.04+Math.random()*.012,sway:1});
-    return 900
+    // ハート：頭の上の幅いっぱいから、まんべんなく上へ
+    for(let i=0;i<n;i++){const t=n===1?.5:i/(n-1);manpuParts.push({kind:id,at:now+i*160+Math.random()*80,life:1600,hx:(t-.5)*1.3+(Math.random()-.5)*.15,up:1,sz:.24+Math.random()*.06})}
+    return 1200
   }
   function drawManpu(now){
     if(!manpuOn.size&&!manpuParts.length)return;
@@ -94,25 +99,41 @@
     }
     manpuParts=manpuParts.filter(p=>now-p.at<p.life);
     if(!avHead)return;
-    const H0=avHead.h,cos=Math.cos(avHead.rot),sin=Math.sin(avHead.rot);
-    // 立ち絵の傾きに合わせて、頭の上の位置を回す
+    const dc=decoCfg();
+    // 頭の大きさのめやす：八頭身なら立ち絵の高さの 1/8 くらい。「大きさ」で全体を拡大・縮小する
+    const hu=avHead.h/7.5*(dc.msize||100)/100,cos=Math.cos(avHead.rot),sin=Math.sin(avHead.rot);
     const at=(dx,dy)=>({x:avHead.x+dx*cos-dy*sin,y:avHead.y+dx*sin+dy*cos});
+    // 頭の中心（てっぺんから少し下）。「位置」で上下・左右にずらす（頭の大きさに対する％）
+    let cx0=(dc.mx||0)/100*hu,cy0=hu*.55+(dc.my||0)/100*hu;
+    // 頭が画面の上（または左右）からはみ出しているときは、並びの形を保ったまま、まとめて画面の内側へずらす
+    {const top=at(cx0,cy0-hu*1.05),mg=hu*.35+6;
+     if(top.y<mg)cy0+=(mg-top.y)/Math.max(.3,cos);
+     const lf=at(cx0-hu*.95,cy0).x,rt=at(cx0+hu*.95,cy0).x;
+     if(lf<mg)cx0+=(mg-lf);else if(rt>W-mg)cx0-=(rt-(W-mg))}
     for(const p of manpuParts){
       const e=now-p.at;if(e<0)continue;
-      const t=e/p.life,inT=Math.min(1,e/160),fade=Math.min(1,(p.life-e)/300);
-      g.save();g.globalAlpha=Math.min(inT,fade);
+      const t=e/p.life,fade=Math.min(1,(p.life-e)/280);
+      g.save();g.globalAlpha=Math.min(1,e/120,fade);
+      let lx,ly,rot=0;
+      if(p.up){lx=cx0+p.hx*hu*.5+Math.sin(e/260+p.hx*3)*hu*.06;ly=cy0-hu*.75-easeOut(Math.min(1,t*1.2))*hu*.9}
+      else if(p.ray){lx=cx0;ly=cy0-hu*.95}
+      else{
+        // 頭の中心から、顔の外（頭の大きさの 0.75 倍くらい）へ。出るときに少し外へ動く
+        const r=hu*(.12+.62*(p.r+(p.out||0)*easeOut(Math.min(1,t*1.5))+.06*easeOut(Math.min(1,e/220))));
+        lx=cx0+Math.cos(p.a)*r;ly=cy0+Math.sin(p.a)*r;
+        rot=p.a-Math.PI/2   // しずくの先（絵の上）を、頭の中心へ向ける
+      }
+      let c=at(lx,ly);
+      const size=Math.max(8,p.sz*hu)*(e<200?.4+.6*backOut(e/200):1);
+      // 画面の端で見切れないように、内側へ寄せる
+      const m=size*.6+4;c={x:Math.max(m,Math.min(W-m,c.x)),y:Math.max(m,Math.min(H-m,c.y))};
+      g.translate(c.x,c.y);g.rotate(avHead.rot);
       if(p.ray){
-        // 細い光の線：外へ伸びて消える（線の太さは変えず、長さで見せる）
-        const c=at(p.ox*H0,p.oy*H0),r0=.035*H0,r1=r0+p.sz*H0*easeOut(Math.min(1,t*1.6));
-        g.translate(c.x,c.y);g.rotate(avHead.rot);
-        g.lineCap='round';g.lineWidth=Math.max(1,H0*.0035);
+        const r0=hu*.18,r1=r0+p.sz*hu*easeOut(Math.min(1,t*1.6));
+        g.lineCap='round';g.lineWidth=Math.max(1,hu*.02);
         for(let i=0;i<9;i++){const a=-Math.PI+i*Math.PI/8,gr=g.createLinearGradient(Math.cos(a)*r0,Math.sin(a)*r0,Math.cos(a)*r1,Math.sin(a)*r1);gr.addColorStop(0,'rgba(255,246,214,.0)');gr.addColorStop(1,'rgba(255,232,170,.9)');g.strokeStyle=gr;g.beginPath();g.moveTo(Math.cos(a)*r0,Math.sin(a)*r0);g.lineTo(Math.cos(a)*r1,Math.sin(a)*r1);g.stroke()}
       }else{
-        const d=easeOut(Math.min(1,t*1.4))*p.dist*H0,sw=p.sway?Math.sin(e/240)*.012*H0:0;
-        const c=at(p.ox*H0+Math.cos(p.a)*d+sw,p.oy*H0+Math.sin(p.a)*d);
-        const sc=e<200?.4+.6*backOut(e/200):1;
-        g.translate(c.x,c.y);g.rotate(avHead.rot+(p.rot||0));
-        const size=Math.max(10,p.sz*H0)*sc;
+        g.rotate(p.kind==='sweat'?rot:(p.rot||0));
         if(p.kind==='sweat')decoPaint('deco-sweat',artDrop,size);
         else if(p.kind==='spark')decoPaint('deco-spark',artStar,size);
         else decoPaint('deco-mheart',artHeart,size,1)
@@ -128,13 +149,13 @@
   function decoBusy(){return !!decoReady&&(decos.length>0||manpuOn.size>0)}
   function decoClear(){decos=[];if(typeof renderTelopNow==='function')renderTelopNow()}
   function decoSpawn(kind){
-    const now=performance.now(),k=Math.min(W,H)/720,n=Math.min(decoCfg().n,state.light?5:12);
+    const now=performance.now(),k=Math.min(W,H)/720,n=Math.min(decoCfg().n,state.light?5:12),rs=(decoCfg().rsize||100)/100;
     for(let i=0;i<n;i++){
       if(kind==='grass'){
-        const fromL=Math.random()<.5,sz=(46+Math.random()*26)*k;
-        decos.push({kind,at:now+i*160,fromL,sz,y:H-sz*.55-Math.random()*70*k,v:(150+Math.random()*90)*k,hop:Math.random()*Math.PI*2})
+        const fromL=Math.random()<.5,sz=(46+Math.random()*26)*k*rs;
+        decos.push({kind,at:now+i*180,fromL,sz,y:H-sz*.6-Math.random()*60*k,v:(230+Math.random()*90)*k,T:.34+Math.random()*.08,hh:.5+Math.random()*.25})
       }else{
-        const sz=(34+Math.random()*30)*k;
+        const sz=(34+Math.random()*30)*k*rs;
         decos.push({kind,at:now+i*140,sz,x:W*(.12+Math.random()*.76),y0:H+sz,v:(70+Math.random()*50)*k,life:decoCfg().sec*1000,ph:Math.random()*Math.PI*2})
       }
     }
@@ -154,10 +175,11 @@
       const e=(now-d.at)/1000;if(e<0)continue;
       g.save();
       if(d.kind==='grass'){
-        // ころころ：横へ進んだ道のりのぶんだけ回る（転がる）。小さく弾む
-        const dist=e*d.v,x=d.fromL?-d.sz+dist:W+d.sz-dist,y=d.y-Math.abs(Math.sin(e*5+d.hop))*d.sz*.12;
-        g.globalAlpha=Math.min(1,e*4);
-        g.translate(x,y);g.rotate((d.fromL?1:-1)*dist/(d.sz*.5));
+        // ぴょんぴょん：テンポよく跳ねながら横へ進む。1回跳ぶごとに、くるっと4分の1回る
+        const dist=e*d.v,x=d.fromL?-d.sz+dist:W+d.sz-dist,ph=e/d.T,hop=Math.floor(ph),f=ph-hop;
+        const y=d.y-4*f*(1-f)*d.sz*d.hh;
+        g.globalAlpha=Math.min(1,e*5);
+        g.translate(x,y);g.rotate((d.fromL?1:-1)*(hop+(f<.5?2*f*f:1-2*(1-f)*(1-f)))*Math.PI/2);
         decoPaint('deco-grass',artGrass,d.sz)
       }else{
         // ふわふわ：ゆっくり上がりながら左右にゆれ、決めた秒数で消える
@@ -184,6 +206,19 @@
       Object.assign(document.createElement('button'),{type:'button',id:'manpuStop',textContent:'漫符を止める',onclick:()=>manpuStop()}));
     renderManpuBar()
   }
+  function renderManpuOpts(){
+    const d=decoCfg();
+    E('manpuSize').value=d.msize||100;E('manpuSizeOut').textContent=(d.msize||100)+'%';
+    E('manpuAmt').value=d.mamt||'mid';
+    E('manpuY').value=d.my||0;E('manpuYOut').textContent=(d.my>0?'下へ ':d.my<0?'上へ ':'')+Math.abs(d.my||0)+'%';
+    E('manpuX').value=d.mx||0;E('manpuXOut').textContent=(d.mx>0?'右へ ':d.mx<0?'左へ ':'')+Math.abs(d.mx||0)+'%'
+  }
+  for(const [id,k] of [['manpuSize','msize'],['manpuY','my'],['manpuX','mx']])E(id).oninput=e=>{decoCfg()[k]=Number(e.target.value)||0;if(k==='msize'&&!decoCfg()[k])decoCfg()[k]=100;renderManpuOpts();save()};
+  E('manpuAmt').onchange=e=>{decoCfg().mamt=e.target.value;save()};
+  E('manpuTry').onclick=()=>manpuStart('sweat',3200);
+  E('manpuReset').onclick=()=>{Object.assign(decoCfg(),{msize:100,mx:0,my:0});renderManpuOpts();save()};
+  renderManpuOpts();
+  E('decoSize').value=String(decoCfg().rsize||100);E('decoSize').onchange=e=>{decoCfg().rsize=Number(e.target.value)||100;save()};
   E('decoGrass').onclick=()=>decoSpawn('grass');
   E('decoHeart').onclick=()=>decoSpawn('heart');
   E('decoN').value=String(decoCfg().n);E('decoN').onchange=e=>{decoCfg().n=Number(e.target.value)||5;save()};
