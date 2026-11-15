@@ -224,3 +224,12 @@ body:not([data-app="live"]) #telopSec{display:none!important}
 .telop-fields label[hidden],.telop-edit label[hidden]{display:none}
 #telopSec{margin-bottom:6px}
 body:not([data-app="live"]) #telopSec+.section{padding-top:0;margin-top:15px;border-top:0}
+/* 0.10.12：漫符のボタン・リアクション・自分の画像にする欄 */
+.manpu-bar{flex-wrap:wrap;align-items:center;gap:6px}
+.manpu-bar button[aria-pressed="true"]{outline:2px solid currentColor;font-weight:700}
+.telop-lab{font-size:13px;color:var(--muted,#666)}
+.deco-row .btn{min-height:40px}
+.deco-imgs-box{margin-top:8px}
+.deco-imgs-box summary{cursor:pointer;font-size:13px}
+.deco-img-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}
+.deco-img-name{flex:1 1 180px;min-width:0;font-size:13px;overflow-wrap:anywhere}

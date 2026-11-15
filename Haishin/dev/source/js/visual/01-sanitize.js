@@ -76,6 +76,8 @@
       const items=(Array.isArray(v.telop.items)?v.telop.items:[]).filter(x=>x&&typeof x==='object'&&typeof x.text==='string'&&x.text.trim()&&/^[\w-]{1,40}$/.test(x.id)&&!tids.has(x.id)&&tids.add(x.id)).slice(0,60).map(x=>({id:x.id,text:x.text.trim().slice(0,80),...TS(x)}));
       out.telop={items,typed:TS(v.telop.typed)}
     }else out.telop=JSON.parse(JSON.stringify(defaults.telop));
+    // 0.10.12：漫符・草・ハート（1回で出す数・ハートの秒数・歌い始めで止めるか）
+    {const d=v.deco&&typeof v.deco==='object'?v.deco:{};out.deco={n:[1,3,5,8,12].includes(d.n)?d.n:5,sec:[3,5,8].includes(d.sec)?d.sec:5,sing:d.sing!==false}}
     if(['off','now','list'].includes(v.setlistShow))out.setlistShow=v.setlistShow;
     if(['tl','tr','bl','br'].includes(v.setlistPos))out.setlistPos=v.setlistPos;
     if([0,15,30,60,120].includes(v.setlistTime))out.setlistTime=v.setlistTime;

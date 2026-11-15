@@ -117,17 +117,19 @@
     updateSeasonParticles(dt,now);
     background();
     effects(dt,now,'back');
+    avHead=null;
     if(sceneAvatar()){
       drawMascots(now);
       // アプリ表示で「キャラクターだけ」を使うときは、立ち絵を透過のレイヤーに描いてから配信画面へ写す（同じ動きをアプリ表示にも使う）
       const av=drawAvatar(now,mouth&&selfSpeak(),blink);
+      drawManpu(now);
       // アプリ表示の「キャラクターだけ」：同じ動きのまま、全身が入る大きさで透過のレイヤーにも描く
       const al=appCharLayer();
       if(al&&av)appLayerDraw(al,now,mouth&&selfSpeak(),blink,av)
     }else appLayerEmpty=true;
     drawSceneImage(now);
     effects(dt,now,'front');
-    if(scene==='live'){caption();drawPlays(now);drawTelops(now);drawSetlist()}else sceneCaption();
+    if(scene==='live'){caption();drawPlays(now);drawTelops(now);drawDeco(now);drawSetlist()}else sceneCaption();
     drawAudience(now);
     if(outputWindow&&!outputWindow.closed&&outContext){
       try{

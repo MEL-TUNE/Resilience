@@ -349,3 +349,19 @@
 - 効果音のタブの BGM の帯：`#seBgmBar`（`#seBgmName`・`#seBgmStop`・`#seBgmLow`・`#seBgmFade`）。13-minibar.js の `syncConsole` で表示を合わせ、押したときは `#consoleBgmStop`・`setBgmLow`・`#bgmFadeBtn` と同じ働き。deck.css で `body[data-app="live"][data-deck="se"]` のときだけ出す。
 - テスト：zip に `t0111.js`（作者の保存データ、1100px・375px、54件。描いた画面を out/ に PNG で残す）。
 - 確かめていないこと：OBS・実機での見え方、低スペック機での重さ、iPhone での長押し。
+
+## 2026-11-15 追記（STUDIO 0.10.12：漫符・草・ハート）
+
+- 作者の希望：取り急ぎ漫符と草とハート。オリジナルデザインと入れ替えられるように。ギャグっぽい線にしすぎず、八頭身イラストに付ける装飾として繊細で美しいタッチ。汗は頭の上から「ぴぴぴ」、顔に被せない（絵師様への配慮）。表情にセットで付ける形と、単独で出す形。表情の切り替え・歌うときに止まること。
+- `js/visual/26-deco.js`（新規）：
+  - 初めの絵はキャンバスで描く（artDrop・artStar・artHeart・artGrass。細いふち・淡いグラデーション・白い光）。`decoPaint(id,art,size)` は `images['deco-…']` があれば画像（長いほうの辺を size に、縦横の比はそのまま）、なければ初めの絵を縦横同じ倍率で描く。
+  - 漫符：`MANPU`（sweat・spark・heart）、`manpuStart(id,ms)`・`manpuStop(id?)`、`drawManpu(now)`（60-frame.js で drawAvatar の直後）。位置は `avHead`（30-drawing.js の `avHeadSet`：立ち絵を描く変換から、いちばん上の真ん中・立ち絵の高さ・傾きを画面の座標で取る。プレースホルダーの絵でも取る。毎フレーム先に null にする）。大きさは立ち絵の高さに対する割合。
+  - 草・ハート：`decoSpawn(kind)`・`drawDeco(now)`（drawTelops のあと、配信中の画面だけ）・`decoClear()`。同時に80まで。軽量モードでは数を減らす。
+  - 画像の差し替え：`[data-deco-imgs]` の欄を `renderDecoImgs()` で作る。`installAsset('deco-…')` で保存（assetBlobs に入るので .live にも入る）。起動時の読み込みは 90-startup.js の一覧に `DECO_IMG_IDS`。
+  - 25-telop.js より後に読まれるので、`renderTelopNow` から呼ぶ `decoBusy()` は `var decoReady` で準備前を判定する（let/const を準備前に触ると例外になる）。
+- 表情：`cleanChar` の exprs に `manpu`（''・sweat・spark・heart）。`setExpr` で `manpuStop()` してから、その表情の漫符を出す。表情の設定の行に「この表情のときに出す漫符」。
+- 歌い始め：11-songbook.js の sing の中で、`state.deco.sing!==false` なら `manpuStop()`・`decoClear()`。
+- `state.deco`＝{n(1・3・5・8・12), sec(3・5・8), sing}。sanitize は telop の区画の前。
+- 「テロップ・演出を消す」（telopClear）は、漫符・草・ハートも消す。
+- テスト：zip に `t0112.js`（作者の保存データ、1100px・375px、54件）。確かめ用の八頭身の影絵で、頭の上に出る位置と絵の見た目を画像で確かめた（作者の実際の立ち絵では見ていない）。
+- 確かめていないこと：作者の立ち絵（髪の毛先・アホ毛などで、いちばん上が頭のてっぺんと違う絵）での位置、OBS・実機、低スペック機での重さ。

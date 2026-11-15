@@ -212,6 +212,7 @@
     logList().push(x);
     if(r){r.count=(r.count||0)+1;r.last=x.t}
     sbLast=x;
+    if(state.deco?.sing!==false){manpuStop();decoClear()}
     bridgeEmit('sing',{title:t,artist:a||''});audEvent('歌い始めた曲：'+t+(a?' / '+a:''));
     saveNow();
     renderSess();logSessUpdate(ss.id);if(r)repRowUpdate(r);

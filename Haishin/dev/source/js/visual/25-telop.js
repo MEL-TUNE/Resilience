@@ -43,7 +43,7 @@
     if(s&&typeof playSound==='function'){try{playSound(s)}catch(_){}}
     renderTelopNow()
   }
-  function telopClear(){telops=[];renderTelopNow()}
+  function telopClear(){telops=[];decoClear();manpuStop();renderTelopNow()}
 
   const easeOut=x=>1-Math.pow(1-x,3);
   const backOut=x=>{const c=1.7;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
@@ -117,7 +117,7 @@
     const n=telops.length,el=E('telopNow');
     const txt=n?'表示中：'+telops.map(t=>t.text.slice(0,20)).join('／'):'テロップは出ていません';
     if(el.textContent!==txt)el.textContent=txt;
-    E('telopClear').disabled=!n
+    E('telopClear').disabled=!n&&!decoBusy()
   }
   function telopEditOpen(target){
     const c=telopCfg(),it=target==='typed'?c.typed:c.items.find(x=>x.id===target);
