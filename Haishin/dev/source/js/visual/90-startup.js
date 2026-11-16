@@ -18,7 +18,8 @@
   scheduleFrame();
 
   (async()=>{
-    for(let i=0;i<100&&!db;i++)await new Promise(r=>setTimeout(r,50));
+    // 保存領域は音声側が開く（開き直しを含めて最大20秒ほど）。それまで待つ
+    for(let i=0;i<440&&!db;i++)await new Promise(r=>setTimeout(r,50));
     if(!db){
       toast('保存領域が利用できませんでした',5000);
       return

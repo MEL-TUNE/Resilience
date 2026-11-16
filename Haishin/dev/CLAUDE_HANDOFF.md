@@ -403,3 +403,11 @@
 - データ：キャラクターに `mp`＝{sweat|spark|heart:{s(30〜300),a(few/mid/many),x,y(−300〜300)}}（cleanChar で点検。ないときは前の版の `state.deco` の msize・mamt・mx・my を使う＝`mpCfg(kind)`）。`state.deco.r`＝{grass:{n,s,sec},heart:{n,s,sec}}（sanitize で前の版の n・rsize・sec から作る。sec は 3・5・8・12）。草の sec は端から端までの秒数（速さ v＝(W+2sz)/sec、1つずつ ±15%）。
 - `drawManpu` は漫符ごとに頭の大きさ・中心・はみ出しのずらしを計算する。`activateChar` で `renderManpuOpts()`（`decoReady` のあとだけ）。
 - テスト：t0111（56件）・t0112（54件）・t0113（62件）を設定の画面での操作に合わせて直した。t092a はテロップがボイスの下になったことに合わせた。
+
+## 2026-11-16 追記（STUDIO 0.10.16：秋・冬の絵をあとから読み込む／保存場所の開き直し）
+
+- 作者の報告：iPad で読み込むと何も保存されていない状態で出ることがある（読み込み直すと直る）。iPhone で 1GB 近い .live が読み込めない。動画収録の保存が不安定かもしれない。機能が多く重い。
+- `openDB`（00-basics.js）：`openDBOnce(ms)` を 4・6・8 秒で最大3回。遅れて開いた分は閉じる。開き直す前に `indexedDB.databases()` を呼ぶ（Safari で返事が止まる不具合の回避として知られる方法。効くかは実機で確かめていない）。映像側（90-startup.js）は db を最大22秒待つ（前は5秒）。お試し表示になったときの文言に「読み込み直すと直ることがある」。
+- 秋・冬の絵：`source/autumn-art.json`（{snow:10,leaf:5,nut:5} の data URL）。build.py が `dev/autumn-art.json` に写し、公開では `Haishin/autumn-art.json` に置く（dev のものはリポジトリに入れない）。29-autumn-art.js の `autumnNeed()`（30-drawing.js の `effects` で秋・冬のときに呼ぶ）。失敗したら30秒は読み直さない。
+- テスト：zip の run.sh が `autumn-art.json` も srv に写す。`t0116.js`（8件。秋・冬以外では読み込まない、1回だけ読む、最初の indexedDB.open が返事をしなくても起動する）。
+- 1GB の .live・動画の保存は、まだ直していない（原因を実機で確かめられていない）。
