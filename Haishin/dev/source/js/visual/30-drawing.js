@@ -407,6 +407,7 @@
   function updateSeasonParticles(dt,now){
     const fx=curEffect();
     if(fx==='none')return;
+    if(fx==='autumn'||fx==='winter')autumnNeed();
     const S=fxSet(),
       N=state.light?Math.min(S.count,40):S.count;
     const t=now/1000,

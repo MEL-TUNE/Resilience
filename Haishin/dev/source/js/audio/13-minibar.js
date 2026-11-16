@@ -107,9 +107,9 @@ for(const el of [$('#bgmNowMain'),$('#miniBgmName')]){
       if(st)cfg=normalize(JSON.parse(st))
     }catch(_){}
 
-    $('.footer').textContent='この画面ではブラウザに保存できないため、お試し表示で動いています。登録した音源や録音は、画面を閉じると消えます。';
+    $('.footer').textContent='ブラウザの保存領域を開けなかったため、お試し表示で動いています（登録した音源・立ち絵は表示されず、変更は保存されません）。ページを読み込み直すと直ることがあります。';
     $('.footer').classList.add('temp-note');
-    toast('お試し表示で動いています（保存はされません）',6000)
+    toast('保存領域を開けませんでした。ページを読み込み直してください（いまはお試し表示です）',12000)
   }
 
   renderVolumes();

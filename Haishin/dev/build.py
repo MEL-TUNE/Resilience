@@ -36,6 +36,8 @@ def build():
     text = re.sub(r'<script src="([^"]+)"( data-wrap="iife")?></script>', script, text)
     text = re.sub(r'<link rel="stylesheet" href="([^"]+)">', css, text)
     (ROOT / 'index.html').write_text(text, encoding='utf-8')
+    # 秋・冬の演出の絵は、選んだときだけ読み込むので、index.html の隣に別のファイルとして置く
+    (ROOT / 'autumn-art.json').write_bytes((SOURCE / 'autumn-art.json').read_bytes())
     print('index.html を生成しました。')
 
 if __name__ == '__main__':

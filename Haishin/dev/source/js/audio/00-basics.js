@@ -529,16 +529,28 @@ function memoryDB(){
     }};
 }
 
-function openDB(){
+// 保存場所（IndexedDB）を開く。iPad・iPhone の Safari では、ページを開いた最初の1回、返事が来ないことがある。
+// 返事が来なければ開き直す（4秒・6秒・8秒待つ）。遅れて開いた古い分は閉じる
+function openDBOnce(ms){
   return new Promise((resolve,reject)=>{
+    let done=false;
     const r=indexedDB.open(DB_NAME,1);
     r.onupgradeneeded=()=>{
       const d=r.result;
       for(const n of ['assets','takes','chunks'])if(!d.objectStoreNames.contains(n))d.createObjectStore(n)
     };
-    r.onsuccess=()=>resolve(r.result);
-    r.onerror=()=>reject(r.error)
+    r.onsuccess=()=>{if(done){try{r.result.close()}catch(_){}return}done=true;resolve(r.result)};
+    r.onerror=()=>{if(done)return;done=true;reject(r.error)};
+    setTimeout(()=>{if(done)return;done=true;reject(Object.assign(Error('保存領域の返事がありません'),{timeout:true}))},ms)
   })
+}
+async function openDB(){
+  let last;
+  for(const ms of [4000,6000,8000]){
+    try{return await openDBOnce(ms)}
+    catch(e){last=e;if(!e.timeout)break;try{await indexedDB.databases?.()}catch(_){}}
+  }
+  throw last
 }
 
 const idbPut=(store,key,val)=>new Promise((resolve,reject)=>{
