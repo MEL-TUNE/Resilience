@@ -479,3 +479,6 @@ a{color:var(--accent)}
 .emoji-grid .emoji-pad{height:auto;aspect-ratio:1/1;font-size:clamp(20px,7vw,32px)}
 #voiceGrid .voice-pad.loaded{background-color:transparent;background-size:cover;background-repeat:no-repeat;background-position:center;padding:0}
 .menu-heading span,.section-title h2,.panel h3,.modal h2,.film-panel h3{font-weight:700}
+
+/* 分けたページ（obs.html・rec.html）で使わないもの */
+html[data-target="obs"] [data-not~="obs"],html[data-target="rec"] [data-not~="rec"]{display:none!important}

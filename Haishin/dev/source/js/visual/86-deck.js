@@ -5,7 +5,7 @@
    要素を動かすのは2つだけ：番組の行（ラジオは録音バー、配信・動画は BGM の欄）と、場面のボタン（配信は帯、動画は「収録・接続」） */
 
   const DECK_KEY='otonoha-deck',PV_PIN_KEY='otonoha-pv-pin',PLAN_KEY='otonoha-plan-open';
-  const DECK_LIVE=['kikaku','se','bgm','chara','tools','all'],DECK_PREP=['plan','songs','aivoice'];
+  const DECK_LIVE=['kikaku','se','bgm','chara','tools','all'],DECK_PREP=OTONOHA_TARGET==='rec'?['plan']:['plan','songs','aivoice'];
   const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}};
   const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
   const deck={level:'live',live:'kikaku',prep:'plan'};

@@ -31,6 +31,8 @@ function applyPage(){
 const APP_KEY=(typeof OTONOHA_NS==='string'?OTONOHA_NS:'')+'otonoha_app';
 function setApp(app,kind){
   if(app==='live'&&kind!=='stream'&&kind!=='video')kind=document.body.dataset.kind||'stream';
+  if(OTONOHA_TARGET==='obs'){app='live';kind='stream'}
+  if(OTONOHA_TARGET==='rec'&&app==='live')kind='video';
   app=app==='radio'?'radio':'live';
   document.body.dataset.app=app;
   if(app==='live')document.body.dataset.kind=kind;
@@ -42,6 +44,9 @@ function setApp(app,kind){
 function savedApp(){
   let v='';
   try{v=localStorage.getItem(APP_KEY)||''}catch(_){}
+  // 配信（OBS）用のページは配信だけ、収録用のページは動画と音声だけ
+  if(OTONOHA_TARGET==='obs')return ['live','stream'];
+  if(OTONOHA_TARGET==='rec'&&v!=='radio')return ['live','video'];
   if(v==='radio')return ['radio'];
   if(v==='stream'||v==='video')return ['live',v];
   return ['live',matchMedia('(pointer:coarse)').matches?'video':'stream']
