@@ -1,6 +1,6 @@
 # 配信処オトノハ：プログラムの地図
 
-編集するのは `source/` の中だけです。`python3 build.py` で、`source/index.html` を元に、CSS と JS を埋め込んだ1枚の `index.html` を作ります。点検は `node --expose-internals tests/checks.cjs` です。
+編集するのは `source/` の中だけです。`python3 build.py` で、`source/index.html` を元に、CSS と JS を埋め込んだページを3つ作ります：`index.html`（全部入り）、`obs.html`（配信（OBS）用）、`rec.html`（収録用）。分けたページで外すファイルと代わりの関数は build.py の `TARGETS` にあります。秋・冬の演出の絵は `autumn-art.json` として隣に置きます。点検は `node --expose-internals tests/checks.cjs` です。
 
 ## 守ること（変えないでください）
 

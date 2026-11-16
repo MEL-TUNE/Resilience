@@ -2,6 +2,9 @@
 /* 名前と着せ替え（ページ表示前に適用） */
 
 const OTONOHA_NS=location.protocol==='file:'?'':'haishin-';
+// 分けたページ（obs.html＝配信（OBS）用、rec.html＝収録用）。index.html は全部入り。保存場所は3つとも共有する
+const OTONOHA_TARGET=(typeof OTONOHA_BUILD_TARGET==='string'&&OTONOHA_BUILD_TARGET)||'';
+if(OTONOHA_TARGET)document.documentElement.dataset.target=OTONOHA_TARGET;
 const LOOK_KEY=OTONOHA_NS?'meltune-haishin-studio-look-v1':'meltune-kissa-studio-look-v1';
 
 const LOOK_PRESETS={

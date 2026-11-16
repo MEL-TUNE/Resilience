@@ -411,3 +411,16 @@
 - 秋・冬の絵：`source/autumn-art.json`（{snow:10,leaf:5,nut:5} の data URL）。build.py が `dev/autumn-art.json` に写し、公開では `Haishin/autumn-art.json` に置く（dev のものはリポジトリに入れない）。29-autumn-art.js の `autumnNeed()`（30-drawing.js の `effects` で秋・冬のときに呼ぶ）。失敗したら30秒は読み直さない。
 - テスト：zip の run.sh が `autumn-art.json` も srv に写す。`t0116.js`（8件。秋・冬以外では読み込まない、1回だけ読む、最初の indexedDB.open が返事をしなくても起動する）。
 - 1GB の .live・動画の保存は、まだ直していない（原因を実機で確かめられていない）。
+
+## 2026-11-16 追記（STUDIO 0.11.0：配信（OBS）用 obs.html と収録用 rec.html を分ける）
+
+- 作者の決定：収録系と配信（OBS）系を分ける。PC では OBS の機能しか使わない。2つを同じ PC で同時に開くことはない（古い低スペックの PC なので最低限しか開かない）。立ち絵の位置・番組・効果音・漫符などの設定とデータは、全部のページで引き継ぎたい（.live を読み込んだら全部のページに出てほしい）。使っていない：AI観客席・ボイス録り・PC での 3:4。低頻度で使う：画像生成AI用のプロンプトの欄（残す）。基本は歌枠ライバーで、OBS ではほぼ歌枠。歌枠とトークの分離は、あとで測って決める。
+- 作り：同じ source から build.py が3つ作る（`TARGETS`）。index.html は全部入り（これまでどおり）。obs.html・rec.html は、使わない js を外し、外したファイルの関数のうちほかから呼ばれるものに何もしない代わり（stub）を置く。`OTONOHA_BUILD_TARGET`（最初の script の頭に入る）→ theme.js の `OTONOHA_TARGET`、`<html data-target>`。
+  - obs.html が外すもの：audio/06-takes、visual/15-audience・16-voicerec・61-capture・62-videos。
+  - rec.html が外すもの：visual/10-karaoke・11-songbook・19-sheet・19s-sheet-edit・15-audience・16-voicerec・23-kakeai。
+  - 05-recording・08-video-export は、ほかから使う関数（download・updateStorage・micLive・rec など）が多いので、obs.html でも外していない。24-topics は sanitize が topicSanitize を呼ぶので外していない（外すと、そのページで保存したときにお題帳が消える）。12-apps・14-bridge は企画タブが使うので rec.html でも残す。
+  - 画面：`data-not="obs"`・`data-not="rec"`（base.css で `html[data-target] [data-not~=…]{display:none}`）。12-pages.js の `savedApp`・`setApp` で、obs は配信だけ、rec は動画・音声だけ。86-deck.js の `DECK_PREP` は rec で plan だけ。40-motion-prompt.js：obs で aspect が x34 なら portrait。
+  - 保存のキーは `OTONOHA_NS`（file: でなければ haishin-）で決まり、ページの名前には依らないので、3つのページで共有する。
+- 外すファイルを増やすとき：ほかのファイルから呼ばれる関数・値を調べて stub を足す。sanitize から呼ぶ関数を持つファイルは外さない。`t0201.js`（分けたページをひととおり動かす、44件）と `t0200.js`（分けたページで保存しても、ほかの設定が変わらない、10件）を流す。
+- テスト：run.sh は渡した index.html と同じ場所の obs.html・rec.html・autumn-art.json も srv に写す。
+- 確かめていないこと：実機（iPhone で rec.html、低スペックの PC で obs.html）、obs.html から開く配信用ウインドウを OBS に取り込んだときの見え方。

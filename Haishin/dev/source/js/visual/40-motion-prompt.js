@@ -9,6 +9,8 @@
       canvas.height=H;
       for(const p of particles)p.beh=''
     }
+    // 配信（OBS）用のページでは 3:4 を使わない（収録用のページで選んだときは、縦 9:16 で出す）
+    if(OTONOHA_TARGET==='obs'&&state.aspect==='x34')state.aspect='portrait';
     document.body.dataset.studioAspect=state.aspect;
     E('studioAspect').value=state.aspect;
     applyPerfLabel()

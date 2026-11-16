@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.10.16 / 秋・冬の絵をあとから読み込む・保存場所の開き直し</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.0 / 配信（OBS）用・収録用のページを分ける</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -49,8 +49,8 @@
 <button type="button" data-deck="tools" data-mode="live" data-level-of="live"><i aria-hidden="true">🎛</i><span data-modes="video">収録</span><span data-modes="stream">接続</span></button>
 <button type="button" data-deck="all" data-mode="live" data-level-of="live"><i aria-hidden="true">☰</i>全部</button>
 <button type="button" data-deck="plan" data-mode="plan" data-level-of="prep"><i aria-hidden="true">📝</i>企画の準備</button>
-<button type="button" data-deck="songs" data-mode="songs" data-level-of="prep"><i aria-hidden="true">🎤</i>歌枠ノート</button>
-<button type="button" data-deck="aivoice" data-mode="aivoice" data-level-of="prep"><i aria-hidden="true">🎧</i>AIキャラ・声</button>
+<button type="button" data-deck="songs" data-mode="songs" data-level-of="prep" data-not="rec"><i aria-hidden="true">🎤</i>歌枠ノート</button>
+<button type="button" data-deck="aivoice" data-mode="aivoice" data-level-of="prep" data-not="rec"><i aria-hidden="true">🎧</i>AIキャラ・声</button>
 </nav>
 <div class="deck-panels" id="deckPanels">
 <section class="studio-card deck-panel" data-panel="kikaku" aria-label="企画">
@@ -241,7 +241,7 @@
 <pre class="bridge-log" id="bridgeLog" aria-live="polite"></pre>
 </details>
 </details>
-<details class="app-dock aud-dock plan-group" data-pg="aud"><summary><h3>AI観客席</h3><small>AIのリスナーにコメントしてもらう（手渡し）</small></summary>
+<details class="app-dock aud-dock plan-group" data-pg="aud" data-not="obs rec"><summary><h3>AI観客席</h3><small>AIのリスナーにコメントしてもらう（手渡し）</small></summary>
 
 <p class="studio-note">最大5人の架空のAIリスナーが、配信者の発言や配信の出来事（歌い始めた曲、セリフ、サイコロ・ルーレットの結果、場面の切り替え）にコメントします。いまは「手渡し」でつなぎます：依頼文をコピーしてChatGPT／Claudeに貼り、返ってきたJSONを貼り戻すと、配信画面の端にコメントが流れます。人物の作りと依頼文・検証の規則は、AI観客席 0.8 と同じです。</p>
 <div class="studio-inline"><label class="studio-field">つなぎ先<select id="audVia"><option value="handoff">手渡し（ChatGPT／Claudeのプラン内の会話に貼る）</option><option value="soon" disabled>このPCのAI（Ollama・LM Studio）…準備中</option><option value="soon2" disabled>API…準備中</option></select></label><label class="studio-field">配信者の名前（空欄なら名義の名前）<input id="audStreamer" type="text" maxlength="40"></label></div>
@@ -271,7 +271,7 @@
 <ol class="sb-list aud-log" id="audLog" aria-label="これまでのコメント"></ol>
 </details>
 </section>
-<section class="studio-card mode-section deck-panel" id="studioSongs" data-panel="songs"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore">
+<section class="studio-card mode-section deck-panel" id="studioSongs" data-panel="songs" data-not="rec"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore">
 <ol class="sb-flow"><li><b>セトリ</b>：今日歌う曲。歌い始めに「♪ 歌い始め」を押す</li><li><b>本番</b>：歌唱の記録を始める・取り消す</li><li><b>曲リスト</b>：曲と、カラオケ音源のURLを登録しておく（ここからセトリへ入れる）</li><li><b>配信のあと</b>：概要欄（セトリ＋使用音源）をコピー。歌枠管理シートへも送れる</li><li><b>歌枠管理シート</b>：つなぐ・シートの曲や音源を直す</li></ol>
 <div class="sheet-bar" id="sheetBar"></div>
 <h3 class="kara-h">① セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div>
@@ -336,7 +336,7 @@
 <label class="studio-field"><input id="karaSuppress" type="checkbox" checked> 取り込んだタブ側では音を鳴らさない（アプリのモニター音で聞く。二重に聞こえるのを防ぎます。次に取り込むときから反映）</label>
 <label class="studio-field"><input id="karaAutoFade" type="checkbox" checked> 伴奏が鳴り始めたら（歌い始めたら）BGMと効果音を自動でフェードアウトする</label><label class="studio-field"><input id="karaFadeEnv" type="checkbox"> 環境音（雨音など）も一緒に止める</label><div class="studio-row"><button id="karaSingStart" type="button">歌い始め：BGM・効果音をフェードアウト</button></div><p class="studio-note">自動のフェードアウトは、取り込んだ伴奏タブの音が約2秒以上の無音のあとに鳴り始めたときに働きます。購入音源をアプリの外で流すときなど、伴奏を取り込んでいない場合は「歌い始め」ボタンを使います。</p><p class="studio-note">選ぶ画面では「Chromeタブ」（Edgeでは「タブ」）から伴奏のタブを選び、「タブの音声も共有する」をオンにします。パソコン版のChrome・Edge向けの機能で、スマートフォンでは使えません。伴奏は効果音・BGMと同じく自動で小さくなる処理（ダッキング）の対象外です。モニター音がオフ（スピーカー判定など）のときは、上の「タブ側では鳴らさない」をオンにしていると伴奏が聞こえません。</p></div>
 </div></section>
-<section class="studio-card mode-section deck-panel" id="studioAiVoice" data-panel="aivoice">
+<section class="studio-card mode-section deck-panel" id="studioAiVoice" data-panel="aivoice" data-not="rec">
 <p class="studio-kicker">AI CHARACTER / VOICE</p>
 <h2>AIキャラ・声</h2>
 <p class="studio-note">AIキャラクターとの掛け合いと、声の準備の場所です。</p>
@@ -369,6 +369,7 @@
 <div class="studio-inline"><label class="studio-field">依頼文に添える会話の数<select id="kkCtx"><option value="4">直近4発言</option><option value="8">直近8発言</option><option value="12">直近12発言</option><option value="20">直近20発言</option></select></label><label class="studio-field">字幕の位置<select id="kkPos"><option value="">セリフ帳と同じ</option><option value="bottom">下</option><option value="top">上</option><option value="left">左</option><option value="right">右</option></select></label></div>
 <div class="studio-row"><button type="button" id="kkDup">別のキャラクターとして複製</button><button type="button" id="kkReset">彼岸リオの初めの設定に戻す</button><button type="button" id="kkDel">このキャラクターを消す</button></div>
 </details>
+<div class="vr-block" data-not="obs rec">
 <h3>ボイス録り（音声モデルの学習用の録音）</h3>
 <p class="studio-note">読み上げる文を1文ずつ表示して録音し、音割れ・声の小ささ・雑音・短すぎをその場で確かめます。録った声は、1文1ファイルのWAVと「ファイル名|話者名|JP|文」の一覧（Style-Bert-VITS2 などの学習用の形式）にまとめて、ZIPで書き出せます。声のモデルを作る（学習する）作業は、GPUのあるPCや Google Colab などで別に行います。マイクは、ブラウザの音声加工（エコー除去・雑音抑制・自動音量）を切った状態で開きます。</p>
 <div class="studio-inline"><label class="studio-field">話者名（声の種類ごとに分けると、声質ごとの録音セットになります）<input id="vrSpeaker" maxlength="30"></label><label class="studio-field"><input type="checkbox" id="vrTrim"> 前後の無音を自動で詰める</label><label class="studio-field"><input type="checkbox" id="vrAuto"> 問題がなければ次の文へ進む</label></div>
@@ -386,6 +387,7 @@
 </details>
 <ol class="sb-list vr-list" id="vrList"></ol>
 <div class="studio-row"><button type="button" id="vrExport" class="accent">録音をZIPで書き出す</button></div>
+</div>
 </section>
 </div>
 </div>
@@ -449,7 +451,7 @@
  <section class="panel studio-settings grp-visual" data-modes="stream video" id="studioSettings" aria-label="表情と演出"><div class="ss-grid"><div class="ss-prev"><div class="ss-prev-box"><canvas id="settingsPreview" width="640" height="360" aria-label="映像のプレビュー"></canvas></div><p class="studio-note">配信画面と同じ映像です。右の設定を変えるとここに反映されます。</p></div>
 <aside class="studio-card">
 <p class="studio-kicker">AVATAR & SCENE</p><h2>表情と演出</h2>
-<div class="studio-inline"><label class="studio-field">映像のなめらかさ<select id="studioFps"><option value="30">30fps（なめらか）</option><option value="15">15fps</option><option value="10">10fps（軽い）</option></select></label><label class="studio-field perf-light"><input id="studioLight" type="checkbox"> 軽量モード（低スペックPC向け）</label></div><p class="studio-note">10fpsでは映像を描く回数が30fpsの3分の1になります。収録する動画もこのコマ数になります。軽量モードでは、降らせる演出を最大40個に抑え、画面の飾りのアニメーションと音量メーターの更新を間引きます。</p><label class="studio-field">映像の向き<select id="studioAspect"><option value="landscape">横 16:9（1280×720）</option><option value="portrait">縦 9:16（720×1280・縦型配信／ショート向け）</option><option value="x34">3:4（960×1280・Xに載せる動画向け）</option></select></label>
+<div class="studio-inline"><label class="studio-field">映像のなめらかさ<select id="studioFps"><option value="30">30fps（なめらか）</option><option value="15">15fps</option><option value="10">10fps（軽い）</option></select></label><label class="studio-field perf-light"><input id="studioLight" type="checkbox"> 軽量モード（低スペックPC向け）</label></div><p class="studio-note">10fpsでは映像を描く回数が30fpsの3分の1になります。収録する動画もこのコマ数になります。軽量モードでは、降らせる演出を最大40個に抑え、画面の飾りのアニメーションと音量メーターの更新を間引きます。</p><label class="studio-field">映像の向き<select id="studioAspect"><option value="landscape">横 16:9（1280×720）</option><option value="portrait">縦 9:16（720×1280・縦型配信／ショート向け）</option><option value="x34" data-not="obs">3:4（960×1280・Xに載せる動画向け）</option></select></label>
 <div class="char-panel">
 <div class="studio-header-line"><strong>名義とキャラクター</strong></div>
 <div class="studio-inline"><label class="studio-field">名義<select id="profileSel"></select></label><label class="studio-field">名義の名前<input id="profileName" type="text" maxlength="40"></label></div>
