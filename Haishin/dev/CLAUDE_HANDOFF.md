@@ -424,3 +424,10 @@
 - 外すファイルを増やすとき：ほかのファイルから呼ばれる関数・値を調べて stub を足す。sanitize から呼ぶ関数を持つファイルは外さない。`t0201.js`（分けたページをひととおり動かす、44件）と `t0200.js`（分けたページで保存しても、ほかの設定が変わらない、10件）を流す。
 - テスト：run.sh は渡した index.html と同じ場所の obs.html・rec.html・autumn-art.json も srv に写す。
 - 確かめていないこと：実機（iPhone で rec.html、低スペックの PC で obs.html）、obs.html から開く配信用ウインドウを OBS に取り込んだときの見え方。
+
+## 2026-11-16 追記（STUDIO 0.11.1：部屋ごとの骨格・色・マイク2つの確かめ）
+
+- 作者の決定：色（着せ替え）は全部屋で共有、部屋ごとに変えるのは外枠・見出しの飾り・背景の模様・看板だけ。ボタンや欄の形は全部屋同じ。部屋は3つ：配信処（OBS 系）＝ダイナーあるいは洋スイーツ、ポップ／パステル。純喫茶（音声・収録系）＝喫茶店、フードモチーフ、レトロ。甘味処（AI 系）＝和スイーツ、和風キュート。筋肉室のデザイン（ボルトの枠など。添付の「筋肉室ラジオ収録」第23版がオトノハの前身）は IP 色が強いので、甘味処のデザインへブラッシュアップする方向。ダイナーは着せ替えの色として足す。プリンアラモード系の色は配信処へ。
+- 作り：theme.js に `LOOK_ROOMS`（部屋ごとの色の並び）と `LOOK_ROOM_OF_TARGET`（看板の上の部屋の名前。タブの名前にも付ける）。11-look.js は部屋ごとの見出し `.look-room` を付けて並べ、開いている部屋（OTONOHA_TARGET）を先に。色を6つ（macaron・cherrycola・mintshake・anmitsu・sakuramochi・kinako）。骨格は base.css の最後の `html[data-target="obs"]`・`html[data-target="rec"]`（`.room-plate`・body の背景・`.top`・`.top::after`・`.shell`・`.section-title h2::before`）。index.html（data-target なし）は前のまま。甘味処（target "ai"）の骨格はまだない。
+- `Haishin/mic2.html`（新規・ビルドしない単独のページ）：getUserMedia で違う deviceId を2つ同時に開き、2本のメーターで別々に動くかを見る。iPhone では、機材をつなぐと入力が1つにまとまる可能性が高い（確かめていない）。
+- 作者の情報：IRIAM・Prism Live Studio のつなぎ方（AG03 で混ぜる）では、口パクがオケにも反応する。Prism では口パクの反応する音量をオケより少し大きめにして対応していた。オトノハの中でオケを流すとずれるなら、AG03 で混ぜる。

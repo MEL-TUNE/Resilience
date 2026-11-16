@@ -491,6 +491,30 @@ a{color:var(--accent)}
 /* 分けたページ（obs.html・rec.html）で使わないもの */
 html[data-target="obs"] [data-not~="obs"],html[data-target="rec"] [data-not~="rec"]{display:none!important}
 
+/* ---- 0.11.1：部屋の骨格（色は着せ替えのまま。変えるのは外枠・見出しの飾り・背景の模様・看板だけ） ---- */
+.room-plate{display:none}
+html[data-target] .room-plate{display:block;margin:0 auto 8px;width:max-content;max-width:100%;font:700 10.5px/1.6 var(--title-font,serif);letter-spacing:.22em;padding:2px 14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-target] .shop-eyebrow{display:none}
+/* 配信処（OBS）：洋菓子・ダイナー。水玉の背景、角の丸い看板と縞の帯、シールのような影 */
+html[data-target="obs"] .room-plate::before{content:"配信処 · LIVE STAGE"}
+html[data-target="obs"] .room-plate{border:2px solid color-mix(in srgb,var(--on-accent) 70%,transparent);border-radius:999px}
+html[data-target="obs"] body{background-image:radial-gradient(color-mix(in srgb,var(--decor) 22%,transparent) 2.2px,transparent 2.8px);background-size:24px 24px}
+html[data-target="obs"] .top{border:3px solid var(--decor);border-radius:22px;box-shadow:0 5px 0 color-mix(in srgb,var(--decor) 45%,transparent);padding-bottom:28px}
+html[data-target="obs"] .top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:repeating-linear-gradient(-45deg,var(--decor) 0 9px,var(--paper) 9px 18px);opacity:.9}
+html[data-target="obs"] .shell{border:2px solid var(--d-p-45);border-radius:18px;box-shadow:0 4px 0 color-mix(in srgb,var(--decor) 28%,transparent)}
+html[data-target="obs"] .section-title h2::before{content:"";display:inline-block;width:10px;height:10px;margin:0 9px 2px 2px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--decor) 50%,transparent);vertical-align:middle}
+/* 純喫茶（収録）：レトロな喫茶。テーブルクロスの格子の背景、看板の下のふち飾り、献立表のような二重の線 */
+html[data-target="rec"] .room-plate::before{content:"純喫茶 ─ RECORDING ROOM"}
+html[data-target="rec"] .room-plate{border-top:1px solid color-mix(in srgb,var(--on-accent) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--on-accent) 60%,transparent);font-family:Georgia,var(--title-font,serif)}
+html[data-target="rec"] body{background-image:repeating-linear-gradient(0deg,color-mix(in srgb,var(--decor) 9%,transparent) 0 14px,transparent 14px 28px),repeating-linear-gradient(90deg,color-mix(in srgb,var(--decor) 9%,transparent) 0 14px,transparent 14px 28px)}
+html[data-target="rec"] .top{padding-bottom:30px}
+html[data-target="rec"] .top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:11px;background:radial-gradient(circle at 10px 11px,var(--bg) 8px,transparent 8.6px) repeat-x;background-size:20px 11px}
+html[data-target="rec"] .shell{box-shadow:inset 0 0 0 5px var(--paper),inset 0 0 0 6px var(--d-p-30),0 5px 15px #2a20180d}
+html[data-target="rec"] .section-title h2::before{content:"";display:inline-block;width:8px;height:8px;margin:0 10px 3px 2px;background:var(--decor);transform:rotate(45deg);vertical-align:middle}
+/* 色の選び方：部屋の献立ごとの見出し */
+.look-room{grid-column:1/-1;margin:10px 0 0;font-size:11.5px;font-weight:700;color:var(--muted)}
+.look-room:first-child{margin-top:0}
+
 </style>
 <style>
 .top{padding-top:8px}
@@ -1322,10 +1346,25 @@ const LOOK_PRESETS={
 
   coffeejelly:{name:'コーヒーゼリー',bg:'#170f0b',paper:'#2b1c14',accent:'#f6ead6',decor:'#c98a4b'},
 
-  nightsoda:{name:'夜のクリームソーダ',bg:'#0b201d',paper:'#14332d',accent:'#7ee8a8',decor:'#ff4f6a'}
+  nightsoda:{name:'夜のクリームソーダ',bg:'#0b201d',paper:'#14332d',accent:'#7ee8a8',decor:'#ff4f6a'},
+  // 0.11.1：配信処（洋菓子・ダイナー）と甘味処（和菓子）の色。看板の文字と色の差（コントラスト比）は、どれも4.5以上にしてある
+  macaron:{name:'マカロン',bg:'#f6e3ec',paper:'#fffafc',accent:'#a8406a',decor:'#6fb9a4'},
+  cherrycola:{name:'チェリーコーラ',bg:'#fbe7e4',paper:'#fffaf6',accent:'#b8323f',decor:'#3f8f8a'},
+  mintshake:{name:'ミントシェイク',bg:'#dff3ec',paper:'#f8fffc',accent:'#21705c',decor:'#e8708e'},
+  anmitsu:{name:'抹茶あんみつ',bg:'#e3ecd8',paper:'#fbfcf6',accent:'#4f6e3a',decor:'#8a4b5e'},
+  sakuramochi:{name:'桜もち',bg:'#f7e4e8',paper:'#fffafb',accent:'#a8435f',decor:'#6d8f5a'},
+  kinako:{name:'黒蜜きなこ',bg:'#efe2c8',paper:'#fffaf0',accent:'#5a3a22',decor:'#c9a35b'}
 };
 
 const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];
+// 色は全部の部屋で共有する。選ぶ画面では、部屋の献立ごとにまとめて並べる（どの部屋でも、どの色でも選べる）
+const LOOK_ROOMS=[
+  {key:'haishin',name:'配信処の色（洋菓子・ダイナー）',presets:['macaron','cherrycola','mintshake','strawberry','purin','grape']},
+  {key:'kissa',name:'純喫茶の色（喫茶の献立）',presets:['kissaten','creamsoda','napolitan','omurice','lemon','bluehawaii','hotchoco','coffeejelly','nightsoda']},
+  {key:'kanmi',name:'甘味処の色（和菓子）',presets:['anmitsu','sakuramochi','kinako']}
+];
+// 部屋の名前（分けたページの看板の上に出す）
+const LOOK_ROOM_OF_TARGET={obs:{name:'配信処',en:'LIVE STAGE'},rec:{name:'純喫茶',en:'RECORDING ROOM'},ai:{name:'甘味処',en:'AI ATELIER'}};
 
 const LOOK_DEFAULT={title:'配信処オトノハ',subtitle:'',eyebrow:'LIVE＆RADIO',preset:'kissaten',...LOOK_PRESETS.kissaten};
 
@@ -1377,7 +1416,7 @@ function lookPaint(v){
 
   document.documentElement.dataset.tone=dark?'dark':'light';
 
-  document.title=v.title;
+  document.title=v.title+(typeof OTONOHA_TARGET==='string'&&LOOK_ROOM_OF_TARGET[OTONOHA_TARGET]?'｜'+LOOK_ROOM_OF_TARGET[OTONOHA_TARGET].name:'');
 
   const t=document.getElementById('appTitle'),
     s=document.getElementById('appSub'),
@@ -1400,7 +1439,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.0 / 配信（OBS）用・収録用のページを分ける</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.1 / 部屋ごとの骨格（配信処・純喫茶）と色を足す</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -7385,21 +7424,31 @@ function lookRenderUI(){
   const box=$('#lookPresets');
 
   if(!box.childElementCount){
-    for(const [key,p] of [...Object.entries(LOOK_PRESETS),['custom',{name:'カスタム'}]]){
+    const mk=(key,p)=>{
       const b=document.createElement('button');
       b.type='button';
       b.className='look-preset';
       b.dataset.preset=key;
       b.setAttribute('role','radio');
-
       b.innerHTML=`<span class="look-sw">${LOOK_COLOR_KEYS.map(k=>`<i data-k="${k}"></i>`).join('')}</span><span>${esc(p.name)}</span>`;
-
       b.onclick=()=>lookDraft(key==='custom'?{...look,preset:'custom'}:{...look,preset:key});
-      box.appendChild(b);
+      return b
+    };
+    // いま開いている部屋の色を先に並べる
+    const room={obs:'haishin',rec:'kissa',ai:'kanmi'}[OTONOHA_TARGET]||'';
+    const rooms=[...LOOK_ROOMS].sort((a,b)=>(b.key===room)-(a.key===room));
+    const listed=new Set(rooms.flatMap(r=>r.presets));
+    for(const r of rooms){
+      const h=document.createElement('p');h.className='look-room';h.textContent=r.name;box.appendChild(h);
+      for(const k of r.presets)if(LOOK_PRESETS[k])box.appendChild(mk(k,LOOK_PRESETS[k]))
     }
+    const rest=Object.keys(LOOK_PRESETS).filter(k=>!listed.has(k));
+    if(rest.length){const h=document.createElement('p');h.className='look-room';h.textContent='そのほかの色';box.appendChild(h);for(const k of rest)box.appendChild(mk(k,LOOK_PRESETS[k]))}
+    const h=document.createElement('p');h.className='look-room';h.textContent='自分で決める';box.appendChild(h);
+    box.appendChild(mk('custom',{name:'カスタム'}));
   }
 
-  for(const b of box.children){
+  for(const b of box.querySelectorAll('.look-preset')){
     const key=b.dataset.preset,
       c=key==='custom'?look:LOOK_PRESETS[key];
     b.setAttribute('aria-checked',String(look.preset===key));

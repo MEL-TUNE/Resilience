@@ -17,21 +17,31 @@ function lookRenderUI(){
   const box=$('#lookPresets');
 
   if(!box.childElementCount){
-    for(const [key,p] of [...Object.entries(LOOK_PRESETS),['custom',{name:'カスタム'}]]){
+    const mk=(key,p)=>{
       const b=document.createElement('button');
       b.type='button';
       b.className='look-preset';
       b.dataset.preset=key;
       b.setAttribute('role','radio');
-
       b.innerHTML=`<span class="look-sw">${LOOK_COLOR_KEYS.map(k=>`<i data-k="${k}"></i>`).join('')}</span><span>${esc(p.name)}</span>`;
-
       b.onclick=()=>lookDraft(key==='custom'?{...look,preset:'custom'}:{...look,preset:key});
-      box.appendChild(b);
+      return b
+    };
+    // いま開いている部屋の色を先に並べる
+    const room={obs:'haishin',rec:'kissa',ai:'kanmi'}[OTONOHA_TARGET]||'';
+    const rooms=[...LOOK_ROOMS].sort((a,b)=>(b.key===room)-(a.key===room));
+    const listed=new Set(rooms.flatMap(r=>r.presets));
+    for(const r of rooms){
+      const h=document.createElement('p');h.className='look-room';h.textContent=r.name;box.appendChild(h);
+      for(const k of r.presets)if(LOOK_PRESETS[k])box.appendChild(mk(k,LOOK_PRESETS[k]))
     }
+    const rest=Object.keys(LOOK_PRESETS).filter(k=>!listed.has(k));
+    if(rest.length){const h=document.createElement('p');h.className='look-room';h.textContent='そのほかの色';box.appendChild(h);for(const k of rest)box.appendChild(mk(k,LOOK_PRESETS[k]))}
+    const h=document.createElement('p');h.className='look-room';h.textContent='自分で決める';box.appendChild(h);
+    box.appendChild(mk('custom',{name:'カスタム'}));
   }
 
-  for(const b of box.children){
+  for(const b of box.querySelectorAll('.look-preset')){
     const key=b.dataset.preset,
       c=key==='custom'?look:LOOK_PRESETS[key];
     b.setAttribute('aria-checked',String(look.preset===key));
