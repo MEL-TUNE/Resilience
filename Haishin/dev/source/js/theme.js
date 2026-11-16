@@ -30,10 +30,25 @@ const LOOK_PRESETS={
 
   coffeejelly:{name:'コーヒーゼリー',bg:'#170f0b',paper:'#2b1c14',accent:'#f6ead6',decor:'#c98a4b'},
 
-  nightsoda:{name:'夜のクリームソーダ',bg:'#0b201d',paper:'#14332d',accent:'#7ee8a8',decor:'#ff4f6a'}
+  nightsoda:{name:'夜のクリームソーダ',bg:'#0b201d',paper:'#14332d',accent:'#7ee8a8',decor:'#ff4f6a'},
+  // 0.11.1：配信処（洋菓子・ダイナー）と甘味処（和菓子）の色。看板の文字と色の差（コントラスト比）は、どれも4.5以上にしてある
+  macaron:{name:'マカロン',bg:'#f6e3ec',paper:'#fffafc',accent:'#a8406a',decor:'#6fb9a4'},
+  cherrycola:{name:'チェリーコーラ',bg:'#fbe7e4',paper:'#fffaf6',accent:'#b8323f',decor:'#3f8f8a'},
+  mintshake:{name:'ミントシェイク',bg:'#dff3ec',paper:'#f8fffc',accent:'#21705c',decor:'#e8708e'},
+  anmitsu:{name:'抹茶あんみつ',bg:'#e3ecd8',paper:'#fbfcf6',accent:'#4f6e3a',decor:'#8a4b5e'},
+  sakuramochi:{name:'桜もち',bg:'#f7e4e8',paper:'#fffafb',accent:'#a8435f',decor:'#6d8f5a'},
+  kinako:{name:'黒蜜きなこ',bg:'#efe2c8',paper:'#fffaf0',accent:'#5a3a22',decor:'#c9a35b'}
 };
 
 const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];
+// 色は全部の部屋で共有する。選ぶ画面では、部屋の献立ごとにまとめて並べる（どの部屋でも、どの色でも選べる）
+const LOOK_ROOMS=[
+  {key:'haishin',name:'配信処の色（洋菓子・ダイナー）',presets:['macaron','cherrycola','mintshake','strawberry','purin','grape']},
+  {key:'kissa',name:'純喫茶の色（喫茶の献立）',presets:['kissaten','creamsoda','napolitan','omurice','lemon','bluehawaii','hotchoco','coffeejelly','nightsoda']},
+  {key:'kanmi',name:'甘味処の色（和菓子）',presets:['anmitsu','sakuramochi','kinako']}
+];
+// 部屋の名前（分けたページの看板の上に出す）
+const LOOK_ROOM_OF_TARGET={obs:{name:'配信処',en:'LIVE STAGE'},rec:{name:'純喫茶',en:'RECORDING ROOM'},ai:{name:'甘味処',en:'AI ATELIER'}};
 
 const LOOK_DEFAULT={title:'配信処オトノハ',subtitle:'',eyebrow:'LIVE＆RADIO',preset:'kissaten',...LOOK_PRESETS.kissaten};
 
@@ -85,7 +100,7 @@ function lookPaint(v){
 
   document.documentElement.dataset.tone=dark?'dark':'light';
 
-  document.title=v.title;
+  document.title=v.title+(typeof OTONOHA_TARGET==='string'&&LOOK_ROOM_OF_TARGET[OTONOHA_TARGET]?'｜'+LOOK_ROOM_OF_TARGET[OTONOHA_TARGET].name:'');
 
   const t=document.getElementById('appTitle'),
     s=document.getElementById('appSub'),
