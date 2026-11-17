@@ -95,13 +95,30 @@
     const kids=[name,st];
     const has=v.mem||v.status==='stored'||v.status==='orphan';
     if(has){
-      if(navigator.canShare)kids.push(vidButton(isIOS?'写真に保存（共有）':'共有','primary','共有の画面で「ビデオを保存」を選ぶと、写真アプリに入ります',async()=>{
-        try{
-          const b=await videoBlob(v),file=new File([b],v.m.name,{type:b.type||v.m.type});
-          if(!navigator.canShare({files:[file]}))throw Error('この端末では共有できません。「ファイルに保存」をお使いください');
-          await navigator.share({files:[file]})
-        }catch(e){if(e?.name!=='AbortError')toast(e.message||'共有できませんでした。「ファイルに保存」をお使いください',5000)}
-      }));
+      // 0.11.2：iPhone・iPad の Safari は、押してから共有の画面を開くまでに待ち（保存場所から動画を読む）が入ると、
+      // 「押した操作から開いた」と見なさずに断る（NotAllowedError）。そこで1回目に押したときに動画を用意し、
+      // 2回目に押したときは待たずに共有の画面を開く
+      if(navigator.canShare){
+        const label=isIOS?'写真に保存（共有）':'共有';
+        const sb=vidButton(v.shareFile?label:(isIOS?'写真に保存の準備':'共有の準備'),'primary','共有の画面で「ビデオを保存」を選ぶと、写真アプリに入ります',async()=>{
+          if(v.shareFile){
+            const file=v.shareFile;
+            try{
+              if(!navigator.canShare({files:[file]}))throw Error('この端末では共有できません。「ファイルに保存」をお使いください');
+              await navigator.share({files:[file]})
+            }catch(e){
+              if(e?.name==='AbortError')return;
+              toast(e?.name==='NotAllowedError'?'共有の画面を開けませんでした。もう一度「'+label+'」を押してください':(e.message||'共有できませんでした。「ファイルに保存」をお使いください'),6000)
+            }
+            return
+          }
+          sb.disabled=true;sb.textContent='用意しています…';
+          try{const b=await videoBlob(v);v.shareFile=new File([b],v.m.name,{type:b.type||v.m.type});sb.textContent=label;toast('用意できました。もう一度「'+label+'」を押すと、共有の画面が開きます',6000)}
+          catch(e){sb.textContent=isIOS?'写真に保存の準備':'共有の準備';toast(e.message||'動画を用意できませんでした',5000)}
+          finally{sb.disabled=false}
+        });
+        kids.push(sb)
+      }
       kids.push(vidButton('ファイルに保存','vsave','',async()=>{
         try{await vidDownload(v);toast('ファイルのダウンロードを開始しました。完了はブラウザのダウンロード表示でご確認ください',5000)}
         catch(e){toast(e.message||'書き出せませんでした',5000)}
@@ -124,7 +141,7 @@
     if((state.legacyVideos||[]).some(x=>x.id===v.m.id)){state.legacyVideos=state.legacyVideos.filter(x=>x.id!==v.m.id);saveNow()}
     vidDrop(v)
   }
-  function vidDrop(v){const i=vids.indexOf(v);if(i>=0)vids.splice(i,1);v.el?.remove();renderVideoInfo()}
+  function vidDrop(v){v.shareFile=null;const i=vids.indexOf(v);if(i>=0)vids.splice(i,1);v.el?.remove();renderVideoInfo()}
   async function vidRemove(v){
     try{await vidDelete(v.m.id)}
     catch(e){toast('削除できませんでした。動画は残っています。もう一度お試しください',6000);return}

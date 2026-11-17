@@ -130,12 +130,8 @@
       // 頭の大きさのめやす：八頭身なら立ち絵の高さの 1/8 くらい。「大きさ」で拡大・縮小する
       const hu=avHead.h/7.5*mc.s/100;
       // 頭の中心（てっぺんから少し下）。「位置」で上下・左右にずらす（頭の大きさに対する％）
-      let cx0=mc.x/100*hu,cy0=hu*.55+mc.y/100*hu;
-      // 頭が画面の上（または左右）からはみ出しているときは、並びの形を保ったまま、まとめて画面の内側へずらす
-      const top=at(cx0,cy0-hu*1.05),mg=hu*.35+6;
-      if(top.y<mg)cy0+=(mg-top.y)/Math.max(.3,cos);
-      const lf=at(cx0-hu*.95,cy0).x,rt=at(cx0+hu*.95,cy0).x;
-      if(lf<mg)cx0+=(mg-lf);else if(rt>W-mg)cx0-=(rt-(W-mg));
+      // 0.11.2：画面の端で内側へ寄せる・押し下げる処理はやめた（端でつっかえたように見えるため）。決めた位置にそのまま出す
+      const cx0=mc.x/100*hu,cy0=hu*.55+mc.y/100*hu;
       lay[kind]={hu,cx0,cy0}
     }
     for(const p of manpuParts){
@@ -152,10 +148,8 @@
         lx=cx0+Math.cos(p.a)*r;ly=cy0+Math.sin(p.a)*r;
         rot=p.a-Math.PI/2   // しずくの先（絵の上）を、頭の中心へ向ける
       }
-      let c=at(lx,ly);
+      const c=at(lx,ly);
       const size=Math.max(8,p.sz*hu)*(e<200?.4+.6*backOut(e/200):1);
-      // 画面の端で見切れないように、内側へ寄せる
-      const m=size*.6+4;c={x:Math.max(m,Math.min(W-m,c.x)),y:Math.max(m,Math.min(H-m,c.y))};
       g.translate(c.x,c.y);g.rotate(avHead.rot);
       if(p.ray){
         const r0=hu*.18,r1=r0+p.sz*hu*easeOut(Math.min(1,t*1.6));

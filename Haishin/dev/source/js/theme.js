@@ -7,36 +7,37 @@ const OTONOHA_TARGET=(typeof OTONOHA_BUILD_TARGET==='string'&&OTONOHA_BUILD_TARG
 if(OTONOHA_TARGET)document.documentElement.dataset.target=OTONOHA_TARGET;
 const LOOK_KEY=OTONOHA_NS?'meltune-haishin-studio-look-v1':'meltune-kissa-studio-look-v1';
 
+// 0.11.2：食べ物の色をより美味しそうに（地は食べ物の色を薄く、差し色は食べ物そのものの色、装飾は添え物の色）
 const LOOK_PRESETS={
-  kissaten:{name:'抹茶ラテ',bg:'#e8dfce',paper:'#faf4e6',accent:'#234c40',decor:'#a47c42'},
+  kissaten:{name:'抹茶ラテ',bg:'#e3e1c4',paper:'#fbf8ec',accent:'#2f5e34',decor:'#b0814f'},
 
-  creamsoda:{name:'クリームソーダ',bg:'#dff0de',paper:'#f8fcf6',accent:'#56a678',decor:'#e04a5c'},
+  creamsoda:{name:'クリームソーダ',bg:'#d6f0d2',paper:'#fbfff6',accent:'#22804c',decor:'#e2304f'},
 
-  napolitan:{name:'ナポリタン',bg:'#f7e2d4',paper:'#fff9f3',accent:'#d2623c',decor:'#7d9b52'},
+  napolitan:{name:'ナポリタン',bg:'#fbdcc8',paper:'#fffaf3',accent:'#c2421c',decor:'#5e8f36'},
 
-  lemon:{name:'レモンスカッシュ',bg:'#f9efc6',paper:'#fffdf2',accent:'#d6ac2c',decor:'#78a556'},
+  lemon:{name:'レモンスカッシュ',bg:'#faefb8',paper:'#fffdf0',accent:'#d8a515',decor:'#6fa142'},
 
-  bluehawaii:{name:'ブルーハワイ',bg:'#dbebf6',paper:'#f7fbfe',accent:'#4189c4',decor:'#f0c43c'},
+  bluehawaii:{name:'ブルーハワイ',bg:'#d3eaf8',paper:'#f7fbff',accent:'#1c72b3',decor:'#f2c230'},
 
-  grape:{name:'ぶどうゼリー',bg:'#e8dff3',paper:'#fbf8fd',accent:'#8158b5',decor:'#a6c452'},
+  grape:{name:'ぶどうゼリー',bg:'#eadcf3',paper:'#fcf8fe',accent:'#6b3a9f',decor:'#94bb3a'},
 
-  strawberry:{name:'いちごパフェ',bg:'#f8dee6',paper:'#fff8fa',accent:'#de5b82',decor:'#8b5a48'},
+  strawberry:{name:'いちごパフェ',bg:'#fbd9e2',paper:'#fff8fa',accent:'#c42d58',decor:'#c38a4d'},
 
-  hotchoco:{name:'ホットショコラ',bg:'#36271f',paper:'#46342b',accent:'#d8a873',decor:'#c2775c'},
+  hotchoco:{name:'ホットショコラ',bg:'#3a2419',paper:'#4b3124',accent:'#e6b47c',decor:'#d2806a'},
 
-  purin:{name:'プリンアラモード',bg:'#fbe09a',paper:'#fffaf0',accent:'#7a3a14',decor:'#e8264a'},
+  purin:{name:'プリンアラモード',bg:'#fbe1a0',paper:'#fffaee',accent:'#7a3810',decor:'#e0233f'},
 
-  omurice:{name:'オムライス',bg:'#ffd75e',paper:'#fffbe8',accent:'#b8141f',decor:'#7a4422'},
+  omurice:{name:'オムライス',bg:'#ffd968',paper:'#fffbea',accent:'#b0121c',decor:'#5f9235'},
 
   coffeejelly:{name:'コーヒーゼリー',bg:'#170f0b',paper:'#2b1c14',accent:'#f6ead6',decor:'#c98a4b'},
 
   nightsoda:{name:'夜のクリームソーダ',bg:'#0b201d',paper:'#14332d',accent:'#7ee8a8',decor:'#ff4f6a'},
   // 0.11.1：配信処（洋菓子・ダイナー）と甘味処（和菓子）の色。看板の文字と色の差（コントラスト比）は、どれも4.5以上にしてある
   macaron:{name:'マカロン',bg:'#f6e3ec',paper:'#fffafc',accent:'#a8406a',decor:'#6fb9a4'},
-  cherrycola:{name:'チェリーコーラ',bg:'#fbe7e4',paper:'#fffaf6',accent:'#b8323f',decor:'#3f8f8a'},
-  mintshake:{name:'ミントシェイク',bg:'#dff3ec',paper:'#f8fffc',accent:'#21705c',decor:'#e8708e'},
-  anmitsu:{name:'抹茶あんみつ',bg:'#e3ecd8',paper:'#fbfcf6',accent:'#4f6e3a',decor:'#8a4b5e'},
-  sakuramochi:{name:'桜もち',bg:'#f7e4e8',paper:'#fffafb',accent:'#a8435f',decor:'#6d8f5a'},
+  cherrycola:{name:'チェリーコーラ',bg:'#f8e0dc',paper:'#fffaf6',accent:'#a8222f',decor:'#6b3a2a'},
+  mintshake:{name:'ミントシェイク',bg:'#d6f1e5',paper:'#f8fffb',accent:'#1f6e58',decor:'#6b4636'},
+  anmitsu:{name:'抹茶あんみつ',bg:'#e0ead0',paper:'#fbfcf4',accent:'#466a2c',decor:'#7a3146'},
+  sakuramochi:{name:'桜もち',bg:'#f9dfe6',paper:'#fffafb',accent:'#a8435f',decor:'#5e8a4e'},
   kinako:{name:'黒蜜きなこ',bg:'#efe2c8',paper:'#fffaf0',accent:'#5a3a22',decor:'#c9a35b'}
 };
 

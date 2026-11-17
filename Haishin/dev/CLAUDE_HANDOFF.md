@@ -431,3 +431,15 @@
 - 作り：theme.js に `LOOK_ROOMS`（部屋ごとの色の並び）と `LOOK_ROOM_OF_TARGET`（看板の上の部屋の名前。タブの名前にも付ける）。11-look.js は部屋ごとの見出し `.look-room` を付けて並べ、開いている部屋（OTONOHA_TARGET）を先に。色を6つ（macaron・cherrycola・mintshake・anmitsu・sakuramochi・kinako）。骨格は base.css の最後の `html[data-target="obs"]`・`html[data-target="rec"]`（`.room-plate`・body の背景・`.top`・`.top::after`・`.shell`・`.section-title h2::before`）。index.html（data-target なし）は前のまま。甘味処（target "ai"）の骨格はまだない。
 - `Haishin/mic2.html`（新規・ビルドしない単独のページ）：getUserMedia で違う deviceId を2つ同時に開き、2本のメーターで別々に動くかを見る。iPhone では、機材をつなぐと入力が1つにまとまる可能性が高い（確かめていない）。
 - 作者の情報：IRIAM・Prism Live Studio のつなぎ方（AG03 で混ぜる）では、口パクがオケにも反応する。Prism では口パクの反応する音量をオケより少し大きめにして対応していた。オトノハの中でオケを流すとずれるなら、AG03 で混ぜる。
+
+## 2026-11-17 追記（STUDIO 0.11.2）
+
+- タブ：`DECK_LIVE=['se','kikaku','chara','tools','all']`。'bgm' のデッキはなくし、保存されていた 'bgm' は 'se' へ。se のデッキで BGM・環境音も出す（deck.css の隠す決まりを削除）。`#telopSec` は最後の `section[data-panel="bgm"]` の後ろ。.deck-nav は5列（先頭だけ 1.5 倍の幅）。
+- 漫符（26-deck の drawManpu）：0.10.13 の「画面の端で群ごとずらす」「部品ごとに収める」をやめた。原点は `cx0=mc.x/100*hu, cy0=hu*.55+mc.y/100*hu`。y の範囲は -600〜300。
+- マスコットのキャラクターごとの控え：`m.pc[cid]` は `m.pos` と同じ形（向きごと、t 付き）。`activateChar` で前のキャラクターへ `mscCharStash`（いまの値を pos[向き] に入れてから pos を丸ごと写す）、新しいキャラクターへ `mscCharApply`（pc があれば pos を置き換え、いまの向きの値を当てる）。向きの切り替え（41-aspect-memory）には関わらない。sanitize は `aspectPosClean(v,'msc')` を使う。
+- 動画の共有（62-videos）：1回目で `v.shareFile` を作り、2回目で await を挟まず `navigator.share`。NotAllowedError は案内の文。
+- テロップ色 'look'：`telopColor(k)` が documentElement の --accent・--paper・--on-accent を読む。
+- obs の水玉の背景を削除。
+- テスト：t0117（新規）。t0100d はタブ5つ・se に bgm/env を含む、に更新。t0101・t0111・t092a も更新。全体 0 失敗。
+- iPhone で2つのマイクは同時に開けない（作者が mic2.html で確かめた）。口パクとオケの分け方は未着手：案は「口パクの反応する音量をオケより上に」、オトノハの中でオケを流すときは「オケの音量に合わせて口パクの基準を上げ下げする」。
+- 会話の枠で話すリオ：claude.ai のアーティファクト「彼岸リオ 会話室」（https://claude.ai/artifact/Depp5D4SePtjuCN6yp42J9）。sample（Claude に書かせる・API キー不要）、tts、dictation、db（data/users/<id>/rio-room に会話80件と設定）、assets（立ち絵）、user。ソースはこのリポジトリにはない（artifact 側）。

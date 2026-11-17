@@ -5,15 +5,16 @@
    要素を動かすのは2つだけ：番組の行（ラジオは録音バー、配信・動画は BGM の欄）と、場面のボタン（配信は帯、動画は「収録・接続」） */
 
   const DECK_KEY='otonoha-deck',PV_PIN_KEY='otonoha-pv-pin',PLAN_KEY='otonoha-plan-open';
-  const DECK_LIVE=['kikaku','se','bgm','chara','tools','all'],DECK_PREP=OTONOHA_TARGET==='rec'?['plan']:['plan','songs','aivoice'];
+  const DECK_LIVE=['se','kikaku','chara','tools','all'],DECK_PREP=OTONOHA_TARGET==='rec'?['plan']:['plan','songs','aivoice'];
   const lsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}};
   const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(_){}};
   const deck={level:'live',live:'kikaku',prep:'plan'};
   {
     let s={};
     try{s=JSON.parse(lsGet(DECK_KEY)||'{}')||{}}catch(_){}
-    // 広い画面は「全部」、狭い画面は「企画」から始める（選んだあとは、選んだものを覚える）
-    deck.live=DECK_LIVE.includes(s.live)?s.live:matchMedia('(min-width:1100px)').matches?'all':'kikaku';
+    // 広い画面は「全部」、狭い画面は「効果音」から始める（選んだあとは、選んだものを覚える）。0.11.2 で BGM は効果音のタブへ
+    if(s.live==='bgm')s.live='se';
+    deck.live=DECK_LIVE.includes(s.live)?s.live:matchMedia('(min-width:1100px)').matches?'all':'se';
     deck.prep=DECK_PREP.includes(s.prep)?s.prep:'plan'
   }
   const deckCur=()=>deck.level==='prep'?deck.prep:deck.live;

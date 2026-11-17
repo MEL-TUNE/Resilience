@@ -490,7 +490,6 @@ html[data-target] .shop-eyebrow{display:none}
 /* 配信処（OBS）：洋菓子・ダイナー。水玉の背景、角の丸い看板と縞の帯、シールのような影 */
 html[data-target="obs"] .room-plate::before{content:"配信処 · LIVE STAGE"}
 html[data-target="obs"] .room-plate{border:2px solid color-mix(in srgb,var(--on-accent) 70%,transparent);border-radius:999px}
-html[data-target="obs"] body{background-image:radial-gradient(color-mix(in srgb,var(--decor) 22%,transparent) 2.2px,transparent 2.8px);background-size:24px 24px}
 html[data-target="obs"] .top{border:3px solid var(--decor);border-radius:22px;box-shadow:0 5px 0 color-mix(in srgb,var(--decor) 45%,transparent);padding-bottom:28px}
 html[data-target="obs"] .top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:repeating-linear-gradient(-45deg,var(--decor) 0 9px,var(--paper) 9px 18px);opacity:.9}
 html[data-target="obs"] .shell{border:2px solid var(--d-p-45);border-radius:18px;box-shadow:0 4px 0 color-mix(in srgb,var(--decor) 28%,transparent)}

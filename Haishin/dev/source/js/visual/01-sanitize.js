@@ -71,7 +71,7 @@
     }
     // 0.10.11：テロップ（効果音は音の id で指名するだけ）
     if(v.telop&&typeof v.telop==='object'&&!Array.isArray(v.telop)){
-      const TS=x=>{x=x&&typeof x==='object'?x:{};return {anim:['band','pop','scatter','rise'].includes(x.anim)?x.anim:'band',color:['white','pink','yellow','sky','dark'].includes(x.color)?x.color:'white',pos:['bottom','top','center'].includes(x.pos)?x.pos:'bottom',sec:Math.max(1,Math.min(15,Math.round(Number(x.sec)||4))),n:Math.max(1,Math.min(16,Math.round(Number(x.n)||8))),font:typeof x.font==='string'&&/^[a-z]{0,16}$/.test(x.font)?x.font:'',se:typeof x.se==='string'?x.se.slice(0,80):'',expr:typeof x.expr==='string'&&/^[a-z0-9]{0,8}$/.test(x.expr)?x.expr:'',mp:['sweat','spark','heart'].includes(x.mp)?x.mp:''}};
+      const TS=x=>{x=x&&typeof x==='object'?x:{};return {anim:['band','pop','scatter','rise'].includes(x.anim)?x.anim:'band',color:['look','white','pink','yellow','sky','dark'].includes(x.color)?x.color:'white',pos:['bottom','top','center'].includes(x.pos)?x.pos:'bottom',sec:Math.max(1,Math.min(15,Math.round(Number(x.sec)||4))),n:Math.max(1,Math.min(16,Math.round(Number(x.n)||8))),font:typeof x.font==='string'&&/^[a-z]{0,16}$/.test(x.font)?x.font:'',se:typeof x.se==='string'?x.se.slice(0,80):'',expr:typeof x.expr==='string'&&/^[a-z0-9]{0,8}$/.test(x.expr)?x.expr:'',mp:['sweat','spark','heart'].includes(x.mp)?x.mp:''}};
       const tids=new Set();
       const items=(Array.isArray(v.telop.items)?v.telop.items:[]).filter(x=>x&&typeof x==='object'&&typeof x.text==='string'&&x.text.trim()&&/^[\w-]{1,40}$/.test(x.id)&&!tids.has(x.id)&&tids.add(x.id)).slice(0,60).map(x=>({id:x.id,text:x.text.trim().slice(0,80),...TS(x)}));
       out.telop={items,typed:TS(v.telop.typed)}
@@ -154,8 +154,14 @@ out.fps=[10,15,30].includes(Number(v.fps))?Number(v.fps):30;
     out.motion=['still','sing','hop','shake','wander','iya'].includes(v.motion)?v.motion:'still';
     out.vidFormat=v.vidFormat==='webm'?'webm':'mp4';
     out.vidQuality=[2.5,4.5,8,16].includes(Number(v.vidQuality))?Number(v.vidQuality):8;
+    // 0.11.2：マスコットの位置・大きさ・傾きを、PNGTuber のキャラクターごと・映像の向きごとに覚える（pc＝{キャラID:{向き:{x,y,size,tilt}}}）
+    function mscPcClean(pc){
+      const o={};if(!pc||typeof pc!=='object')return o;
+      for(const [cid,v] of Object.entries(pc).slice(0,60)){if(!/^[a-z0-9]{1,24}$/.test(cid))continue;const r=aspectPosClean(v,'msc');if(Object.keys(r).length)o[cid]=r}
+      return o
+    }
     {const MV=['float','sway','hop','run','shake','still','play','walk'],num=(x,a,b,df)=>{const n=Number(x);return Number.isFinite(n)?Math.max(a,Math.min(b,n)):df},seenM=new Set();out.mascots=[];
-     if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,600)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40),tilt:num(m.tilt,-180,180,0),pos:aspectPosClean(m.pos,'msc'),kind:m.kind==='mini'?'mini':'mascot',owner:typeof m.owner==='string'&&/^[a-z0-9]{1,16}$/.test(m.owner)?m.owner:''})}
+     if(Array.isArray(v.mascots))for(const m of v.mascots.slice(0,600)){if(!m||typeof m!=='object'||typeof m.id!=='string'||!/^[a-z0-9]{1,12}$/.test(m.id)||seenM.has(m.id))continue;seenM.add(m.id);out.mascots.push({id:m.id,name:String(m.name||'マスコット').slice(0,20),show:m.show!==false,talk:m.talk===true,motion:MV.includes(m.motion)?m.motion:'float',amp:num(m.amp,0,200,100),speed:num(m.speed,20,300,100),size:num(m.size,3,90,22),x:num(m.x,-100,100,60),y:num(m.y,-100,100,40),tilt:num(m.tilt,-180,180,0),pos:aspectPosClean(m.pos,'msc'),kind:m.kind==='mini'?'mini':'mascot',pc:mscPcClean(m.pc),owner:typeof m.owner==='string'&&/^[a-z0-9]{1,16}$/.test(m.owner)?m.owner:''})}
      
      out.speaker=typeof v.speaker==='string'&&(v.speaker==='self'||out.mascots.some(m=>m.id===v.speaker))?v.speaker:'self';
      out.sceneBoost=num(v.sceneBoost,0,12,6)}
