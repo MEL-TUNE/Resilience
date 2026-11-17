@@ -16,7 +16,7 @@
 .deck-level .selected{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 
 /* ---- 3. タブ（映像と帯のすぐ下に残る） */
-.deck-nav{position:sticky;top:calc(var(--mini-h,0px) + var(--side-h,0px));z-index:6;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin:0 0 10px;padding:5px;background:var(--paper);border:1px solid var(--a-p-30);border-radius:14px;box-shadow:0 4px 10px color-mix(in srgb,var(--shade) 10%,transparent)}
+.deck-nav{position:sticky;top:calc(var(--mini-h,0px) + var(--side-h,0px));z-index:6;display:grid;grid-template-columns:minmax(0,1.5fr) repeat(4,minmax(0,1fr));gap:4px;margin:0 0 10px;padding:5px;background:var(--paper);border:1px solid var(--a-p-30);border-radius:14px;box-shadow:0 4px 10px color-mix(in srgb,var(--shade) 10%,transparent)}
 body[data-level="prep"] .deck-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
 .deck-nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;min-height:46px;border:1px solid transparent;border-radius:10px;padding:4px 2px;background:transparent;color:var(--ink);font-size:11.5px;font-weight:700;line-height:1.2;white-space:nowrap;cursor:pointer}
 .deck-nav button i{font-style:normal;font-size:19px;line-height:1.1}
@@ -29,7 +29,7 @@ body[data-level="prep"] .deck-nav [data-level-of="live"],body:not([data-level="p
 body[data-app="live"] .deck-panel[data-panel="kikaku"],body[data-app="live"] .deck-panel[data-panel="chara"],body[data-app="live"] .deck-panel[data-panel="tools"],body[data-app="live"] #boardShell{display:none}
 body[data-app="live"][data-deck="kikaku"] .deck-panel[data-panel="kikaku"],body[data-app="live"][data-deck="chara"] .deck-panel[data-panel="chara"],body[data-app="live"][data-deck="tools"] .deck-panel[data-panel="tools"],body[data-app="live"][data-deck="all"] .deck-panel[data-panel="kikaku"],body[data-app="live"][data-deck="all"] .deck-panel[data-panel="chara"],body[data-app="live"][data-deck="all"] .deck-panel[data-panel="tools"]{display:block}
 body[data-app="live"][data-deck="se"] #boardShell,body[data-app="live"][data-deck="bgm"] #boardShell,body[data-app="live"][data-deck="all"] #boardShell{display:block}
-body[data-app="live"][data-deck="se"] #boardShell [data-panel="bgm"],body[data-app="live"][data-deck="bgm"] #boardShell [data-panel="se"]{display:none}
+body[data-app="live"][data-deck="bgm"] #boardShell [data-panel="se"]{display:none}
 /* BGM のタブでは、BGM を環境音より先に見せる */
 body[data-app="live"][data-deck="bgm"] #boardShell>.content{display:flex;flex-direction:column}
 body[data-app="live"][data-deck="bgm"] #boardShell .menu-heading{order:-2}

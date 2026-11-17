@@ -11,6 +11,20 @@
       m.owner=q.id
     }
   }
+  // 0.11.2：キャラクターを切り替えるとき、いまのマスコットの位置・大きさをいまのキャラクターの分として控え、
+  // 切り替え先のキャラクターの控えがあれば、それに入れ替える（控えがなければ、いまのまま）
+  // キャラクターごとのマスコットの位置・大きさ（0.11.2）：向きごとの控え（pos）を、キャラクターを切り替えるときに丸ごと預ける
+  function mscCharStash(cid){
+    if(!cid)return;const asp=state.aspect;
+    for(const m of state.mascots||[]){if(!m.pos||typeof m.pos!=='object')m.pos={};m.pos[asp]=aspTag({x:m.x,y:m.y,size:m.size,tilt:m.tilt||0},m.pos[asp],m);
+      if(!m.pc||typeof m.pc!=='object')m.pc={};m.pc[cid]=JSON.parse(JSON.stringify(m.pos))}
+  }
+  function mscCharApply(cid){
+    if(!cid)return false;const asp=state.aspect;let hit=false;
+    for(const m of state.mascots||[]){const pc=m.pc?.[cid];if(!pc||!Object.keys(pc).length)continue;m.pos=JSON.parse(JSON.stringify(pc));const r=m.pos[asp];
+      if(r){m.x=r.x;m.y=r.y;m.size=r.size;m.tilt=r.tilt}m._t=!!r&&r.t===1;m._sz=false;hit=true}
+    return hit
+  }
   function myMascots(){claimMascots();return (state.mascots||[]).filter(m=>m.owner===state.profileId)}
   function mscCur(){return myMascots().find(m=>m.id===mscSel)||null}
   function drawMascots(now){

@@ -4,12 +4,19 @@
 
   const TELOP_ANIM={band:'帯で出す（テロップ）',pop:'中央にどん',scatter:'あちこちに散らす',rise:'ふわっと上がって消える'};
   const TELOP_COLOR={
+    look:{name:'着せ替えの色に合わせる',fill:'',line:'',bg:''},
     white:{name:'白（こげ茶のふち）',fill:'#ffffff',line:'#3b2a22',bg:'rgba(40,28,22,.78)'},
     pink:{name:'ピンク（白のふち）',fill:'#ff6fa8',line:'#ffffff',bg:'rgba(255,240,246,.92)'},
     yellow:{name:'黄色（茶色のふち）',fill:'#ffd23f',line:'#5a3a10',bg:'rgba(40,28,22,.78)'},
     sky:{name:'水色（白のふち）',fill:'#5cc4f2',line:'#ffffff',bg:'rgba(236,248,255,.92)'},
     dark:{name:'こげ茶（白のふち）',fill:'#2e211c',line:'#ffffff',bg:'rgba(255,251,244,.94)'}
   };
+  // 着せ替えの色（theme.js が <html> に置く --accent・--paper・--on-accent）から作る。着せ替えを変えると、次に描くときから変わる
+  function telopColor(k){
+    if(k!=='look')return TELOP_COLOR[k]||TELOP_COLOR.white;
+    const st=document.documentElement.style,acc=st.getPropertyValue('--accent').trim()||'#a8406a',pap=st.getPropertyValue('--paper').trim()||'#fffaf3',on=st.getPropertyValue('--on-accent').trim()||'#ffffff';
+    return {fill:acc,line:pap,bg:acc,bandInk:on}
+  }
   const TELOP_POS={bottom:'下',top:'上',center:'真ん中'};
   const telopCfg=()=>{
     if(!state.telop||typeof state.telop!=='object')state.telop=JSON.parse(JSON.stringify(defaults.telop));
@@ -52,7 +59,7 @@
   const backOut=x=>{const c=1.7;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
   function telopFont(t,size){return t.font&&typeof SCENE_FONTS!=='undefined'&&SCENE_FONTS[t.font]?sceneFontCss(size,t.text,t.font):sceneFontCss(size,t.text)}
   function outlined(t,text,x,y,fs){
-    const c=TELOP_COLOR[t.color];
+    const c=telopColor(t.color);
     g.lineJoin='round';g.lineWidth=Math.max(2,fs*.18);g.strokeStyle=c.line;g.strokeText(text,x,y);
     g.fillStyle=c.fill;g.fillText(text,x,y)
   }
@@ -77,7 +84,7 @@
     if(!telops.length){renderTelopNow();return}
     const k=Math.min(W,H)/720;
     for(const t of telops){
-      const el=now-t.at,c=TELOP_COLOR[t.color],L=telopLay(t,now,k),fs=L.fs;
+      const el=now-t.at,c=telopColor(t.color),L=telopLay(t,now,k),fs=L.fs;
       const out=Math.max(0,Math.min(1,(t.dur-el)/400));
       g.save();g.textAlign='center';g.textBaseline='middle';g.font=L.font;
       if(t.anim==='band'){
@@ -87,7 +94,7 @@
         g.globalAlpha=Math.min(inP,out);
         g.translate((1-inP)*-W*.25,0);
         g.fillStyle=c.bg;g.beginPath();g.roundRect((W-w)/2,y,w,h,14*k);g.fill();
-        g.fillStyle=c.fill;
+        g.fillStyle=c.bandInk||c.fill;
         L.lines.forEach((l,i)=>g.fillText(l,W/2,y+14*k+lh*i+lh/2))
       }else if(t.anim==='pop'){
         const lh=fs*1.25,cy=t.pos==='top'?H*.22:t.pos==='bottom'?H*.72:H*.45;
