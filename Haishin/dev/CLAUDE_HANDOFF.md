@@ -443,3 +443,10 @@
 - テスト：t0117（新規）。t0100d はタブ5つ・se に bgm/env を含む、に更新。t0101・t0111・t092a も更新。全体 0 失敗。
 - iPhone で2つのマイクは同時に開けない（作者が mic2.html で確かめた）。口パクとオケの分け方は未着手：案は「口パクの反応する音量をオケより上に」、オトノハの中でオケを流すときは「オケの音量に合わせて口パクの基準を上げ下げする」。
 - 会話の枠で話すリオ：claude.ai のアーティファクト「彼岸リオ 会話室」（https://claude.ai/artifact/Depp5D4SePtjuCN6yp42J9）。sample（Claude に書かせる・API キー不要）、tts、dictation、db（data/users/<id>/rio-room に会話80件と設定）、assets（立ち絵）、user。ソースはこのリポジトリにはない（artifact 側）。
+
+## 2026-11-18 追記（STUDIO 0.11.3）
+
+- 歌うときの口パク：`js/visual/27-songth.js`（新規）。`state.songTh={on,db,mode}`（sanitize は karaFadeEnv の次）。`mouthTh()`＝on かつ（mode か karaSinging）なら max(threshold, db)。60-frame.js は threshold の代わりに `mouthTh()` を使い、`micDbNow` に毎フレームのマイクの dB を入れる（測る用）。測る＝5秒・100msごと・95パーセンタイル＋4dB。設定は「自動まばたき」の前の fieldset（data-not="rec"）、本番は `#songThBar`（表情タブの立ち絵の動きの上、on のときだけ）。`renderAll` 系（03-values）から `songThRender()`。テスト用に `window.__otonohaChars.mouthTh`。
+- 掛け合いの「手元のAI」：`kkConn.via='local'`、`kkConn.local={url,max}`、`kkConn.model.local`（初めは qwen3:4b、http://localhost:11434、400）。`場所/v1/chat/completions`（末尾の / と /v1 は外す）、stream:false、system に人格、qwen3 系には末尾に /no_think。`<think>…</think>` を外す。3分で打ち切り。403・モデルなし・つながらないの案内文。手引き `dev/LOCAL_AI.md`。
+- テスト：t0118（歌うときの口パク、28件）、t0119（手元のAI、まねで30件）。
+- claude.ai の「彼岸リオ 会話室」（artifact）を 0.2 に：キャラクター切り替え（12人まで、会話はキャラクターごとに60件）、画像なしの名札表示、設定の欄（名前・名札の文字・一人称・呼び方・人物・口調・関係・してはいけないこと・話し方の例）、メモから設定の欄を作る（sample.json）、着せ替え8色（キャラクターごと）、書き出し・読み込み（オトノハの state.ai.chars の形も読める）、全キャラ共通の決まり。db は data/users/<id>/rio-room-v2 に D を JSON 文字列で。0.1（rio-room）の会話を引き継ぐ。会話室からは手元のAIは呼べない（artifact の CSP）。

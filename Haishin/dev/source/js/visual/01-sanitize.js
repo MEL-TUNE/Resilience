@@ -124,6 +124,7 @@
     if(typeof v.karaSuppress==='boolean')out.karaSuppress=v.karaSuppress;
     if(typeof v.karaAutoFade==='boolean')out.karaAutoFade=v.karaAutoFade;
     if(typeof v.karaFadeEnv==='boolean')out.karaFadeEnv=v.karaFadeEnv;
+    if(v.songTh&&typeof v.songTh==='object'){const n=Number(v.songTh.db);out.songTh={on:v.songTh.on===true,db:Number.isFinite(n)?Math.max(-65,Math.min(-5,Math.round(n))):-30,mode:v.songTh.mode===true}}
     {
       const fs={},
         src=v.fxSeason&&typeof v.fxSeason==='object'?v.fxSeason:{},

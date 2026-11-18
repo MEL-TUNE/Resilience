@@ -100,8 +100,10 @@
       dbLevel=20*Math.log10(Math.max(1e-8,Math.sqrt(sum/levelData.length)))
     }
     const testing=now<testUntil;
-    talkEnv+=((micMuted||dbLevel<state.threshold?0:Math.min(1,(dbLevel-state.threshold)/22))-talkEnv)*Math.min(1,dt*5);
-    const signal=testing?Math.sin(now/110)>-.1:!micMuted&&dbLevel>state.threshold+(talking?-3:0);
+    micDbNow=dbLevel;
+    const th=mouthTh();
+    talkEnv+=((micMuted||dbLevel<th?0:Math.min(1,(dbLevel-th)/22))-talkEnv)*Math.min(1,dt*5);
+    const signal=testing?Math.sin(now/110)>-.1:!micMuted&&dbLevel>th+(talking?-3:0);
     if(signal)lastTalk=now;
     const was=talking;
     talking=(!micMuted||testing)&&(signal||now-lastTalk<state.hold);

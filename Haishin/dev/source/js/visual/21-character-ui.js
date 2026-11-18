@@ -308,6 +308,8 @@
 
   window.__otonohaChars={get state(){
       return state
+    },get mouthTh(){
+      return mouthTh()
     },get mouth(){
       return mouth
     },charKey,activateChar,activateProfile};
