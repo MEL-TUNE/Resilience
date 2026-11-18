@@ -458,3 +458,11 @@
 - `songThActive`：`OTONOHA_TARGET==='rec'` なら false。
 - テスト：t0120（8件）。全体 0 失敗。
 - 作者向けの手引き「キャラクター対話AIのためのLLM選びと応用の手引き（開発編）」を claude.ai の Docs に作った（https://claude.ai/artifact/Eg8QpVFHs2A3pXAuri1Dsb）。
+
+## 2026-11-18 追記（STUDIO 0.11.5）
+
+- 08-video-export.js：`scaledCanvas(src,w,h)`（半分ずつ縮める）を thumbUrl と drawCover で使う。thumbUrl の JPEG は .92。`pickVideoFormat`：latencyMode:'realtime' を外した。bitrate＝静止画（fps≦2）1080:2.5M・720:1.5M、動きあり 1080:5M・720:3M ×(0.5＋0.5×fps/30)。keyFrame は max(2, fps×2) コマごと。
+- videoFps：10・15・24・30（normalize、初めの値 15）。
+- 飾り：base.css の部屋の骨格から、obs の .top::after（縞）・h2::before（丸）・.top の影、rec の body 背景（格子）・.top::after（ふち飾り）・h2::before（ひし形）を削除。index.html の見出しの英字の番号 span を削除。
+- テスト：t0121（13件）。全体の実行で t092a が2件落ちたが、単独で2回流すと 0 件（負荷の高いときの時間切れと見ている）。
+- PNGTuber の動きと声付き掛け合いの設計の控え：dev/PNGTUBER_PLAN.md（作者の ChatGPT 相談の引き継ぎ文を精査したもの。作者の判断待ちの点あり）。

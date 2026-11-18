@@ -487,21 +487,15 @@ html[data-target="obs"] [data-not~="obs"],html[data-target="rec"] [data-not~="re
 .room-plate{display:none}
 html[data-target] .room-plate{display:block;margin:0 auto 8px;width:max-content;max-width:100%;font:700 10.5px/1.6 var(--title-font,serif);letter-spacing:.22em;padding:2px 14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html[data-target] .shop-eyebrow{display:none}
-/* 配信処（OBS）：洋菓子・ダイナー。水玉の背景、角の丸い看板と縞の帯、シールのような影 */
+/* 配信処（OBS）：角の丸い看板と枠（0.11.5 で縞の帯・見出しの丸・影を外した） */
 html[data-target="obs"] .room-plate::before{content:"配信処 · LIVE STAGE"}
 html[data-target="obs"] .room-plate{border:2px solid color-mix(in srgb,var(--on-accent) 70%,transparent);border-radius:999px}
-html[data-target="obs"] .top{border:3px solid var(--decor);border-radius:22px;box-shadow:0 5px 0 color-mix(in srgb,var(--decor) 45%,transparent);padding-bottom:28px}
-html[data-target="obs"] .top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:repeating-linear-gradient(-45deg,var(--decor) 0 9px,var(--paper) 9px 18px);opacity:.9}
+html[data-target="obs"] .top{border:3px solid var(--decor);border-radius:22px}
 html[data-target="obs"] .shell{border:2px solid var(--d-p-45);border-radius:18px;box-shadow:0 4px 0 color-mix(in srgb,var(--decor) 28%,transparent)}
-html[data-target="obs"] .section-title h2::before{content:"";display:inline-block;width:10px;height:10px;margin:0 9px 2px 2px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--decor) 50%,transparent);vertical-align:middle}
-/* 純喫茶（収録）：レトロな喫茶。テーブルクロスの格子の背景、看板の下のふち飾り、献立表のような二重の線 */
+/* 純喫茶（収録）：看板と、献立表のような二重の線（0.11.5 で格子の背景・ふち飾り・見出しのひし形を外した） */
 html[data-target="rec"] .room-plate::before{content:"純喫茶 ─ RECORDING ROOM"}
 html[data-target="rec"] .room-plate{border-top:1px solid color-mix(in srgb,var(--on-accent) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--on-accent) 60%,transparent);font-family:Georgia,var(--title-font,serif)}
-html[data-target="rec"] body{background-image:repeating-linear-gradient(0deg,color-mix(in srgb,var(--decor) 9%,transparent) 0 14px,transparent 14px 28px),repeating-linear-gradient(90deg,color-mix(in srgb,var(--decor) 9%,transparent) 0 14px,transparent 14px 28px)}
-html[data-target="rec"] .top{padding-bottom:30px}
-html[data-target="rec"] .top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:11px;background:radial-gradient(circle at 10px 11px,var(--bg) 8px,transparent 8.6px) repeat-x;background-size:20px 11px}
 html[data-target="rec"] .shell{box-shadow:inset 0 0 0 5px var(--paper),inset 0 0 0 6px var(--d-p-30),0 5px 15px #2a20180d}
-html[data-target="rec"] .section-title h2::before{content:"";display:inline-block;width:8px;height:8px;margin:0 10px 3px 2px;background:var(--decor);transform:rotate(45deg);vertical-align:middle}
 /* 色の選び方：部屋の献立ごとの見出し */
 .look-room{grid-column:1/-1;margin:10px 0 0;font-size:11.5px;font-weight:700;color:var(--muted)}
 .look-room:first-child{margin-top:0}
