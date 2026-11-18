@@ -466,3 +466,10 @@
 - 飾り：base.css の部屋の骨格から、obs の .top::after（縞）・h2::before（丸）・.top の影、rec の body 背景（格子）・.top::after（ふち飾り）・h2::before（ひし形）を削除。index.html の見出しの英字の番号 span を削除。
 - テスト：t0121（13件）。全体の実行で t092a が2件落ちたが、単独で2回流すと 0 件（負荷の高いときの時間切れと見ている）。
 - PNGTuber の動きと声付き掛け合いの設計の控え：dev/PNGTUBER_PLAN.md（作者の ChatGPT 相談の引き継ぎ文を精査したもの。作者の判断待ちの点あり）。
+
+## 2026-11-18 追記（STUDIO 0.11.6）
+
+- cfg.rec.videoShape（'square'｜'wide'、normalize あり）。`videoDims(size,shape)`＝wide なら [round(size×16/9), size]。drawCover・drawPlainCover は第4引数に高さ。drawEffectFrame は SW（幅）と S（高さ）を分け、横の広がりと数を幅に合わせる。pickVideoFormat(width,sr,forceWebm,fps,height)、横長は bitrate ×1.4。verifyMp4Audio も高さを渡す。
+- 画面：#videoShape（「動画の形」）。renderCover で #coverPreview の比率を合わせる。演出のプレビューの canvas もベースの大きさに合わせる。
+- テスト：t0122（16件。横長の動画を VideoEncoder＋Mux.webm で実際に作り、1920×1080 として読めるか）。全体 0 失敗。
+- 作者の答え（2026-11-18）：掛け合いの収録は全部入りと OBS（パソコン）で。音声合成エンジンの条件は「作ったデータを商用利用できる・無料か買い切り・低スペックで動く」。PNGTuber の素材に、絵師さんの Live2D 用のパーツ分け PSD（AI 学習不可・Live2D に使ってよいもの）が使えるかを質問された（使ってよい範囲は絵師さんとの約束次第と回答）。

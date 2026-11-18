@@ -45,6 +45,7 @@ const REC_DEFAULTS={
   fadeOnStop:true,
   coverFit:'cover',
   videoSize:1080,
+  videoShape:'square',
   videoEffect:'none',
   effectSource:'default',
   videoFps:15,
@@ -159,6 +160,7 @@ function normalize(raw){
 
   base.rec.videoFps=[10,15,24,30].includes(+base.rec.videoFps)?+base.rec.videoFps:15;
   base.rec.videoSize=+base.rec.videoSize===720?720:1080;
+  base.rec.videoShape=base.rec.videoShape==='wide'?'wide':'square';
 
   if(Array.isArray(raw.programs)&&raw.programs.some(x=>x&&typeof x==='object')){
     raw={...raw,programs:raw.programs.filter(x=>x&&typeof x==='object')};

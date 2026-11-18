@@ -31,6 +31,7 @@ function renderVolumes(){
   $('#fadeOnStop').checked=!!r.fadeOnStop;
   $('#coverFit').value=r.coverFit;
   $('#videoSize').value=String(r.videoSize);
+  $('#videoShape').value=r.videoShape==='wide'?'wide':'square';
   if(typeof renderBgmLow==='function'&&$('#bgmLowBtn'))renderBgmLow();
   $('#playMode').value=cfg.playMode;
   renderDuck();
@@ -740,6 +741,13 @@ $('#coverFit').onchange=e=>{
 $('#videoSize').onchange=e=>{
   cfg.rec.videoSize=+e.target.value;
   persist()
+};
+
+$('#videoShape').onchange=e=>{
+  cfg.rec.videoShape=e.target.value==='wide'?'wide':'square';
+  persist();
+  renderCover();
+  if(!$('#filmPreview').hidden)startFilmPreview()
 };
 
 $('#playMode').onchange=e=>{
