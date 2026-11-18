@@ -174,7 +174,8 @@
     if(!quiet&&cid!==state.charId){syncChar();mscCharStash(state.charId)}
     const changed=cid!==state.charId;
     state.charId=cid;
-    if(changed&&!quiet&&mscCharApply(cid)&&typeof renderMascotUI==='function')renderMascotUI();
+    // 名義の切り替え・キャラクターの削除（quiet）でも、切り替え先のキャラクターのマスコットの控えを当てる（0.11.4）
+    if(changed&&mscCharApply(cid)&&typeof renderMascotUI==='function')renderMascotUI();
     if(typeof decoReady!=='undefined'&&decoReady)renderManpuOpts();
     const c=state.chars[cid];
     for(const k of CHAR_KEYS)state[k]=c[k];
@@ -191,6 +192,7 @@
     const p=state.profiles.find(x=>x.id===pid);
     if(!p||pid===state.profileId)return;
     syncChar();
+    mscCharStash(state.charId);
     state.profileId=pid;
     const s=p.snap||{};
     state.scenes=normScenes(s.scenes);
