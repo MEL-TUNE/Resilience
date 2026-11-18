@@ -1,6 +1,7 @@
 /* リオと掛け合い（0.10.9・段階1、0.10.10 で API）：AIキャラクターの返答を話者名つきの字幕として出す。
    人格・口調は state.ai（.live に入る）。会話の記録は IndexedDB の ai:キャラ:企画（.live に入らない）。
-   つなぎ方（手渡し／Claude／ChatGPT）・モデル・APIキーは localStorage だけ（otonoha-ai-conn・otonoha-ai-key-claude・otonoha-ai-key-openai。.live に入れない） */
+   つなぎ方（手渡し／Claude／ChatGPT／手元のAI）・モデル・APIキーは localStorage だけ（otonoha-ai-conn・otonoha-ai-key-claude・otonoha-ai-key-openai。.live に入れない）
+   手元のAI（0.11.3）：Ollama・LM Studio の OpenAI 互換の口（場所＋/v1/chat/completions）。キーは要らない。 */
 
   const KK_PLANS={
     chat:['普段の会話','肩の力を抜いた雑談。話題を広げすぎず、相手の話を受けて返す。'],
@@ -42,15 +43,21 @@
   }
 
   // ---- つなぎ方（localStorage だけ）
-  const KK_MODEL={claude:'claude-sonnet-5-5',openai:'gpt-5.6-terra'};
+  const KK_MODEL={claude:'claude-sonnet-5-5',openai:'gpt-5.6-terra',local:'qwen3:4b'},KK_LOCAL_URL='http://localhost:11434';
   const kkLsGet=k=>{try{return localStorage.getItem(k)}catch(_){return null}};
   const kkLsSet=(k,v)=>{try{v==null||v===''?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(_){}};
   const kkConn=(()=>{let c={};try{c=JSON.parse(kkLsGet('otonoha-ai-conn')||'{}')||{}}catch(_){}
-    return{via:['hand','claude','openai'].includes(c.via)?c.via:'hand',auto:c.auto!==false,model:{claude:typeof c.model?.claude==='string'&&c.model.claude.trim()?c.model.claude.trim().slice(0,80):KK_MODEL.claude,openai:typeof c.model?.openai==='string'&&c.model.openai.trim()?c.model.openai.trim().slice(0,80):KK_MODEL.openai}}})();
+    const L=c.local&&typeof c.local==='object'?c.local:{};
+    return{via:['hand','claude','openai','local'].includes(c.via)?c.via:'hand',auto:c.auto!==false,model:{claude:typeof c.model?.claude==='string'&&c.model.claude.trim()?c.model.claude.trim().slice(0,80):KK_MODEL.claude,openai:typeof c.model?.openai==='string'&&c.model.openai.trim()?c.model.openai.trim().slice(0,80):KK_MODEL.openai,local:typeof c.model?.local==='string'&&c.model.local.trim()?c.model.local.trim().slice(0,120):KK_MODEL.local},
+      local:{url:typeof L.url==='string'&&/^https?:\/\/[^\s]{1,200}$/.test(L.url.trim())?L.url.trim():KK_LOCAL_URL,max:[200,400,800].includes(L.max)?L.max:400}}})();
   const kkConnSave=()=>kkLsSet('otonoha-ai-conn',JSON.stringify(kkConn));
   const kkKeyOf=v=>(kkLsGet('otonoha-ai-key-'+v)||'').trim();
   const kkApi=()=>kkConn.via!=='hand';
-  const KK_VIA={claude:'Claude',openai:'ChatGPT'};
+  const KK_VIA={claude:'Claude',openai:'ChatGPT',local:'手元のAI'};
+  // 手元のAIの場所：末尾の / と /v1 を外して、/v1/chat/completions を付ける
+  const kkLocalBase=()=>kkConn.local.url.replace(/\/+$/,'').replace(/\/v1$/,'');
+  // 考えている途中の文（<think>…</think>）を外す
+  const kkStripThink=t=>String(t).replace(/<think>[\s\S]*?<\/think>/g,'').replace(/^[\s\S]*<\/think>/,'').trim();
 
   // 人格・口調・企画・返し方（API ではこれを system に、手渡しでは依頼文の頭に）
   function kkSystem(){
@@ -77,28 +84,32 @@
     return msgs
   }
   async function kkCall(via,system,messages,max){
-    const key=kkKeyOf(via);
-    if(!key)throw new Error('nokey');
-    const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),60000);
+    const key=via==='local'?'':kkKeyOf(via);
+    if(!key&&via!=='local')throw new Error('nokey');
+    const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),via==='local'?180000:60000);
     let r;
     try{
       if(via==='claude')r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:ac.signal,headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:kkConn.model.claude,max_tokens:max||800,system,messages})});
+      else if(via==='local')r=await fetch(kkLocalBase()+'/v1/chat/completions',{method:'POST',signal:ac.signal,headers:{'content-type':'application/json'},body:JSON.stringify({model:kkConn.model.local,max_tokens:max||kkConn.local.max,stream:false,messages:[{role:'system',content:system+(/^qwen3/i.test(kkConn.model.local)?'\n/no_think':'')},...messages]})});
       else r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',signal:ac.signal,headers:{'content-type':'application/json','authorization':'Bearer '+key},body:JSON.stringify({model:kkConn.model.openai,max_completion_tokens:max||2000,messages:[{role:'system',content:system},...messages]})});
     }catch(e){clearTimeout(tm);throw new Error(e.name==='AbortError'?'timeout':'net')}
     clearTimeout(tm);
     let j=null;try{j=await r.json()}catch(_){}
     if(!r.ok){const m=j?.error?.message||'';const e=new Error('http');e.status=r.status;e.detail=String(m).slice(0,200);throw e}
-    const text=via==='claude'?(j?.content||[]).filter(x=>x.type==='text').map(x=>x.text).join(''):(j?.choices?.[0]?.message?.content||'');
+    let text=via==='claude'?(j?.content||[]).filter(x=>x.type==='text').map(x=>x.text).join(''):(j?.choices?.[0]?.message?.content||'');
+    if(via==='local')text=kkStripThink(text);
     if(!String(text).trim())throw new Error('empty');
     return String(text)
   }
   function kkErrText(e,via){
     const v=KK_VIA[via]||via;
     if(e.message==='nokey')return v+' の APIキーが入っていません（「Claude・ChatGPT とのつなぎ方」で入れます）';
-    if(e.message==='timeout')return v+' から60秒たっても返事がありませんでした';
-    if(e.message==='net')return v+' につながりませんでした（ネットの接続を確かめてください）';
+    if(e.message==='timeout')return v+' から'+(via==='local'?'3分':'60秒')+'たっても返事がありませんでした'+(via==='local'?'（もっと小さいモデルにするか、返事の長さを短くすると速くなります）':'');
+    if(e.message==='net')return via==='local'?'手元のAI（'+kkLocalBase()+'）につながりませんでした。Ollama・LM Studio が動いているか、ブラウザの「ローカルネットワークへのアクセス」を許可したか、このページからの呼び出しを許す設定（Ollama は OLLAMA_ORIGINS、LM Studio は CORS）を入れたかを確かめてください':v+' につながりませんでした（ネットの接続を確かめてください）';
     if(e.message==='empty')return v+' の返事が空でした';
     const s=e.status;
+    if(via==='local'&&s===403)return v+'：このページからの呼び出しが許されていません（Ollama は OLLAMA_ORIGINS、LM Studio は CORS の設定）（403）';
+    if(via==='local'&&(s===404||s===400)&&/model|not found/i.test(e.detail||''))return v+'：モデル「'+kkConn.model.local+'」が見つかりません。Ollama なら ollama pull で入れたか、名前が合っているか（ollama list で見られます）を確かめてください（'+s+'）';
     const why=s===401||s===403?'APIキーが違うか、使えない状態です':s===404?'モデルの名前が見つかりません（'+kkConn.model[via]+'）':s===429?'混み合っているか、利用の上限・残高を超えています':s===400?'送った内容を受け付けませんでした':s>=500?v+' 側の不具合です。少しおいて送り直してください':'エラーが返りました';
     return v+'：'+why+'（'+s+(e.detail?'：'+e.detail:'')+'）'
   }
@@ -186,18 +197,22 @@
     E('kkVia').value=kkConn.via;E('kkAuto').checked=kkConn.auto;
     E('kkHandBox').hidden=kkApi();E('kkAuto').closest('label').hidden=!kkApi();
     E('kkModelClaude').value=kkConn.model.claude;E('kkModelOpenai').value=kkConn.model.openai;
+    E('kkLocalUrl').value=kkConn.local.url;E('kkModelLocal').value=kkConn.model.local;E('kkLocalMax').value=String(kkConn.local.max);
     E('kkKeyClaude').value=kkKeyOf('claude');E('kkKeyOpenai').value=kkKeyOf('openai');
     renderKkBusy()
   }
   E('kkVia').onchange=e=>{kkConn.via=e.target.value;kkConnSave();renderKkConn();renderKkLines();
-    E('kkInfo').textContent=kkApi()?(kkKeyOf(kkConn.via)?'「① '+KK_VIA[kkConn.via]+' に送る」で、返事が字幕の行になります。':KK_VIA[kkConn.via]+' の APIキーがまだありません。下の「Claude・ChatGPT とのつなぎ方」で入れます。'):''};
+    E('kkInfo').textContent=kkConn.via==='local'?'「① 手元のAI に送る」で、返事が字幕の行になります。つながらないときは、下の「つなぎ方」の「つながるか試す」で確かめられます。':kkApi()?(kkKeyOf(kkConn.via)?'「① '+KK_VIA[kkConn.via]+' に送る」で、返事が字幕の行になります。':KK_VIA[kkConn.via]+' の APIキーがまだありません。下の「Claude・ChatGPT とのつなぎ方」で入れます。'):''};
   E('kkAuto').onchange=e=>{kkConn.auto=e.target.checked;kkConnSave()};
   for(const [id,v] of [['kkKeyClaude','claude'],['kkKeyOpenai','openai']])E(id).onchange=e=>{kkLsSet('otonoha-ai-key-'+v,e.target.value.trim());E('kkConnInfo').textContent=e.target.value.trim()?KK_VIA[v]+' のキーを、このブラウザに置きました':''};
   for(const [id,v] of [['kkModelClaude','claude'],['kkModelOpenai','openai']])E(id).onchange=e=>{kkConn.model[v]=e.target.value.trim().slice(0,80)||KK_MODEL[v];e.target.value=kkConn.model[v];kkConnSave()};
+  E('kkLocalUrl').onchange=e=>{const v=e.target.value.trim();kkConn.local.url=/^https?:\/\/[^\s]{1,200}$/.test(v)?v:KK_LOCAL_URL;e.target.value=kkConn.local.url;kkConnSave()};
+  E('kkModelLocal').onchange=e=>{kkConn.model.local=e.target.value.trim().slice(0,120)||KK_MODEL.local;e.target.value=kkConn.model.local;kkConnSave()};
+  E('kkLocalMax').onchange=e=>{const n=Number(e.target.value);kkConn.local.max=[200,400,800].includes(n)?n:400;kkConnSave()};
   E('kkKeyTest').onclick=async e=>{
     const via=kkApi()?kkConn.via:(kkKeyOf('claude')?'claude':'openai'),b=e.currentTarget;
     b.disabled=true;E('kkConnInfo').textContent=KK_VIA[via]+' に試しに送っています…';
-    try{await kkCall(via,'短く返事をしてください。',[{role:'user',content:'テストです。「つながりました」とだけ返してください。'}],50);E('kkConnInfo').textContent=KK_VIA[via]+' につながりました（モデル：'+kkConn.model[via]+'）'}
+    try{await kkCall(via,'短く返事をしてください。',[{role:'user',content:'テストです。「つながりました」とだけ返してください。'}],via==='local'?300:50);E('kkConnInfo').textContent=KK_VIA[via]+' につながりました（モデル：'+kkConn.model[via]+'）'}
     catch(err){E('kkConnInfo').textContent=kkErrText(err,via)}
     finally{b.disabled=false}
   };

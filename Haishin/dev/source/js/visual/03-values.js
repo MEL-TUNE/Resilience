@@ -61,6 +61,7 @@ for(const [id,k]of Object.entries(bindings)){
     renderAud();
     renderVoiceRec();
     renderKara();
+    songThRender();
     renderCharUI();
     renderSceneForm?.();
     renderMotionOut()
