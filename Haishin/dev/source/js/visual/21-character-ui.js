@@ -128,6 +128,7 @@
       state.profiles=state.profiles.filter(x=>x!==p);
       for(const cid of p.chars){
         await dropCharAssets(cid);
+        mscCharForget(cid);
         delete state.chars[cid]
       }
       renderCharUI();
@@ -211,6 +212,7 @@
       state.charId='';
       activateChar(p.chars[Math.max(0,i-1)],true);
       await dropCharAssets(cid);
+      mscCharForget(cid);
       delete state.chars[cid];
       renderCharUI();
       save();

@@ -19,6 +19,8 @@
     for(const m of state.mascots||[]){if(!m.pos||typeof m.pos!=='object')m.pos={};m.pos[asp]=aspTag({x:m.x,y:m.y,size:m.size,tilt:m.tilt||0},m.pos[asp],m);
       if(!m.pc||typeof m.pc!=='object')m.pc={};m.pc[cid]=JSON.parse(JSON.stringify(m.pos))}
   }
+  // 消したキャラクターの控えを外す
+  function mscCharForget(cid){for(const m of state.mascots||[])if(m.pc&&typeof m.pc==='object')delete m.pc[cid]}
   function mscCharApply(cid){
     if(!cid)return false;const asp=state.aspect;let hit=false;
     for(const m of state.mascots||[]){const pc=m.pc?.[cid];if(!pc||!Object.keys(pc).length)continue;m.pos=JSON.parse(JSON.stringify(pc));const r=m.pos[asp];

@@ -450,3 +450,11 @@
 - 掛け合いの「手元のAI」：`kkConn.via='local'`、`kkConn.local={url,max}`、`kkConn.model.local`（初めは qwen3:4b、http://localhost:11434、400）。`場所/v1/chat/completions`（末尾の / と /v1 は外す）、stream:false、system に人格、qwen3 系には末尾に /no_think。`<think>…</think>` を外す。3分で打ち切り。403・モデルなし・つながらないの案内文。手引き `dev/LOCAL_AI.md`。
 - テスト：t0118（歌うときの口パク、28件）、t0119（手元のAI、まねで30件）。
 - claude.ai の「彼岸リオ 会話室」（artifact）を 0.2 に：キャラクター切り替え（12人まで、会話はキャラクターごとに60件）、画像なしの名札表示、設定の欄（名前・名札の文字・一人称・呼び方・人物・口調・関係・してはいけないこと・話し方の例）、メモから設定の欄を作る（sample.json）、着せ替え8色（キャラクターごと）、書き出し・読み込み（オトノハの state.ai.chars の形も読める）、全キャラ共通の決まり。db は data/users/<id>/rio-room-v2 に D を JSON 文字列で。0.1（rio-room）の会話を引き継ぐ。会話室からは手元のAIは呼べない（artifact の CSP）。
+
+## 2026-11-18 追記（STUDIO 0.11.4）
+
+- バグ探し：ビルドした3ページで、JS が参照する id が HTML にあるか（動的に作るもの以外はすべてあった）、全タブ・全 details を開いた横はみ出し（なし）、コンソールのエラー（フォントの読み込み以外なし）を確かめた。
+- `activateChar`：切り替え先の `mscCharApply` を quiet でも行う（名義の切り替え・削除のあと）。`activateProfile`：syncChar のあとに `mscCharStash(state.charId)`。`mscCharForget(cid)`（81-mascots）を2つの削除の流れで呼ぶ。
+- `songThActive`：`OTONOHA_TARGET==='rec'` なら false。
+- テスト：t0120（8件）。全体 0 失敗。
+- 作者向けの手引き「キャラクター対話AIのためのLLM選びと応用の手引き（開発編）」を claude.ai の Docs に作った（https://claude.ai/artifact/Eg8QpVFHs2A3pXAuri1Dsb）。

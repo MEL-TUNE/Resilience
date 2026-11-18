@@ -4,6 +4,8 @@
      使う音量は max(いつもの口が開く音量, db)。歌の口パクが効くのは、ボタンが押されているときか、伴奏タブを取り込んで歌い始めを見つけたとき（PC）。 */
   var micDbNow=-99;
   function songThActive(){
+    // 収録用（rec.html）には設定もボタンもないので、ほかのページでオンにしていても使わない（0.11.4）
+    if(OTONOHA_TARGET==='rec')return false;
     const s=state.songTh;if(!s||!s.on)return false;
     return s.mode||(typeof karaSinging!=='undefined'&&karaSinging===true)
   }
