@@ -3,20 +3,32 @@
 const coverUrls=new Map();
 let coverTarget=null;
 
+// 大きい画像を一度で小さくすると、線がざらつく（間引かれる）。半分ずつ縮めてから目的の大きさにする（0.11.5）
+function scaledCanvas(src,w,h){
+  let cur=src,cw=src.width,ch=src.height;
+  while(cw/2>=w&&ch/2>=h){
+    const nw=Math.max(w,Math.round(cw/2)),nh=Math.max(h,Math.round(ch/2)),c=document.createElement('canvas');
+    c.width=nw;c.height=nh;
+    const g=c.getContext('2d');g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(cur,0,0,nw,nh);
+    cur=c;cw=nw;ch=nh
+  }
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const g=c.getContext('2d');g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(cur,0,0,w,h);
+  return c
+}
+
 async function thumbUrl(blob,max=512){
   try{
     const bmp=await createImageBitmap(blob);
+    // 画面の解像度（Retina など）でもぼやけないように、表示の大きさの2倍まで持つ
     const k=Math.min(1,max/Math.max(bmp.width,bmp.height)),
       w=Math.max(1,Math.round(bmp.width*k)),
       h=Math.max(1,Math.round(bmp.height*k));
 
-    const c=document.createElement('canvas');
-    c.width=w;
-    c.height=h;
-    c.getContext('2d').drawImage(bmp,0,0,w,h);
+    const c=scaledCanvas(bmp,w,h);
     bmp.close();
 
-    return /png|webp|gif/.test(blob.type)?c.toDataURL('image/png'):c.toDataURL('image/jpeg',.88)
+    return /png|webp|gif/.test(blob.type)?c.toDataURL('image/png'):c.toDataURL('image/jpeg',.92)
   }
  catch(_){
     return await new Promise(res=>{
@@ -97,10 +109,14 @@ async function drawCover(blob,size,fit){
   const cover=Math.max(size/bmp.width,size/bmp.height),
     contain=Math.min(size/bmp.width,size/bmp.height);
 
+  // 縮めるときは半分ずつ（scaledCanvas）。同じ倍率は一度だけ作る
+  const made=new Map();
   const draw=s=>{
-    const w=bmp.width*s,
-      h=bmp.height*s;
-    g.drawImage(bmp,(size-w)/2,(size-h)/2,w,h)
+    const w=Math.max(1,Math.round(bmp.width*s)),
+      h=Math.max(1,Math.round(bmp.height*s));
+    let src=bmp;
+    if(s<.75){src=made.get(s);if(!src){src=scaledCanvas(bmp,w,h);made.set(s,src)}}
+    g.drawImage(src,(size-w)/2,(size-h)/2,w,h)
   };
 
   g.fillStyle='#000';
@@ -818,13 +834,16 @@ async function pickVideoFormat(size,sr,forceWebm=false,fps=1){
     }
   };
 
-  const vbase={width:size,height:size,bitrate:size>=1080?2000000:1200000,framerate:fps};
+  // 画質（0.11.5）：静止画（1コマ/秒）でも動きのある映像でも、1コマあたりの量を十分に取る。
+  // 以前は latencyMode:'realtime'（速さ優先で画質を落とす）にしていたので外した
+  const still=fps<=2,big=size>=1080;
+  const vbase={width:size,height:size,bitrate:still?(big?2500000:1500000):Math.round((big?5000000:3000000)*(.5+.5*Math.min(30,fps)/30)),framerate:fps};
 
   const aac={codec:'mp4a.40.2',sampleRate:sr,numberOfChannels:2,bitrate:192000};
 
   if(window.VideoEncoder&&window.AudioEncoder){
     if(!forceWebm&&await ok(AudioEncoder,aac))for(const codec of ['avc1.640028','avc1.4d0028','avc1.420028']){
-      const v={...vbase,codec,latencyMode:'realtime',avc:{format:'avc'}};
+      const v={...vbase,codec,avc:{format:'avc'}};
       if(await ok(VideoEncoder,v))return {kind:'mp4',v,a:aac}
     }
 
@@ -962,7 +981,7 @@ async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
       const ts=Math.round(i*1e6/fps),
         end=Math.min(Math.round((i+1)*1e6/fps),Math.round(pos*1e6/sr));
       const f=new VideoFrame(canvas,{timestamp:ts,duration:Math.max(1,end-ts)});
-      ve.encode(f,{keyFrame:i%(fps*2)===0});
+      ve.encode(f,{keyFrame:i%Math.max(2,fps*2)===0});
       f.close();
 
       while(ve.encodeQueueSize>3){

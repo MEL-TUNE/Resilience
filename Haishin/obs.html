@@ -495,21 +495,15 @@ html[data-target="obs"] [data-not~="obs"],html[data-target="rec"] [data-not~="re
 .room-plate{display:none}
 html[data-target] .room-plate{display:block;margin:0 auto 8px;width:max-content;max-width:100%;font:700 10.5px/1.6 var(--title-font,serif);letter-spacing:.22em;padding:2px 14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html[data-target] .shop-eyebrow{display:none}
-/* 配信処（OBS）：洋菓子・ダイナー。水玉の背景、角の丸い看板と縞の帯、シールのような影 */
+/* 配信処（OBS）：角の丸い看板と枠（0.11.5 で縞の帯・見出しの丸・影を外した） */
 html[data-target="obs"] .room-plate::before{content:"配信処 · LIVE STAGE"}
 html[data-target="obs"] .room-plate{border:2px solid color-mix(in srgb,var(--on-accent) 70%,transparent);border-radius:999px}
-html[data-target="obs"] .top{border:3px solid var(--decor);border-radius:22px;box-shadow:0 5px 0 color-mix(in srgb,var(--decor) 45%,transparent);padding-bottom:28px}
-html[data-target="obs"] .top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:repeating-linear-gradient(-45deg,var(--decor) 0 9px,var(--paper) 9px 18px);opacity:.9}
+html[data-target="obs"] .top{border:3px solid var(--decor);border-radius:22px}
 html[data-target="obs"] .shell{border:2px solid var(--d-p-45);border-radius:18px;box-shadow:0 4px 0 color-mix(in srgb,var(--decor) 28%,transparent)}
-html[data-target="obs"] .section-title h2::before{content:"";display:inline-block;width:10px;height:10px;margin:0 9px 2px 2px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--decor) 50%,transparent);vertical-align:middle}
-/* 純喫茶（収録）：レトロな喫茶。テーブルクロスの格子の背景、看板の下のふち飾り、献立表のような二重の線 */
+/* 純喫茶（収録）：看板と、献立表のような二重の線（0.11.5 で格子の背景・ふち飾り・見出しのひし形を外した） */
 html[data-target="rec"] .room-plate::before{content:"純喫茶 ─ RECORDING ROOM"}
 html[data-target="rec"] .room-plate{border-top:1px solid color-mix(in srgb,var(--on-accent) 60%,transparent);border-bottom:1px solid color-mix(in srgb,var(--on-accent) 60%,transparent);font-family:Georgia,var(--title-font,serif)}
-html[data-target="rec"] body{background-image:repeating-linear-gradient(0deg,color-mix(in srgb,var(--decor) 9%,transparent) 0 14px,transparent 14px 28px),repeating-linear-gradient(90deg,color-mix(in srgb,var(--decor) 9%,transparent) 0 14px,transparent 14px 28px)}
-html[data-target="rec"] .top{padding-bottom:30px}
-html[data-target="rec"] .top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:11px;background:radial-gradient(circle at 10px 11px,var(--bg) 8px,transparent 8.6px) repeat-x;background-size:20px 11px}
 html[data-target="rec"] .shell{box-shadow:inset 0 0 0 5px var(--paper),inset 0 0 0 6px var(--d-p-30),0 5px 15px #2a20180d}
-html[data-target="rec"] .section-title h2::before{content:"";display:inline-block;width:8px;height:8px;margin:0 10px 3px 2px;background:var(--decor);transform:rotate(45deg);vertical-align:middle}
 /* 色の選び方：部屋の献立ごとの見出し */
 .look-room{grid-column:1/-1;margin:10px 0 0;font-size:11.5px;font-weight:700;color:var(--muted)}
 .look-room:first-child{margin-top:0}
@@ -1439,7 +1433,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.4 / 名義を切り替えてもマスコットをキャラクターごとに戻す・収録用ページの口パク</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.5 / 音声収録の動画の画質・飾りを減らす</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1498,14 +1492,14 @@ lookPaint(look);
 <main class="shell in-workspace" id="boardShell"><div class="content"><div class="menu-heading"><span>音のお品書き</span><label class="pad-size">ボタンの大きさ<select id="padSize"><option value="s">小</option><option value="m">中</option><option value="l">大</option></select></label></div>
 <div data-panel="se" class="se-bgmbar" id="seBgmBar"><span class="se-bgm-name"><span aria-hidden="true">♪</span><span id="seBgmName">BGM：なし</span></span><button type="button" class="btn" id="seBgmStop">▶ 初期BGM</button><button type="button" class="btn" id="seBgmLow" title="BGMを小さくする／元の音量へ">小さく</button><button type="button" class="btn" id="seBgmFade" title="BGMをフェードアウト">フェード</button></div>
 
-<section data-panel="se" class="section"><div class="section-title"><h2>絵文字の効果音 <span>01 / SOUND EFFECTS</span></h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
-<section data-panel="se" class="section sec-join"><div class="section-title"><h2>文字の効果音 <span>02 / SHORT WORDS</span></h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
-<section data-panel="se" class="section sec-join"><div class="section-title"><h2>ボイス <span>03 / VOICE</span></h2></div><div class="bgm-tabs voice-tabs" id="voiceTabs" role="tablist" aria-label="ボイスの名義" hidden></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
+<section data-panel="se" class="section"><div class="section-title"><h2>絵文字の効果音</h2><div class="emoji-head-controls"><button class="btn gold" type="button" id="editEmojiTabs" hidden>分類名編集</button></div></div><div class="bgm-tabs" id="emojiTabs" hidden></div><div class="emoji-grid" id="emojiGrid"></div><div class="play-mode-row"><label for="playMode">鳴っている途中でもう一度押したら</label><select id="playMode"><option value="restart">最初から鳴らす</option><option value="overlap">重ねて鳴らす</option></select></div><p class="section-help">空欄を押して登録。最後の行まで埋まると枠が1行増えます。登録後は長押し・右クリックで編集できます。</p></section>
+<section data-panel="se" class="section sec-join"><div class="section-title"><h2>文字の効果音</h2><button class="btn gold" type="button" id="editTextTabs" hidden>分類名編集</button></div><div class="bgm-tabs" id="textTabs" hidden></div><div class="text-grid" id="textGrid"></div><p class="section-help">空欄を押して登録。再度押すとフェードして停止します。最後の行まで埋まると枠が1行増えます。</p></section>
+<section data-panel="se" class="section sec-join"><div class="section-title"><h2>ボイス</h2></div><div class="bgm-tabs voice-tabs" id="voiceTabs" role="tablist" aria-label="ボイスの名義" hidden></div><div class="voice-grid" id="voiceGrid"></div><p class="section-help">空欄を押して画像と音声を登録。押すと再生、再生中にもう一度押すと停止します。登録後は長押し・右クリックで編集できます。</p></section>
 
 
-<section data-panel="bgm" class="section"><div class="section-title"><h2>環境音 <span>04 / AMBIENCE</span></h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
-<section data-panel="bgm" class="section"><div class="section-title"><h2>BGM <span>05 / RECORDS</span></h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="bgm-now-row"><div class="sound-now"><span aria-hidden="true">♪</span><span id="consoleBgmName">BGM：なし</span></div><button type="button" class="stop-btn" id="consoleBgmStop" disabled>▶ 初期BGM</button></div><div class="live-prog" id="liveProgSlot" aria-label="番組"><span class="live-prog-label">番組</span></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは「標準」と名義ごとのタブです。名義専用のタブを開いているときに名義を切り替えると、その名義のタブに移ります。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
-<section data-panel="se" class="section telop-sec" id="telopSec"><div class="section-title"><h2>テロップ <span>TELOP / REACTION</span></h2></div>
+<section data-panel="bgm" class="section"><div class="section-title"><h2>環境音</h2></div><div class="text-grid env-grid" id="envGrid"></div><p class="section-help">雨・吹雪・街のざわめきなど。押すとループ再生、もう一度押すとフェードして止まります。BGMと同時に、いくつでも重ねられます。</p></section>
+<section data-panel="bgm" class="section"><div class="section-title"><h2>BGM</h2><button class="btn gold" id="editBgmTabs" hidden>分類名編集</button></div><div class="bgm-now-row"><div class="sound-now"><span aria-hidden="true">♪</span><span id="consoleBgmName">BGM：なし</span></div><button type="button" class="stop-btn" id="consoleBgmStop" disabled>▶ 初期BGM</button></div><div class="live-prog" id="liveProgSlot" aria-label="番組"><span class="live-prog-label">番組</span></div><div class="prog-bgm" id="progBgm"></div><div class="bgm-actions"><button class="btn" type="button" id="bgmLowBtn">BGMを小さくする</button><button class="btn" type="button" id="bgmFadeBtn">BGMをフェードアウト</button><span class="bgm-low-state" id="bgmLowState">通常の音量</span></div><div class="bgm-tabs" id="bgmTabs"></div><div class="bgm-list" id="bgmList"></div><p class="section-help">空欄を押して登録。タブは「標準」と名義ごとのタブです。名義専用のタブを開いているときに名義を切り替えると、その名義のタブに移ります。最後の行まで埋まると枠が1行増えます。選んだ曲は停止か別の曲を押すまでループします。曲名の長押し・右クリックで、名前・音量・並び順を編集できます。</p></section>
+<section data-panel="se" class="section telop-sec" id="telopSec"><div class="section-title"><h2>テロップ</h2></div>
 <div class="telop-type"><input id="telopIn" type="text" maxlength="80" placeholder="打ち込んで Enter で、配信画面に出す" enterkeyhint="send"><button type="button" class="btn primary" id="telopShow">出す</button></div>
 <div class="telop-grid" id="telopGrid"></div>
 <div class="telop-row deco-row"><button type="button" class="btn" id="decoGrass" title="草がぴょんぴょん跳ねていきます">🌿 草</button><button type="button" class="btn" id="decoHeart" title="ハートがふわふわ上がります">💗 ハート</button><span class="telop-now" id="telopNow" aria-live="polite"></span><button type="button" class="btn" id="telopClear" title="テロップ・漫符・草・ハートを全部消します">演出を消す</button></div>
@@ -1970,7 +1964,7 @@ lookPaint(look);
   <div class="film-controls">
    <label>季節の演出<select id="videoEffect"><option value="none">なし（静止画）</option><option value="spring">春：薄絹の桜</option><option value="summer">夏：虹彩の泡</option><option value="autumn">秋：琥珀の紅葉</option><option value="winter">冬：銀雪の結晶</option></select></label>
    <label>動かすもの<select id="effectSource"><option value="default">季節の絵（標準）</option><option value="image">好きな画像</option></select></label>
-   <label>映像のなめらかさ<select id="videoFps"><option value="24">24コマ / 秒</option><option value="30">30コマ / 秒</option></select></label>
+   <label>映像のなめらかさ<select id="videoFps"><option value="10">10コマ / 秒（軽い）</option><option value="15">15コマ / 秒（おすすめ）</option><option value="24">24コマ / 秒</option><option value="30">30コマ / 秒（重い）</option></select></label>
    <label>量 <output id="effectCountVal"></output><input id="effectCount" type="range" min="10" max="120" step="5" value="45"></label>
    <label>速さ <output id="effectSpeedVal"></output><input id="effectSpeed" type="range" min="20" max="180" step="5" value="60"></label>
    <label>大きさ <output id="effectScaleVal"></output><input id="effectScale" type="range" min="30" max="160" step="5" value="70"></label>
@@ -2119,7 +2113,7 @@ const REC_DEFAULTS={
   videoSize:1080,
   videoEffect:'none',
   effectSource:'default',
-  videoFps:24,
+  videoFps:15,
   effectCount:45,
   effectSpeed:60,
   effectScale:70,
@@ -2229,7 +2223,7 @@ function normalize(raw){
 
   for(const [k,min,max] of [['effectCount',10,120],['effectSpeed',20,180],['effectScale',30,160],['effectOpacity',10,100]])base.rec[k]=Number.isFinite(+base.rec[k])?Math.max(min,Math.min(max,+base.rec[k])):REC_DEFAULTS[k];
 
-  base.rec.videoFps=+base.rec.videoFps===30?30:24;
+  base.rec.videoFps=[10,15,24,30].includes(+base.rec.videoFps)?+base.rec.videoFps:15;
   base.rec.videoSize=+base.rec.videoSize===720?720:1080;
 
   if(Array.isArray(raw.programs)&&raw.programs.some(x=>x&&typeof x==='object')){
@@ -4694,20 +4688,32 @@ const Mux=(()=>{
 const coverUrls=new Map();
 let coverTarget=null;
 
+// 大きい画像を一度で小さくすると、線がざらつく（間引かれる）。半分ずつ縮めてから目的の大きさにする（0.11.5）
+function scaledCanvas(src,w,h){
+  let cur=src,cw=src.width,ch=src.height;
+  while(cw/2>=w&&ch/2>=h){
+    const nw=Math.max(w,Math.round(cw/2)),nh=Math.max(h,Math.round(ch/2)),c=document.createElement('canvas');
+    c.width=nw;c.height=nh;
+    const g=c.getContext('2d');g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(cur,0,0,nw,nh);
+    cur=c;cw=nw;ch=nh
+  }
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const g=c.getContext('2d');g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(cur,0,0,w,h);
+  return c
+}
+
 async function thumbUrl(blob,max=512){
   try{
     const bmp=await createImageBitmap(blob);
+    // 画面の解像度（Retina など）でもぼやけないように、表示の大きさの2倍まで持つ
     const k=Math.min(1,max/Math.max(bmp.width,bmp.height)),
       w=Math.max(1,Math.round(bmp.width*k)),
       h=Math.max(1,Math.round(bmp.height*k));
 
-    const c=document.createElement('canvas');
-    c.width=w;
-    c.height=h;
-    c.getContext('2d').drawImage(bmp,0,0,w,h);
+    const c=scaledCanvas(bmp,w,h);
     bmp.close();
 
-    return /png|webp|gif/.test(blob.type)?c.toDataURL('image/png'):c.toDataURL('image/jpeg',.88)
+    return /png|webp|gif/.test(blob.type)?c.toDataURL('image/png'):c.toDataURL('image/jpeg',.92)
   }
  catch(_){
     return await new Promise(res=>{
@@ -4788,10 +4794,14 @@ async function drawCover(blob,size,fit){
   const cover=Math.max(size/bmp.width,size/bmp.height),
     contain=Math.min(size/bmp.width,size/bmp.height);
 
+  // 縮めるときは半分ずつ（scaledCanvas）。同じ倍率は一度だけ作る
+  const made=new Map();
   const draw=s=>{
-    const w=bmp.width*s,
-      h=bmp.height*s;
-    g.drawImage(bmp,(size-w)/2,(size-h)/2,w,h)
+    const w=Math.max(1,Math.round(bmp.width*s)),
+      h=Math.max(1,Math.round(bmp.height*s));
+    let src=bmp;
+    if(s<.75){src=made.get(s);if(!src){src=scaledCanvas(bmp,w,h);made.set(s,src)}}
+    g.drawImage(src,(size-w)/2,(size-h)/2,w,h)
   };
 
   g.fillStyle='#000';
@@ -5509,13 +5519,16 @@ async function pickVideoFormat(size,sr,forceWebm=false,fps=1){
     }
   };
 
-  const vbase={width:size,height:size,bitrate:size>=1080?2000000:1200000,framerate:fps};
+  // 画質（0.11.5）：静止画（1コマ/秒）でも動きのある映像でも、1コマあたりの量を十分に取る。
+  // 以前は latencyMode:'realtime'（速さ優先で画質を落とす）にしていたので外した
+  const still=fps<=2,big=size>=1080;
+  const vbase={width:size,height:size,bitrate:still?(big?2500000:1500000):Math.round((big?5000000:3000000)*(.5+.5*Math.min(30,fps)/30)),framerate:fps};
 
   const aac={codec:'mp4a.40.2',sampleRate:sr,numberOfChannels:2,bitrate:192000};
 
   if(window.VideoEncoder&&window.AudioEncoder){
     if(!forceWebm&&await ok(AudioEncoder,aac))for(const codec of ['avc1.640028','avc1.4d0028','avc1.420028']){
-      const v={...vbase,codec,latencyMode:'realtime',avc:{format:'avc'}};
+      const v={...vbase,codec,avc:{format:'avc'}};
       if(await ok(VideoEncoder,v))return {kind:'mp4',v,a:aac}
     }
 
@@ -5653,7 +5666,7 @@ async function buildVideo(t,progress,forceWebm=false,options=null,job=null){
       const ts=Math.round(i*1e6/fps),
         end=Math.min(Math.round((i+1)*1e6/fps),Math.round(pos*1e6/sr));
       const f=new VideoFrame(canvas,{timestamp:ts,duration:Math.max(1,end-ts)});
-      ve.encode(f,{keyFrame:i%(fps*2)===0});
+      ve.encode(f,{keyFrame:i%Math.max(2,fps*2)===0});
       f.close();
 
       while(ve.encodeQueueSize>3){

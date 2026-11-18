@@ -47,7 +47,7 @@ const REC_DEFAULTS={
   videoSize:1080,
   videoEffect:'none',
   effectSource:'default',
-  videoFps:24,
+  videoFps:15,
   effectCount:45,
   effectSpeed:60,
   effectScale:70,
@@ -157,7 +157,7 @@ function normalize(raw){
 
   for(const [k,min,max] of [['effectCount',10,120],['effectSpeed',20,180],['effectScale',30,160],['effectOpacity',10,100]])base.rec[k]=Number.isFinite(+base.rec[k])?Math.max(min,Math.min(max,+base.rec[k])):REC_DEFAULTS[k];
 
-  base.rec.videoFps=+base.rec.videoFps===30?30:24;
+  base.rec.videoFps=[10,15,24,30].includes(+base.rec.videoFps)?+base.rec.videoFps:15;
   base.rec.videoSize=+base.rec.videoSize===720?720:1080;
 
   if(Array.isArray(raw.programs)&&raw.programs.some(x=>x&&typeof x==='object')){
