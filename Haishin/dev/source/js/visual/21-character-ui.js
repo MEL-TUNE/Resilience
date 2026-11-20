@@ -310,6 +310,8 @@
 
   window.__otonohaChars={get state(){
       return state
+    },get head(){
+      return avHead?{x:avHead.x,y:avHead.y,h:avHead.h}:null
     },get mouthTh(){
       return mouthTh()
     },get mouth(){

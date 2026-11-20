@@ -28,7 +28,7 @@
     sel.value=cur?cur.id:'';
     E('serifEdit').hidden=!cur;
     if(cur){E('serifTitle').value=cur.title;E('serifText').value=cur.lines.join('\n')}
-    E('serifPos').value=state.serifPos;E('serifName').checked=state.serifName;
+    E('serifPos').value=state.serifPos;E('cardScale').value=String(state.cardScale||100);E('serifName').checked=state.serifName;
     E('serifNow').textContent=play.serif?'表示中：'+play.serif.text:'画面には出していません';
     renderUndo();renderSlot();renderPon()
   }
@@ -96,6 +96,7 @@
   E('serifPrev').onclick=()=>serifPick('prev');
   E('serifHide').onclick=()=>{play.serif=null;play.slot=null;renderSerifs()};
   E('serifPos').onchange=e=>{state.serifPos=e.target.value;save()};
+  E('cardScale').onchange=e=>{const n=Number(e.target.value);state.cardScale=[85,100,120,140,160].includes(n)?n:100;save()};
   E('serifName').onchange=e=>{state.serifName=e.target.checked;save()};
 
   // ---- サイコロ・ルーレット
@@ -172,17 +173,18 @@
     g.globalAlpha=a;
     // AI観客席のコメント欄が出ているときは、その列を避けて置く
     const audW=state.aud?.show&&audOn.length?Math.min(W*.34,440*k)+40*k:0,audL=audW&&state.aud.pos==='left';
-    const fs=32*k,maxW=Math.min(W*.78,1000*k,W-audW-60*k);
+    // 文字の大きさ（0.11.7）：設定の「文字の大きさ」で拡大。名前の行も小さすぎないように
+    const ts=(state.cardScale||100)/100,fs=32*k*ts,maxW=Math.min(W*.86,1000*k*Math.max(1,ts),W-audW-60*k);
     g.font=sceneFontCss(fs,s.text);
     const lines=wrapLines(s.text,maxW-60*k,4),lh=fs*1.5;
     const name=s.who||(state.serifName?((state.profiles||[]).find(p=>p.id===state.profileId)?.name||''):'');
-    const w=Math.min(maxW,Math.max(...lines.map(l=>g.measureText(l).width))+60*k),h=lines.length*lh+40*k+(name?fs*.9:0);
+    const w=Math.min(maxW,Math.max(...lines.map(l=>g.measureText(l).width))+60*k),h=lines.length*lh+40*k+(name?fs*1.02:0);
     const pos=s.pos||state.serifPos,L=audL?audW:0,Rr=audW&&!audL?audW:0,x=pos==='left'?40*k+L:pos==='right'?W-40*k-w-Rr:L+(W-L-Rr-w)/2,y=pos==='top'?40*k:H-60*k-h-(pos==='bottom'?0:H*.18);
     g.fillStyle='rgba(255,251,244,.94)';g.strokeStyle='rgba(60,40,30,.35)';g.lineWidth=2*k;
     g.beginPath();g.roundRect(x,y,w,h,22*k);g.fill();g.stroke();
     let yy=y+22*k;
     g.textBaseline='top';g.textAlign='left';
-    if(name){g.font=sceneFontCss(fs*.62,name);g.fillStyle='#8a5a3b';g.fillText(name,x+30*k,yy);yy+=fs*.9}
+    if(name){g.font=sceneFontCss(fs*.72,name);g.fillStyle='#8a5a3b';g.fillText(name,x+30*k,yy);yy+=fs*1.02}
     g.font=sceneFontCss(fs,s.text);g.fillStyle='#2e211c';
     lines.forEach((l,i)=>g.fillText(l,x+30*k,yy+i*lh+(lh-fs)/2));
     g.restore()

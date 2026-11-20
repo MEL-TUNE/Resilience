@@ -106,10 +106,12 @@
     out.appSize=Math.max(15,Math.min(70,Math.round(Number(v.appSize)||35)));
     if(['char','stage'].includes(v.appView))out.appView=v.appView;
     if(typeof v.appMsc==='boolean')out.appMsc=v.appMsc;
+    if(['over','side'].includes(v.appCSide))out.appCSide=v.appCSide;
     {const n=(x,lo,hi,df)=>{const k=Number(x);return Number.isFinite(k)?Math.max(lo,Math.min(hi,Math.round(k))):df};out.appCX=n(v.appCX,0,100,100);out.appCY=n(v.appCY,0,100,100);out.appCSize=n(v.appCSize,15,90,42)}
     if(Array.isArray(v.serifs))out.serifs=v.serifs.filter(s=>s&&/^[a-z0-9]{1,16}$/.test(s.id)).slice(0,100).map(s=>({id:s.id,title:S(s.title,80)||'シチュエーション',lines:(Array.isArray(s.lines)?s.lines:[]).slice(0,300).map(x=>S(x,300)),...(Number.isInteger(s.pos)?{pos:s.pos}:{})}));
     out.serifSel=out.serifs.some(s=>s.id===v.serifSel)?v.serifSel:'';
     if(['bottom','top','left','right'].includes(v.serifPos))out.serifPos=v.serifPos;
+    if([85,100,120,140,160].includes(Number(v.cardScale)))out.cardScale=Number(v.cardScale);
     out.serifName=v.serifName!==false;
     out.diceN=[1,2,3].includes(v.diceN)?v.diceN:1;
     out.diceF=[4,6,8,10,12,20,100].includes(v.diceF)?v.diceF:6;

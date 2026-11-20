@@ -59,6 +59,7 @@
     serifs:[],
     serifSel:'',
     serifPos:'bottom',
+    cardScale:100,
     deco:{n:5,sec:5,sing:true,msize:100,mamt:'mid',mx:0,my:0,rsize:100,r:{grass:{n:5,s:100,sec:5},heart:{n:5,s:100,sec:5}}},
     telop:{items:[{id:'tjoke',text:'彼女は冗談を言っています',anim:'band',color:'white',pos:'bottom',sec:4,n:8,font:'',se:''}],typed:{anim:'band',color:'white',pos:'bottom',sec:5,n:8,font:'',se:''}},
     serifName:true,
@@ -75,6 +76,7 @@
     appView:'char',
     appMsc:true,
     appCX:100,
+    appCSide:'over',
     appCY:100,
     appCSize:42,
     assetNames:{},
@@ -228,5 +230,9 @@ fps:30,
     try{syncChar()}catch(_){}
     return saveWrite()
   }
+  // 画面を離れる・アプリを切り替えるとき（iPhone では裏へ回ると止められることがある）、書く前の変更をその場で書く（0.11.7）。
+  // 以前は、つまみを動かして0.4〜2秒以内に別のアプリへ移ると、その変更が残らないことがあった
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&saveTm)saveNow()});
+  window.addEventListener('pagehide',()=>{if(saveTm)saveNow()});
   window.__otonohaSaveState=()=>saveSt;
   window.__otonohaSaveFlush=()=>saveTm?saveWrite():saveSt!=='failed';
