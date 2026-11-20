@@ -24,24 +24,36 @@
   }
 
   // ---- 初めの絵（中心が 0,0、大きさ 1 くらいで描く。呼ぶ側で縦横同じ倍率に拡大する）
+  // 0.11.8 漫符の絵（3種）。中心 0,0、上下左右 ±0.46 ほどに収める（同じ見かけの大きさ・同じ余白）。
+  // 縮めても形が読めるよう、ふちは一段濃い色で残し、明るい背景でも暗い背景でも消えないようにする
   function artDrop(c){
-    // しずく：とがった先が上。淡い水色のグラデーション、細いふち、白い光
-    const gr=c.createLinearGradient(0,-.5,0,.5);gr.addColorStop(0,'rgba(236,248,255,.95)');gr.addColorStop(1,'rgba(150,205,236,.95)');
-    c.beginPath();c.moveTo(0,-.5);c.bezierCurveTo(.08,-.28,.3,-.05,.3,.17);c.arc(0,.17,.3,0,Math.PI);c.bezierCurveTo(-.3,-.05,-.08,-.28,0,-.5);c.closePath();
-    c.fillStyle=gr;c.fill();c.lineWidth=.035;c.strokeStyle='rgba(84,140,178,.8)';c.stroke();
-    c.beginPath();c.moveTo(-.14,.05);c.quadraticCurveTo(-.17,.2,-.08,.3);c.lineWidth=.05;c.lineCap='round';c.strokeStyle='rgba(255,255,255,.9)';c.stroke()
+    // 汗：青いしずく。とがった先が上（描く側で、先を人物へ向けて回す）。白い反射を一筋
+    const gr=c.createLinearGradient(0,-.46,0,.46);gr.addColorStop(0,'#d9f0ff');gr.addColorStop(.55,'#7cc0ef');gr.addColorStop(1,'#3d8fd6');
+    c.beginPath();c.moveTo(0,-.46);c.bezierCurveTo(.1,-.24,.3,-.04,.3,.16);c.arc(0,.16,.3,0,Math.PI);c.bezierCurveTo(-.3,-.04,-.1,-.24,0,-.46);c.closePath();
+    c.fillStyle=gr;c.fill();c.lineJoin='round';c.lineWidth=.05;c.strokeStyle='#2c6ea8';c.stroke();
+    c.beginPath();c.moveTo(-.15,.02);c.quadraticCurveTo(-.2,.2,-.08,.31);c.lineWidth=.065;c.lineCap='round';c.strokeStyle='rgba(255,255,255,.95)';c.stroke()
   }
   function artStar(c){
-    // 4つの先を持つ細い星：金から白へ
-    const gr=c.createRadialGradient(0,0,0,0,0,.5);gr.addColorStop(0,'rgba(255,255,250,1)');gr.addColorStop(.45,'rgba(255,236,170,.95)');gr.addColorStop(1,'rgba(232,186,96,.0)');
+    // きらめき：中心に厚みのある淡金の四芒星（くびれを浅くして、縮めても線にならない）
+    const gr=c.createRadialGradient(-.04,-.04,0,0,0,.46);gr.addColorStop(0,'#fffdf0');gr.addColorStop(.35,'#fbe9a6');gr.addColorStop(1,'#efc75a');
     c.beginPath();
-    for(let i=0;i<4;i++){const a=i*Math.PI/2;c.lineTo(Math.cos(a)*.5,Math.sin(a)*.5);c.quadraticCurveTo(0,0,Math.cos(a+Math.PI/4)*.07,Math.sin(a+Math.PI/4)*.07)}
-    c.closePath();c.fillStyle=gr;c.fill();
-    c.lineWidth=.02;c.strokeStyle='rgba(214,170,80,.7)';c.stroke()
+    for(let i=0;i<4;i++){const a=-Math.PI/2+i*Math.PI/2,b=a+Math.PI/4;
+      if(i===0)c.moveTo(Math.cos(a)*.46,Math.sin(a)*.46);
+      c.quadraticCurveTo(Math.cos(b)*.13,Math.sin(b)*.13,Math.cos(a+Math.PI/2)*.46,Math.sin(a+Math.PI/2)*.46)}
+    c.closePath();c.fillStyle=gr;c.fill();c.lineJoin='round';c.lineWidth=.045;c.strokeStyle='#b8862a';c.stroke();
+    c.beginPath();c.arc(0,0,.07,0,Math.PI*2);c.fillStyle='rgba(255,255,255,.95)';c.fill()
   }
-  function artHeart(c,light){
-    // ハート：ばら色のグラデーション、細いふち、白い光の筋
-    const gr=c.createLinearGradient(-.4,-.4,.4,.45);gr.addColorStop(0,light?'rgba(255,228,238,.97)':'rgba(255,214,228,.97)');gr.addColorStop(1,light?'rgba(244,140,178,.95)':'rgba(226,92,140,.95)');
+  function artMHeart(c){
+    // 漫符のハート：ローズピンク。上のくぼみを深めにして、小さくてもハートと読めるように。細い光沢を一筋
+    const gr=c.createLinearGradient(-.35,-.4,.3,.45);gr.addColorStop(0,'#ffb3c8');gr.addColorStop(.5,'#f07399');gr.addColorStop(1,'#d9466f');
+    c.beginPath();c.moveTo(0,.44);c.bezierCurveTo(-.14,.31,-.47,.1,-.46,-.15);c.bezierCurveTo(-.45,-.4,-.13,-.47,0,-.2);c.bezierCurveTo(.13,-.47,.45,-.4,.46,-.15);c.bezierCurveTo(.47,.1,.14,.31,0,.44);c.closePath();
+    c.fillStyle=gr;c.fill();c.lineJoin='round';c.lineWidth=.045;c.strokeStyle='#a9284f';c.stroke();
+    c.beginPath();c.moveTo(-.32,-.12);c.quadraticCurveTo(-.31,-.31,-.15,-.33);c.lineWidth=.05;c.lineCap='round';c.strokeStyle='rgba(255,255,255,.9)';c.stroke()
+  }
+  function artHeart(c){
+    // ふわふわのハート（リアクション）：ばら色のグラデーション、細いふち、白い光の筋。
+    // 0.11.8：漫符のハートは artMHeart に分けた（ここにあった、漫符用の淡い色の分かれ道は使う所がなくなったので外した）
+    const gr=c.createLinearGradient(-.4,-.4,.4,.45);gr.addColorStop(0,'rgba(255,214,228,.97)');gr.addColorStop(1,'rgba(226,92,140,.95)');
     c.beginPath();c.moveTo(0,.42);c.bezierCurveTo(-.12,.3,-.5,.08,-.48,-.14);c.bezierCurveTo(-.46,-.38,-.16,-.46,0,-.24);c.bezierCurveTo(.16,-.46,.46,-.38,.48,-.14);c.bezierCurveTo(.5,.08,.12,.3,0,.42);c.closePath();
     c.fillStyle=gr;c.fill();c.lineWidth=.03;c.strokeStyle='rgba(176,64,110,.55)';c.stroke();
     c.beginPath();c.moveTo(-.3,-.2);c.quadraticCurveTo(-.3,-.32,-.18,-.33);c.lineWidth=.045;c.lineCap='round';c.strokeStyle='rgba(255,255,255,.85)';c.stroke()
@@ -78,10 +90,11 @@
   // ---- 漫符
   const manpuOn=new Map();   // id → {start, until(0＝止めるまで), next}
   let manpuParts=[];
-  function manpuStart(id,ms){
+  // trial＝設定の「試しに出す」・つまみの見本（本番のボタンとは分けて、設定の画面に「試し表示中」と出す）
+  function manpuStart(id,ms,trial){
     if(!MANPU[id])return;
     const now=performance.now();
-    manpuOn.set(id,{start:now,until:ms?now+ms:0,next:now});
+    manpuOn.set(id,{start:now,until:ms?now+ms:0,next:now,trial:!!trial});
     renderManpuBar()
   }
   function manpuStop(id){
@@ -166,7 +179,7 @@
         g.rotate(p.kind==='sweat'?rot:(p.rot||0));
         if(p.kind==='sweat')decoPaint('deco-sweat',artDrop,size);
         else if(p.kind==='spark')decoPaint('deco-spark',artStar,size);
-        else decoPaint('deco-mheart',artHeart,size,1)
+        else decoPaint('deco-mheart',artMHeart,size)
       }
       g.restore()
     }
@@ -228,6 +241,9 @@
     const bar=E('manpuBar');
     for(const b of bar.querySelectorAll('[data-manpu]'))b.setAttribute('aria-pressed',String(manpuOn.has(b.dataset.manpu)));
     E('manpuStop').disabled=!manpuOn.size;
+    // 設定の画面：試しに出している漫符を短く示す。出す先は配信画面そのもの（プレビューと本線の区別はない）なので、そのことも書く
+    const tn=E('mpTrialNote');
+    if(tn){const t=[...manpuOn].filter(([,m])=>m.trial).map(([id])=>MANPU[id].name);tn.textContent=t.length?t.join('・')+'を試し表示中です。配信画面に出ています（OBS 用のウインドウ・動画の収録にも映ります）':'';tn.hidden=!t.length}
     if(decoReady)renderTelopNow()
   }
   {
@@ -250,9 +266,9 @@
   // つまみを動かしている間は、その漫符を出し続けて、どこに出るかをその場で見せる（0.11.7）
   for(const [id,k] of [['manpuSize','s'],['manpuY','y'],['manpuX','x']])E(id).oninput=e=>{mpSet(E('mpKind').value,{[k]:Number(e.target.value)||(k==='s'?100:0)});renderManpuOpts();save();mpPeek()};
   let mpPeekAt=0;
-  function mpPeek(){const now=performance.now();if(now-mpPeekAt<900)return;mpPeekAt=now;manpuStart(E('mpKind').value,2200)}
+  function mpPeek(){const now=performance.now();if(now-mpPeekAt<900)return;mpPeekAt=now;manpuStart(E('mpKind').value,2200,true)}
   E('manpuAmt').onchange=e=>{mpSet(E('mpKind').value,{a:e.target.value});save()};
-  E('manpuTry').onclick=()=>manpuStart(E('mpKind').value,3200);
+  E('manpuTry').onclick=()=>manpuStart(E('mpKind').value,3200,true);
   E('manpuReset').onclick=()=>{mpSet(E('mpKind').value,{s:100,a:'mid',x:0,y:0});renderManpuOpts();save()};
   renderManpuOpts();
   function renderRcOpts(){

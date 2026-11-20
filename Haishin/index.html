@@ -1432,7 +1432,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.7 / アプリと並べる立ち絵の置き方・マスコットの大きさ・ハートの漫符・文字の大きさ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.8 / 漫符の絵を描き替え・試し表示中の表示</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1887,7 +1887,7 @@ lookPaint(look);
 <div class="deco-set" id="decoSet"><div class="studio-header-line"><strong>漫符（このキャラクター：<span id="mpWho"></span>）</strong></div>
 <p class="studio-note">本番の「👗 表情」タブの漫符のボタンで出すときの、大きさ・量・位置です。キャラクターごと、漫符ごとに覚えます（いま選んでいるキャラクターの分を変えます）。画面の端にかかる分は、そのまま画面の外へ出ます。</p>
 <div class="telop-fields"><label class="studio-field">調整する漫符<select id="mpKind"><option value="sweat">汗</option><option value="spark">きらめき（笑い）</option><option value="heart">ハート</option></select></label><label class="studio-field">量<select id="manpuAmt"><option value="few">少なめ（2〜3コ）</option><option value="mid">ふつう</option><option value="many">多め（とても焦る様子）</option></select></label><label class="studio-field">大きさ <output id="manpuSizeOut"></output><input type="range" id="manpuSize" min="30" max="300" step="10"></label><label class="studio-field">上下 <output id="manpuYOut"></output><input type="range" id="manpuY" min="-600" max="300" step="10"></label><label class="studio-field">左右 <output id="manpuXOut"></output><input type="range" id="manpuX" min="-300" max="300" step="10"></label></div>
-<div class="studio-row"><button type="button" id="manpuTry">試しに出す</button><button type="button" id="manpuReset">この漫符を初めに戻す</button></div>
+<div class="studio-row"><button type="button" id="manpuTry">試しに出す</button><button type="button" id="manpuReset">この漫符を初めに戻す</button><p class="studio-note mp-trial" id="mpTrialNote" role="status" aria-live="polite" hidden></p></div>
 <details class="deco-imgs-box"><summary>漫符の絵を自分の画像にする（全キャラクター共通）</summary><div data-deco-imgs="deco-sweat,deco-spark,deco-mheart"></div><p class="studio-mini">PNG・WebP（透明つき）を選べます。縦横の比はそのままで出します。</p></details>
 <div class="studio-header-line"><strong>草・ハート（リアクション）</strong></div>
 <div class="telop-fields"><label class="studio-field">調整するもの<select id="rcKind"><option value="grass">🌿 草（ぴょんぴょん）</option><option value="heart">💗 ハート（ふわふわ）</option></select></label><label class="studio-field">1回で出す数<select id="decoN"><option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="8">8</option><option value="12">12</option></select></label><label class="studio-field">大きさ<select id="decoSize"><option value="50">小さめ（50%）</option><option value="75">やや小さめ（75%）</option><option value="100">ふつう</option><option value="130">やや大きめ（130%）</option><option value="160">大きめ（160%）</option><option value="200">とても大きく（200%）</option></select></label><label class="studio-field" id="decoSecLab">消えるまでの秒数<select id="decoSec"><option value="3">3秒</option><option value="5">5秒</option><option value="8">8秒</option><option value="12">12秒</option></select></label></div>
@@ -9401,7 +9401,6 @@ const SB={
     return f?{id,start:f.start,prof:f.prof,items}:null
   }
   const localTime=iso=>{const d=new Date(iso);return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
-  function sessText(s){return s.items.map(x=>`${hms(x.off)} ${x.title}${x.artist?' / '+x.artist:''}`).join('\n')}
   function sessCsv(list){
     const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
     const rows=[['日付','記録の開始','経過','曲名','アーティスト','名義']];
@@ -9501,7 +9500,6 @@ const SB={
   function descSrcText(s){const p=descParts(s);return p.prov.length||p.src.length?[state.desc.srcHead.trim(),...p.prov,...p.src].filter(Boolean).join('\n'):''}
   // セトリ → 区切り線 → 使用音源
   function descFull(s){const a=descSetText(s),b=descSrcText(s),sep=state.desc.sep.trim();return b?[a,'',...(sep?[sep,'']:[]),b].join('\n'):a}
-  const descText=(s,withLink)=>descSetText(s,withLink);
   // 概要欄の形（見出し・区切り線・記号・書き方）。どの回にも同じものを使う
   function descOpts(onChange){
     const D=state.desc,det=document.createElement('details');det.className='sb-desc-opts';
@@ -13774,24 +13772,36 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
   }
 
   // ---- 初めの絵（中心が 0,0、大きさ 1 くらいで描く。呼ぶ側で縦横同じ倍率に拡大する）
+  // 0.11.8 漫符の絵（3種）。中心 0,0、上下左右 ±0.46 ほどに収める（同じ見かけの大きさ・同じ余白）。
+  // 縮めても形が読めるよう、ふちは一段濃い色で残し、明るい背景でも暗い背景でも消えないようにする
   function artDrop(c){
-    // しずく：とがった先が上。淡い水色のグラデーション、細いふち、白い光
-    const gr=c.createLinearGradient(0,-.5,0,.5);gr.addColorStop(0,'rgba(236,248,255,.95)');gr.addColorStop(1,'rgba(150,205,236,.95)');
-    c.beginPath();c.moveTo(0,-.5);c.bezierCurveTo(.08,-.28,.3,-.05,.3,.17);c.arc(0,.17,.3,0,Math.PI);c.bezierCurveTo(-.3,-.05,-.08,-.28,0,-.5);c.closePath();
-    c.fillStyle=gr;c.fill();c.lineWidth=.035;c.strokeStyle='rgba(84,140,178,.8)';c.stroke();
-    c.beginPath();c.moveTo(-.14,.05);c.quadraticCurveTo(-.17,.2,-.08,.3);c.lineWidth=.05;c.lineCap='round';c.strokeStyle='rgba(255,255,255,.9)';c.stroke()
+    // 汗：青いしずく。とがった先が上（描く側で、先を人物へ向けて回す）。白い反射を一筋
+    const gr=c.createLinearGradient(0,-.46,0,.46);gr.addColorStop(0,'#d9f0ff');gr.addColorStop(.55,'#7cc0ef');gr.addColorStop(1,'#3d8fd6');
+    c.beginPath();c.moveTo(0,-.46);c.bezierCurveTo(.1,-.24,.3,-.04,.3,.16);c.arc(0,.16,.3,0,Math.PI);c.bezierCurveTo(-.3,-.04,-.1,-.24,0,-.46);c.closePath();
+    c.fillStyle=gr;c.fill();c.lineJoin='round';c.lineWidth=.05;c.strokeStyle='#2c6ea8';c.stroke();
+    c.beginPath();c.moveTo(-.15,.02);c.quadraticCurveTo(-.2,.2,-.08,.31);c.lineWidth=.065;c.lineCap='round';c.strokeStyle='rgba(255,255,255,.95)';c.stroke()
   }
   function artStar(c){
-    // 4つの先を持つ細い星：金から白へ
-    const gr=c.createRadialGradient(0,0,0,0,0,.5);gr.addColorStop(0,'rgba(255,255,250,1)');gr.addColorStop(.45,'rgba(255,236,170,.95)');gr.addColorStop(1,'rgba(232,186,96,.0)');
+    // きらめき：中心に厚みのある淡金の四芒星（くびれを浅くして、縮めても線にならない）
+    const gr=c.createRadialGradient(-.04,-.04,0,0,0,.46);gr.addColorStop(0,'#fffdf0');gr.addColorStop(.35,'#fbe9a6');gr.addColorStop(1,'#efc75a');
     c.beginPath();
-    for(let i=0;i<4;i++){const a=i*Math.PI/2;c.lineTo(Math.cos(a)*.5,Math.sin(a)*.5);c.quadraticCurveTo(0,0,Math.cos(a+Math.PI/4)*.07,Math.sin(a+Math.PI/4)*.07)}
-    c.closePath();c.fillStyle=gr;c.fill();
-    c.lineWidth=.02;c.strokeStyle='rgba(214,170,80,.7)';c.stroke()
+    for(let i=0;i<4;i++){const a=-Math.PI/2+i*Math.PI/2,b=a+Math.PI/4;
+      if(i===0)c.moveTo(Math.cos(a)*.46,Math.sin(a)*.46);
+      c.quadraticCurveTo(Math.cos(b)*.13,Math.sin(b)*.13,Math.cos(a+Math.PI/2)*.46,Math.sin(a+Math.PI/2)*.46)}
+    c.closePath();c.fillStyle=gr;c.fill();c.lineJoin='round';c.lineWidth=.045;c.strokeStyle='#b8862a';c.stroke();
+    c.beginPath();c.arc(0,0,.07,0,Math.PI*2);c.fillStyle='rgba(255,255,255,.95)';c.fill()
   }
-  function artHeart(c,light){
-    // ハート：ばら色のグラデーション、細いふち、白い光の筋
-    const gr=c.createLinearGradient(-.4,-.4,.4,.45);gr.addColorStop(0,light?'rgba(255,228,238,.97)':'rgba(255,214,228,.97)');gr.addColorStop(1,light?'rgba(244,140,178,.95)':'rgba(226,92,140,.95)');
+  function artMHeart(c){
+    // 漫符のハート：ローズピンク。上のくぼみを深めにして、小さくてもハートと読めるように。細い光沢を一筋
+    const gr=c.createLinearGradient(-.35,-.4,.3,.45);gr.addColorStop(0,'#ffb3c8');gr.addColorStop(.5,'#f07399');gr.addColorStop(1,'#d9466f');
+    c.beginPath();c.moveTo(0,.44);c.bezierCurveTo(-.14,.31,-.47,.1,-.46,-.15);c.bezierCurveTo(-.45,-.4,-.13,-.47,0,-.2);c.bezierCurveTo(.13,-.47,.45,-.4,.46,-.15);c.bezierCurveTo(.47,.1,.14,.31,0,.44);c.closePath();
+    c.fillStyle=gr;c.fill();c.lineJoin='round';c.lineWidth=.045;c.strokeStyle='#a9284f';c.stroke();
+    c.beginPath();c.moveTo(-.32,-.12);c.quadraticCurveTo(-.31,-.31,-.15,-.33);c.lineWidth=.05;c.lineCap='round';c.strokeStyle='rgba(255,255,255,.9)';c.stroke()
+  }
+  function artHeart(c){
+    // ふわふわのハート（リアクション）：ばら色のグラデーション、細いふち、白い光の筋。
+    // 0.11.8：漫符のハートは artMHeart に分けた（ここにあった、漫符用の淡い色の分かれ道は使う所がなくなったので外した）
+    const gr=c.createLinearGradient(-.4,-.4,.4,.45);gr.addColorStop(0,'rgba(255,214,228,.97)');gr.addColorStop(1,'rgba(226,92,140,.95)');
     c.beginPath();c.moveTo(0,.42);c.bezierCurveTo(-.12,.3,-.5,.08,-.48,-.14);c.bezierCurveTo(-.46,-.38,-.16,-.46,0,-.24);c.bezierCurveTo(.16,-.46,.46,-.38,.48,-.14);c.bezierCurveTo(.5,.08,.12,.3,0,.42);c.closePath();
     c.fillStyle=gr;c.fill();c.lineWidth=.03;c.strokeStyle='rgba(176,64,110,.55)';c.stroke();
     c.beginPath();c.moveTo(-.3,-.2);c.quadraticCurveTo(-.3,-.32,-.18,-.33);c.lineWidth=.045;c.lineCap='round';c.strokeStyle='rgba(255,255,255,.85)';c.stroke()
@@ -13828,10 +13838,11 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
   // ---- 漫符
   const manpuOn=new Map();   // id → {start, until(0＝止めるまで), next}
   let manpuParts=[];
-  function manpuStart(id,ms){
+  // trial＝設定の「試しに出す」・つまみの見本（本番のボタンとは分けて、設定の画面に「試し表示中」と出す）
+  function manpuStart(id,ms,trial){
     if(!MANPU[id])return;
     const now=performance.now();
-    manpuOn.set(id,{start:now,until:ms?now+ms:0,next:now});
+    manpuOn.set(id,{start:now,until:ms?now+ms:0,next:now,trial:!!trial});
     renderManpuBar()
   }
   function manpuStop(id){
@@ -13916,7 +13927,7 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
         g.rotate(p.kind==='sweat'?rot:(p.rot||0));
         if(p.kind==='sweat')decoPaint('deco-sweat',artDrop,size);
         else if(p.kind==='spark')decoPaint('deco-spark',artStar,size);
-        else decoPaint('deco-mheart',artHeart,size,1)
+        else decoPaint('deco-mheart',artMHeart,size)
       }
       g.restore()
     }
@@ -13978,6 +13989,9 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
     const bar=E('manpuBar');
     for(const b of bar.querySelectorAll('[data-manpu]'))b.setAttribute('aria-pressed',String(manpuOn.has(b.dataset.manpu)));
     E('manpuStop').disabled=!manpuOn.size;
+    // 設定の画面：試しに出している漫符を短く示す。出す先は配信画面そのもの（プレビューと本線の区別はない）なので、そのことも書く
+    const tn=E('mpTrialNote');
+    if(tn){const t=[...manpuOn].filter(([,m])=>m.trial).map(([id])=>MANPU[id].name);tn.textContent=t.length?t.join('・')+'を試し表示中です。配信画面に出ています（OBS 用のウインドウ・動画の収録にも映ります）':'';tn.hidden=!t.length}
     if(decoReady)renderTelopNow()
   }
   {
@@ -14000,9 +14014,9 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
   // つまみを動かしている間は、その漫符を出し続けて、どこに出るかをその場で見せる（0.11.7）
   for(const [id,k] of [['manpuSize','s'],['manpuY','y'],['manpuX','x']])E(id).oninput=e=>{mpSet(E('mpKind').value,{[k]:Number(e.target.value)||(k==='s'?100:0)});renderManpuOpts();save();mpPeek()};
   let mpPeekAt=0;
-  function mpPeek(){const now=performance.now();if(now-mpPeekAt<900)return;mpPeekAt=now;manpuStart(E('mpKind').value,2200)}
+  function mpPeek(){const now=performance.now();if(now-mpPeekAt<900)return;mpPeekAt=now;manpuStart(E('mpKind').value,2200,true)}
   E('manpuAmt').onchange=e=>{mpSet(E('mpKind').value,{a:e.target.value});save()};
-  E('manpuTry').onclick=()=>manpuStart(E('mpKind').value,3200);
+  E('manpuTry').onclick=()=>manpuStart(E('mpKind').value,3200,true);
   E('manpuReset').onclick=()=>{mpSet(E('mpKind').value,{s:100,a:'mid',x:0,y:0});renderManpuOpts();save()};
   renderManpuOpts();
   function renderRcOpts(){
