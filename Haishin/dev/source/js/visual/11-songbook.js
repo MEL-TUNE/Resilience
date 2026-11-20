@@ -435,7 +435,6 @@
     return f?{id,start:f.start,prof:f.prof,items}:null
   }
   const localTime=iso=>{const d=new Date(iso);return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
-  function sessText(s){return s.items.map(x=>`${hms(x.off)} ${x.title}${x.artist?' / '+x.artist:''}`).join('\n')}
   function sessCsv(list){
     const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
     const rows=[['日付','記録の開始','経過','曲名','アーティスト','名義']];
@@ -535,7 +534,6 @@
   function descSrcText(s){const p=descParts(s);return p.prov.length||p.src.length?[state.desc.srcHead.trim(),...p.prov,...p.src].filter(Boolean).join('\n'):''}
   // セトリ → 区切り線 → 使用音源
   function descFull(s){const a=descSetText(s),b=descSrcText(s),sep=state.desc.sep.trim();return b?[a,'',...(sep?[sep,'']:[]),b].join('\n'):a}
-  const descText=(s,withLink)=>descSetText(s,withLink);
   // 概要欄の形（見出し・区切り線・記号・書き方）。どの回にも同じものを使う
   function descOpts(onChange){
     const D=state.desc,det=document.createElement('details');det.className='sb-desc-opts';
