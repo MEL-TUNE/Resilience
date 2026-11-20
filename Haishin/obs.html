@@ -1433,7 +1433,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.6 / 音声収録の動画に横長（16:9）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.7 / アプリと並べる立ち絵の置き方・マスコットの大きさ・ハートの漫符・文字の大きさ</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1545,7 +1545,7 @@ lookPaint(look);
 <div class="studio-row"><button type="button" id="serifUndo" disabled>↶ 元に戻す</button></div>
 <div class="studio-row play-big"><button type="button" id="serifRandom" class="accent">🎲 ランダムに出す</button><button type="button" id="serifPrev">← 前</button><button type="button" id="serifNext">次 →</button><button type="button" id="serifHide">吹き出しを消す</button></div>
 <p class="studio-mini" id="serifNow"></p>
-<div class="studio-inline"><label class="studio-field">吹き出しの位置<select id="serifPos"><option value="bottom">下</option><option value="top">上</option><option value="left">左下（字幕の上）</option><option value="right">右下（字幕の上）</option></select></label><label class="studio-field"><input type="checkbox" id="serifName"> 名義の名前を添える</label></div>
+<div class="studio-inline"><label class="studio-field">文字の大きさ（セリフ・お題・スロット）<select id="cardScale"><option value="100">ふつう</option><option value="120">少し大きく</option><option value="140">大きく</option><option value="160">とても大きく</option><option value="85">小さく</option></select></label><label class="studio-field">吹き出しの位置<select id="serifPos"><option value="bottom">下</option><option value="top">上</option><option value="left">左下（字幕の上）</option><option value="right">右下（字幕の上）</option></select></label><label class="studio-field"><input type="checkbox" id="serifName"> 名義の名前を添える</label></div>
 </details>
 <details class="plan-group" data-pg="slot"><summary><h3>スロット（役柄×セリフ）</h3><small>役柄とセリフをくじ引きで出す</small></summary>
 <p class="studio-note">筋肉室スロットと同じ2段の抽選です。シチュエーション（役柄）をくじで引き、その中のセリフをくじで引きます。どちらも、全部出し終えるまで同じものを繰り返しません。下で選んだシチュエーションだけを対象にでき、何も選ばなければ、セリフのあるものすべてが対象です。</p>
@@ -1646,10 +1646,10 @@ lookPaint(look);
 <div class="app-stage" id="appStageWrap" hidden><div class="app-frame-box"><iframe id="appFrame" title="登録したアプリ"></iframe><p class="app-away" id="appAway" hidden>アプリは別ウインドウで表示中です。</p></div><figure class="app-mirror-box"><canvas id="appMirror" aria-label="立ち絵（配信画面と同じ絵）"></canvas><figcaption class="studio-mini">立ち絵（配信画面と同じ絵）</figcaption></figure></div>
 <div class="studio-inline"><label class="studio-field">アプリと並べる立ち絵<select id="appView"><option value="char">キャラクターだけ（背景・季節の演出なし・透過）</option><option value="stage">配信画面をそのまま（背景・演出ごと）</option></select></label>
 <label class="studio-field"><input type="checkbox" id="appMsc"> マスコットを出す（キャラクターのまわりを動きます）</label></div>
-<div class="studio-inline" id="appCharOpts"><label class="studio-field">横の位置（左 0 ←→ 右 100） <output id="appCXVal">100%</output><input id="appCX" type="range" min="0" max="100" step="1"></label>
+<div class="studio-inline" id="appCharOpts"><label class="studio-field">アプリとの関係<select id="appCSide"><option value="over">アプリの上に重ねる</option><option value="side">アプリの横に並べる（重ねない）</option></select></label><label class="studio-field">横の位置（左 0 ←→ 右 100）  <output id="appCXVal">100%</output><input id="appCX" type="range" min="0" max="100" step="1"></label>
 <label class="studio-field">縦の位置（上 0 ←→ 下 100） <output id="appCYVal">100%</output><input id="appCY" type="range" min="0" max="100" step="1"></label>
 <label class="studio-field">大きさ（ウインドウの高さに対して） <output id="appCSizeVal">42%</output><input id="appCSize" type="range" min="15" max="90" step="1"></label>
-<p class="studio-mini">ゲーム実況のように、アプリの上の端にキャラクターを小さく置く形です。マスコットは、キャラクターの枠の内側をめぐるので、端で切れません。下の小窓とアプリと立ち絵のウインドウに、同じ置き方で出ます。</p></div>
+<p class="studio-mini">「重ねる」は、ゲーム実況のように、アプリの上の端にキャラクターを置く形です。「横に並べる」は、キャラクターの幅だけアプリを狭めて隣に立たせます（横の位置が 50 より小さいと左、大きいと右）。マスコットは、キャラクターの枠の内側をめぐるので、端で切れません。下の小窓とアプリと立ち絵のウインドウに、同じ置き方で出ます。</p></div>
 <div id="appStageOpts"><div class="studio-inline"><label class="studio-field">別ウインドウでの立ち絵の置き方<select id="appLayout"><option value="overlay">アプリの上に重ねる</option><option value="side">アプリの横に並べる</option></select></label>
 <label class="studio-field">位置<select id="appPos"><option value="br">右下（横に並べるときは右）</option><option value="bl">左下（横に並べるときは左）</option><option value="tr">右上</option><option value="tl">左上</option></select></label>
 <label class="studio-field">立ち絵の大きさ（ウインドウの幅に対して） <output id="appSizeVal">35%</output><input id="appSize" type="range" min="15" max="70" step="1"></label></div>
@@ -7696,6 +7696,7 @@ async function renderTakes(){}
     serifs:[],
     serifSel:'',
     serifPos:'bottom',
+    cardScale:100,
     deco:{n:5,sec:5,sing:true,msize:100,mamt:'mid',mx:0,my:0,rsize:100,r:{grass:{n:5,s:100,sec:5},heart:{n:5,s:100,sec:5}}},
     telop:{items:[{id:'tjoke',text:'彼女は冗談を言っています',anim:'band',color:'white',pos:'bottom',sec:4,n:8,font:'',se:''}],typed:{anim:'band',color:'white',pos:'bottom',sec:5,n:8,font:'',se:''}},
     serifName:true,
@@ -7712,6 +7713,7 @@ async function renderTakes(){}
     appView:'char',
     appMsc:true,
     appCX:100,
+    appCSide:'over',
     appCY:100,
     appCSize:42,
     assetNames:{},
@@ -7865,6 +7867,10 @@ fps:30,
     try{syncChar()}catch(_){}
     return saveWrite()
   }
+  // 画面を離れる・アプリを切り替えるとき（iPhone では裏へ回ると止められることがある）、書く前の変更をその場で書く（0.11.7）。
+  // 以前は、つまみを動かして0.4〜2秒以内に別のアプリへ移ると、その変更が残らないことがあった
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&saveTm)saveNow()});
+  window.addEventListener('pagehide',()=>{if(saveTm)saveNow()});
   window.__otonohaSaveState=()=>saveSt;
   window.__otonohaSaveFlush=()=>saveTm?saveWrite():saveSt!=='failed';
 
@@ -7974,10 +7980,12 @@ function sanitize(v){
     out.appSize=Math.max(15,Math.min(70,Math.round(Number(v.appSize)||35)));
     if(['char','stage'].includes(v.appView))out.appView=v.appView;
     if(typeof v.appMsc==='boolean')out.appMsc=v.appMsc;
+    if(['over','side'].includes(v.appCSide))out.appCSide=v.appCSide;
     {const n=(x,lo,hi,df)=>{const k=Number(x);return Number.isFinite(k)?Math.max(lo,Math.min(hi,Math.round(k))):df};out.appCX=n(v.appCX,0,100,100);out.appCY=n(v.appCY,0,100,100);out.appCSize=n(v.appCSize,15,90,42)}
     if(Array.isArray(v.serifs))out.serifs=v.serifs.filter(s=>s&&/^[a-z0-9]{1,16}$/.test(s.id)).slice(0,100).map(s=>({id:s.id,title:S(s.title,80)||'シチュエーション',lines:(Array.isArray(s.lines)?s.lines:[]).slice(0,300).map(x=>S(x,300)),...(Number.isInteger(s.pos)?{pos:s.pos}:{})}));
     out.serifSel=out.serifs.some(s=>s.id===v.serifSel)?v.serifSel:'';
     if(['bottom','top','left','right'].includes(v.serifPos))out.serifPos=v.serifPos;
+    if([85,100,120,140,160].includes(Number(v.cardScale)))out.cardScale=Number(v.cardScale);
     out.serifName=v.serifName!==false;
     out.diceN=[1,2,3].includes(v.diceN)?v.diceN:1;
     out.diceF=[4,6,8,10,12,20,100].includes(v.diceF)?v.diceF:6;
@@ -9556,7 +9564,7 @@ const APP_MAX=12;
       E('appWhere').textContent=a.kind==='url'?a.url:'ファイル：'+(a.file||'')
     }
     E('appLayout').value=state.appLayout;E('appPos').value=state.appPos;E('appSize').value=state.appSize;
-    E('appView').value=appCharMode()?'char':'stage';E('appMsc').checked=state.appMsc!==false;
+    E('appView').value=appCharMode()?'char':'stage';E('appMsc').checked=state.appMsc!==false;E('appCSide').value=state.appCSide==='side'?'side':'over';
     for(const [id,k,df] of [['appCX','appCX',100],['appCY','appCY',100],['appCSize','appCSize',42]]){E(id).value=state[k]??df;E(id+'Val').textContent=(state[k]??df)+'%'}
     appMirrorPlace();
     E('appSizeVal').textContent=state.appSize+'%';
@@ -9603,6 +9611,7 @@ const APP_MAX=12;
   for(const [id,key] of [['appLayout','appLayout'],['appPos','appPos']])E(id).onchange=e=>{state[key]=e.target.value;save();renderApps();appLayoutWin()};
   E('appView').onchange=e=>{state.appView=e.target.value==='stage'?'stage':'char';save();renderApps();appLayoutWin()};
   E('appMsc').onchange=e=>{state.appMsc=e.target.checked;save()};
+  E('appCSide').onchange=e=>{state.appCSide=e.target.value==='side'?'side':'over';save();if(state.appCSide!=='side'){const f=E('appFrame');f.style.width=f.style.left=''}};
   for(const [id,k,lo,hi] of [['appCX','appCX',0,100],['appCY','appCY',0,100],['appCSize','appCSize',15,90]])E(id).oninput=e=>{state[k]=Math.max(lo,Math.min(hi,Math.round(Number(e.target.value))));E(id+'Val').textContent=state[k]+'%';save()};
   E('appSize').oninput=e=>{state.appSize=Math.max(15,Math.min(70,Number(e.target.value)||35));E('appSizeVal').textContent=state.appSize+'%';save();appLayoutWin()};
 
@@ -9629,7 +9638,7 @@ const APP_MAX=12;
     if(!appWindow){toast('別窓を開くにはポップアップを許可してください',5000);return}
     const d=appWindow.document;
     d.open();
-    d.write('<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>オトノハ｜アプリと立ち絵</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;display:block}body.overlay iframe{position:absolute;inset:0;width:100%;height:100%}body.overlay canvas{position:absolute;pointer-events:none}body.side{display:flex;align-items:center}body.side.left{flex-direction:row-reverse}body.side iframe{flex:1;height:100%}body.side canvas{flex:none;height:auto}canvas{display:block}</style></head><body><iframe id="app"></iframe><canvas id="pt"></canvas></body></html>');
+    d.write('<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>オトノハ｜アプリと立ち絵</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;display:block}body.overlay iframe{position:absolute;inset:0;width:100%;height:100%}body.overlay canvas{position:absolute;pointer-events:none}body.side{display:flex;align-items:center}body.side.left{flex-direction:row-reverse}body.side iframe{flex:1;height:100%}body.side canvas{flex:none;height:auto}body.side.char canvas{position:static}canvas{display:block}</style></head><body><iframe id="app"></iframe><canvas id="pt"></canvas></body></html>');
     d.close();
     const f=d.getElementById('app');
     appFrameAttrs(f,a);
@@ -9668,11 +9677,7 @@ const APP_MAX=12;
     if(!appLayerCtx||appLayerEmpty)return;
     const L=appLayerInfo,t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
     if(!L)return;
-    // 切り抜く範囲：全身＋動き（右往左往・跳ねる）の分。レイヤーの外には出ない
-    const move=W*.13*L.k*Math.max(1,(state.motionWander||0)/100,...((curChar()?.exprs)||[]).filter(e=>e.motion==='wander').map(e=>(e.amt??100)/100))+18,
-      hw=Math.min(APP_LW/2,L.w/2+move),top=Math.max(0,L.bottom-L.h*1.08-40),
-      sx=APP_LW/2-hw,cropW=hw*2,cropH=APP_LH-top;
-    const ms=state.appMsc!==false?myMascots().filter(m=>m.show&&images['msc-'+m.id]):[];
+    const {sx,top,cropW,cropH,ms}=appCrop();
     const mx=ms.length?cw*.17:cw*.02,mt=ms.length?ch*.1:ch*.02;
     const s=Math.min((cw-2*mx)/cropW,(ch-mt)/cropH),dw=cropW*s,dh=cropH*s,dx=(cw-dw)/2,dy=ch-dh;
     // マスコット：立ち絵のまわりを楕円にめぐり、跳ねる。画面の端で切れないよう、枠の内側に収める
@@ -9697,11 +9702,26 @@ const APP_MAX=12;
     cx.drawImage(appLayerCtx.canvas,sx,top,cropW,cropH,dx,dy,dw,dh);
     items.filter(it=>it.depth>=0).forEach(put)
   }
-  // 置き場所（ウインドウ・ページ内の枠に対する％）
+  // 切り抜く範囲：全身＋動き（右往左往を使うときだけ、その分の横幅）。レイヤーの外には出ない（0.11.7：右往左往を使わないときは余白を足さない）
+  function appCrop(){
+    const L=appLayerInfo;
+    const wan=Math.max((state.motion==='wander'?(state.motionWander??100):0)/100,...((curChar()?.exprs)||[]).filter(e=>e.motion==='wander').map(e=>(e.amt??100)/100),0);
+    const move=(L?W*.13*L.k*wan:0)+18,
+      hw=L?Math.min(APP_LW/2,L.w/2+move):APP_LW*.2,top=L?Math.max(0,L.bottom-L.h*1.08-40):0,
+      sx=APP_LW/2-hw,cropW=hw*2,cropH=APP_LH-top;
+    const ms=state.appMsc!==false?myMascots().filter(m=>m.show&&images['msc-'+m.id]):[];
+    return {sx,top,cropW,cropH,ms}
+  }
+  // 置き場所（ウインドウ・ページ内の枠に対する％）。枠の幅は、キャラクター（とマスコットの余白）がちょうど入る幅にする（0.11.7）。
+  // 以前は高さの1.15倍の幅で、細い立ち絵だと枠の真ん中に小さく立つため、右端（100%）にしても右に寄らなかった
   function appCharRect(boxW,boxH){
-    const ch=boxH*Math.max(15,Math.min(90,state.appCSize||42))/100,cw=Math.min(boxW,ch*1.15);
+    const {cropW,cropH,ms}=appCrop();
+    const ch=boxH*Math.max(15,Math.min(90,state.appCSize||42))/100;
+    const ratio=cropW/cropH,cw=Math.min(boxW*(appSideMode()?.6:1),ms.length?(ch*.9*ratio)/.66:(ch*.98*ratio)/.96);
     return {w:cw,h:ch,x:(boxW-cw)*(state.appCX??100)/100,y:(boxH-ch)*(state.appCY??100)/100}
   }
+  // 「アプリの横に並べる」（重ねない）：キャラクターの幅だけアプリを狭め、その横に置く。左右は横の位置（50 未満なら左）
+  const appSideMode=()=>appCharMode()&&state.appCSide==='side';
 
   // 毎フレーム：別ウインドウへは配信画面と同じ絵を、ページ内の小窓へは約8fpsで写す
   function appCopy(now){
@@ -9712,7 +9732,15 @@ const APP_MAX=12;
           const win=appWindow,dpr=Math.min(2,win.devicePixelRatio||1),r=appCharRect(win.innerWidth,win.innerHeight);
           const pw=Math.max(1,Math.round(r.w*dpr)),ph=Math.max(1,Math.round(r.h*dpr));
           if(c.width!==pw||c.height!==ph){c.width=pw;c.height=ph}
-          Object.assign(c.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',right:'',bottom:'',aspectRatio:''});
+          if(appSideMode()){
+            const left=(state.appCX??100)<50,f=appWindow.document.getElementById('app'),cy=state.appCY??100;
+            const cls='side char '+(left?'left':'right');if(appWindow.document.body.className!==cls)appWindow.document.body.className=cls;
+            Object.assign(c.style,{left:'',top:'',width:r.w+'px',height:r.h+'px',right:'',bottom:'',aspectRatio:'',alignSelf:cy<34?'flex-start':cy>66?'flex-end':'center'});
+            if(f)f.style.width=''
+          }else{
+            if(appWindow.document.body.className!=='overlay char')appWindow.document.body.className='overlay char';
+            Object.assign(c.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',right:'',bottom:'',aspectRatio:'',alignSelf:''})
+          }
           appCharDraw(appContext,pw,ph,now)
         }else{
           if(c.width!==W||c.height!==H){c.width=W;c.height=H}
@@ -9724,7 +9752,8 @@ const APP_MAX=12;
     if(!m||E('appStageWrap').hidden)return;
     const charM=appCharMode()&&!appWinOpen();
     if(now-appMirrorAt<(charM?33:120))return;
-    const r=m.getBoundingClientRect();
+    // 見えているかは、キャラクターだけのときはアプリの枠で見る（小窓はまだ置き場所が決まっていないと枠の外にあるため、一度も描かれないことがあった）
+    const r=(charM?m.parentElement:m).getBoundingClientRect();
     if(!r.width||r.bottom<0||r.top>innerHeight)return;
     appMirrorAt=now;
     if(charM){
@@ -9732,6 +9761,11 @@ const APP_MAX=12;
       const box=m.parentElement.getBoundingClientRect(),q=appCharRect(box.width,box.height),dpr=Math.min(2,devicePixelRatio||1);
       const pw=Math.max(1,Math.round(q.w*dpr)),ph=Math.max(1,Math.round(q.h*dpr));
       if(m.width!==pw||m.height!==ph){m.width=pw;m.height=ph}
+      const fr=E('appFrame');
+      if(appSideMode()){
+        const left=(state.appCX??100)<50;q.x=left?0:box.width-q.w;
+        Object.assign(fr.style,{width:Math.max(0,box.width-q.w)+'px',left:left?q.w+'px':'0px'})
+      }else if(fr.style.width){fr.style.width='';fr.style.left=''}
       Object.assign(m.style,{left:q.x+'px',top:q.y+'px',width:q.w+'px',height:q.h+'px'});
       appCharDraw(m.getContext('2d'),pw,ph,now);
       return
@@ -9781,7 +9815,7 @@ const SERIF_MAX=100,LINE_MAX=300;
     sel.value=cur?cur.id:'';
     E('serifEdit').hidden=!cur;
     if(cur){E('serifTitle').value=cur.title;E('serifText').value=cur.lines.join('\n')}
-    E('serifPos').value=state.serifPos;E('serifName').checked=state.serifName;
+    E('serifPos').value=state.serifPos;E('cardScale').value=String(state.cardScale||100);E('serifName').checked=state.serifName;
     E('serifNow').textContent=play.serif?'表示中：'+play.serif.text:'画面には出していません';
     renderUndo();renderSlot();renderPon()
   }
@@ -9849,6 +9883,7 @@ const SERIF_MAX=100,LINE_MAX=300;
   E('serifPrev').onclick=()=>serifPick('prev');
   E('serifHide').onclick=()=>{play.serif=null;play.slot=null;renderSerifs()};
   E('serifPos').onchange=e=>{state.serifPos=e.target.value;save()};
+  E('cardScale').onchange=e=>{const n=Number(e.target.value);state.cardScale=[85,100,120,140,160].includes(n)?n:100;save()};
   E('serifName').onchange=e=>{state.serifName=e.target.checked;save()};
 
   // ---- サイコロ・ルーレット
@@ -9925,17 +9960,18 @@ const SERIF_MAX=100,LINE_MAX=300;
     g.globalAlpha=a;
     // AI観客席のコメント欄が出ているときは、その列を避けて置く
     const audW=state.aud?.show&&audOn.length?Math.min(W*.34,440*k)+40*k:0,audL=audW&&state.aud.pos==='left';
-    const fs=32*k,maxW=Math.min(W*.78,1000*k,W-audW-60*k);
+    // 文字の大きさ（0.11.7）：設定の「文字の大きさ」で拡大。名前の行も小さすぎないように
+    const ts=(state.cardScale||100)/100,fs=32*k*ts,maxW=Math.min(W*.86,1000*k*Math.max(1,ts),W-audW-60*k);
     g.font=sceneFontCss(fs,s.text);
     const lines=wrapLines(s.text,maxW-60*k,4),lh=fs*1.5;
     const name=s.who||(state.serifName?((state.profiles||[]).find(p=>p.id===state.profileId)?.name||''):'');
-    const w=Math.min(maxW,Math.max(...lines.map(l=>g.measureText(l).width))+60*k),h=lines.length*lh+40*k+(name?fs*.9:0);
+    const w=Math.min(maxW,Math.max(...lines.map(l=>g.measureText(l).width))+60*k),h=lines.length*lh+40*k+(name?fs*1.02:0);
     const pos=s.pos||state.serifPos,L=audL?audW:0,Rr=audW&&!audL?audW:0,x=pos==='left'?40*k+L:pos==='right'?W-40*k-w-Rr:L+(W-L-Rr-w)/2,y=pos==='top'?40*k:H-60*k-h-(pos==='bottom'?0:H*.18);
     g.fillStyle='rgba(255,251,244,.94)';g.strokeStyle='rgba(60,40,30,.35)';g.lineWidth=2*k;
     g.beginPath();g.roundRect(x,y,w,h,22*k);g.fill();g.stroke();
     let yy=y+22*k;
     g.textBaseline='top';g.textAlign='left';
-    if(name){g.font=sceneFontCss(fs*.62,name);g.fillStyle='#8a5a3b';g.fillText(name,x+30*k,yy);yy+=fs*.9}
+    if(name){g.font=sceneFontCss(fs*.72,name);g.fillStyle='#8a5a3b';g.fillText(name,x+30*k,yy);yy+=fs*1.02}
     g.font=sceneFontCss(fs,s.text);g.fillStyle='#2e211c';
     lines.forEach((l,i)=>g.fillText(l,x+30*k,yy+i*lh+(lh-fs)/2));
     g.restore()
@@ -10453,13 +10489,15 @@ const slotCfg=()=>state.slot||(state.slot={aName:'役柄',bName:'セリフ',dur:
       return
     }
     const P=slotPal(),pos=c.pos||'center',w=Math.min(W*(c.size||62)/100,W-48*k),x=pos==='left'?24*k:pos==='right'?W-24*k-w:(W-w)/2,y=36*k;
-    const sc=Math.max(.6,Math.min(1.2,w/(793*k))),fsA=40*k*sc;
+    // 文字の大きさ（0.11.7）：設定の「文字の大きさ」で拡大
+    const ts=(state.cardScale||100)/100,sc=Math.max(.6,Math.min(1.2,w/(793*k)))*ts,fsA=40*k*sc;
     g.save();
     let fsB=26*k*sc,lines;
     for(;;){g.font=sceneFontCss(fsB,lineTxt);lines=wrapLines('「'+lineTxt+'」',w-90*k,99);if(lines.length<=4||fsB<=16*k*sc)break;fsB-=2*k*sc}
     if(lines.length>7)lines=wrapLines('「'+lineTxt+'」',w-90*k,7);
     const lhB=fsB*1.55,hA=fsA*1.9,hB=Math.max(lhB*2.4,lines.length*lhB+30*k);
-    const h=44*k+36*k+hA+14*k+hB+30*k;
+    const fsBd=23*k*ts,bh=fsBd*1.75;
+    const h=44*k+36*k+(bh-32*k)+hA+14*k+hB+30*k;
     playPlace('slot',x+w/2,y+h/2,w+12*k,h+12*k);
     // 筐体
     g.fillStyle='rgba(92,65,48,.16)';g.beginPath();g.roundRect(x+6*k,y+8*k,w,h,30*k);g.fill();
@@ -10473,12 +10511,12 @@ const slotCfg=()=>state.slot||(state.slot={aName:'役柄',bName:'セリフ',dur:
     }
     // 見出し「役柄 × セリフ」
     g.textAlign='center';g.textBaseline='middle';
-    const badge=c.aName+'  ×  '+c.bName;g.font=sceneFontCss(17*k,badge);
+    const badge=c.aName+'  ×  '+c.bName;g.font=sceneFontCss(fsBd,badge);
     const bw=g.measureText(badge).width+40*k,by=iy+22*k;
-    g.fillStyle=P.badge;g.strokeStyle=P.badgeL;g.lineWidth=2*k;g.beginPath();g.roundRect(x+(w-bw)/2,by,bw,32*k,16*k);g.fill();g.stroke();
-    g.fillStyle=P.badgeT;g.fillText(badge,x+w/2,by+16*k);
+    g.fillStyle=P.badge;g.strokeStyle=P.badgeL;g.lineWidth=2*k;g.beginPath();g.roundRect(x+(w-bw)/2,by,bw,bh,bh/2);g.fill();g.stroke();
+    g.fillStyle=P.badgeT;g.fillText(badge,x+w/2,by+bh/2);
     // 役柄の窓
-    const ay=by+46*k,aw=iw-52*k,ax=x+(w-aw)/2;
+    const ay=by+bh+14*k,aw=iw-52*k,ax=x+(w-aw)/2;
     g.fillStyle=P.role;g.strokeStyle=P.roleL;g.lineWidth=4*k;g.beginPath();g.roundRect(ax,ay,aw,hA,22*k);g.fill();g.stroke();
     g.font=sceneFontCss(fsA,roleTxt);g.fillStyle=P.text;g.fillText(roleTxt,x+w/2,ay+hA/2,aw-30*k);
     // セリフの窓
@@ -12158,6 +12196,8 @@ async function storeCharImage(cid,slot,f){
 
   window.__otonohaChars={get state(){
       return state
+    },get head(){
+      return avHead?{x:avHead.x,y:avHead.y,h:avHead.h}:null
     },get mouthTh(){
       return mouthTh()
     },get mouth(){
@@ -12675,8 +12715,10 @@ const TOPIC_ST={cand:'候補',adopt:'採用・準備中',rec:'収録済み・未
     let head=tHead(d,it),body=tField(d,it,d.body),who=tField(d,it,d.who);const label=d.label||d.name;
     if(tp.spin&&tp.spin.length){const el=performance.now()-tp.at;if(el<1100){head=tp.spin[Math.floor(el/110)%tp.spin.length];body='';who=''}else tp.spin=null}
     const acc=(typeof look!=='undefined'&&look.accent)||'#8a5a3b';
-    const a=Math.min(1,(performance.now()-tp.at)/220),w=Math.min(W*.74,940*k),pad=30*k;
-    const fsL=20*k,fsH=36*k,fsB=23*k,fsW=19*k;
+    // 文字の大きさ（0.11.7）：設定の「文字の大きさ」で拡大。見出しの札・名前の行を大きめに
+    const ts=(state.cardScale||100)/100;
+    const a=Math.min(1,(performance.now()-tp.at)/220),w=Math.min(W*.9,940*k*Math.max(1,ts*.9)),pad=30*k;
+    const fsL=25*k*ts,fsH=36*k*ts,fsB=25*k*ts,fsW=24*k*ts;
     g.save();g.globalAlpha=a;
     g.font=sceneFontCss(fsH,head);const hl=wrapLines(head,w-pad*2,3);
     g.font=sceneFontCss(fsB,body);const bl=body?wrapLines(body,w-pad*2,7):[];
@@ -13226,13 +13268,17 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
       const cx0=mc.x/100*hu,cy0=hu*.55+mc.y/100*hu;
       lay[kind]={hu,cx0,cy0}
     }
+    // ハートは頭の上へ昇るので、頭が画面の上の端に近いと、ほとんど画面の外になって見えない（0.11.7）。
+    // 昇る道のりが入りきらない分だけ、出る高さを下げ、顔にかからないよう左右へ広げる（一粒ずつ押し込まず、まとめて決める）
+    {const L=lay.heart,headTop=Math.min(at(L.cx0,L.cy0-L.hu*.5).y,avHead.y),need=L.hu*1.75,room=headTop-H*.03;
+      L.drop=Math.max(0,need-room);L.wide=1+Math.min(1,L.drop/need)*.9}
     for(const p of manpuParts){
       const e=now-p.at;if(e<0)continue;
-      const {hu,cx0,cy0}=lay[p.kind];
+      const {hu,cx0,cy0,drop,wide}=lay[p.kind];
       const t=e/p.life,fade=Math.min(1,(p.life-e)/280);
       g.save();g.globalAlpha=Math.min(1,e/120,fade);
       let lx,ly,rot=0;
-      if(p.up){lx=cx0+p.hx*hu*.5+Math.sin(e/260+p.hx*3)*hu*.06;ly=cy0-hu*.75-easeOut(Math.min(1,t*1.2))*hu*.9}
+      if(p.up){lx=cx0+p.hx*hu*.5*wide+Math.sin(e/260+p.hx*3)*hu*.06;ly=cy0-hu*.75-easeOut(Math.min(1,t*1.2))*hu*.9+drop}
       else if(p.ray){lx=cx0;ly=cy0-hu*.95}
       else{
         // 頭の中心から、顔の外（頭の大きさの 0.75 倍くらい）へ。出るときに少し外へ動く
@@ -13335,7 +13381,10 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
     E('manpuX').value=m.x;E('manpuXOut').textContent=(m.x>0?'右へ ':m.x<0?'左へ ':'')+Math.abs(m.x)+'%'
   }
   E('mpKind').onchange=renderManpuOpts;
-  for(const [id,k] of [['manpuSize','s'],['manpuY','y'],['manpuX','x']])E(id).oninput=e=>{mpSet(E('mpKind').value,{[k]:Number(e.target.value)||(k==='s'?100:0)});renderManpuOpts();save()};
+  // つまみを動かしている間は、その漫符を出し続けて、どこに出るかをその場で見せる（0.11.7）
+  for(const [id,k] of [['manpuSize','s'],['manpuY','y'],['manpuX','x']])E(id).oninput=e=>{mpSet(E('mpKind').value,{[k]:Number(e.target.value)||(k==='s'?100:0)});renderManpuOpts();save();mpPeek()};
+  let mpPeekAt=0;
+  function mpPeek(){const now=performance.now();if(now-mpPeekAt<900)return;mpPeekAt=now;manpuStart(E('mpKind').value,2200)}
   E('manpuAmt').onchange=e=>{mpSet(E('mpKind').value,{a:e.target.value});save()};
   E('manpuTry').onclick=()=>manpuStart(E('mpKind').value,3200);
   E('manpuReset').onclick=()=>{mpSet(E('mpKind').value,{s:100,a:'mid',x:0,y:0});renderManpuOpts();save()};
@@ -14220,16 +14269,18 @@ ${color||'モチーフ本来の色を、彩度をやや抑えて上品に'}
     charPosApply(curChar(),asp);
     for(const m of state.mascots||[]){
       const r=m.pos?.[asp],q=prev&&m.pos?.[prev],cur=m.size;
-      const tuned=!!r&&(r.t===1||(r.t===undefined&&!!q&&r.size!==q.size));
+      // 0.11.7：換算するのは「その向きでは直していない」と印（t:0）の付いた控えと、控えがまだない向きだけ。
+      // 印のない古い控え（0.10.4 まで）は、作者が決めた値としてそのまま戻す（以前は、横と同じ値の控えを写しとみなして換算し、大きさが変わって見えた）
+      const tuned=!!r&&r.t!==0&&Number.isFinite(r.size);
       if(r){m.x=r.x;m.y=r.y;m.tilt=r.tilt}
-      m.size=tuned?r.size:prev?aspSizeConv(cur,prev,asp,3,90):r?r.size:cur;
+      m.size=tuned?r.size:prev?aspSizeConv(cur,prev,asp,3,90):r&&Number.isFinite(r.size)?r.size:cur;
       m._t=tuned;m._sz=false
     }
     for(const k of ['standby','away','end']){
       const c=state.scenes[k],r=c.pos?.[asp],q=prev&&c.pos?.[prev],cur=c.imgSize;
-      const tuned=!!r&&(r.t===1||(r.t===undefined&&!!q&&r.imgSize!==q.imgSize));
+      const tuned=!!r&&r.t!==0&&Number.isFinite(r.imgSize);
       if(r){c.imgX=r.imgX;c.imgY=r.imgY}
-      c.imgSize=tuned?r.imgSize:prev?aspSizeConv(cur,prev,asp,10,150):r?r.imgSize:cur;
+      c.imgSize=tuned?r.imgSize:prev?aspSizeConv(cur,prev,asp,10,150):r&&Number.isFinite(r.imgSize)?r.imgSize:cur;
       c._t=tuned;c._sz=false
     }
     for(const t of fxTargets()){const r=t.pos?.[asp];if(r){t.count=r.count;t.fxSize=r.fxSize}}

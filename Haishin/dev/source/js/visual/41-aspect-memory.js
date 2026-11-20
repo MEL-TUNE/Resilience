@@ -52,16 +52,18 @@
     charPosApply(curChar(),asp);
     for(const m of state.mascots||[]){
       const r=m.pos?.[asp],q=prev&&m.pos?.[prev],cur=m.size;
-      const tuned=!!r&&(r.t===1||(r.t===undefined&&!!q&&r.size!==q.size));
+      // 0.11.7：換算するのは「その向きでは直していない」と印（t:0）の付いた控えと、控えがまだない向きだけ。
+      // 印のない古い控え（0.10.4 まで）は、作者が決めた値としてそのまま戻す（以前は、横と同じ値の控えを写しとみなして換算し、大きさが変わって見えた）
+      const tuned=!!r&&r.t!==0&&Number.isFinite(r.size);
       if(r){m.x=r.x;m.y=r.y;m.tilt=r.tilt}
-      m.size=tuned?r.size:prev?aspSizeConv(cur,prev,asp,3,90):r?r.size:cur;
+      m.size=tuned?r.size:prev?aspSizeConv(cur,prev,asp,3,90):r&&Number.isFinite(r.size)?r.size:cur;
       m._t=tuned;m._sz=false
     }
     for(const k of ['standby','away','end']){
       const c=state.scenes[k],r=c.pos?.[asp],q=prev&&c.pos?.[prev],cur=c.imgSize;
-      const tuned=!!r&&(r.t===1||(r.t===undefined&&!!q&&r.imgSize!==q.imgSize));
+      const tuned=!!r&&r.t!==0&&Number.isFinite(r.imgSize);
       if(r){c.imgX=r.imgX;c.imgY=r.imgY}
-      c.imgSize=tuned?r.imgSize:prev?aspSizeConv(cur,prev,asp,10,150):r?r.imgSize:cur;
+      c.imgSize=tuned?r.imgSize:prev?aspSizeConv(cur,prev,asp,10,150):r&&Number.isFinite(r.imgSize)?r.imgSize:cur;
       c._t=tuned;c._sz=false
     }
     for(const t of fxTargets()){const r=t.pos?.[asp];if(r){t.count=r.count;t.fxSize=r.fxSize}}

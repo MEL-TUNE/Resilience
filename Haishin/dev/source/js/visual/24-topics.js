@@ -148,8 +148,10 @@
     let head=tHead(d,it),body=tField(d,it,d.body),who=tField(d,it,d.who);const label=d.label||d.name;
     if(tp.spin&&tp.spin.length){const el=performance.now()-tp.at;if(el<1100){head=tp.spin[Math.floor(el/110)%tp.spin.length];body='';who=''}else tp.spin=null}
     const acc=(typeof look!=='undefined'&&look.accent)||'#8a5a3b';
-    const a=Math.min(1,(performance.now()-tp.at)/220),w=Math.min(W*.74,940*k),pad=30*k;
-    const fsL=20*k,fsH=36*k,fsB=23*k,fsW=19*k;
+    // 文字の大きさ（0.11.7）：設定の「文字の大きさ」で拡大。見出しの札・名前の行を大きめに
+    const ts=(state.cardScale||100)/100;
+    const a=Math.min(1,(performance.now()-tp.at)/220),w=Math.min(W*.9,940*k*Math.max(1,ts*.9)),pad=30*k;
+    const fsL=25*k*ts,fsH=36*k*ts,fsB=25*k*ts,fsW=24*k*ts;
     g.save();g.globalAlpha=a;
     g.font=sceneFontCss(fsH,head);const hl=wrapLines(head,w-pad*2,3);
     g.font=sceneFontCss(fsB,body);const bl=body?wrapLines(body,w-pad*2,7):[];

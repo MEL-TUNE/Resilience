@@ -55,7 +55,7 @@
       E('appWhere').textContent=a.kind==='url'?a.url:'ファイル：'+(a.file||'')
     }
     E('appLayout').value=state.appLayout;E('appPos').value=state.appPos;E('appSize').value=state.appSize;
-    E('appView').value=appCharMode()?'char':'stage';E('appMsc').checked=state.appMsc!==false;
+    E('appView').value=appCharMode()?'char':'stage';E('appMsc').checked=state.appMsc!==false;E('appCSide').value=state.appCSide==='side'?'side':'over';
     for(const [id,k,df] of [['appCX','appCX',100],['appCY','appCY',100],['appCSize','appCSize',42]]){E(id).value=state[k]??df;E(id+'Val').textContent=(state[k]??df)+'%'}
     appMirrorPlace();
     E('appSizeVal').textContent=state.appSize+'%';
@@ -102,6 +102,7 @@
   for(const [id,key] of [['appLayout','appLayout'],['appPos','appPos']])E(id).onchange=e=>{state[key]=e.target.value;save();renderApps();appLayoutWin()};
   E('appView').onchange=e=>{state.appView=e.target.value==='stage'?'stage':'char';save();renderApps();appLayoutWin()};
   E('appMsc').onchange=e=>{state.appMsc=e.target.checked;save()};
+  E('appCSide').onchange=e=>{state.appCSide=e.target.value==='side'?'side':'over';save();if(state.appCSide!=='side'){const f=E('appFrame');f.style.width=f.style.left=''}};
   for(const [id,k,lo,hi] of [['appCX','appCX',0,100],['appCY','appCY',0,100],['appCSize','appCSize',15,90]])E(id).oninput=e=>{state[k]=Math.max(lo,Math.min(hi,Math.round(Number(e.target.value))));E(id+'Val').textContent=state[k]+'%';save()};
   E('appSize').oninput=e=>{state.appSize=Math.max(15,Math.min(70,Number(e.target.value)||35));E('appSizeVal').textContent=state.appSize+'%';save();appLayoutWin()};
 
@@ -128,7 +129,7 @@
     if(!appWindow){toast('別窓を開くにはポップアップを許可してください',5000);return}
     const d=appWindow.document;
     d.open();
-    d.write('<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>オトノハ｜アプリと立ち絵</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;display:block}body.overlay iframe{position:absolute;inset:0;width:100%;height:100%}body.overlay canvas{position:absolute;pointer-events:none}body.side{display:flex;align-items:center}body.side.left{flex-direction:row-reverse}body.side iframe{flex:1;height:100%}body.side canvas{flex:none;height:auto}canvas{display:block}</style></head><body><iframe id="app"></iframe><canvas id="pt"></canvas></body></html>');
+    d.write('<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>オトノハ｜アプリと立ち絵</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;display:block}body.overlay iframe{position:absolute;inset:0;width:100%;height:100%}body.overlay canvas{position:absolute;pointer-events:none}body.side{display:flex;align-items:center}body.side.left{flex-direction:row-reverse}body.side iframe{flex:1;height:100%}body.side canvas{flex:none;height:auto}body.side.char canvas{position:static}canvas{display:block}</style></head><body><iframe id="app"></iframe><canvas id="pt"></canvas></body></html>');
     d.close();
     const f=d.getElementById('app');
     appFrameAttrs(f,a);
@@ -167,11 +168,7 @@
     if(!appLayerCtx||appLayerEmpty)return;
     const L=appLayerInfo,t=now/1000,TAU=Math.PI*2,deg=Math.PI/180;
     if(!L)return;
-    // 切り抜く範囲：全身＋動き（右往左往・跳ねる）の分。レイヤーの外には出ない
-    const move=W*.13*L.k*Math.max(1,(state.motionWander||0)/100,...((curChar()?.exprs)||[]).filter(e=>e.motion==='wander').map(e=>(e.amt??100)/100))+18,
-      hw=Math.min(APP_LW/2,L.w/2+move),top=Math.max(0,L.bottom-L.h*1.08-40),
-      sx=APP_LW/2-hw,cropW=hw*2,cropH=APP_LH-top;
-    const ms=state.appMsc!==false?myMascots().filter(m=>m.show&&images['msc-'+m.id]):[];
+    const {sx,top,cropW,cropH,ms}=appCrop();
     const mx=ms.length?cw*.17:cw*.02,mt=ms.length?ch*.1:ch*.02;
     const s=Math.min((cw-2*mx)/cropW,(ch-mt)/cropH),dw=cropW*s,dh=cropH*s,dx=(cw-dw)/2,dy=ch-dh;
     // マスコット：立ち絵のまわりを楕円にめぐり、跳ねる。画面の端で切れないよう、枠の内側に収める
@@ -196,11 +193,26 @@
     cx.drawImage(appLayerCtx.canvas,sx,top,cropW,cropH,dx,dy,dw,dh);
     items.filter(it=>it.depth>=0).forEach(put)
   }
-  // 置き場所（ウインドウ・ページ内の枠に対する％）
+  // 切り抜く範囲：全身＋動き（右往左往を使うときだけ、その分の横幅）。レイヤーの外には出ない（0.11.7：右往左往を使わないときは余白を足さない）
+  function appCrop(){
+    const L=appLayerInfo;
+    const wan=Math.max((state.motion==='wander'?(state.motionWander??100):0)/100,...((curChar()?.exprs)||[]).filter(e=>e.motion==='wander').map(e=>(e.amt??100)/100),0);
+    const move=(L?W*.13*L.k*wan:0)+18,
+      hw=L?Math.min(APP_LW/2,L.w/2+move):APP_LW*.2,top=L?Math.max(0,L.bottom-L.h*1.08-40):0,
+      sx=APP_LW/2-hw,cropW=hw*2,cropH=APP_LH-top;
+    const ms=state.appMsc!==false?myMascots().filter(m=>m.show&&images['msc-'+m.id]):[];
+    return {sx,top,cropW,cropH,ms}
+  }
+  // 置き場所（ウインドウ・ページ内の枠に対する％）。枠の幅は、キャラクター（とマスコットの余白）がちょうど入る幅にする（0.11.7）。
+  // 以前は高さの1.15倍の幅で、細い立ち絵だと枠の真ん中に小さく立つため、右端（100%）にしても右に寄らなかった
   function appCharRect(boxW,boxH){
-    const ch=boxH*Math.max(15,Math.min(90,state.appCSize||42))/100,cw=Math.min(boxW,ch*1.15);
+    const {cropW,cropH,ms}=appCrop();
+    const ch=boxH*Math.max(15,Math.min(90,state.appCSize||42))/100;
+    const ratio=cropW/cropH,cw=Math.min(boxW*(appSideMode()?.6:1),ms.length?(ch*.9*ratio)/.66:(ch*.98*ratio)/.96);
     return {w:cw,h:ch,x:(boxW-cw)*(state.appCX??100)/100,y:(boxH-ch)*(state.appCY??100)/100}
   }
+  // 「アプリの横に並べる」（重ねない）：キャラクターの幅だけアプリを狭め、その横に置く。左右は横の位置（50 未満なら左）
+  const appSideMode=()=>appCharMode()&&state.appCSide==='side';
 
   // 毎フレーム：別ウインドウへは配信画面と同じ絵を、ページ内の小窓へは約8fpsで写す
   function appCopy(now){
@@ -211,7 +223,15 @@
           const win=appWindow,dpr=Math.min(2,win.devicePixelRatio||1),r=appCharRect(win.innerWidth,win.innerHeight);
           const pw=Math.max(1,Math.round(r.w*dpr)),ph=Math.max(1,Math.round(r.h*dpr));
           if(c.width!==pw||c.height!==ph){c.width=pw;c.height=ph}
-          Object.assign(c.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',right:'',bottom:'',aspectRatio:''});
+          if(appSideMode()){
+            const left=(state.appCX??100)<50,f=appWindow.document.getElementById('app'),cy=state.appCY??100;
+            const cls='side char '+(left?'left':'right');if(appWindow.document.body.className!==cls)appWindow.document.body.className=cls;
+            Object.assign(c.style,{left:'',top:'',width:r.w+'px',height:r.h+'px',right:'',bottom:'',aspectRatio:'',alignSelf:cy<34?'flex-start':cy>66?'flex-end':'center'});
+            if(f)f.style.width=''
+          }else{
+            if(appWindow.document.body.className!=='overlay char')appWindow.document.body.className='overlay char';
+            Object.assign(c.style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',right:'',bottom:'',aspectRatio:'',alignSelf:''})
+          }
           appCharDraw(appContext,pw,ph,now)
         }else{
           if(c.width!==W||c.height!==H){c.width=W;c.height=H}
@@ -223,7 +243,8 @@
     if(!m||E('appStageWrap').hidden)return;
     const charM=appCharMode()&&!appWinOpen();
     if(now-appMirrorAt<(charM?33:120))return;
-    const r=m.getBoundingClientRect();
+    // 見えているかは、キャラクターだけのときはアプリの枠で見る（小窓はまだ置き場所が決まっていないと枠の外にあるため、一度も描かれないことがあった）
+    const r=(charM?m.parentElement:m).getBoundingClientRect();
     if(!r.width||r.bottom<0||r.top>innerHeight)return;
     appMirrorAt=now;
     if(charM){
@@ -231,6 +252,11 @@
       const box=m.parentElement.getBoundingClientRect(),q=appCharRect(box.width,box.height),dpr=Math.min(2,devicePixelRatio||1);
       const pw=Math.max(1,Math.round(q.w*dpr)),ph=Math.max(1,Math.round(q.h*dpr));
       if(m.width!==pw||m.height!==ph){m.width=pw;m.height=ph}
+      const fr=E('appFrame');
+      if(appSideMode()){
+        const left=(state.appCX??100)<50;q.x=left?0:box.width-q.w;
+        Object.assign(fr.style,{width:Math.max(0,box.width-q.w)+'px',left:left?q.w+'px':'0px'})
+      }else if(fr.style.width){fr.style.width='';fr.style.left=''}
       Object.assign(m.style,{left:q.x+'px',top:q.y+'px',width:q.w+'px',height:q.h+'px'});
       appCharDraw(m.getContext('2d'),pw,ph,now);
       return

@@ -231,13 +231,15 @@
       return
     }
     const P=slotPal(),pos=c.pos||'center',w=Math.min(W*(c.size||62)/100,W-48*k),x=pos==='left'?24*k:pos==='right'?W-24*k-w:(W-w)/2,y=36*k;
-    const sc=Math.max(.6,Math.min(1.2,w/(793*k))),fsA=40*k*sc;
+    // 文字の大きさ（0.11.7）：設定の「文字の大きさ」で拡大
+    const ts=(state.cardScale||100)/100,sc=Math.max(.6,Math.min(1.2,w/(793*k)))*ts,fsA=40*k*sc;
     g.save();
     let fsB=26*k*sc,lines;
     for(;;){g.font=sceneFontCss(fsB,lineTxt);lines=wrapLines('「'+lineTxt+'」',w-90*k,99);if(lines.length<=4||fsB<=16*k*sc)break;fsB-=2*k*sc}
     if(lines.length>7)lines=wrapLines('「'+lineTxt+'」',w-90*k,7);
     const lhB=fsB*1.55,hA=fsA*1.9,hB=Math.max(lhB*2.4,lines.length*lhB+30*k);
-    const h=44*k+36*k+hA+14*k+hB+30*k;
+    const fsBd=23*k*ts,bh=fsBd*1.75;
+    const h=44*k+36*k+(bh-32*k)+hA+14*k+hB+30*k;
     playPlace('slot',x+w/2,y+h/2,w+12*k,h+12*k);
     // 筐体
     g.fillStyle='rgba(92,65,48,.16)';g.beginPath();g.roundRect(x+6*k,y+8*k,w,h,30*k);g.fill();
@@ -251,12 +253,12 @@
     }
     // 見出し「役柄 × セリフ」
     g.textAlign='center';g.textBaseline='middle';
-    const badge=c.aName+'  ×  '+c.bName;g.font=sceneFontCss(17*k,badge);
+    const badge=c.aName+'  ×  '+c.bName;g.font=sceneFontCss(fsBd,badge);
     const bw=g.measureText(badge).width+40*k,by=iy+22*k;
-    g.fillStyle=P.badge;g.strokeStyle=P.badgeL;g.lineWidth=2*k;g.beginPath();g.roundRect(x+(w-bw)/2,by,bw,32*k,16*k);g.fill();g.stroke();
-    g.fillStyle=P.badgeT;g.fillText(badge,x+w/2,by+16*k);
+    g.fillStyle=P.badge;g.strokeStyle=P.badgeL;g.lineWidth=2*k;g.beginPath();g.roundRect(x+(w-bw)/2,by,bw,bh,bh/2);g.fill();g.stroke();
+    g.fillStyle=P.badgeT;g.fillText(badge,x+w/2,by+bh/2);
     // 役柄の窓
-    const ay=by+46*k,aw=iw-52*k,ax=x+(w-aw)/2;
+    const ay=by+bh+14*k,aw=iw-52*k,ax=x+(w-aw)/2;
     g.fillStyle=P.role;g.strokeStyle=P.roleL;g.lineWidth=4*k;g.beginPath();g.roundRect(ax,ay,aw,hA,22*k);g.fill();g.stroke();
     g.font=sceneFontCss(fsA,roleTxt);g.fillStyle=P.text;g.fillText(roleTxt,x+w/2,ay+hA/2,aw-30*k);
     // セリフの窓

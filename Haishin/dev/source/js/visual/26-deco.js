@@ -134,13 +134,17 @@
       const cx0=mc.x/100*hu,cy0=hu*.55+mc.y/100*hu;
       lay[kind]={hu,cx0,cy0}
     }
+    // ハートは頭の上へ昇るので、頭が画面の上の端に近いと、ほとんど画面の外になって見えない（0.11.7）。
+    // 昇る道のりが入りきらない分だけ、出る高さを下げ、顔にかからないよう左右へ広げる（一粒ずつ押し込まず、まとめて決める）
+    {const L=lay.heart,headTop=Math.min(at(L.cx0,L.cy0-L.hu*.5).y,avHead.y),need=L.hu*1.75,room=headTop-H*.03;
+      L.drop=Math.max(0,need-room);L.wide=1+Math.min(1,L.drop/need)*.9}
     for(const p of manpuParts){
       const e=now-p.at;if(e<0)continue;
-      const {hu,cx0,cy0}=lay[p.kind];
+      const {hu,cx0,cy0,drop,wide}=lay[p.kind];
       const t=e/p.life,fade=Math.min(1,(p.life-e)/280);
       g.save();g.globalAlpha=Math.min(1,e/120,fade);
       let lx,ly,rot=0;
-      if(p.up){lx=cx0+p.hx*hu*.5+Math.sin(e/260+p.hx*3)*hu*.06;ly=cy0-hu*.75-easeOut(Math.min(1,t*1.2))*hu*.9}
+      if(p.up){lx=cx0+p.hx*hu*.5*wide+Math.sin(e/260+p.hx*3)*hu*.06;ly=cy0-hu*.75-easeOut(Math.min(1,t*1.2))*hu*.9+drop}
       else if(p.ray){lx=cx0;ly=cy0-hu*.95}
       else{
         // 頭の中心から、顔の外（頭の大きさの 0.75 倍くらい）へ。出るときに少し外へ動く
@@ -243,7 +247,10 @@
     E('manpuX').value=m.x;E('manpuXOut').textContent=(m.x>0?'右へ ':m.x<0?'左へ ':'')+Math.abs(m.x)+'%'
   }
   E('mpKind').onchange=renderManpuOpts;
-  for(const [id,k] of [['manpuSize','s'],['manpuY','y'],['manpuX','x']])E(id).oninput=e=>{mpSet(E('mpKind').value,{[k]:Number(e.target.value)||(k==='s'?100:0)});renderManpuOpts();save()};
+  // つまみを動かしている間は、その漫符を出し続けて、どこに出るかをその場で見せる（0.11.7）
+  for(const [id,k] of [['manpuSize','s'],['manpuY','y'],['manpuX','x']])E(id).oninput=e=>{mpSet(E('mpKind').value,{[k]:Number(e.target.value)||(k==='s'?100:0)});renderManpuOpts();save();mpPeek()};
+  let mpPeekAt=0;
+  function mpPeek(){const now=performance.now();if(now-mpPeekAt<900)return;mpPeekAt=now;manpuStart(E('mpKind').value,2200)}
   E('manpuAmt').onchange=e=>{mpSet(E('mpKind').value,{a:e.target.value});save()};
   E('manpuTry').onclick=()=>manpuStart(E('mpKind').value,3200);
   E('manpuReset').onclick=()=>{mpSet(E('mpKind').value,{s:100,a:'mid',x:0,y:0});renderManpuOpts();save()};
