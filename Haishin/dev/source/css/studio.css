@@ -554,3 +554,27 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .kk-live .kk-live-say{flex:1 1 200px;min-width:0;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
 .kk-live button{border:1px solid var(--a-p-45);border-radius:8px;padding:7px 11px;background:var(--hi);color:var(--ink);font-size:13px;cursor:pointer}
 .kk-live button.accent{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
+/* 0.11.9：音源のボタンは略称でも長いことがあるので、幅を決めて省く。配信先で使えない音源は薄く */
+.sb-list .sb-oke{max-width:15em}
+.sb-oke.sb-oke-no{opacity:.45;border-style:dashed!important}
+.sb-oke.sb-oke-unk{opacity:.8}
+.sb-file,.sb-lyrics{max-width:15em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-openall{margin:6px 0 10px}
+.sb-openall-list{margin:4px 0 0 1.4em;padding:0;font-size:13px;line-height:1.7}
+.sb-openall-list li.done{opacity:.55}
+.sb-gacha-body{padding:6px 0}
+.sb-gacha-groups{display:flex;flex-direction:column;gap:6px;margin:4px 0 8px}
+.sb-gacha-group{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.sb-gacha-gname{font-size:12px;opacity:.75;min-width:6em}
+.sb-chip{font-size:12px;padding:4px 9px;border-radius:999px}
+.sb-chip.on{background:var(--a-p-20)!important;border-color:var(--accent)!important;font-weight:700}
+.sb-gacha-ck{flex-direction:row!important;align-items:center;gap:4px}
+.sb-gacha-out{margin:8px 0}
+.sb-gacha-spin{font-size:20px;font-weight:700;text-align:center;padding:18px 8px;opacity:.7}
+.sb-gacha-card{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;text-align:center}
+.sb-gacha-head{margin:0;font-size:12px;opacity:.75}
+.sb-gacha-title{margin:4px 0 2px;font-size:22px;font-weight:800;line-height:1.35}
+.sb-gacha-artist{margin:0 0 6px;font-size:14px;opacity:.85}
+.sb-gacha-tags{margin:0 0 8px;font-size:12px}
+.sb-gacha-card .studio-row{justify-content:center}
+.sb-gacha-card .sb-okes{display:flex;flex-wrap:wrap;gap:6px}

@@ -493,3 +493,13 @@
 - 整理：11-songbook.js の sessText・descText（定義のみ。build.py の stub・保存データ・HTML からも参照なし）を削除。
 - run.sh（テスト）：各テストの終了コードを見る（124＝時間切れ、ほかの 0 以外＝途中終了をエラーに数える）。PASS/FAIL の行がないテスト（t0100p）には「出力を目で見る」と付ける。最後に合計が 0 でなければ 0 以外で終わる。
 - テスト：t0124（24件）。全体 0 失敗・時間切れなし。t0100p は表示だけのテストで、出力を目で見て true 3つ（はじめは出ていない／重くすると知らせ／軽くすると 15fps・軽量モード）。
+
+## 2026-11-22 追記（STUDIO 0.11.9）
+
+- 作者の報告（iPad）：漫符のハートが途中で止まる（画面外へ抜けてよい）／✧の置き方が不自然（大きさ・位置・角度をばらばらに）／ルーレットの1文字の項目が小さすぎる／歌枠管理シートの更新に合わせた要望7件（略称・新しいチャンネルの検索・配信先ごとの音源・ドライブの音源・歌詞ページ・セトリの音源をまとめて開く・ラベルと歌枠ガチャ）。
+- 26-deco.js：ハートの drop・wide を外した。ハートは hx＝左右に ±(0.6〜1.0)hu、ly＝cy0−0.15hu−t×heartRun（heartRun＝max(2.2hu, 頭のy＋1.6hu)。直線で、止まらない）。ハートだけ終わりのフェードなし。きらめきは ray（放射の線）を外し、角度 −195〜15°・半径 p.r 1.1〜1.9・大きさ 0.12〜0.40・回転 0〜90°・出る時刻と寿命も乱数。近すぎる（正規化で 0.42 未満）ときだけ最大10回置き直す。大きさに小さなまたたき（p.tw）。
+- 13-plays.js：drawWheel の文字の大きさ＝min(R×0.34, 扇の長さに収まる大きさ, 文字の中ほどでの扇の幅×0.78) を3回まわして決める。最小 14px 相当。
+- 11g-songdest.js（新規。build.py の rec の exclude に追加）。他のファイルから先に呼ばれるので関数宣言だけ（定数は置かない。gachaTimer は var）。state.okeDest（''｜yt｜iriam｜l17、sanitize あり）。曲に org・lu、音源に pv{yt,mon,oth}（sanitize あり）。sheetCacheSet が provs に ab・yt・mon・oth、labelInfo（name,group,mark）を持ち、sheetDetailApply・karaMergeProvs を呼ぶ。karaMergeProvs は localStorage 'otonoha-kara-offered' に一度足した名前を覚える。歌枠ガチャの設定は localStorage 'otonoha-gacha'。
+- Apps Script 版5（dev/otonoha-sheet.gs・19-sheet.js の SHEET_GAS）：FIELDS_ の提供者に ab:'略称'、setup で提供者タブに略称の列を足す。19-sheet.js は SHEET_NEED=4（配信ログの機能の判定はそのまま）、SHEET_NOW=5（案内の文言だけ）。
+- 作者のシート（MEL-TUNE 直下の「歌枠管理シート」）：「提供者」タブの L 列に見出し「略称（セトリ表示用・空欄なら自動）」と、Hiro・歌っちゃ王・BOX・カラオケ音源ch・Dagger Hearts を書いた（ほかの行は空欄）。作者の Apps Script はまだ版4のはずなので、略称の列が読み込まれるのは版5へ入れ替えたあと。
+- テスト：t0125（漫符・ルーレット・歌枠ノート）。

@@ -31,7 +31,7 @@ TARGETS = {
         'stub_visual': NOOP(['audClear', 'audEvent', 'audShow', 'drawAudience', 'renderAud', 'renderVoiceRec', 'renderStoredVideos']) + '\nconst audOn=[];',
     },
     'rec.html': {
-        'exclude': ['js/visual/10-karaoke.js', 'js/visual/11-songbook.js', 'js/visual/19-sheet.js',
+        'exclude': ['js/visual/10-karaoke.js', 'js/visual/11-songbook.js', 'js/visual/11g-songdest.js', 'js/visual/19-sheet.js',
                     'js/visual/19s-sheet-edit.js', 'js/visual/15-audience.js', 'js/visual/16-voicerec.js',
                     'js/visual/23-kakeai.js'],
         'stub_audio': '',

@@ -1066,6 +1066,30 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .kk-live .kk-live-say{flex:1 1 200px;min-width:0;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
 .kk-live button{border:1px solid var(--a-p-45);border-radius:8px;padding:7px 11px;background:var(--hi);color:var(--ink);font-size:13px;cursor:pointer}
 .kk-live button.accent{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
+/* 0.11.9：音源のボタンは略称でも長いことがあるので、幅を決めて省く。配信先で使えない音源は薄く */
+.sb-list .sb-oke{max-width:15em}
+.sb-oke.sb-oke-no{opacity:.45;border-style:dashed!important}
+.sb-oke.sb-oke-unk{opacity:.8}
+.sb-file,.sb-lyrics{max-width:15em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-openall{margin:6px 0 10px}
+.sb-openall-list{margin:4px 0 0 1.4em;padding:0;font-size:13px;line-height:1.7}
+.sb-openall-list li.done{opacity:.55}
+.sb-gacha-body{padding:6px 0}
+.sb-gacha-groups{display:flex;flex-direction:column;gap:6px;margin:4px 0 8px}
+.sb-gacha-group{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.sb-gacha-gname{font-size:12px;opacity:.75;min-width:6em}
+.sb-chip{font-size:12px;padding:4px 9px;border-radius:999px}
+.sb-chip.on{background:var(--a-p-20)!important;border-color:var(--accent)!important;font-weight:700}
+.sb-gacha-ck{flex-direction:row!important;align-items:center;gap:4px}
+.sb-gacha-out{margin:8px 0}
+.sb-gacha-spin{font-size:20px;font-weight:700;text-align:center;padding:18px 8px;opacity:.7}
+.sb-gacha-card{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;text-align:center}
+.sb-gacha-head{margin:0;font-size:12px;opacity:.75}
+.sb-gacha-title{margin:4px 0 2px;font-size:22px;font-weight:800;line-height:1.35}
+.sb-gacha-artist{margin:0 0 6px;font-size:14px;opacity:.85}
+.sb-gacha-tags{margin:0 0 8px;font-size:12px}
+.sb-gacha-card .studio-row{justify-content:center}
+.sb-gacha-card .sb-okes{display:flex;flex-wrap:wrap;gap:6px}
 
 </style>
 <style>
@@ -1433,7 +1457,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.8 / 漫符の絵を描き替え・試し表示中の表示</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.9 / ハート・きらめき・ルーレット・歌枠ノートとシートの連携</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1695,7 +1719,13 @@ lookPaint(look);
 <section class="studio-card mode-section deck-panel" id="studioSongs" data-panel="songs" data-not="rec"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore">
 <ol class="sb-flow"><li><b>セトリ</b>：今日歌う曲。歌い始めに「♪ 歌い始め」を押す</li><li><b>本番</b>：歌唱の記録を始める・取り消す</li><li><b>曲リスト</b>：曲と、カラオケ音源のURLを登録しておく（ここからセトリへ入れる）</li><li><b>配信のあと</b>：概要欄（セトリ＋使用音源）をコピー。歌枠管理シートへも送れる</li><li><b>歌枠管理シート</b>：つなぐ・シートの曲や音源を直す</li></ol>
 <div class="sheet-bar" id="sheetBar"></div>
-<h3 class="kara-h">① セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div>
+<h3 class="kara-h">① セトリ（今日歌う予定）</h3>
+<div class="studio-inline sb-dest"><label class="studio-field">配信先（使える音源の見分け）<select id="okeDest"><option value="">選ばない（すべての音源をそのまま出す）</option><option value="yt">YouTube</option><option value="iriam">IRIAM（収益化済み・JASRAC と NexTone に提携）</option><option value="l17">17LIVE（収益化済み・JASRAC だけに提携）</option></select></label></div>
+<p class="studio-mini" id="okeDestInfo" aria-live="polite"></p>
+<ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songOpenAllBtn" type="button" title="セトリの曲の YouTube の音源を、1曲に1つずつ新しいタブで開きます">▶ セトリの音源をまとめて開く</button><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div>
+<div id="songOpenAll" class="sb-openall" hidden></div>
+<p class="studio-mini">音源のボタンは、提供者の略称で出します（歌枠管理シートの「提供者」タブの「略称」。空欄なら自動で短くします）。📁 は音源ファイルの保存場所（Googleドライブなど）、📝 歌詞 は歌詞が出ない音源の曲に出ます（シートの「歌詞ページのURL」か、歌ネットの検索を開きます）。「まとめて開く」は、ブラウザがポップアップを止めると1件だけになります。そのときはアドレスバーの表示から、このページのポップアップを「常に許可」にするか、下に出るリンクから1つずつ開いてください。配信先の判定は、シートの「音源」タブの「個別：…」の列があればそれを、なければ「提供者」タブの可否を使い、17LIVE では管理団体が NexTone だけの曲を外します。</p>
+<details class="sb-add sb-gacha" id="sbGacha"><summary>🎲 歌枠ガチャ（ラベルでしぼって、曲リストからでたらめに1曲・ラベルで抜き出す）</summary><div id="gachaBody" class="sb-gacha-body"></div></details>
 <h3 class="kara-h">② 本番：歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびにセトリか曲リストの「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。「▶」で開いた音源も一緒に残ります。</p>
 <h3 class="kara-h">③ 曲リスト <small id="repCount"></small></h3>
 <div class="sb-find"><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・音源・メモで探す" aria-label="曲リストを探す"><label class="studio-field sb-sort">並び<select id="repSort"><option value="recent">最近歌った順</option><option value="name">曲名順</option><option value="count">よく歌う順</option></select></label></div>
@@ -1720,7 +1750,7 @@ lookPaint(look);
 <p class="studio-mini" id="sheetInfo" aria-live="polite"></p>
 <p class="studio-mini">URLと合言葉は、このブラウザの中だけに保存します（設定ファイルや書き出しには入りません）。URLと合言葉を知っている人は誰でもシートを読み書きできるので、人に見せないでください。シートに書き込むのは手で入力する列だけで、自動で計算する列には書きません。</p>
 <h4 class="sb-h4">はじめてつなぐ・Apps Script のコードを入れ替える</h4>
-<p class="studio-mini">いまのコードは版4です（版3に、配信一覧の配信先・収益化・枠タイトル、オープニング・エンディングの行、同じ配信の送り直しを足したもの）。版2・版3をお使いなら、Apps Script のコードを全部置き換えて保存し、「デプロイ」→「デプロイを管理」→ 鉛筆の印 → バージョン「新バージョン」→「デプロイ」で入れ替えます（URLと合言葉はそのままです。合言葉の行は、いまの合言葉に直してから保存します）。版3のままでも、曲・音源の読み書きと、曲の行だけの配信ログは使えます。</p>
+<p class="studio-mini">いまのコードは版5です（版4に、「提供者」タブの略称の列を足したもの。版4は、配信一覧の配信先・収益化・枠タイトル、オープニング・エンディングの行、同じ配信の送り直しを足した版）。版2〜版4をお使いなら、Apps Script のコードを全部置き換えて保存し、「デプロイ」→「デプロイを管理」→ 鉛筆の印 → バージョン「新バージョン」→「デプロイ」で入れ替えます（URLと合言葉はそのままです。合言葉の行は、いまの合言葉に直してから保存します）。版3のままでも、曲・音源の読み書きと、曲の行だけの配信ログは使えます。版4のままだと「略称」の列は読み込まれず、長いチャンネル名はオトノハが自動で短くして出します（シートに書いた略称を使うには版5が要ります）。</p>
 <ol class="studio-mini sb-steps"><li>シートを開き、メニューの「拡張機能」→「Apps Script」を開きます。</li><li>下の「コードをコピー」で写したコードを、最初からあるコードと全部置き換えて貼り付けます。</li><li>コードの中の <code>ここに合言葉</code> を、自分だけの合言葉（英数字で12文字以上がおすすめ）に書き換えて保存します。</li><li>「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」でデプロイし、表示される許可の画面で許可します。</li><li>出てきた「ウェブアプリ」のURL（…/exec）と合言葉を、上に入れて「保存して確かめる」を押します。</li></ol>
 <div class="studio-row"><button type="button" id="sheetGasCopy">コードをコピー</button><button type="button" id="sheetGasSave">コードをファイルに保存</button></div>
 <h4 class="sb-h4">つながずに、貼り付けで読み込む</h4>
@@ -1747,7 +1777,7 @@ lookPaint(look);
 <div class="studio-inline"><label class="studio-field">探す言葉（曲名・アニメ名など）<input id="karaQuery" type="search" autocomplete="off"></label><label class="studio-field">開き方<select id="karaOpen"><option value="popup">別ウィンドウ</option><option value="tab">新しいタブ（同じタブを使い回す）</option><option value="newtab">新しいタブ（毎回開く）</option></select></label></div>
 <div class="studio-row"><button id="karaFromSong" type="button">上の曲名欄から入れる</button><button id="karaAll" type="button">YouTube全体で「カラオケ」付き検索</button></div>
 <div id="karaChannels" class="kara-channels"></div>
-<p class="studio-note">チャンネルの利用条件メモは参考情報です。歌枠管理シート・提供者の最新案内とは自動連動しません。</p><details><summary>チャンネルを編集</summary><div id="karaEdit" class="kara-edit"></div><div class="studio-row"><button id="karaAdd" type="button">チャンネルを追加</button><button id="karaReset" type="button">初期の6件に戻す</button></div><p class="studio-note">URLは「https://www.youtube.com/@名前」か「https://www.youtube.com/channel/UC…」の形で入れます（@名前だけでも可）。メモは使用条件の控えです。初期値は歌枠管理シートの提供者タブ（2026年10月30日時点）から写したもので、規約が変わることがあるため、使う前に提供者の原文で確かめる想定です。</p></details>
+<p class="studio-note">チャンネルの利用条件メモは参考情報です。歌枠管理シートを読み込むと、シートの「提供者」タブにあって、ここにまだないチャンネルを足します（すでにあるチャンネルのメモは書き換えません）。</p><details><summary>チャンネルを編集</summary><div id="karaEdit" class="kara-edit"></div><div class="studio-row"><button id="karaAdd" type="button">チャンネルを追加</button><button id="karaReset" type="button">初期の6件に戻す</button></div><p class="studio-note">URLは「https://www.youtube.com/@名前」か「https://www.youtube.com/channel/UC…」の形で入れます（@名前だけでも可）。メモは使用条件の控えです。初期値は歌枠管理シートの提供者タブ（2026年10月30日時点）から写したもので、規約が変わることがあるため、使う前に提供者の原文で確かめる想定です。</p></details>
 <div class="kara-sound"><hr class="studio-divider">
 <p class="studio-kicker">KARAOKE / SOUND</p><h3 class="kara-h">伴奏の音をアプリに取り込む</h3>
 <p class="studio-note">YouTubeなどを開いた別のタブの音を、このアプリの音（モニター・録音・動画・配信用の出力）に混ぜます。再生・一時停止・シークはそのタブ側で、音量はここで調整します。埋め込みは使いません。</p>
@@ -7972,6 +8002,7 @@ fps:30,
     imageMotion:'flutter',
     karaChannels:null,
     karaOpen:'popup',
+    okeDest:'',
     karaVol:100,
     karaSuppress:true,
     karaAutoFade:true,
@@ -8113,8 +8144,8 @@ function sanitize(v){
     {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last),...(()=>{const o={};
        const http=u=>{const t=S(u,500);return /^https?:\/\//i.test(t)?t:''};
-       if(Array.isArray(x.srcs))o.srcs=x.srcs.filter(y=>y&&typeof y==='object').slice(0,8).map(y=>({u:http(y.u),n:S(y.n,200),by:S(y.by,120),k:S(y.k,20),kind:S(y.kind,30),f:http(y.f),...(y.kk?{kk:S(y.kk,20)}:{}),...(y.ly?{ly:S(y.ly,10)}:{})})).filter(y=>y.u||y.n);
-       if(x.useSrc)o.useSrc=S(x.useSrc,500);if(x.sk)o.sk=S(x.sk,420);if(x.w)o.w=S(x.w,200);if(x.tag)o.tag=S(x.tag,200);return o})()}));
+       if(Array.isArray(x.srcs))o.srcs=x.srcs.filter(y=>y&&typeof y==='object').slice(0,8).map(y=>({u:http(y.u),n:S(y.n,200),by:S(y.by,120),k:S(y.k,20),kind:S(y.kind,30),f:http(y.f),...(y.kk?{kk:S(y.kk,20)}:{}),...(y.ly?{ly:S(y.ly,10)}:{}),...(()=>{const p={};if(y.pv&&typeof y.pv==='object')for(const k of ['yt','mon','oth'])if(y.pv[k])p[k]=S(y.pv[k],10);return Object.keys(p).length?{pv:p}:{}})()})).filter(y=>y.u||y.n);
+       if(x.useSrc)o.useSrc=S(x.useSrc,500);if(x.sk)o.sk=S(x.sk,420);if(x.w)o.w=S(x.w,200);if(x.tag)o.tag=S(x.tag,200);if(x.org)o.org=S(x.org,40);if(x.lu){const u=http(x.lu);if(u)o.lu=u}return o})()}));
      if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).map(x=>{const o={id:S(x.id,16)||Math.random().toString(36).slice(2,10),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)};if(Number.isFinite(Number(x.off0)))o.off0=Math.max(0,Math.floor(Number(x.off0)));if(x.ts!==null&&x.ts!==undefined&&Number.isFinite(Number(x.ts)))o.ts=Math.max(0,Math.floor(Number(x.ts)));if(x.src)o.src=S(x.src,500);return o});
      if(Array.isArray(v.legacyVideos))out.legacyVideos=v.legacyVideos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,60).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at),missing:x.missing===true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
@@ -8133,6 +8164,7 @@ function sanitize(v){
       if(Number.isFinite(n))out[k]=Math.max(CHAR_RANGES[k][0],Math.min(CHAR_RANGES[k][1],n))
     }
     if(['flutter','leaf','rise','snow','roll'].includes(v.imageMotion))out.imageMotion=v.imageMotion;
+    if(['yt','iriam','l17'].includes(v.okeDest))out.okeDest=v.okeDest;
     if(Array.isArray(v.karaChannels))out.karaChannels=v.karaChannels.slice(0,60).filter(x=>x&&typeof x==='object').map(x=>({name:String(x.name||'').slice(0,80),url:String(x.url||'').slice(0,300),memo:String(x.memo||'').slice(0,300)}));
     if(['popup','tab','newtab'].includes(v.karaOpen))out.karaOpen=v.karaOpen;
     if(['recent','name','count'].includes(v.repSort))out.repSort=v.repSort;
@@ -9079,12 +9111,17 @@ const SERIF_MAX=100,LINE_MAX=300;
       g.beginPath();g.moveTo(0,0);g.arc(0,0,R,a0,a1);g.closePath();g.fill();
       g.strokeStyle='#fffaf2';g.lineWidth=3*k;g.stroke();
       g.save();g.rotate(a0+seg/2);g.textAlign='right';g.textBaseline='middle';
-      // 項目名は、扇の長さに収まるまで文字を小さくする（最小で14px相当。それでも長いときだけ末尾を省く）
-      const label=r.items[i],room=R*.74;
-      let fs=Math.min(30*k,seg*R*.42);
-      g.font=sceneFontCss(fs,label);
-      const w0=g.measureText(label).width;
-      if(w0>room){fs=Math.max(14*k,fs*room/w0);g.font=sceneFontCss(fs,label)}
+      // 項目名の大きさ（0.11.9）：扇の「長さ」と「幅」の両方に収まる、いちばん大きい文字にする。
+      // 以前は上限が 30px 相当で、1文字の項目はとても小さく見えた。短い項目ほど大きく、長い項目は小さく（最小で14px相当。それでも長いときだけ末尾を省く）
+      const label=r.items[i],room=R*.74,half=Math.min(seg/2,Math.PI/2*.9);
+      let fs=R*.34;
+      for(let it=0;it<3;it++){
+        g.font=sceneFontCss(fs,label);
+        const w=g.measureText(label).width,rc=Math.max(R*.2,R-14*k-w*.5);
+        // 文字の中ほどの位置での扇の幅に、文字の高さが収まるように
+        fs=Math.min(R*.34,fs*room/Math.max(1,w),2*rc*Math.sin(half)*.78)
+      }
+      fs=Math.max(14*k,fs);g.font=sceneFontCss(fs,label)
       g.fillStyle='#2e211c';
       let tx=label;while(tx.length>1&&g.measureText(tx).width>room)tx=tx.slice(0,-1);
       g.fillText(tx===label?tx:tx+'…',R-14*k,0);g.restore()
@@ -11095,13 +11132,24 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
       return 1050
     }
     if(id==='spark'){
-      // きらめき：頭の上で、細い光の線と星がはじける
-      manpuParts.push({kind:id,at:now,life:1100,ray:1,sz:.75});
-      for(let i=0;i<n;i++){const a=(-160+140*(n===1?.5:i/(n-1))+(Math.random()-.5)*10)*Math.PI/180;manpuParts.push({kind:id,at:now+60+i*50,life:1000,a,r:1.0+Math.random()*.25,sz:.22+Math.random()*.1,rot:Math.random()*.6,out:.2})}
-      return 1500
+      // きらめき（0.11.9）：✧を、頭のまわり（顔の外）に、大きさ・位置・角度をばらばらに散らす。
+      // 弧に沿って等間隔に並べたり、光の線を放射状に出したりはしない（並びが機械的に見えるため）。
+      // 位置は「頭の中心からの向きと距離」をそれぞれ乱数で決め、先に置いた✧と近すぎるときだけ置き直す
+      const pts=[];
+      for(let i=0;i<n;i++){
+        let a=0,r=0;
+        for(let k=0;k<10;k++){
+          a=(-195+210*Math.random())*Math.PI/180;r=1.1+Math.random()*.8;
+          const x=Math.cos(a)*r,y=Math.sin(a)*r;
+          if(pts.every(q=>Math.hypot(q[0]-x,q[1]-y)>.42))break
+        }
+        pts.push([Math.cos(a)*r,Math.sin(a)*r]);
+        manpuParts.push({kind:id,at:now+Math.random()*420,life:800+Math.random()*500,a,r,sz:.12+Math.random()*.28,rot:Math.random()*Math.PI/2,tw:Math.random()*6.3})
+      }
+      return 1100+Math.random()*500
     }
-    // ハート：頭の上の幅いっぱいから、まんべんなく上へ
-    for(let i=0;i<n;i++){const t=n===1?.5:i/(n-1);manpuParts.push({kind:id,at:now+i*160+Math.random()*80,life:1600,hx:(t-.5)*1.3+(Math.random()-.5)*.15,up:1,sz:.24+Math.random()*.06})}
+    // ハート（0.11.9）：頭の左右（顔にかからない所）から出て、止まらずにまっすぐ上へ昇り、画面の上の外へ抜ける
+    for(let i=0;i<n;i++){const side=i%2?1:-1;manpuParts.push({kind:id,at:now+i*170+Math.random()*90,life:2400,hx:side*(.6+Math.random()*.4),up:1,sz:.24+Math.random()*.06,ph:Math.random()*6.3})}
     return 1200
   }
   function drawManpu(now){
@@ -11125,18 +11173,15 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
       const cx0=mc.x/100*hu,cy0=hu*.55+mc.y/100*hu;
       lay[kind]={hu,cx0,cy0}
     }
-    // ハートは頭の上へ昇るので、頭が画面の上の端に近いと、ほとんど画面の外になって見えない（0.11.7）。
-    // 昇る道のりが入りきらない分だけ、出る高さを下げ、顔にかからないよう左右へ広げる（一粒ずつ押し込まず、まとめて決める）
-    {const L=lay.heart,headTop=Math.min(at(L.cx0,L.cy0-L.hu*.5).y,avHead.y),need=L.hu*1.75,room=headTop-H*.03;
-      L.drop=Math.max(0,need-room);L.wide=1+Math.min(1,L.drop/need)*.9}
+    // ハートが昇る道のり：画面の上の外へ抜けきるまで（頭が低いほど長い）。0.11.7 の「出る高さを下げる」処理はやめた（顔にかかって止まって見えたため）
+    const heartRun=Math.max(lay.heart.hu*2.2,avHead.y+lay.heart.hu*1.6);
     for(const p of manpuParts){
       const e=now-p.at;if(e<0)continue;
-      const {hu,cx0,cy0,drop,wide}=lay[p.kind];
-      const t=e/p.life,fade=Math.min(1,(p.life-e)/280);
+      const {hu,cx0,cy0}=lay[p.kind];
+      const t=e/p.life,fade=p.up?1:Math.min(1,(p.life-e)/280);
       g.save();g.globalAlpha=Math.min(1,e/120,fade);
       let lx,ly,rot=0;
-      if(p.up){lx=cx0+p.hx*hu*.5*wide+Math.sin(e/260+p.hx*3)*hu*.06;ly=cy0-hu*.75-easeOut(Math.min(1,t*1.2))*hu*.9+drop}
-      else if(p.ray){lx=cx0;ly=cy0-hu*.95}
+      if(p.up){lx=cx0+p.hx*hu+Math.sin(e/300+p.ph)*hu*.07;ly=cy0-hu*.15-t*heartRun}
       else{
         // 頭の中心から、顔の外（頭の大きさの 0.75 倍くらい）へ。出るときに少し外へ動く
         const r=hu*(.12+.62*(p.r+(p.out||0)*easeOut(Math.min(1,t*1.5))+.06*easeOut(Math.min(1,e/220))));
@@ -11144,16 +11189,9 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
         rot=p.a-Math.PI/2   // しずくの先（絵の上）を、頭の中心へ向ける
       }
       const c=at(lx,ly);
-      const size=Math.max(8,p.sz*hu)*(e<200?.4+.6*backOut(e/200):1);
+      const size=Math.max(8,p.sz*hu)*(e<200?.4+.6*backOut(e/200):1)*(p.kind==='spark'?.88+.12*Math.sin(e/90+p.tw):1);
       g.translate(c.x,c.y);g.rotate(avHead.rot);
-      if(p.ray){
-        const r0=hu*.18,r1=r0+p.sz*hu*easeOut(Math.min(1,t*1.6));
-        // 9本の光の線を、1つのグラデーション・1回の線描きで（内側は透明、外側が金色）
-        const gr=g.createRadialGradient(0,0,r0,0,0,r1);gr.addColorStop(0,'rgba(255,246,214,0)');gr.addColorStop(1,'rgba(255,232,170,.9)');
-        g.lineCap='round';g.lineWidth=Math.max(1,hu*.02);g.strokeStyle=gr;g.beginPath();
-        for(let i=0;i<9;i++){const a=-Math.PI+i*Math.PI/8,ca=Math.cos(a),sa=Math.sin(a);g.moveTo(ca*r0,sa*r0);g.lineTo(ca*r1,sa*r1)}
-        g.stroke()
-      }else{
+      {
         g.rotate(p.kind==='sweat'?rot:(p.rot||0));
         if(p.kind==='sweat')decoPaint('deco-sweat',artDrop,size);
         else if(p.kind==='spark')decoPaint('deco-spark',artStar,size);
