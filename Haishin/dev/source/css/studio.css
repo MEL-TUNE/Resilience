@@ -555,10 +555,8 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .kk-live button{border:1px solid var(--a-p-45);border-radius:8px;padding:7px 11px;background:var(--hi);color:var(--ink);font-size:13px;cursor:pointer}
 .kk-live button.accent{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
 /* 0.11.9：音源のボタンは略称でも長いことがあるので、幅を決めて省く。配信先で使えない音源は薄く */
-.sb-list .sb-oke{max-width:15em}
 .sb-oke.sb-oke-no{opacity:.45;border-style:dashed!important}
 .sb-oke.sb-oke-unk{opacity:.8}
-.sb-file,.sb-lyrics{max-width:15em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sb-openall{margin:6px 0 10px}
 .sb-openall-list{margin:4px 0 0 1.4em;padding:0;font-size:13px;line-height:1.7}
 .sb-openall-list li.done{opacity:.55}
@@ -578,3 +576,24 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .sb-gacha-tags{margin:0 0 8px;font-size:12px}
 .sb-gacha-card .studio-row{justify-content:center}
 .sb-gacha-card .sb-okes{display:flex;flex-wrap:wrap;gap:6px}
+/* 0.11.9：セトリの行は、どの曲も同じ形にする。
+   狭いとき（ふつう）：1行目＝♪ 歌い始め・曲名（1行。はみ出す分は省く）、2行目＝音源・📁・🗒️・↑↓外す。
+   広いとき（セトリの幅が 760px 以上）：1行にまとめる（音源の欄は幅を決めておく）。音源のボタンは同じ幅、📁・🗒️ は絵文字だけの小さなボタン */
+.sb-list .sb-oke{width:8.8em;max-width:8.8em;flex:0 0 auto;text-align:left}
+.sb-list .sb-icon{width:2.5em;min-width:2.5em;padding:5px 0!important;text-align:center;flex:0 0 auto}
+ol.studio-setlist,ol.deck-setlist{container-type:inline-size}
+ol.studio-setlist.sb-list>li:not(.sb-empty):not(.sb-edit){display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"sing name name" "okes okes acts";column-gap:8px;row-gap:6px;align-items:center}
+ol.studio-setlist.sb-list>li>.sb-sing{grid-area:sing}
+ol.studio-setlist.sb-list>li>.sb-name,ol.deck-setlist>li>.sb-name{grid-area:name;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
+ol.studio-setlist.sb-list>li>.sb-okes,ol.deck-setlist>li>.sb-okes{grid-area:okes;display:flex;flex-wrap:nowrap;gap:6px;min-height:30px;max-width:none;overflow-x:auto;scrollbar-width:thin;order:0}
+ol.studio-setlist.sb-list>li>.sb-okes:empty,ol.deck-setlist>li>.sb-okes:empty{display:flex}
+ol.studio-setlist.sb-list>li>.sb-acts{grid-area:acts;margin-left:0;order:0}
+@container (min-width:760px){
+  ol.studio-setlist.sb-list>li:not(.sb-empty):not(.sb-edit){grid-template-columns:auto minmax(0,1fr) 24em auto;grid-template-areas:"sing name okes acts"}
+}
+ol.deck-setlist>li:not(.sb-empty){display:grid;grid-template-columns:1.6em auto minmax(0,1fr);grid-template-areas:"no sing name" ". okes okes";column-gap:6px;row-gap:5px;align-items:center}
+ol.deck-setlist>li>.deck-set-no{grid-area:no}
+ol.deck-setlist>li>.sb-sing{grid-area:sing}
+@container (min-width:640px){
+  ol.deck-setlist>li:not(.sb-empty){grid-template-columns:1.6em auto minmax(0,1fr) 24em;grid-template-areas:"no sing name okes"}
+}

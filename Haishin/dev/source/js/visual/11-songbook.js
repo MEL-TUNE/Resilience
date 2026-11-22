@@ -302,7 +302,7 @@
   E('repSort').onchange=e=>{state.repSort=['name','count'].includes(e.target.value)?e.target.value:'recent';save();renderRep()};
 
   function rowBtn(label,cls,fn,title){const b=document.createElement('button');b.type='button';b.textContent=label;if(cls)b.className=cls;if(title)b.title=title;b.onclick=fn;return b}
-  function songSpan(t,a,extra){const s=document.createElement('span');s.className='sb-name';s.textContent=t+(a?' / '+a:'');if(extra){const x=document.createElement('small');x.textContent=extra;s.append(x)}return s}
+  function songSpan(t,a,extra){const s=document.createElement('span');s.className='sb-name';s.textContent=t+(a?' / '+a:'');s.title=t+(a?' / '+a:'');if(extra){const x=document.createElement('small');x.textContent=extra;s.append(x)}return s}
   // 行の中のまとまり（音源のボタン／操作のボタン）。まとまりごとに折り返すので、ボタンがばらばらの行に散らない
   function rowGroup(cls,nodes){const g=document.createElement('span');g.className=cls;g.append(...nodes.filter(Boolean));return g}
   function sbEmpty(tag,text){const e=document.createElement(tag);e.className=tag==='p'?'studio-note sb-empty':'sb-empty';e.textContent=text;return e}

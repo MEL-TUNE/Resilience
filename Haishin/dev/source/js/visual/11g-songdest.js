@@ -1,4 +1,4 @@
-/* 歌枠ノート（0.11.9）：提供者の略称・配信先ごとに使える音源・歌詞ページ・音源ファイル・セトリの音源をまとめて開く・歌枠ガチャ
+/* 歌枠ノート（0.11.9）：提供者の略称・配信先ごとに使える音源・歌詞ページ（シートにURLがある曲だけ）・音源ファイル・セトリの音源をまとめて開く・歌枠ガチャ
    11-songbook.js の行の作り方（rowBtn・okeButtons）と、歌枠管理シートの読み込み（sheetCacheSet）から呼ばれる。
    ほかのファイルから先に呼ばれることがあるので、ここでは const の値を置かず、関数（function 宣言）だけにする */
 
@@ -57,31 +57,22 @@
   }
 
   // ---- 歌詞ページ
-  // 曲に歌詞ページのURL（シートの「歌詞ページのURL」）があればそれ、なければ歌ネットで曲名を探す
-  function lyricsUrl(r){
-    if(r?.lu)return r.lu;
-    return 'https://www.uta-net.com/search/?Aselect=2&Keyword='+encodeURIComponent(r?.title||'')
-  }
-  // 歌詞のボタンを出すか：歌詞が出る（「動画内の歌詞表示：出る」）音源が1つもないとき
-  function lyricsNeeded(r){
-    if(!r)return false;
-    const list=(r.srcs||[]).filter(x=>x.u||x.f);
-    if(r.useSrc){const y=list.find(x=>x.n===r.useSrc||x.u===r.useSrc);if(y)return y.ly!=='出る'}
-    return !list.some(x=>x.u&&x.ly==='出る')
-  }
   function lyricsOpen(r){
     let w=null;
-    try{w=window.open(lyricsUrl(r),'otonohaLyrics',state.karaOpen==='popup'?'popup=yes,width=560,height=860':'')}catch(_){}
+    try{w=window.open(r.lu,'otonohaLyrics',state.karaOpen==='popup'?'popup=yes,width=560,height=860':'')}catch(_){}
     if(!w)toast('ブラウザに新しい窓を止められました。アドレスバーの表示からポップアップを許可すると開けます',7000);else try{w.focus()}catch(_){}
   }
 
-  // ---- 音源のボタンに足すもの（歌詞・音源ファイル）
+  // ---- 音源のボタンに足すもの（音源ファイル・歌詞）。行の幅をそろえるため、絵文字だけの小さなボタンにする（0.11.9）
+  // 歌詞は、歌枠管理シートの「歌詞ページのURL」が入っている曲だけ
   function okeExtras(r){
     if(!r)return [];
     const out=[];
-    for(const x of (r.srcs||[]).filter(x=>x.f))
-      out.push(rowBtn('📁 '+(provShort(x.by)||'音源ファイル'),'sb-file',()=>{const w=window.open(x.f,'_blank','noopener');if(!w)toast('ブラウザに新しいタブを止められました。ポップアップを許可すると開けます',6000)},'音源ファイルの保存場所（Googleドライブなど）を開きます'+(x.n?'\n'+x.n:'')));
-    if(lyricsNeeded(r))out.push(rowBtn('📝 歌詞','sb-lyrics',()=>lyricsOpen(r),r.lu?'歌詞ページを開きます（歌枠管理シートの「歌詞ページのURL」）':'歌ネットで、この曲名の歌詞を探します（歌枠管理シートに「歌詞ページのURL」を入れると、そのページを開きます）'));
+    for(const x of (r.srcs||[]).filter(x=>x.f)){
+      const b=rowBtn('📁','sb-icon sb-file',()=>{const w=window.open(x.f,'_blank','noopener');if(!w)toast('ブラウザに新しいタブを止められました。ポップアップを許可すると開けます',6000)},'音源ファイルを開く'+(x.by?'（'+x.by+'）':'')+(x.n?'\n'+x.n:''));
+      b.setAttribute('aria-label','音源ファイルを開く'+(x.by?'（'+provShort(x.by)+'）':''));out.push(b)
+    }
+    if(r.lu){const b=rowBtn('🗒️','sb-icon sb-lyrics',()=>lyricsOpen(r),'歌詞ページを開く\n'+r.lu);b.setAttribute('aria-label','歌詞ページを開く');out.push(b)}
     return out
   }
 
@@ -179,7 +170,7 @@
     return add
   }
 
-  // ---- 歌枠ガチャ（ラベルでしぼって、曲リストからでたらめに1曲）
+  // ---- 歌枠ガチャ（ラベルでしぼってランダムで1曲・ラベルから選出）
   function gachaOpt(){
     let o=null;try{o=JSON.parse(localStorage.getItem('otonoha-gacha')||'null')}catch(_){}
     o=o&&typeof o==='object'?o:{};
