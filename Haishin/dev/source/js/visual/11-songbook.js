@@ -28,9 +28,12 @@
   }
   function sheetCacheSet(j){
     if(!j||!Array.isArray(j.provs))return;
-    sheetCacheMem={at:Date.now(),provs:j.provs.filter(x=>x&&x.n).slice(0,400).map(x=>({n:String(x.n).slice(0,120),url:String(x.url||'').slice(0,300)})),labels:(Array.isArray(j.labels)?j.labels:[]).map(x=>String(x.name||'').slice(0,40)).filter(Boolean).slice(0,300)};
+    const S=(v,n)=>String(v||'').trim().slice(0,n),L=(Array.isArray(j.labels)?j.labels:[]).filter(x=>x&&x.name).slice(0,300);
+    // 0.11.9：提供者は略称・配信の可否も、ラベルは分類・記号も持っておく（セトリの表示・配信先の判定・歌枠ガチャに使う）
+    sheetCacheMem={at:Date.now(),provs:j.provs.filter(x=>x&&x.n).slice(0,400).map(x=>({n:S(x.n,120),url:S(x.url,300),ab:S(x.ab,40),yt:S(x.yt,10),mon:S(x.mon,10),oth:S(x.oth,10)})),labels:L.map(x=>S(x.name,40)).filter(Boolean),labelInfo:L.map(x=>({name:S(x.name,40),group:S(x.group,40),mark:S(x.mark,8)}))};
     try{localStorage.setItem(SHEET_CACHE_LS,JSON.stringify(sheetCacheMem))}catch(_){}
-    provListFill()
+    provListFill();
+    sheetDetailApply(j);karaMergeProvs();renderSet();renderGacha()
   }
   // 提供者の名前を、シートの提供者タブの名前にそろえる（例：「歌っちゃ王」→「カラオケ歌っちゃ王」）。
   // シートにそのままの名前があればそれ。なければ、その名前で終わる・始まる提供者が1つだけのときに限って、そちらにする
@@ -123,10 +126,10 @@
     if(!r||!src||(!src.u&&!src.n&&!src.by))return false;
     if(!Array.isArray(r.srcs))r.srcs=[];
     const same=r.srcs.find(x=>(src.u&&x.u===src.u)||(src.n&&x.n&&sbNorm(x.n)===sbNorm(src.n)));
-    if(same){for(const k of ['u','n','by','k','kind','f','kk','ly'])if(src[k]&&!same[k])same[k]=src[k];return false}
+    if(same){for(const k of ['u','n','by','k','kind','f','kk','ly','pv'])if(src[k]&&!same[k])same[k]=src[k];return false}
     if(r.srcs.length>=8){toast('1曲に登録できる音源は8つまでです');return false}
     // kk＝キーの区分（原曲キー・女性キー・男性キー・その他）、ly＝動画内の歌詞（出る・出ない）。歌枠管理シートの「音源」タブから
-    r.srcs.push({u:src.u||'',n:(src.n||'').slice(0,200),by:(src.by||'').slice(0,120),k:(src.k||'').slice(0,20),kind:(src.kind||'').slice(0,30),f:src.f||'',...(src.kk?{kk:String(src.kk).slice(0,20)}:{}),...(src.ly?{ly:String(src.ly).slice(0,10)}:{})});
+    r.srcs.push({u:src.u||'',n:(src.n||'').slice(0,200),by:(src.by||'').slice(0,120),k:(src.k||'').slice(0,20),kind:(src.kind||'').slice(0,30),f:src.f||'',...(src.kk?{kk:String(src.kk).slice(0,20)}:{}),...(src.ly?{ly:String(src.ly).slice(0,10)}:{}),...(src.pv&&Object.keys(src.pv).length?{pv:src.pv}:{})});
     return true
   }
   // 音源を開く（カラオケ音源を探すときと同じ窓を使う）。開いた音源は、次の「♪ 歌い始め」の記録に残す
@@ -135,10 +138,16 @@
     r.useSrc=x.n||x.u;save();
     karaGo(x.u)
   }
+  // 音源のボタン。提供者は略称で出す（0.11.9。長いチャンネル名で行が崩れないように）。
+  // 配信先を選んでいるときは、その配信先で使えない音源に ✕ を付けて薄く出す（押せば開けます）。歌詞・音源ファイルのボタンも足す
   function okeButtons(r){
-    const list=(r?.srcs||[]).filter(x=>x.u);
+    const list=(r?.srcs||[]).filter(x=>x.u),d=state.okeDest;
     const kk=x=>x.kk&&x.kk!=='原曲キー'?'（'+x.kk.replace(/キー$/,'')+'）':'';
-    return list.map((x,i)=>rowBtn('▶ '+(x.by||'音源'+(list.length>1?i+1:''))+kk(x),'sb-oke'+(r.useSrc&&(r.useSrc===x.n||r.useSrc===x.u)?' used':''),()=>{okeOpen(r,x);for(const b of document.querySelectorAll('.sb-oke'))b.classList.remove('used')},(x.n?x.n+'\n':'')+x.u))
+    return list.map((x,i)=>{
+      const av=d?srcAvail(r,x,d):{ok:true},mark=av.ok===false?'✕ ':av.ok===null?'？ ':'▶ ';
+      const b=rowBtn(mark+(provShort(x.by)||'音源'+(list.length>1?i+1:''))+kk(x),'sb-oke'+(r.useSrc&&(r.useSrc===x.n||r.useSrc===x.u)?' used':'')+(av.ok===false?' sb-oke-no':av.ok===null?' sb-oke-unk':''),()=>{okeOpen(r,x);for(const b of document.querySelectorAll('.sb-oke'))b.classList.remove('used')},(x.by?x.by+'\n':'')+(x.n?x.n+'\n':'')+x.u+(av.why?'\n'+(d?destName(d)+'：':'')+av.why:''));
+      return b
+    }).concat(okeExtras(r))
   }
   function repFind(t,a){const k=songKey(t,a);return repList().find(s=>songKey(s.title,s.artist)===k)}
   function repAdd(t,a,memo,src){
@@ -311,7 +320,7 @@
       SB.set.append(li)
     });
     if(!state.songs.length)SB.set.append(sbEmpty('li','セトリは空です。下の「③ 曲リスト」の「セトリへ」か、「＋ 曲を登録する」の「登録してセトリにも入れる」で追加できます'))
-    renderDeckSet()
+    renderDeckSet();renderOkeDest();{const b=E('songOpenAllBtn');if(b)b.disabled=!state.songs.length}
   }
 
   // 本番の「🎲 企画」タブに出すセトリ（0.10.5）。セトリに曲があるか、歌唱を記録しているときだけ出す。
@@ -322,7 +331,7 @@
     const box=E('deckSet');if(!box)return;
     const ss=state.singSess,sung=new Set(ss?logList().filter(x=>x.sess===ss.id).map(x=>songKey(x.title,x.artist)):[]),last=sbLast;
     const nowK=last&&ss&&last.sess===ss.id?songKey(last.title,last.artist):'';
-    const sig=JSON.stringify([state.songs.map(s=>[s.title,s.artist,(repFind(s.title,s.artist)?.srcs||[]).map(x=>x.u+x.by+(x.kk||'')).join('|'),repFind(s.title,s.artist)?.useSrc||'']),!!ss,[...sung],nowK]);
+    const sig=JSON.stringify([state.okeDest||'',sheetCache()?.at||0,state.songs.map(s=>[s.title,s.artist,(repFind(s.title,s.artist)?.srcs||[]).map(x=>x.u+x.by+(x.kk||'')+(x.f||'')+(x.ly||'')).join('|')+(repFind(s.title,s.artist)?.lu||''),repFind(s.title,s.artist)?.useSrc||'']),!!ss,[...sung],nowK]);
     box.hidden=!state.songs.length&&!ss;
     if(sig===deckSetSig)return;
     deckSetSig=sig;

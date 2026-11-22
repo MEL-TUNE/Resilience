@@ -117,13 +117,24 @@
       return 1050
     }
     if(id==='spark'){
-      // きらめき：頭の上で、細い光の線と星がはじける
-      manpuParts.push({kind:id,at:now,life:1100,ray:1,sz:.75});
-      for(let i=0;i<n;i++){const a=(-160+140*(n===1?.5:i/(n-1))+(Math.random()-.5)*10)*Math.PI/180;manpuParts.push({kind:id,at:now+60+i*50,life:1000,a,r:1.0+Math.random()*.25,sz:.22+Math.random()*.1,rot:Math.random()*.6,out:.2})}
-      return 1500
+      // きらめき（0.11.9）：✧を、頭のまわり（顔の外）に、大きさ・位置・角度をばらばらに散らす。
+      // 弧に沿って等間隔に並べたり、光の線を放射状に出したりはしない（並びが機械的に見えるため）。
+      // 位置は「頭の中心からの向きと距離」をそれぞれ乱数で決め、先に置いた✧と近すぎるときだけ置き直す
+      const pts=[];
+      for(let i=0;i<n;i++){
+        let a=0,r=0;
+        for(let k=0;k<10;k++){
+          a=(-195+210*Math.random())*Math.PI/180;r=1.1+Math.random()*.8;
+          const x=Math.cos(a)*r,y=Math.sin(a)*r;
+          if(pts.every(q=>Math.hypot(q[0]-x,q[1]-y)>.42))break
+        }
+        pts.push([Math.cos(a)*r,Math.sin(a)*r]);
+        manpuParts.push({kind:id,at:now+Math.random()*420,life:800+Math.random()*500,a,r,sz:.12+Math.random()*.28,rot:Math.random()*Math.PI/2,tw:Math.random()*6.3})
+      }
+      return 1100+Math.random()*500
     }
-    // ハート：頭の上の幅いっぱいから、まんべんなく上へ
-    for(let i=0;i<n;i++){const t=n===1?.5:i/(n-1);manpuParts.push({kind:id,at:now+i*160+Math.random()*80,life:1600,hx:(t-.5)*1.3+(Math.random()-.5)*.15,up:1,sz:.24+Math.random()*.06})}
+    // ハート（0.11.9）：頭の左右（顔にかからない所）から出て、止まらずにまっすぐ上へ昇り、画面の上の外へ抜ける
+    for(let i=0;i<n;i++){const side=i%2?1:-1;manpuParts.push({kind:id,at:now+i*170+Math.random()*90,life:2400,hx:side*(.6+Math.random()*.4),up:1,sz:.24+Math.random()*.06,ph:Math.random()*6.3})}
     return 1200
   }
   function drawManpu(now){
@@ -147,18 +158,15 @@
       const cx0=mc.x/100*hu,cy0=hu*.55+mc.y/100*hu;
       lay[kind]={hu,cx0,cy0}
     }
-    // ハートは頭の上へ昇るので、頭が画面の上の端に近いと、ほとんど画面の外になって見えない（0.11.7）。
-    // 昇る道のりが入りきらない分だけ、出る高さを下げ、顔にかからないよう左右へ広げる（一粒ずつ押し込まず、まとめて決める）
-    {const L=lay.heart,headTop=Math.min(at(L.cx0,L.cy0-L.hu*.5).y,avHead.y),need=L.hu*1.75,room=headTop-H*.03;
-      L.drop=Math.max(0,need-room);L.wide=1+Math.min(1,L.drop/need)*.9}
+    // ハートが昇る道のり：画面の上の外へ抜けきるまで（頭が低いほど長い）。0.11.7 の「出る高さを下げる」処理はやめた（顔にかかって止まって見えたため）
+    const heartRun=Math.max(lay.heart.hu*2.2,avHead.y+lay.heart.hu*1.6);
     for(const p of manpuParts){
       const e=now-p.at;if(e<0)continue;
-      const {hu,cx0,cy0,drop,wide}=lay[p.kind];
-      const t=e/p.life,fade=Math.min(1,(p.life-e)/280);
+      const {hu,cx0,cy0}=lay[p.kind];
+      const t=e/p.life,fade=p.up?1:Math.min(1,(p.life-e)/280);
       g.save();g.globalAlpha=Math.min(1,e/120,fade);
       let lx,ly,rot=0;
-      if(p.up){lx=cx0+p.hx*hu*.5*wide+Math.sin(e/260+p.hx*3)*hu*.06;ly=cy0-hu*.75-easeOut(Math.min(1,t*1.2))*hu*.9+drop}
-      else if(p.ray){lx=cx0;ly=cy0-hu*.95}
+      if(p.up){lx=cx0+p.hx*hu+Math.sin(e/300+p.ph)*hu*.07;ly=cy0-hu*.15-t*heartRun}
       else{
         // 頭の中心から、顔の外（頭の大きさの 0.75 倍くらい）へ。出るときに少し外へ動く
         const r=hu*(.12+.62*(p.r+(p.out||0)*easeOut(Math.min(1,t*1.5))+.06*easeOut(Math.min(1,e/220))));
@@ -166,16 +174,9 @@
         rot=p.a-Math.PI/2   // しずくの先（絵の上）を、頭の中心へ向ける
       }
       const c=at(lx,ly);
-      const size=Math.max(8,p.sz*hu)*(e<200?.4+.6*backOut(e/200):1);
+      const size=Math.max(8,p.sz*hu)*(e<200?.4+.6*backOut(e/200):1)*(p.kind==='spark'?.88+.12*Math.sin(e/90+p.tw):1);
       g.translate(c.x,c.y);g.rotate(avHead.rot);
-      if(p.ray){
-        const r0=hu*.18,r1=r0+p.sz*hu*easeOut(Math.min(1,t*1.6));
-        // 9本の光の線を、1つのグラデーション・1回の線描きで（内側は透明、外側が金色）
-        const gr=g.createRadialGradient(0,0,r0,0,0,r1);gr.addColorStop(0,'rgba(255,246,214,0)');gr.addColorStop(1,'rgba(255,232,170,.9)');
-        g.lineCap='round';g.lineWidth=Math.max(1,hu*.02);g.strokeStyle=gr;g.beginPath();
-        for(let i=0;i<9;i++){const a=-Math.PI+i*Math.PI/8,ca=Math.cos(a),sa=Math.sin(a);g.moveTo(ca*r0,sa*r0);g.lineTo(ca*r1,sa*r1)}
-        g.stroke()
-      }else{
+      {
         g.rotate(p.kind==='sweat'?rot:(p.rot||0));
         if(p.kind==='sweat')decoPaint('deco-sweat',artDrop,size);
         else if(p.kind==='spark')decoPaint('deco-spark',artStar,size);

@@ -1,5 +1,5 @@
 /**
- * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版4）
+ * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版5）
  * @OnlyCurrentDoc  … このスクリプトが触れられるのは、このスプレッドシートだけです（ドライブのほかのファイルには触れません）
  *
  * 1. 下の OTONOHA_KEY を、自分だけの合言葉に書き換えます（英数字で12文字以上がおすすめ）。
@@ -13,10 +13,12 @@
  * 曲名・アーティスト・音源名・提供者名を直したときは、それを選んでいる「音源」「配信ログ」の行も新しい名前に付け替えます。
  * 版4で足したこと（配信ログへ送るところ）：配信一覧の「配信先」「収益化」「枠タイトル」も書く、
  *   オープニング・エンディング・トーク・企画の行も送る、同じ配信IDを送り直す（その配信IDの配信ログの行を入れ替える）。
+ * 版5で足したこと：「提供者」タブの「略称」列（セトリなどで長いチャンネル名の代わりに出す名前）を読み書きする。
+ *   列がないときは、ラベルの準備（setup）で「提供者」タブのいちばん右に足します。
  * 曲・音源・提供者の行を消す働きはありません（消すときは、シートで行を選んで消します）。
  */
 const OTONOHA_KEY = 'ここに合言葉';
-const GAS_VERSION = 4;
+const GAS_VERSION = 5;
 
 function doGet(e) { return out_(handle_((e && e.parameter) || {})); }
 function doPost(e) {
@@ -193,7 +195,7 @@ function log_(ss, p) {
 const FIELDS_ = {
   '曲': { t: '表示用曲名', w: '作品名', a: '表示用アーティスト', y: '読み', st: '表記の状態', lu: '歌詞ページのURL', org: '管理団体', code: '作品コード', jt: '作品タイトル', ja: 'アーティスト名', ly: '作詞者', cp: '作曲者', memo: 'メモ', rt: '管理団体の登録表記（曲名', ra: '管理団体の登録表記（アーティスト', set: 'セトリでの表記', g: 'ラベル' },
   '音源': { s: '曲（選ぶ）', n: '音源名', kind: '種類', key: 'キー', u: 'URL（貼り付け', by: '提供者（選ぶ）', yt: '個別：YouTube配信', mon: '個別：収益化配信', oth: '個別：YouTube以外', cond: '個別の利用条件', memo: 'メモ', f: '音源ファイルの保存場所', who: '使える名義', kk: 'キーの区分', lyr: '動画内の歌詞表示' },
-  '提供者': { n: '提供者名', url: '概要欄に載せるURL', yt: 'YouTube配信で使用', mon: '収益化済み配信で使用', oth: 'YouTube以外の配信', cr: 'クレジット表記の指定', tu: '利用規約・説明のURL', d: '確認日', memo: 'メモ', raw: '規約・説明の原文', y: '読み' }
+  '提供者': { n: '提供者名', ab: '略称', url: '概要欄に載せるURL', yt: 'YouTube配信で使用', mon: '収益化済み配信で使用', oth: 'YouTube以外の配信', cr: 'クレジット表記の指定', tu: '利用規約・説明のURL', d: '確認日', memo: 'メモ', raw: '規約・説明の原文', y: '読み' }
 };
 // 1行を見分ける項目（曲は「曲名／アーティスト」、音源と提供者は名前）。ほかのタブから、この文字で選ばれています
 const ID_ = { '曲': ['t', 'a'], '音源': ['n'], '提供者': ['n'] };
@@ -356,7 +358,7 @@ function save_(ss, p) {
 
 // 「ラベル一覧」タブと、「曲」タブの「ラベル」列を作る（ないときだけ）
 function setup_(ss, p) {
-  const made = { tab: false, col: false };
+  const made = { tab: false, col: false, ab: false };
   let L = ss.getSheetByName(LABEL_TAB_);
   if (!L) {
     L = ss.insertSheet(LABEL_TAB_);
@@ -375,7 +377,16 @@ function setup_(ss, p) {
     S.sh.getRange(1, c + 1).setValue('ラベル');
     made.col = true;
   }
-  if (made.tab || made.col) hist_(ss, [[stamp_(ss), LABEL_TAB_, '', 'ラベルの準備', '', (made.tab ? '「' + LABEL_TAB_ + '」タブを作った　' : '') + (made.col ? '「曲」タブにラベル列を足した' : ''), '準備', '']]);
+  const P = tab_(ss, '提供者');
+  if (P.col('略称') < 0) {
+    let c = P.head.length;
+    while (c > 0 && !P.head[c - 1]) c--;
+    if (c + 1 > P.sh.getMaxColumns()) P.sh.insertColumnAfter(P.sh.getMaxColumns());
+    P.sh.getRange(1, 1).copyTo(P.sh.getRange(1, c + 1), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+    P.sh.getRange(1, c + 1).setValue('略称（セトリ表示用・空欄なら自動）');
+    made.ab = true;
+  }
+  if (made.tab || made.col || made.ab) hist_(ss, [[stamp_(ss), LABEL_TAB_, '', 'ラベルの準備', '', (made.tab ? '「' + LABEL_TAB_ + '」タブを作った　' : '') + (made.col ? '「曲」タブにラベル列を足した　' : '') + (made.ab ? '「提供者」タブに略称の列を足した' : ''), '準備', '']]);
   return { ok: true, made: made };
 }
 

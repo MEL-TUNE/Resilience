@@ -70,6 +70,7 @@
 | 03-values.js | 設定画面と値の結び付け（renderValues）、企画メモ |
 | 10-karaoke.js | カラオケ音源の検索 |
 | 11-songbook.js | 歌枠ノート：曲リスト（音源 URL）・セトリ・歌唱の記録・概要欄（セトリ＋使用音源。0.10.8）、曲を登録する欄、提供者の名前をそろえる（provCanon） |
+| 11g-songdest.js | 歌枠ノート（0.11.9）：提供者の略称（provShort）・配信先ごとの可否（srcAvail・songAvail）・歌詞ページと音源ファイルのボタン（okeExtras）・セトリの音源をまとめて開く・シートの詳しい項目を曲リストへ写す（sheetDetailApply）・カラオケ検索へ提供者を足す（karaMergeProvs）・歌枠ガチャ。rec.html には入れない |
 | 12-apps.js | 企画卓のアプリ、アプリと立ち絵のウインドウ、キャラクターだけの表示 |
 | 13-plays.js | セリフ帳・ルーレット・サイコロ |
 | 14-bridge.js | オトノハ連携（Otonoha Bridge 1） |

@@ -4,7 +4,7 @@
   const SX_NAMES={
     '曲':{t:'曲名',a:'アーティスト',w:'作品名（タイアップ）',y:'読み（並べ替え用）',st:'表記の状態',g:'ラベル',set:'セトリでの表記',lu:'歌詞ページのURL',org:'管理団体',code:'作品コード',jt:'作品タイトル（申請用）',ja:'アーティスト名（申請用）',ly:'作詞者',cp:'作曲者',rt:'管理団体の登録表記（曲名）',ra:'管理団体の登録表記（アーティスト）',memo:'メモ'},
     '音源':{s:'曲',n:'音源名',u:'URL',by:'提供者',kind:'種類',kk:'キーの区分',key:'キー',lyr:'動画内の歌詞表示',who:'使える名義',yt:'個別：YouTube配信',mon:'個別：収益化配信',oth:'個別：YouTube以外',cond:'個別の利用条件・購入メモ',f:'音源ファイルの保存場所',memo:'メモ'},
-    '提供者':{n:'提供者名',url:'概要欄に載せるURL',yt:'YouTube配信で使用',mon:'収益化済み配信で使用',oth:'YouTube以外の配信で使用',cr:'クレジット表記の指定',tu:'利用規約・説明のURL',d:'確認日',memo:'メモ（要点）',raw:'規約・説明の原文',y:'読み（並べ替え用）'}
+    '提供者':{n:'提供者名',ab:'略称（セトリ表示用）',url:'概要欄に載せるURL',yt:'YouTube配信で使用',mon:'収益化済み配信で使用',oth:'YouTube以外の配信で使用',cr:'クレジット表記の指定',tu:'利用規約・説明のURL',d:'確認日',memo:'メモ（要点）',raw:'規約・説明の原文',y:'読み（並べ替え用）'}
   };
   const SX_IDS={'曲':['t','a'],'音源':['n'],'提供者':['n']};
   const SX_ARR={'曲':'songs','音源':'srcs','提供者':'provs'};
@@ -406,7 +406,7 @@
     const tab='提供者',v=rec||{};
     pane.replaceChildren();
     const I={};
-    I.n=sxInput(v.n,{max:120});I.url=sxInput(v.url,{type:'url',max:500,ph:'メンションの付かないチャンネルURLなど'});
+    I.n=sxInput(v.n,{max:120});I.ab=sxInput(v.ab,{max:40,ph:'空欄なら自動（例：Hiro、BOX、Dagger Hearts）'});I.url=sxInput(v.url,{type:'url',max:500,ph:'メンションの付かないチャンネルURLなど'});
     for(const k of ['yt','mon','oth'])I[k]=sxSelect(v[k]||(!rec?'未確認':''),sxOpts(tab,k));
     I.cr=sxInput(v.cr,{max:300});I.tu=sxInput(v.tu,{type:'url',max:500});I.d=sxInput(v.d,{max:20,ph:'2026/11/12'});
     I.memo=sxInput(v.memo,{area:true,max:5000,rows:3});I.raw=sxInput(v.raw,{area:true,max:45000,rows:4});I.y=sxInput(v.y,{max:120});
@@ -423,6 +423,7 @@
     },'accent'));
     pane.append(h('div',{class:'sx-head'},sxBtn('← 提供者の一覧へ',()=>{pane.replaceChildren();sxProvList(pane)}),h('b',{text:rec?'提供者を直す':'提供者を足す'})),
       h('div',{class:'studio-inline'},sxField('提供者名（チャンネル名）',I.n),sxField('読み（並べ替え用）',I.y)),
+      sxHas(tab,'ab')?sxField('略称（セトリ・音源のボタンに出す短い名前）',I.ab,'空欄なら、オトノハが自動で短くします（「」の中・絵文字の後ろの名前など）'):sxNote('「提供者」タブに「略称」の列がないか、Apps Script が版4以前のため、略称はここでは直せません（シートに「略称」で始まる見出しの列を足し、Apps Script を版5にすると直せます）。','studio-mini'),
       sxField('概要欄に載せるURL',I.url),
       h('div',{class:'sx-3'},sxField('YouTube配信',I.yt),sxField('収益化した配信',I.mon),sxField('YouTube以外（IRIAM等）',I.oth)),
       h('div',{class:'studio-inline'},sxField('利用規約・説明のURL',I.tu),h('div',null,sxField('確認日',I.d),sxBtn('今日の日付',()=>{I.d.value=sxToday()}))),

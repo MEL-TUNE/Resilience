@@ -1066,6 +1066,30 @@ body[data-studio-aspect="x34"] .stage-wrap{aspect-ratio:3/4!important;height:min
 .kk-live .kk-live-say{flex:1 1 200px;min-width:0;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
 .kk-live button{border:1px solid var(--a-p-45);border-radius:8px;padding:7px 11px;background:var(--hi);color:var(--ink);font-size:13px;cursor:pointer}
 .kk-live button.accent{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
+/* 0.11.9：音源のボタンは略称でも長いことがあるので、幅を決めて省く。配信先で使えない音源は薄く */
+.sb-list .sb-oke{max-width:15em}
+.sb-oke.sb-oke-no{opacity:.45;border-style:dashed!important}
+.sb-oke.sb-oke-unk{opacity:.8}
+.sb-file,.sb-lyrics{max-width:15em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-openall{margin:6px 0 10px}
+.sb-openall-list{margin:4px 0 0 1.4em;padding:0;font-size:13px;line-height:1.7}
+.sb-openall-list li.done{opacity:.55}
+.sb-gacha-body{padding:6px 0}
+.sb-gacha-groups{display:flex;flex-direction:column;gap:6px;margin:4px 0 8px}
+.sb-gacha-group{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.sb-gacha-gname{font-size:12px;opacity:.75;min-width:6em}
+.sb-chip{font-size:12px;padding:4px 9px;border-radius:999px}
+.sb-chip.on{background:var(--a-p-20)!important;border-color:var(--accent)!important;font-weight:700}
+.sb-gacha-ck{flex-direction:row!important;align-items:center;gap:4px}
+.sb-gacha-out{margin:8px 0}
+.sb-gacha-spin{font-size:20px;font-weight:700;text-align:center;padding:18px 8px;opacity:.7}
+.sb-gacha-card{border:2px solid var(--accent);border-radius:14px;padding:12px 14px;text-align:center}
+.sb-gacha-head{margin:0;font-size:12px;opacity:.75}
+.sb-gacha-title{margin:4px 0 2px;font-size:22px;font-weight:800;line-height:1.35}
+.sb-gacha-artist{margin:0 0 6px;font-size:14px;opacity:.85}
+.sb-gacha-tags{margin:0 0 8px;font-size:12px}
+.sb-gacha-card .studio-row{justify-content:center}
+.sb-gacha-card .sb-okes{display:flex;flex-wrap:wrap;gap:6px}
 
 </style>
 <style>
@@ -1433,7 +1457,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.8 / 漫符の絵を描き替え・試し表示中の表示</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.9 / ハート・きらめき・ルーレット・歌枠ノートとシートの連携</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1695,7 +1719,13 @@ lookPaint(look);
 <section class="studio-card mode-section deck-panel" id="studioSongs" data-panel="songs" data-not="rec"><p class="studio-kicker">SONGBOOK / FIRST NOTES</p><h2>歌枠ノート</h2><div class="studio-row"><button id="songbookPop" type="button">歌枠ノートを別のタブで開く</button></div><p class="studio-note sb-away" id="songbookAway" hidden>歌枠ノートは別のタブで開いています。<button type="button" id="songbookReturn">この画面に戻す</button></p><div id="songbookHome"><div id="songbookCore">
 <ol class="sb-flow"><li><b>セトリ</b>：今日歌う曲。歌い始めに「♪ 歌い始め」を押す</li><li><b>本番</b>：歌唱の記録を始める・取り消す</li><li><b>曲リスト</b>：曲と、カラオケ音源のURLを登録しておく（ここからセトリへ入れる）</li><li><b>配信のあと</b>：概要欄（セトリ＋使用音源）をコピー。歌枠管理シートへも送れる</li><li><b>歌枠管理シート</b>：つなぐ・シートの曲や音源を直す</li></ol>
 <div class="sheet-bar" id="sheetBar"></div>
-<h3 class="kara-h">① セトリ（今日歌う予定）</h3><ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div>
+<h3 class="kara-h">① セトリ（今日歌う予定）</h3>
+<div class="studio-inline sb-dest"><label class="studio-field">配信先（使える音源の見分け）<select id="okeDest"><option value="">選ばない（すべての音源をそのまま出す）</option><option value="yt">YouTube</option><option value="iriam">IRIAM（収益化済み・JASRAC と NexTone に提携）</option><option value="l17">17LIVE（収益化済み・JASRAC だけに提携）</option></select></label></div>
+<p class="studio-mini" id="okeDestInfo" aria-live="polite"></p>
+<ol id="songList" class="studio-setlist sb-list"></ol><div class="studio-row"><button id="songOpenAllBtn" type="button" title="セトリの曲の YouTube の音源を、1曲に1つずつ新しいタブで開きます">▶ セトリの音源をまとめて開く</button><button id="songCopy" type="button">セトリをコピー</button><button id="songClear" type="button">セトリを空にする</button></div>
+<div id="songOpenAll" class="sb-openall" hidden></div>
+<p class="studio-mini">音源のボタンは、提供者の略称で出します（歌枠管理シートの「提供者」タブの「略称」。空欄なら自動で短くします）。📁 は音源ファイルの保存場所（Googleドライブなど）、📝 歌詞 は歌詞が出ない音源の曲に出ます（シートの「歌詞ページのURL」か、歌ネットの検索を開きます）。「まとめて開く」は、ブラウザがポップアップを止めると1件だけになります。そのときはアドレスバーの表示から、このページのポップアップを「常に許可」にするか、下に出るリンクから1つずつ開いてください。配信先の判定は、シートの「音源」タブの「個別：…」の列があればそれを、なければ「提供者」タブの可否を使い、17LIVE では管理団体が NexTone だけの曲を外します。</p>
+<details class="sb-add sb-gacha" id="sbGacha"><summary>🎲 歌枠ガチャ（ラベルでしぼって、曲リストからでたらめに1曲・ラベルで抜き出す）</summary><div id="gachaBody" class="sb-gacha-body"></div></details>
 <h3 class="kara-h">② 本番：歌唱の記録</h3><div class="sb-sess-bar"><button id="singSessBtn" class="sb-sess-btn" type="button">● 歌唱の記録を始める</button><span id="singSessState" class="studio-state"></span></div><p class="studio-mini sb-now" id="singNow"></p><div class="studio-row sb-undo-row"><button id="singUndo" type="button" hidden>直前の記録を取り消す</button></div><p class="studio-note">OBSで配信・録画を始めたときに「歌唱の記録を始める」を押し、歌い始めるたびにセトリか曲リストの「♪ 歌い始め」を押すと、記録を始めてからの経過時間つきで残ります。押し忘れても、最初の「♪ 歌い始め」で記録が始まります。「▶」で開いた音源も一緒に残ります。</p>
 <h3 class="kara-h">③ 曲リスト <small id="repCount"></small></h3>
 <div class="sb-find"><input id="repFilter" class="sb-filter" type="search" placeholder="曲名・アーティスト・音源・メモで探す" aria-label="曲リストを探す"><label class="studio-field sb-sort">並び<select id="repSort"><option value="recent">最近歌った順</option><option value="name">曲名順</option><option value="count">よく歌う順</option></select></label></div>
@@ -1720,7 +1750,7 @@ lookPaint(look);
 <p class="studio-mini" id="sheetInfo" aria-live="polite"></p>
 <p class="studio-mini">URLと合言葉は、このブラウザの中だけに保存します（設定ファイルや書き出しには入りません）。URLと合言葉を知っている人は誰でもシートを読み書きできるので、人に見せないでください。シートに書き込むのは手で入力する列だけで、自動で計算する列には書きません。</p>
 <h4 class="sb-h4">はじめてつなぐ・Apps Script のコードを入れ替える</h4>
-<p class="studio-mini">いまのコードは版4です（版3に、配信一覧の配信先・収益化・枠タイトル、オープニング・エンディングの行、同じ配信の送り直しを足したもの）。版2・版3をお使いなら、Apps Script のコードを全部置き換えて保存し、「デプロイ」→「デプロイを管理」→ 鉛筆の印 → バージョン「新バージョン」→「デプロイ」で入れ替えます（URLと合言葉はそのままです。合言葉の行は、いまの合言葉に直してから保存します）。版3のままでも、曲・音源の読み書きと、曲の行だけの配信ログは使えます。</p>
+<p class="studio-mini">いまのコードは版5です（版4に、「提供者」タブの略称の列を足したもの。版4は、配信一覧の配信先・収益化・枠タイトル、オープニング・エンディングの行、同じ配信の送り直しを足した版）。版2〜版4をお使いなら、Apps Script のコードを全部置き換えて保存し、「デプロイ」→「デプロイを管理」→ 鉛筆の印 → バージョン「新バージョン」→「デプロイ」で入れ替えます（URLと合言葉はそのままです。合言葉の行は、いまの合言葉に直してから保存します）。版3のままでも、曲・音源の読み書きと、曲の行だけの配信ログは使えます。版4のままだと「略称」の列は読み込まれず、長いチャンネル名はオトノハが自動で短くして出します（シートに書いた略称を使うには版5が要ります）。</p>
 <ol class="studio-mini sb-steps"><li>シートを開き、メニューの「拡張機能」→「Apps Script」を開きます。</li><li>下の「コードをコピー」で写したコードを、最初からあるコードと全部置き換えて貼り付けます。</li><li>コードの中の <code>ここに合言葉</code> を、自分だけの合言葉（英数字で12文字以上がおすすめ）に書き換えて保存します。</li><li>「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」でデプロイし、表示される許可の画面で許可します。</li><li>出てきた「ウェブアプリ」のURL（…/exec）と合言葉を、上に入れて「保存して確かめる」を押します。</li></ol>
 <div class="studio-row"><button type="button" id="sheetGasCopy">コードをコピー</button><button type="button" id="sheetGasSave">コードをファイルに保存</button></div>
 <h4 class="sb-h4">つながずに、貼り付けで読み込む</h4>
@@ -1747,7 +1777,7 @@ lookPaint(look);
 <div class="studio-inline"><label class="studio-field">探す言葉（曲名・アニメ名など）<input id="karaQuery" type="search" autocomplete="off"></label><label class="studio-field">開き方<select id="karaOpen"><option value="popup">別ウィンドウ</option><option value="tab">新しいタブ（同じタブを使い回す）</option><option value="newtab">新しいタブ（毎回開く）</option></select></label></div>
 <div class="studio-row"><button id="karaFromSong" type="button">上の曲名欄から入れる</button><button id="karaAll" type="button">YouTube全体で「カラオケ」付き検索</button></div>
 <div id="karaChannels" class="kara-channels"></div>
-<p class="studio-note">チャンネルの利用条件メモは参考情報です。歌枠管理シート・提供者の最新案内とは自動連動しません。</p><details><summary>チャンネルを編集</summary><div id="karaEdit" class="kara-edit"></div><div class="studio-row"><button id="karaAdd" type="button">チャンネルを追加</button><button id="karaReset" type="button">初期の6件に戻す</button></div><p class="studio-note">URLは「https://www.youtube.com/@名前」か「https://www.youtube.com/channel/UC…」の形で入れます（@名前だけでも可）。メモは使用条件の控えです。初期値は歌枠管理シートの提供者タブ（2026年10月30日時点）から写したもので、規約が変わることがあるため、使う前に提供者の原文で確かめる想定です。</p></details>
+<p class="studio-note">チャンネルの利用条件メモは参考情報です。歌枠管理シートを読み込むと、シートの「提供者」タブにあって、ここにまだないチャンネルを足します（すでにあるチャンネルのメモは書き換えません）。</p><details><summary>チャンネルを編集</summary><div id="karaEdit" class="kara-edit"></div><div class="studio-row"><button id="karaAdd" type="button">チャンネルを追加</button><button id="karaReset" type="button">初期の6件に戻す</button></div><p class="studio-note">URLは「https://www.youtube.com/@名前」か「https://www.youtube.com/channel/UC…」の形で入れます（@名前だけでも可）。メモは使用条件の控えです。初期値は歌枠管理シートの提供者タブ（2026年10月30日時点）から写したもので、規約が変わることがあるため、使う前に提供者の原文で確かめる想定です。</p></details>
 <div class="kara-sound"><hr class="studio-divider">
 <p class="studio-kicker">KARAOKE / SOUND</p><h3 class="kara-h">伴奏の音をアプリに取り込む</h3>
 <p class="studio-note">YouTubeなどを開いた別のタブの音を、このアプリの音（モニター・録音・動画・配信用の出力）に混ぜます。再生・一時停止・シークはそのタブ側で、音量はここで調整します。埋め込みは使いません。</p>
@@ -7749,6 +7779,7 @@ fps:30,
     imageMotion:'flutter',
     karaChannels:null,
     karaOpen:'popup',
+    okeDest:'',
     karaVol:100,
     karaSuppress:true,
     karaAutoFade:true,
@@ -7890,8 +7921,8 @@ function sanitize(v){
     {const S=(x,n)=>String(x??'').slice(0,n),iso=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\dT/.test(x)?x.slice(0,30):'';
      if(Array.isArray(v.repertoire))out.repertoire=v.repertoire.filter(x=>x&&typeof x.title==='string'&&x.title).slice(0,3000).map(x=>({id:S(x.id,16)||Math.random().toString(36).slice(2,10),title:S(x.title,200),artist:S(x.artist,200),memo:S(x.memo,200),count:Math.max(0,Math.floor(Number(x.count)||0)),last:iso(x.last),...(()=>{const o={};
        const http=u=>{const t=S(u,500);return /^https?:\/\//i.test(t)?t:''};
-       if(Array.isArray(x.srcs))o.srcs=x.srcs.filter(y=>y&&typeof y==='object').slice(0,8).map(y=>({u:http(y.u),n:S(y.n,200),by:S(y.by,120),k:S(y.k,20),kind:S(y.kind,30),f:http(y.f),...(y.kk?{kk:S(y.kk,20)}:{}),...(y.ly?{ly:S(y.ly,10)}:{})})).filter(y=>y.u||y.n);
-       if(x.useSrc)o.useSrc=S(x.useSrc,500);if(x.sk)o.sk=S(x.sk,420);if(x.w)o.w=S(x.w,200);if(x.tag)o.tag=S(x.tag,200);return o})()}));
+       if(Array.isArray(x.srcs))o.srcs=x.srcs.filter(y=>y&&typeof y==='object').slice(0,8).map(y=>({u:http(y.u),n:S(y.n,200),by:S(y.by,120),k:S(y.k,20),kind:S(y.kind,30),f:http(y.f),...(y.kk?{kk:S(y.kk,20)}:{}),...(y.ly?{ly:S(y.ly,10)}:{}),...(()=>{const p={};if(y.pv&&typeof y.pv==='object')for(const k of ['yt','mon','oth'])if(y.pv[k])p[k]=S(y.pv[k],10);return Object.keys(p).length?{pv:p}:{}})()})).filter(y=>y.u||y.n);
+       if(x.useSrc)o.useSrc=S(x.useSrc,500);if(x.sk)o.sk=S(x.sk,420);if(x.w)o.w=S(x.w,200);if(x.tag)o.tag=S(x.tag,200);if(x.org)o.org=S(x.org,40);if(x.lu){const u=http(x.lu);if(u)o.lu=u}return o})()}));
      if(Array.isArray(v.singLog))out.singLog=v.singLog.filter(x=>x&&typeof x.title==='string'&&iso(x.t)).map(x=>{const o={id:S(x.id,16)||Math.random().toString(36).slice(2,10),t:iso(x.t),title:S(x.title,200),artist:S(x.artist,200),sess:S(x.sess,16),start:iso(x.start)||iso(x.t),off:Math.max(0,Math.floor(Number(x.off)||0)),prof:S(x.prof,40)};if(Number.isFinite(Number(x.off0)))o.off0=Math.max(0,Math.floor(Number(x.off0)));if(x.ts!==null&&x.ts!==undefined&&Number.isFinite(Number(x.ts)))o.ts=Math.max(0,Math.floor(Number(x.ts)));if(x.src)o.src=S(x.src,500);return o});
      if(Array.isArray(v.legacyVideos))out.legacyVideos=v.legacyVideos.filter(x=>x&&typeof x.id==='string'&&/^[a-z0-9]{1,16}$/.test(x.id)).slice(0,60).map(x=>({id:x.id,name:S(x.name,120)||'otonoha.mp4',size:Math.max(0,Number(x.size)||0),type:S(x.type,40),at:iso(x.at),missing:x.missing===true}));
      out.singSess=v.singSess&&typeof v.singSess==='object'&&iso(v.singSess.start)?{id:S(v.singSess.id,16),start:iso(v.singSess.start),prof:S(v.singSess.prof,40)}:null}
@@ -7910,6 +7941,7 @@ function sanitize(v){
       if(Number.isFinite(n))out[k]=Math.max(CHAR_RANGES[k][0],Math.min(CHAR_RANGES[k][1],n))
     }
     if(['flutter','leaf','rise','snow','roll'].includes(v.imageMotion))out.imageMotion=v.imageMotion;
+    if(['yt','iriam','l17'].includes(v.okeDest))out.okeDest=v.okeDest;
     if(Array.isArray(v.karaChannels))out.karaChannels=v.karaChannels.slice(0,60).filter(x=>x&&typeof x==='object').map(x=>({name:String(x.name||'').slice(0,80),url:String(x.url||'').slice(0,300),memo:String(x.memo||'').slice(0,300)}));
     if(['popup','tab','newtab'].includes(v.karaOpen))out.karaOpen=v.karaOpen;
     if(['recent','name','count'].includes(v.repSort))out.repSort=v.repSort;
@@ -8773,9 +8805,12 @@ const SB={
   }
   function sheetCacheSet(j){
     if(!j||!Array.isArray(j.provs))return;
-    sheetCacheMem={at:Date.now(),provs:j.provs.filter(x=>x&&x.n).slice(0,400).map(x=>({n:String(x.n).slice(0,120),url:String(x.url||'').slice(0,300)})),labels:(Array.isArray(j.labels)?j.labels:[]).map(x=>String(x.name||'').slice(0,40)).filter(Boolean).slice(0,300)};
+    const S=(v,n)=>String(v||'').trim().slice(0,n),L=(Array.isArray(j.labels)?j.labels:[]).filter(x=>x&&x.name).slice(0,300);
+    // 0.11.9：提供者は略称・配信の可否も、ラベルは分類・記号も持っておく（セトリの表示・配信先の判定・歌枠ガチャに使う）
+    sheetCacheMem={at:Date.now(),provs:j.provs.filter(x=>x&&x.n).slice(0,400).map(x=>({n:S(x.n,120),url:S(x.url,300),ab:S(x.ab,40),yt:S(x.yt,10),mon:S(x.mon,10),oth:S(x.oth,10)})),labels:L.map(x=>S(x.name,40)).filter(Boolean),labelInfo:L.map(x=>({name:S(x.name,40),group:S(x.group,40),mark:S(x.mark,8)}))};
     try{localStorage.setItem(SHEET_CACHE_LS,JSON.stringify(sheetCacheMem))}catch(_){}
-    provListFill()
+    provListFill();
+    sheetDetailApply(j);karaMergeProvs();renderSet();renderGacha()
   }
   // 提供者の名前を、シートの提供者タブの名前にそろえる（例：「歌っちゃ王」→「カラオケ歌っちゃ王」）。
   // シートにそのままの名前があればそれ。なければ、その名前で終わる・始まる提供者が1つだけのときに限って、そちらにする
@@ -8868,10 +8903,10 @@ const SB={
     if(!r||!src||(!src.u&&!src.n&&!src.by))return false;
     if(!Array.isArray(r.srcs))r.srcs=[];
     const same=r.srcs.find(x=>(src.u&&x.u===src.u)||(src.n&&x.n&&sbNorm(x.n)===sbNorm(src.n)));
-    if(same){for(const k of ['u','n','by','k','kind','f','kk','ly'])if(src[k]&&!same[k])same[k]=src[k];return false}
+    if(same){for(const k of ['u','n','by','k','kind','f','kk','ly','pv'])if(src[k]&&!same[k])same[k]=src[k];return false}
     if(r.srcs.length>=8){toast('1曲に登録できる音源は8つまでです');return false}
     // kk＝キーの区分（原曲キー・女性キー・男性キー・その他）、ly＝動画内の歌詞（出る・出ない）。歌枠管理シートの「音源」タブから
-    r.srcs.push({u:src.u||'',n:(src.n||'').slice(0,200),by:(src.by||'').slice(0,120),k:(src.k||'').slice(0,20),kind:(src.kind||'').slice(0,30),f:src.f||'',...(src.kk?{kk:String(src.kk).slice(0,20)}:{}),...(src.ly?{ly:String(src.ly).slice(0,10)}:{})});
+    r.srcs.push({u:src.u||'',n:(src.n||'').slice(0,200),by:(src.by||'').slice(0,120),k:(src.k||'').slice(0,20),kind:(src.kind||'').slice(0,30),f:src.f||'',...(src.kk?{kk:String(src.kk).slice(0,20)}:{}),...(src.ly?{ly:String(src.ly).slice(0,10)}:{}),...(src.pv&&Object.keys(src.pv).length?{pv:src.pv}:{})});
     return true
   }
   // 音源を開く（カラオケ音源を探すときと同じ窓を使う）。開いた音源は、次の「♪ 歌い始め」の記録に残す
@@ -8880,10 +8915,16 @@ const SB={
     r.useSrc=x.n||x.u;save();
     karaGo(x.u)
   }
+  // 音源のボタン。提供者は略称で出す（0.11.9。長いチャンネル名で行が崩れないように）。
+  // 配信先を選んでいるときは、その配信先で使えない音源に ✕ を付けて薄く出す（押せば開けます）。歌詞・音源ファイルのボタンも足す
   function okeButtons(r){
-    const list=(r?.srcs||[]).filter(x=>x.u);
+    const list=(r?.srcs||[]).filter(x=>x.u),d=state.okeDest;
     const kk=x=>x.kk&&x.kk!=='原曲キー'?'（'+x.kk.replace(/キー$/,'')+'）':'';
-    return list.map((x,i)=>rowBtn('▶ '+(x.by||'音源'+(list.length>1?i+1:''))+kk(x),'sb-oke'+(r.useSrc&&(r.useSrc===x.n||r.useSrc===x.u)?' used':''),()=>{okeOpen(r,x);for(const b of document.querySelectorAll('.sb-oke'))b.classList.remove('used')},(x.n?x.n+'\n':'')+x.u))
+    return list.map((x,i)=>{
+      const av=d?srcAvail(r,x,d):{ok:true},mark=av.ok===false?'✕ ':av.ok===null?'？ ':'▶ ';
+      const b=rowBtn(mark+(provShort(x.by)||'音源'+(list.length>1?i+1:''))+kk(x),'sb-oke'+(r.useSrc&&(r.useSrc===x.n||r.useSrc===x.u)?' used':'')+(av.ok===false?' sb-oke-no':av.ok===null?' sb-oke-unk':''),()=>{okeOpen(r,x);for(const b of document.querySelectorAll('.sb-oke'))b.classList.remove('used')},(x.by?x.by+'\n':'')+(x.n?x.n+'\n':'')+x.u+(av.why?'\n'+(d?destName(d)+'：':'')+av.why:''));
+      return b
+    }).concat(okeExtras(r))
   }
   function repFind(t,a){const k=songKey(t,a);return repList().find(s=>songKey(s.title,s.artist)===k)}
   function repAdd(t,a,memo,src){
@@ -9056,7 +9097,7 @@ const SB={
       SB.set.append(li)
     });
     if(!state.songs.length)SB.set.append(sbEmpty('li','セトリは空です。下の「③ 曲リスト」の「セトリへ」か、「＋ 曲を登録する」の「登録してセトリにも入れる」で追加できます'))
-    renderDeckSet()
+    renderDeckSet();renderOkeDest();{const b=E('songOpenAllBtn');if(b)b.disabled=!state.songs.length}
   }
 
   // 本番の「🎲 企画」タブに出すセトリ（0.10.5）。セトリに曲があるか、歌唱を記録しているときだけ出す。
@@ -9067,7 +9108,7 @@ const SB={
     const box=E('deckSet');if(!box)return;
     const ss=state.singSess,sung=new Set(ss?logList().filter(x=>x.sess===ss.id).map(x=>songKey(x.title,x.artist)):[]),last=sbLast;
     const nowK=last&&ss&&last.sess===ss.id?songKey(last.title,last.artist):'';
-    const sig=JSON.stringify([state.songs.map(s=>[s.title,s.artist,(repFind(s.title,s.artist)?.srcs||[]).map(x=>x.u+x.by+(x.kk||'')).join('|'),repFind(s.title,s.artist)?.useSrc||'']),!!ss,[...sung],nowK]);
+    const sig=JSON.stringify([state.okeDest||'',sheetCache()?.at||0,state.songs.map(s=>[s.title,s.artist,(repFind(s.title,s.artist)?.srcs||[]).map(x=>x.u+x.by+(x.kk||'')+(x.f||'')+(x.ly||'')).join('|')+(repFind(s.title,s.artist)?.lu||''),repFind(s.title,s.artist)?.useSrc||'']),!!ss,[...sung],nowK]);
     box.hidden=!state.songs.length&&!ss;
     if(sig===deckSetSig)return;
     deckSetSig=sig;
@@ -9506,6 +9547,312 @@ const SB={
   };
   E('songbookReturn').onclick=()=>{try{sbWin?.close()}catch(_){}sbBack()};
   window.addEventListener('pagehide',()=>{try{sbWin?.close()}catch(_){}});
+
+// ---- 提供者（歌枠管理シートの「提供者」タブ。読み込んであれば）
+  function provInfo(name){
+    const c=sheetCache();if(!c||!name)return null;
+    const n=provCanon(name);
+    return c.provs.find(x=>x.n===n)||null
+  }
+  // 長いチャンネル名を短くする（シートの「略称」が空のとき）。
+  // 「」『』の中があればそれ。【】（）の中は外す。絵文字で区切られていれば、いちばん後ろの名前。それでも長ければそのまま（ボタンの幅で省く）
+  function provShortAuto(name){
+    let s=String(name||'').trim();
+    if(!s)return '';
+    const plain=s.replace(/[\p{Extended_Pictographic}️‍]/gu,'').trim();
+    if(plain.length<=10)return plain||s;
+    const q=s.match(/[「『]([^」』]+)[」』]/);
+    if(q&&q[1].trim())return q[1].trim();
+    s=s.replace(/【[^】]*】|（[^）]*）|\([^)]*\)|\[[^\]]*\]/g,' ');
+    const parts=s.split(/[\p{Extended_Pictographic}️‍]+/u).map(x=>x.trim()).filter(Boolean);
+    return (parts.length>1?parts[parts.length-1]:parts[0]||plain).trim()
+  }
+  function provShort(name){
+    const p=provInfo(name),ab=String(p?.ab||'').trim();
+    return ab||provShortAuto(p?.n||name)
+  }
+
+  // ---- 配信先ごとに使えるか
+  // 配信先：yt＝YouTube、iriam＝IRIAM（収益化済み・JASRAC と NexTone の両方と提携）、l17＝17LIVE（収益化済み・JASRAC だけと提携）
+  function destName(d){return {yt:'YouTube',iriam:'IRIAM',l17:'17LIVE'}[d]||''}
+  // 音源1つ：{ok:true|false|null（未確認）, cond:条件付きか, why:理由}
+  // 「音源」タブの「個別：…」が入っていればそれを、なければ「提供者」タブの可否を使う
+  function srcAvail(r,x,dest){
+    if(!dest||!x)return {ok:true};
+    if(/^自作/.test(x.kind||''))return {ok:true,why:'自作の音源'};
+    const p=provInfo(x.by)||{},o=x.pv||{};
+    const val=k=>{const a=String(o[k]||'').trim();return a&&a!=='未確認'?a:String(p[k]||'').trim()};
+    const need=dest==='yt'?[['yt','YouTube配信']]:[['oth','YouTube以外の配信'],['mon','収益化した配信']];
+    const v=need.map(([k,n])=>[val(k),n]);
+    const no=v.find(([a])=>a==='不可');
+    if(no)return {ok:false,why:(x.by||'この音源')+'は'+no[1]+'で使えません'};
+    const org=String(r?.org||'');
+    if(dest==='l17'&&/nextone/i.test(org)&&!/jasrac/i.test(org))return {ok:false,why:'管理団体が NexTone の曲は、JASRAC だけと提携している 17LIVE では歌えません'};
+    const un=v.find(([a])=>!a||a==='未確認');
+    if(un)return {ok:null,why:(x.by?x.by+'の':'')+un[1]+'の可否が未確認です（歌枠管理シートの提供者タブ）'};
+    return {ok:true,cond:v.some(([a])=>a==='条件付き'),why:v.some(([a])=>a==='条件付き')?'条件付きで使えます（クレジットなど。提供者タブの指定を確かめてください）':''}
+  }
+  // 曲：この配信先で使える音源があるか（true／false／null＝音源が未確認だけ・音源がない）
+  function songAvail(r,dest){
+    if(!dest)return true;
+    const list=(r?.srcs||[]).filter(x=>x.u||x.f);
+    if(!list.length)return null;
+    let unk=false;
+    for(const x of list){const a=srcAvail(r,x,dest);if(a.ok===true)return true;if(a.ok===null)unk=true}
+    return unk?null:false
+  }
+
+  // ---- 歌詞ページ
+  // 曲に歌詞ページのURL（シートの「歌詞ページのURL」）があればそれ、なければ歌ネットで曲名を探す
+  function lyricsUrl(r){
+    if(r?.lu)return r.lu;
+    return 'https://www.uta-net.com/search/?Aselect=2&Keyword='+encodeURIComponent(r?.title||'')
+  }
+  // 歌詞のボタンを出すか：歌詞が出る（「動画内の歌詞表示：出る」）音源が1つもないとき
+  function lyricsNeeded(r){
+    if(!r)return false;
+    const list=(r.srcs||[]).filter(x=>x.u||x.f);
+    if(r.useSrc){const y=list.find(x=>x.n===r.useSrc||x.u===r.useSrc);if(y)return y.ly!=='出る'}
+    return !list.some(x=>x.u&&x.ly==='出る')
+  }
+  function lyricsOpen(r){
+    let w=null;
+    try{w=window.open(lyricsUrl(r),'otonohaLyrics',state.karaOpen==='popup'?'popup=yes,width=560,height=860':'')}catch(_){}
+    if(!w)toast('ブラウザに新しい窓を止められました。アドレスバーの表示からポップアップを許可すると開けます',7000);else try{w.focus()}catch(_){}
+  }
+
+  // ---- 音源のボタンに足すもの（歌詞・音源ファイル）
+  function okeExtras(r){
+    if(!r)return [];
+    const out=[];
+    for(const x of (r.srcs||[]).filter(x=>x.f))
+      out.push(rowBtn('📁 '+(provShort(x.by)||'音源ファイル'),'sb-file',()=>{const w=window.open(x.f,'_blank','noopener');if(!w)toast('ブラウザに新しいタブを止められました。ポップアップを許可すると開けます',6000)},'音源ファイルの保存場所（Googleドライブなど）を開きます'+(x.n?'\n'+x.n:'')));
+    if(lyricsNeeded(r))out.push(rowBtn('📝 歌詞','sb-lyrics',()=>lyricsOpen(r),r.lu?'歌詞ページを開きます（歌枠管理シートの「歌詞ページのURL」）':'歌ネットで、この曲名の歌詞を探します（歌枠管理シートに「歌詞ページのURL」を入れると、そのページを開きます）'));
+    return out
+  }
+
+  // ---- 配信先の選び方（セトリの上）
+  function renderOkeDest(){
+    const sel=E('okeDest');if(!sel)return;
+    sel.value=state.okeDest||'';
+    const d=state.okeDest,info=E('okeDestInfo');
+    if(!info)return;
+    if(!d){info.textContent='';return}
+    let no=0,unk=0;
+    for(const s of state.songs){const a=songAvail(repFind(s.title,s.artist),d);if(a===false)no++;else if(a===null)unk++}
+    info.textContent=destName(d)+'で使えない音源は、✕を付けて薄く出します。'+(no?'セトリのうち '+no+'曲は、'+destName(d)+'で使える音源がありません。':'')+(unk?'可否が未確認の曲が '+unk+'曲あります。':'')+(sheetCache()?'':'（歌枠管理シートの提供者タブを読み込むと判定できます）')
+  }
+
+  // ---- セトリの YouTube の音源を、まとめて開く
+  function setlistUrls(){
+    const d=state.okeDest,out=[],seen=new Set();
+    for(const s of state.songs){
+      const r=repFind(s.title,s.artist),list=(r?.srcs||[]).filter(x=>x.u&&/youtube\.com|youtu\.be/i.test(x.u));
+      if(!list.length)continue;
+      const okd=x=>!d||srcAvail(r,x,d).ok!==false;
+      const use=list.find(x=>r.useSrc&&(x.n===r.useSrc||x.u===r.useSrc)&&okd(x))||list.find(okd);
+      if(!use||seen.has(use.u))continue;
+      seen.add(use.u);out.push({u:use.u,t:s.title,by:provShort(use.by)})
+    }
+    return out
+  }
+  function openAllSetlist(){
+    const list=setlistUrls(),box=E('songOpenAll');
+    if(!list.length){toast(state.songs.length?'セトリの曲に、開けるYouTubeの音源がありません':'セトリは空です',4000);return}
+    let opened=0;
+    for(const x of list){let w=null;try{w=window.open(x.u,'_blank')}catch(_){}if(w)opened++;else break}
+    if(box){
+      // 開けなかったとき（ブラウザがポップアップを止めたとき）のために、リンクの一覧も出す
+      box.replaceChildren();
+      const p=document.createElement('p');p.className='studio-mini';
+      p.textContent=opened===list.length?list.length+'件の音源を、新しいタブで開きました。':'ブラウザに止められたため、'+list.length+'件のうち '+opened+'件だけ開きました。下のリンクを押すと1つずつ開けます。まとめて開くには、アドレスバーの表示から、このページのポップアップを「常に許可」にしてください。';
+      const ol=document.createElement('ol');ol.className='sb-openall-list';
+      list.forEach((x,i)=>{const li=document.createElement('li'),a=document.createElement('a');a.href=x.u;a.target='_blank';a.rel='noopener';a.textContent=x.t+(x.by?'（'+x.by+'）':'');li.append(a);if(i<opened)li.className='done';ol.append(li)});
+      box.append(p,ol);box.hidden=false
+    }
+    if(opened<list.length)toast('ブラウザに止められて、'+list.length+'件のうち'+opened+'件だけ開きました。セトリの下のリンクから開けます',8000)
+  }
+
+  // ---- 歌枠管理シートの詳しい項目（管理団体・歌詞ページ・音源ごとの可否・動画内の歌詞表示・音源ファイル）を曲リストへ写す
+  function sheetDetailApply(j){
+    if(!j||!Array.isArray(j.songs))return 0;
+    let n=0;
+    const http=u=>/^https?:\/\//i.test(String(u||'').trim())?String(u).trim().slice(0,500):'';
+    for(const x of j.songs){
+      const r=repFind(String(x.t||''),String(x.a||''));if(!r)continue;
+      const org=String(x.org||'').trim().slice(0,40),lu=http(x.lu);
+      if((r.org||'')!==org){if(org)r.org=org;else delete r.org;n++}
+      if((r.lu||'')!==lu){if(lu)r.lu=lu;else delete r.lu;n++}
+    }
+    for(const x of (Array.isArray(j.srcs)?j.srcs:[])){
+      const key=String(x.s||''),i=key.lastIndexOf('／');
+      const r=i>0?repFind(key.slice(0,i),key.slice(i+1)):repFind(key,'');
+      if(!r||!Array.isArray(r.srcs))continue;
+      const u=x.u?okeNorm(String(x.u)):'';
+      const y=r.srcs.find(y=>(u&&y.u===u)||(x.n&&y.n&&sbNorm(y.n)===sbNorm(String(x.n))));
+      if(!y)continue;
+      const pv={};for(const k of ['yt','mon','oth']){const v=String(x[k]||'').trim();if(v&&v!=='未確認')pv[k]=v.slice(0,10)}
+      const was=JSON.stringify(y.pv||{});
+      if(Object.keys(pv).length)y.pv=pv;else delete y.pv;
+      if(JSON.stringify(y.pv||{})!==was)n++;
+      const ly=String(x.lyr||'').trim();if(ly&&y.ly!==ly){y.ly=ly.slice(0,10);n++}
+      const f=http(x.f);if(f&&y.f!==f){y.f=f;n++}
+    }
+    if(n){saveNow();renderRep();renderSet()}
+    return n
+  }
+
+  // ---- 「カラオケ音源を探す」：シートの提供者タブにあって、まだ登録していないチャンネルを足す
+  function karaMergeProvs(){
+    const c=sheetCache();if(!c||typeof karaList!=='function')return 0;
+    const list=karaList(),bases=new Set(list.map(x=>karaBase(x.url)).filter(Boolean)),names=new Set(list.map(x=>provCanon(x.name)));
+    // 一度足したチャンネルは覚えておき、あとで消したときに足し直さない
+    let seen=[];try{seen=JSON.parse(localStorage.getItem('otonoha-kara-offered')||'[]')}catch(_){}
+    if(!Array.isArray(seen))seen=[];
+    const was=seen.length;
+    let add=0;
+    for(const p of c.provs){
+      const base=karaBase(p.url);
+      if(!base||seen.includes(p.n))continue;
+      if(bases.has(base)||names.has(p.n)){seen.push(p.n);continue}
+      if(list.length>=60)continue;
+      seen.push(p.n);
+      list.push({name:p.n.slice(0,80),url:p.url.slice(0,300),memo:'YouTube '+(p.yt||'？')+'／収益化 '+(p.mon||'？')+'／YouTube以外 '+(p.oth||'？')});
+      bases.add(base);names.add(p.n);add++
+    }
+    if(seen.length!==was)try{localStorage.setItem('otonoha-kara-offered',JSON.stringify(seen.slice(-400)))}catch(_){}
+    if(add){save();renderKara()}
+    return add
+  }
+
+  // ---- 歌枠ガチャ（ラベルでしぼって、曲リストからでたらめに1曲）
+  function gachaOpt(){
+    let o=null;try{o=JSON.parse(localStorage.getItem('otonoha-gacha')||'null')}catch(_){}
+    o=o&&typeof o==='object'?o:{};
+    return {tags:Array.isArray(o.tags)?o.tags.filter(x=>typeof x==='string').slice(0,40):[],all:o.all===true,noSet:o.noSet!==false,dest:o.dest!==false,noSung:o.noSung===true}
+  }
+  function gachaOptSet(o){try{localStorage.setItem('otonoha-gacha',JSON.stringify(o))}catch(_){}}
+  function gachaMark(t){return (sheetCache()?.labelInfo||[]).find(x=>x.name===t)?.mark||''}
+  function gachaPool(o){
+    o=o||gachaOpt();
+    const inSet=new Set(state.songs.map(s=>songKey(s.title,s.artist)));
+    const sess=state.singSess,sung=new Set(sess?logList().filter(x=>x.sess===sess.id).map(x=>songKey(x.title,x.artist)):[]);
+    return repList().filter(r=>{
+      if(o.tags.length){const t=tagSplit(r.tag);if(o.all?!o.tags.every(x=>t.includes(x)):!o.tags.some(x=>t.includes(x)))return false}
+      const k=songKey(r.title,r.artist);
+      if(o.noSet&&inSet.has(k))return false;
+      if(o.noSung&&sung.has(k))return false;
+      if(o.dest&&state.okeDest&&songAvail(r,state.okeDest)!==true)return false;
+      return true
+    })
+  }
+  var gachaTimer=0;
+  function gachaShow(r){
+    if(typeof topicCfg!=='function'||typeof topicShow!=='function'){toast('この画面では、配信画面に出せません',4000);return}
+    const t=topicCfg();
+    let d=t.decks.find(x=>x.preset==='song');
+    if(!d){const sel=t.sel;d=topicNew('song');if(!d)return;t.sel=sel||d.id;toast('「🎲 企画」のお題帳に「歌枠ルーレット」の冊を作りました（ガチャの結果をここから画面に出します）',6000)}
+    const F=d.fields;
+    let it=d.items.find(x=>songKey(x.f[F[0]],x.f[F[1]])===songKey(r.title,r.artist));
+    if(!it){
+      if(d.items.length>=2000){toast('お題帳「'+d.name+'」が2000件でいっぱいです',5000);return}
+      const v=[r.title,r.artist||'',r.w||'',r.tag||'',r.memo||''],f={};F.forEach((k,i)=>{f[k]=v[i]||''});
+      it={id:tid(),f,st:'cand',at:new Date().toISOString()};d.items.push(it)
+    }
+    topicShow(d,it)
+  }
+  function gachaResult(box,r){
+    box.replaceChildren();
+    const card=document.createElement('div');card.className='sb-gacha-card';
+    const head=document.createElement('p');head.className='sb-gacha-head';head.textContent='🎲 出ました';
+    const t=document.createElement('p');t.className='sb-gacha-title';t.textContent=r.title;
+    const a=document.createElement('p');a.className='sb-gacha-artist';a.textContent=[r.artist,r.w].filter(Boolean).join('　');
+    card.append(head,t,a);
+    const tags=tagSplit(r.tag);
+    if(tags.length){const g=document.createElement('p');g.className='sb-gacha-tags';g.textContent=tags.map(x=>(gachaMark(x)?gachaMark(x)+' ':'')+x).join('　');card.append(g)}
+    const row=document.createElement('div');row.className='studio-row';
+    row.append(rowBtn('セトリへ','accent',()=>{state.songs.push({title:r.title,artist:r.artist});save();renderSet();renderGacha();toast('セトリに追加しました',2000)}),
+      rowBtn('♪ 歌い始め','sb-sing',()=>sing(r.title,r.artist)),
+      rowBtn('📺 配信画面に出す','',()=>gachaShow(r),'「🎲 企画」の歌枠ルーレットのカードとして、配信画面に出します'),
+      rowBtn('🎲 もう一回','',()=>gachaDraw()));
+    const ok=okeButtons(r);
+    if(ok.length){const g=document.createElement('div');g.className='studio-row sb-okes';g.append(...ok);card.append(g)}
+    card.append(row);box.append(card)
+  }
+  function gachaDraw(){
+    const box=E('gachaOut');if(!box)return;
+    const pool=gachaPool();
+    clearTimeout(gachaTimer);
+    if(!pool.length){box.replaceChildren(sbEmpty('p','このしぼりこみに当てはまる曲がありません'));return}
+    const pick=pool[Math.floor(Math.random()*pool.length)];
+    const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if(reduce||pool.length<2){gachaResult(box,pick);return}
+    // はじめの1秒ほど、ほかの曲名をぱらぱら見せてから止める（おみくじを振るように）
+    const p=document.createElement('p');p.className='sb-gacha-spin';box.replaceChildren(p);
+    let i=0;
+    const step=()=>{
+      if(i>=12){gachaResult(box,pick);return}
+      p.textContent=pool[Math.floor(Math.random()*pool.length)].title;
+      i++;gachaTimer=setTimeout(step,50+i*12)
+    };
+    step()
+  }
+  function renderGacha(){
+    const box=E('gachaBody');if(!box||!box.closest('details')?.open)return;
+    const o=gachaOpt(),c=sheetCache(),info=c?.labelInfo||[];
+    // ラベル：シートのラベル一覧の分類ごとに（記号つき）。シートにない、曲リストだけのラベルは「そのほか」
+    const count=new Map();for(const r of repList())for(const t of tagSplit(r.tag))count.set(t,(count.get(t)||0)+1);
+    const groups=new Map();
+    for(const x of info){const g=x.group||'ラベル';if(!groups.has(g))groups.set(g,[]);groups.get(g).push(x.name)}
+    const known=new Set(info.map(x=>x.name)),rest=[...count.keys()].filter(t=>!known.has(t)).sort((a,b)=>a.localeCompare(b,'ja'));
+    if(rest.length)groups.set(info.length?'そのほか':'ラベル',[...(groups.get(info.length?'そのほか':'ラベル')||[]),...rest]);
+    const chips=document.createElement('div');chips.className='sb-gacha-groups';
+    for(const [g,names] of groups){
+      const row=document.createElement('div');row.className='sb-gacha-group';
+      const h=document.createElement('span');h.className='sb-gacha-gname';h.textContent=g;row.append(h);
+      for(const n of names){
+        const b=rowBtn((gachaMark(n)?gachaMark(n)+' ':'')+n+'（'+(count.get(n)||0)+'）','sb-chip'+(o.tags.includes(n)?' on':''),()=>{const t=gachaOpt();t.tags=t.tags.includes(n)?t.tags.filter(x=>x!==n):[...t.tags,n];gachaOptSet(t);renderGacha()});
+        b.setAttribute('aria-pressed',o.tags.includes(n)?'true':'false');row.append(b)
+      }
+      chips.append(row)
+    }
+    if(!groups.size)chips.append(sbEmpty('p','ラベルの付いた曲がまだありません（曲の「編集」か、歌枠管理シートでラベルを付けられます）'));
+    const ck=(key,label)=>{const l=document.createElement('label');l.className='studio-field sb-gacha-ck';const i=document.createElement('input');i.type='checkbox';i.checked=!!o[key];i.onchange=()=>{const t=gachaOpt();t[key]=i.checked;gachaOptSet(t);renderGacha()};l.append(i,' '+label);return l};
+    const mode=document.createElement('label');mode.className='studio-field';
+    const ms=document.createElement('select');
+    for(const [v,t] of [['any','選んだラベルの、どれかが付いた曲'],['all','選んだラベルが、全部付いた曲']])ms.append(Object.assign(document.createElement('option'),{value:v,textContent:t}));
+    ms.value=o.all?'all':'any';ms.onchange=()=>{const t=gachaOpt();t.all=ms.value==='all';gachaOptSet(t);renderGacha()};
+    mode.append('しぼりこみ方',ms);
+    const pool=gachaPool(o);
+    const opts=document.createElement('div');opts.className='studio-inline';
+    opts.append(mode,ck('noSet','セトリに入っている曲は出さない'),ck('noSung','今回の記録で歌った曲は出さない'),ck('dest','配信先で使える音源がある曲だけ'+(state.okeDest?'（'+destName(state.okeDest)+'）':'（配信先を選んだとき）')));
+    const act=document.createElement('div');act.className='studio-row';
+    act.append(rowBtn('🎲 ガチャを引く','accent',()=>gachaDraw()),
+      o.tags.length?rowBtn('ラベルの選択を外す','',()=>{const t=gachaOpt();t.tags=[];gachaOptSet(t);renderGacha()}):'');
+    const n=document.createElement('p');n.className='studio-mini';n.textContent='当てはまる曲：'+pool.length+'曲'+(o.tags.length?'（'+o.tags.join(o.all?'＋':'・')+'）':'（ラベルを選ばないときは、曲リスト全体から）');
+    // 当てはまる曲の一覧（ラベルで抜き出す）
+    const det=document.createElement('details');det.className='sb-gacha-list';
+    const sum=document.createElement('summary');sum.textContent='当てはまる曲の一覧（'+pool.length+'曲）';det.append(sum);
+    det.ontoggle=()=>{if(!det.open||det.querySelector('ul'))return;
+      const ul=document.createElement('ul');ul.className='sb-list';
+      for(const r of pool.slice().sort((a,b)=>a.title.localeCompare(b.title,'ja')).slice(0,300)){
+        const li=document.createElement('li');
+        li.append(songSpan(r.title,r.artist,tagSplit(r.tag).map(x=>(gachaMark(x)||'')+x).join(' ')),rowGroup('sb-acts',[rowBtn('セトリへ','',()=>{state.songs.push({title:r.title,artist:r.artist});save();renderSet();toast('セトリに追加しました',2000)})]));
+        ul.append(li)
+      }
+      if(pool.length>300)ul.append(sbEmpty('li','ほか'+(pool.length-300)+'曲'));
+      det.append(ul)};
+    const out=E('gachaOut')||Object.assign(document.createElement('div'),{id:'gachaOut',className:'sb-gacha-out'});
+    box.replaceChildren(chips,opts,act,n,out,det)
+  }
+
+  {
+    const sel=E('okeDest');
+    if(sel)sel.onchange=()=>{state.okeDest=sel.value;save();renderSet();renderRep();renderGacha()};
+    const b=E('songOpenAllBtn');if(b)b.onclick=openAllSetlist;
+    const g=E('sbGacha');if(g)g.addEventListener('toggle',()=>renderGacha());
+    renderOkeDest();karaMergeProvs()
+  }
 
 const APP_MAX=12;
   let appWindow=null,appContext=null,appMirrorAt=0,appBlobUrl='',appBlobFor='';
@@ -10031,12 +10378,17 @@ const SERIF_MAX=100,LINE_MAX=300;
       g.beginPath();g.moveTo(0,0);g.arc(0,0,R,a0,a1);g.closePath();g.fill();
       g.strokeStyle='#fffaf2';g.lineWidth=3*k;g.stroke();
       g.save();g.rotate(a0+seg/2);g.textAlign='right';g.textBaseline='middle';
-      // 項目名は、扇の長さに収まるまで文字を小さくする（最小で14px相当。それでも長いときだけ末尾を省く）
-      const label=r.items[i],room=R*.74;
-      let fs=Math.min(30*k,seg*R*.42);
-      g.font=sceneFontCss(fs,label);
-      const w0=g.measureText(label).width;
-      if(w0>room){fs=Math.max(14*k,fs*room/w0);g.font=sceneFontCss(fs,label)}
+      // 項目名の大きさ（0.11.9）：扇の「長さ」と「幅」の両方に収まる、いちばん大きい文字にする。
+      // 以前は上限が 30px 相当で、1文字の項目はとても小さく見えた。短い項目ほど大きく、長い項目は小さく（最小で14px相当。それでも長いときだけ末尾を省く）
+      const label=r.items[i],room=R*.74,half=Math.min(seg/2,Math.PI/2*.9);
+      let fs=R*.34;
+      for(let it=0;it<3;it++){
+        g.font=sceneFontCss(fs,label);
+        const w=g.measureText(label).width,rc=Math.max(R*.2,R-14*k-w*.5);
+        // 文字の中ほどの位置での扇の幅に、文字の高さが収まるように
+        fs=Math.min(R*.34,fs*room/Math.max(1,w),2*rc*Math.sin(half)*.78)
+      }
+      fs=Math.max(14*k,fs);g.font=sceneFontCss(fs,label)
       g.fillStyle='#2e211c';
       let tx=label;while(tx.length>1&&g.measureText(tx).width>room)tx=tx.slice(0,-1);
       g.fillText(tx===label?tx:tx+'…',R-14*k,0);g.restore()
@@ -10641,7 +10993,7 @@ const ponCfg=()=>state.pon||(state.pon={hide:[],app:'window',serif:'all'});
   E('ponSerif').onchange=e=>{ponCfg().serif=e.target.value;save();renderPon()};
   setInterval(()=>{if(ponNodes.length||play.serif||play.slot)ponState()},400);
 
-const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版4）\n * @OnlyCurrentDoc  … このスクリプトが触れられるのは、このスプレッドシートだけです（ドライブのほかのファイルには触れません）\n *\n * 1. 下の OTONOHA_KEY を、自分だけの合言葉に書き換えます（英数字で12文字以上がおすすめ）。\n * 2. デプロイ → 新しいデプロイ → 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」。\n *    版2・版3から入れ替えるときは、デプロイ → デプロイを管理 → 鉛筆の印 → バージョン「新バージョン」→ デプロイ（URLは変わりません）。\n * 3. 出てきたウェブアプリのURLと合言葉を、オトノハの「歌枠管理シートとつなぐ」に入れます。\n *\n * 書き込むのは、1行目に数式がない列（手で入力する列）だけです。1行目が数式の列（自動の列）には書きません。\n * 版3で足したこと：シートの編集（曲・音源・提供者を足す・直す）、ラベル（「ラベル一覧」タブと「曲」タブのラベル列）、\n *   「編集の記録」タブ（オトノハから直した項目の、前と後の値）、控え（「曲」「音源」「提供者」「ラベル一覧」タブを、このシートの中に写して隠す）。\n * 曲名・アーティスト・音源名・提供者名を直したときは、それを選んでいる「音源」「配信ログ」の行も新しい名前に付け替えます。\n * 版4で足したこと（配信ログへ送るところ）：配信一覧の「配信先」「収益化」「枠タイトル」も書く、\n *   オープニング・エンディング・トーク・企画の行も送る、同じ配信IDを送り直す（その配信IDの配信ログの行を入れ替える）。\n * 曲・音源・提供者の行を消す働きはありません（消すときは、シートで行を選んで消します）。\n */\nconst OTONOHA_KEY = 'ここに合言葉';\nconst GAS_VERSION = 4;\n\nfunction doGet(e) { return out_(handle_((e && e.parameter) || {})); }\nfunction doPost(e) {\n  let body = {};\n  try { body = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return out_({ ok: false, error: '送られた内容が読めません' }); }\n  return out_(handle_(body));\n}\nfunction out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }\n\nfunction handle_(p) {\n  if (!OTONOHA_KEY || OTONOHA_KEY === 'ここに合言葉') return { ok: false, error: 'Apps Script の OTONOHA_KEY に合言葉を書いて、デプロイし直してください' };\n  if (String(p.key || '') !== OTONOHA_KEY) return { ok: false, error: '合言葉が違います' };\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  try {\n    if (p.op === 'ping') return { ok: true, version: GAS_VERSION, name: ss.getName(), id: ss.getId() };\n    if (p.op === 'read') return read_(ss);\n    if (p.op === 'sheet') return sheet_(ss);\n    if (p.op === 'history') return history_(ss, p);\n    const writers = { log: log_, save: save_, labels: labels_, setup: setup_, backup: backup_ };\n    if (writers[p.op]) {\n      const lock = LockService.getDocumentLock();\n      lock.waitLock(20000);\n      try { return writers[p.op](ss, p); } finally { SpreadsheetApp.flush(); lock.releaseLock(); }\n    }\n    return { ok: false, error: '知らない操作です：' + String(p.op || '') };\n  } catch (err) {\n    return { ok: false, error: String((err && err.message) || err) };\n  }\n}\n\n// 見出しで列を探す（まず見出しと同じ文字、なければ見出しの「始まりの文字」）。auto[i] は1行目が数式の列（自動の列）\nfunction tab_(ss, name) {\n  const sh = ss.getSheetByName(name);\n  if (!sh) throw new Error('「' + name + '」タブが見つかりません');\n  const v = sh.getDataRange().getDisplayValues();\n  const head = (v[0] || []).map(function (h) { return String(h).trim(); });\n  const fx = head.length ? sh.getRange(1, 1, 1, head.length).getFormulas()[0] : [];\n  const auto = fx.map(function (f) { return !!f; });\n  const col = function (prefix) {\n    for (let i = 0; i < head.length; i++) if (head[i] === prefix) return i;\n    for (let i = 0; i < head.length; i++) if (head[i].indexOf(prefix) === 0) return i;\n    return -1;\n  };\n  return { sh: sh, head: head, auto: auto, body: v.slice(1), col: col };\n}\n\nfunction cell_(row, i) { return i < 0 ? '' : String(row[i] == null ? '' : row[i]).trim(); }\n// 列の中で、最後に値が入っている行（1始まり）。数式の空文字は値として数えない\nfunction lastRow_(sh, col) {\n  const n = sh.getMaxRows();\n  if (n < 2) return 1;\n  const v = sh.getRange(2, col, n - 1, 1).getDisplayValues();\n  for (let i = v.length - 1; i >= 0; i--) if (String(v[i][0]).trim() !== '') return i + 2;\n  return 1;\n}\n\nfunction read_(ss) {\n  const S = tab_(ss, '曲'), R = tab_(ss, '音源'), P = tab_(ss, '提供者');\n  const sT = S.col('表示用曲名'), sW = S.col('作品名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用'), sG = S.col('ラベル');\n  const songs = S.body.filter(function (r) { return cell_(r, sT); }).map(function (r) {\n    const o = { t: cell_(r, sT), a: cell_(r, sA), w: cell_(r, sW), k: cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA)) };\n    // 「ラベル」で始まる見出しの列があるときだけ、ラベルも送る（歌枠ルーレットのしぼりこみ用）\n    if (sG >= 0) o.g = cell_(r, sG);\n    return o;\n  });\n  const rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rKey = R.col('キー'), rU2 = R.col('URL（共有IDなし'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）'), rF = R.col('音源ファイルの保存場所'), rKK = R.col('キーの区分'), rLy = R.col('動画内の歌詞表示');\n  const srcs = R.body.filter(function (r) { return cell_(r, rN); }).map(function (r) {\n    return { s: cell_(r, rS), n: cell_(r, rN), kind: cell_(r, rKind), key: cell_(r, rKey), u: cell_(r, rU2) || cell_(r, rU), by: cell_(r, rBy), f: cell_(r, rF), kk: cell_(r, rKK), ly: cell_(r, rLy) };\n  });\n  const pN = P.col('提供者名');\n  const providers = P.body.map(function (r) { return cell_(r, pN); }).filter(String);\n  let accounts = [];\n  try {\n    const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n    accounts = A.body.filter(function (r) { return cell_(r, aI); }).map(function (r) { return { id: cell_(r, aI), name: cell_(r, aN) }; });\n  } catch (err) { }\n  return { ok: true, version: 1, songs: songs, srcs: srcs, providers: providers, accounts: accounts };\n}\n\n// p.stream = {id, date, prof, title, addStream, dest, mon, replace}\n// p.rows = [{n, ts, kind, t, a, k, src:{n, u, by}}]。kind は「曲」（空も曲）か、オープニング・エンディング・トーク・企画\nconst LOG_KINDS_ = { 'オープニング': 1, 'エンディング': 1, 'トーク・企画': 1 };\nfunction log_(ss, p) {\n  const st = p.stream || {}, rows = Array.isArray(p.rows) ? p.rows.slice(0, 300) : [];\n  const id = String(st.id || '').trim().slice(0, 60);\n  if (!id) return { ok: false, error: '配信IDがありません' };\n  if (!rows.length) return { ok: false, error: '送る曲がありません' };\n  let L = tab_(ss, '配信ログ');\n  const lId = L.col('配信ID');\n  const added = { songs: 0, srcs: 0, rows: 0, stream: 0, replaced: 0 };\n  const has = [];\n  L.body.forEach(function (r, i) { if (cell_(r, lId) === id) has.push(i + 2); });\n  if (has.length && !st.replace) return { ok: false, exists: true, error: '配信ログに、配信ID「' + id + '」の行がもうあります' };\n  // 送り直し：その配信IDの行を消してから入れる（下の行から消す）\n  for (let i = has.length - 1; i >= 0; i--) { L.sh.deleteRow(has[i]); added.replaced++; }\n  if (has.length) L = tab_(ss, '配信ログ');\n\n  // 配信一覧：まだない配信IDなら1行足す。配信先・収益化・枠タイトルは、送られてきたものだけ書く（空のものは、いまの値を残す）\n  {\n    const T = tab_(ss, '配信一覧'), tId = T.col('配信ID'), tDate = T.col('配信日'), tAcc = T.col('アカウントID'), tDest = T.col('配信先'), tMon = T.col('収益化'), tTitle = T.col('枠タイトル');\n    let r = 0;\n    T.body.forEach(function (x, i) { if (!r && cell_(x, tId) === id) r = i + 2; });\n    if (!r && st.addStream) {\n      let acc = '';\n      try {\n        const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n        A.body.forEach(function (x) { if (!acc && st.prof && cell_(x, aN) === String(st.prof)) acc = cell_(x, aI); });\n      } catch (err) { }\n      r = lastRow_(T.sh, tId + 1) + 1;\n      T.sh.getRange(r, tId + 1).setValue(id);\n      if (tDate >= 0) { T.sh.getRange(r, tDate + 1).setNumberFormat('@'); T.sh.getRange(r, tDate + 1).setValue(String(st.date || '')); }\n      if (tAcc >= 0 && acc) T.sh.getRange(r, tAcc + 1).setValue(acc);\n      added.stream = 1;\n    }\n    if (r) {\n      const put = function (c, v) { v = String(v == null ? '' : v).trim(); if (c >= 0 && v && !T.auto[c]) T.sh.getRange(r, c + 1).setValue(text_(v.slice(0, 300))); };\n      put(tDest, st.dest); put(tMon, st.mon); put(tTitle, st.title);\n    }\n  }\n  const songRows = rows.filter(function (x) { return !LOG_KINDS_[String(x.kind || '')]; });\n\n  // 曲：シートにない曲は「曲」タブに下書きとして足す（曲名・アーティスト・表記の状態）\n  const S = tab_(ss, '曲'), sT = S.col('表示用曲名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用'), sState = S.col('表記の状態');\n  const songKeys = {};\n  S.body.forEach(function (r) { if (cell_(r, sT)) songKeys[cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA))] = 1; });\n  let sNext = lastRow_(S.sh, sT + 1) + 1;\n  songRows.forEach(function (x) {\n    const k = String(x.k || (String(x.t || '') + '／' + String(x.a || ''))).slice(0, 420);\n    x.k = k;\n    if (songKeys[k] || !x.t) return;\n    S.sh.getRange(sNext, sT + 1).setValue(String(x.t).slice(0, 200));\n    if (sA >= 0) S.sh.getRange(sNext, sA + 1).setValue(String(x.a || '').slice(0, 200));\n    if (sState >= 0) S.sh.getRange(sNext, sState + 1).setValue('下書き・要確認');\n    songKeys[k] = 1; sNext++; added.songs++;\n  });\n\n  // 音源：シートにない音源は「音源」タブに足す（提供者は、提供者タブにある名前のときだけ入れる）\n  const R = tab_(ss, '音源'), rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）');\n  const P = tab_(ss, '提供者'), pN = P.col('提供者名');\n  const providers = {};\n  P.body.forEach(function (r) { if (cell_(r, pN)) providers[cell_(r, pN)] = 1; });\n  const srcNames = {};\n  R.body.forEach(function (r) { if (cell_(r, rN)) srcNames[cell_(r, rN)] = 1; });\n  let rNext = lastRow_(R.sh, rN + 1) + 1;\n  songRows.forEach(function (x) {\n    const s = x.src;\n    if (!s || !s.n) return;\n    s.n = String(s.n).slice(0, 200);\n    if (srcNames[s.n]) return;\n    if (rS >= 0) R.sh.getRange(rNext, rS + 1).setValue(x.k);\n    R.sh.getRange(rNext, rN + 1).setValue(s.n);\n    if (rKind >= 0) R.sh.getRange(rNext, rKind + 1).setValue(/youtube\\.com|youtu\\.be/.test(String(s.u || '')) ? 'YouTube動画' : 'その他');\n    if (rU >= 0 && s.u) R.sh.getRange(rNext, rU + 1).setValue(String(s.u).slice(0, 500));\n    if (rBy >= 0 && s.by && providers[s.by]) R.sh.getRange(rNext, rBy + 1).setValue(s.by);\n    srcNames[s.n] = 1; rNext++; added.srcs++;\n  });\n\n  // 配信ログ：配信ID・順番・タイムスタンプ（文字）・区分「曲」・曲・音源\n  const values = rows.map(function (x, i) {\n    const kind = String(x.kind || '');\n    if (LOG_KINDS_[kind]) return [id, Number(x.n) || (i + 1), String(x.ts || ''), kind, '', ''];\n    return [id, Number(x.n) || (i + 1), String(x.ts || ''), '曲', x.k, x.src && x.src.n ? x.src.n : ''];\n  });\n  const start = lastRow_(L.sh, 1) + 1;\n  L.sh.getRange(start, 3, values.length, 1).setNumberFormat('@');\n  L.sh.getRange(start, 1, values.length, 6).setValues(values);\n  added.rows = values.length;\n  return { ok: true, added: added, firstRow: start };\n}\n\n// ===================== 版3：シートの編集 =====================\n\n// 画面の項目 → 見出し（「始まりの文字」で探す）。ここにない列には書きません\nconst FIELDS_ = {\n  '曲': { t: '表示用曲名', w: '作品名', a: '表示用アーティスト', y: '読み', st: '表記の状態', lu: '歌詞ページのURL', org: '管理団体', code: '作品コード', jt: '作品タイトル', ja: 'アーティスト名', ly: '作詞者', cp: '作曲者', memo: 'メモ', rt: '管理団体の登録表記（曲名', ra: '管理団体の登録表記（アーティスト', set: 'セトリでの表記', g: 'ラベル' },\n  '音源': { s: '曲（選ぶ）', n: '音源名', kind: '種類', key: 'キー', u: 'URL（貼り付け', by: '提供者（選ぶ）', yt: '個別：YouTube配信', mon: '個別：収益化配信', oth: '個別：YouTube以外', cond: '個別の利用条件', memo: 'メモ', f: '音源ファイルの保存場所', who: '使える名義', kk: 'キーの区分', lyr: '動画内の歌詞表示' },\n  '提供者': { n: '提供者名', url: '概要欄に載せるURL', yt: 'YouTube配信で使用', mon: '収益化済み配信で使用', oth: 'YouTube以外の配信', cr: 'クレジット表記の指定', tu: '利用規約・説明のURL', d: '確認日', memo: 'メモ', raw: '規約・説明の原文', y: '読み' }\n};\n// 1行を見分ける項目（曲は「曲名／アーティスト」、音源と提供者は名前）。ほかのタブから、この文字で選ばれています\nconst ID_ = { '曲': ['t', 'a'], '音源': ['n'], '提供者': ['n'] };\nconst LABEL_TAB_ = 'ラベル一覧';\nconst LABEL_HEAD_ = ['ラベル', '分類', '記号', 'メモ'];\n\nfunction cols_(T, tab) {\n  const m = {}, f = FIELDS_[tab];\n  Object.keys(f).forEach(function (k) { const i = T.col(f[k]); if (i >= 0 && !T.auto[i]) m[k] = i; });\n  return m;\n}\nfunction rowObj_(r, m) { const o = {}; Object.keys(m).forEach(function (k) { o[k] = cell_(r, m[k]); }); return o; }\nconst tagSplit_ = function (v) {\n  const seen = {}, out = [];\n  String(v || '').split(/[、,，\\/／\\n]/).forEach(function (x) { x = x.trim(); if (x && !seen[x]) { seen[x] = 1; out.push(x); } });\n  return out;\n};\n// 並べ替えの文字：読み（なければ曲名）。英数字が先、かなが後\nfunction sortKey_(y, t) {\n  const s = String(y || t || '').normalize('NFKC').toLowerCase().replace(/[ァ-ヶ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); });\n  return (/^[a-z0-9]/.test(s) ? '0' : '1') + s;\n}\n// プルダウン（一覧から選ぶ）の選択肢を、2行目の入力規則から読む\nfunction listOpts_(T, i) {\n  if (i < 0) return null;\n  try {\n    const dv = T.sh.getRange(2, i + 1).getDataValidation();\n    if (!dv || dv.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.VALUE_IN_LIST) return null;\n    return (dv.getCriteriaValues()[0] || []).map(String);\n  } catch (err) { return null; }\n}\nfunction labelTab_(ss) {\n  const sh = ss.getSheetByName(LABEL_TAB_);\n  if (!sh) return null;\n  const v = sh.getDataRange().getDisplayValues().slice(1);\n  return { sh: sh, list: v.filter(function (r) { return cell_(r, 0); }).map(function (r) { return { name: cell_(r, 0), group: cell_(r, 1), mark: cell_(r, 2), memo: cell_(r, 3) }; }) };\n}\n\n// 編集画面用に、手で入れる列をすべて読む（r はシートの行番号）\nfunction sheet_(ss) {\n  const out = { ok: true, version: GAS_VERSION, name: ss.getName(), id: ss.getId(), opts: {} };\n  [['曲', 'songs'], ['音源', 'srcs'], ['提供者', 'provs']].forEach(function (x) {\n    const T = tab_(ss, x[0]), m = cols_(T, x[0]), idc = m[ID_[x[0]][0]];\n    out[x[1]] = [];\n    T.body.forEach(function (r, i) { if (cell_(r, idc)) { const o = rowObj_(r, m); o.r = i + 2; out[x[1]].push(o); } });\n    const opts = {};\n    Object.keys(m).forEach(function (k) { const l = listOpts_(T, m[k]); if (l) opts[k] = l; });\n    out.opts[x[0]] = opts;\n    out[x[1] + 'Cols'] = Object.keys(m);\n  });\n  const L = labelTab_(ss);\n  out.labels = L ? L.list : null;\n  try {\n    const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n    out.accounts = A.body.filter(function (r) { return cell_(r, aI); }).map(function (r) { return { id: cell_(r, aI), name: cell_(r, aN) }; });\n  } catch (err) { out.accounts = []; }\n  return out;\n}\n\n// 新しい行の場所：曲・提供者は読みの順の位置に1行差し込む。音源はいちばん下に足す\nfunction newRow_(T, m, tab, f) {\n  const sh = T.sh, idc = m[ID_[tab][0]];\n  const last = lastRow_(sh, idc + 1);\n  let at = last + 1;\n  if (tab !== '音源') {\n    const key = sortKey_(f.y, f[ID_[tab][0]]);\n    for (let i = 0; i < T.body.length && i + 2 <= last; i++) {\n      const r = T.body[i];\n      if (!cell_(r, idc)) continue;\n      if (sortKey_(m.y >= 0 ? cell_(r, m.y) : '', cell_(r, idc)) > key) { at = i + 2; break; }\n    }\n  }\n  const width = sh.getMaxColumns();\n  if (at <= last) {\n    sh.insertRowBefore(at);\n    const from = sh.getRange(at + 1, 1, 1, width), to = sh.getRange(at, 1, 1, width);\n    from.copyTo(to, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);\n    from.copyTo(to, SpreadsheetApp.CopyPasteType.PASTE_DATA_VALIDATION, false);\n  } else {\n    if (at > sh.getMaxRows()) sh.insertRowAfter(sh.getMaxRows());\n    if (last >= 2) {\n      const from = sh.getRange(last, 1, 1, width), to = sh.getRange(at, 1, 1, width);\n      from.copyTo(to, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);\n      from.copyTo(to, SpreadsheetApp.CopyPasteType.PASTE_DATA_VALIDATION, false);\n    }\n  }\n  return at;\n}\n\n// 名前を直したとき、ほかのタブでその名前を選んでいるセルを付け替える\nfunction relink_(ss, tabName, prefix, oldV, newV) {\n  if (!oldV || oldV === newV) return 0;\n  const T = tab_(ss, tabName), c = T.col(prefix);\n  if (c < 0 || T.auto[c]) return 0;\n  let n = 0;\n  T.body.forEach(function (r, i) {\n    if (String(r[c]) === oldV) { const cell = T.sh.getRange(i + 2, c + 1); cell.setNumberFormat('@'); cell.setValue(text_(newV)); n++; }\n  });\n  return n;\n}\n\nconst LIMIT_ = { raw: 45000, cond: 5000, memo: 5000 };\nfunction clean_(k, v) { return String(v == null ? '' : v).replace(/\\r\\n?/g, '\\n').trim().slice(0, LIMIT_[k] || 1000); }\n\n// p = {tab, r, before:{項目:シートで見た値}, f:{項目:新しい値}}。r が 0 なら新しい行\nfunction save_(ss, p) {\n  const tab = String(p.tab || '');\n  if (!FIELDS_[tab]) return { ok: false, error: '知らないタブです：' + tab };\n  const T = tab_(ss, tab), m = cols_(T, tab), ids = ID_[tab];\n  const f = {}, before = p.before || {};\n  Object.keys(p.f || {}).forEach(function (k) {\n    if (!(k in FIELDS_[tab])) throw new Error('知らない項目です：' + k);\n    if (!(k in m)) throw new Error('「' + tab + '」タブに「' + FIELDS_[tab][k] + '」の列が見つからないか、自動の列です');\n    f[k] = clean_(k, p.f[k]);\n  });\n  if (f.g != null) f.g = tagSplit_(f.g).join('、');\n  let row = Number(p.r) || 0, cur = null;\n  if (row) {\n    // シートで見た行と、いまの行が同じかを確かめる（ほかの端末で直した・行がずれた、を見つける）\n    const same = function (r) { return ids.every(function (k) { return cell_(r, m[k]) === String(before[k] == null ? '' : before[k]).trim(); }); };\n    let i = row - 2;\n    if (!(T.body[i] && same(T.body[i]))) { i = T.body.findIndex(same); row = i + 2; }\n    if (i < 0) return { ok: false, conflict: true, error: 'シートのほうで、この行が変わっているか見つかりません。読み直してから直してください' };\n    cur = rowObj_(T.body[i], m);\n    const changed = Object.keys(before).filter(function (k) { return k in m && cur[k] !== String(before[k] == null ? '' : before[k]).trim(); });\n    if (changed.length) return { ok: false, conflict: true, error: 'シートのほうで「' + changed.map(function (k) { return FIELDS_[tab][k]; }).join('」「') + '」が変わっています。読み直してから直してください' };\n  }\n  const next = {};\n  Object.keys(m).forEach(function (k) { next[k] = k in f ? f[k] : (cur ? cur[k] : ''); });\n  if (!next[ids[0]]) return { ok: false, error: '「' + FIELDS_[tab][ids[0]] + '」は空にできません' };\n  const idOf = function (o) { return ids.map(function (k) { return o[k] || ''; }).join('／'); };\n  const nid = idOf(next);\n  const dup = T.body.some(function (r, i) { return i + 2 !== row && cell_(r, m[ids[0]]) && idOf(rowObj_(r, m)) === nid; });\n  if (dup) return { ok: false, error: tab === '曲' ? '同じ曲名・アーティストの曲がもうあります' : '同じ名前の' + tab + 'がもうあります（名前で選ぶので、重ならない名前にしてください）' };\n  if (tab === '音源' && next.s) {\n    const S = tab_(ss, '曲'), k = S.col('選択用');\n    if (k >= 0 && !S.body.some(function (r) { return cell_(r, k) === next.s; })) return { ok: false, error: '「曲」タブに「' + next.s + '」がありません' };\n  }\n  const added = !row;\n  if (added) row = newRow_(T, m, tab, next);\n  const keys = added ? Object.keys(next).filter(function (k) { return next[k] !== ''; }) : Object.keys(f).filter(function (k) { return f[k] !== cur[k]; });\n  keys.forEach(function (k) { const cell = T.sh.getRange(row, m[k] + 1); cell.setNumberFormat('@'); cell.setValue(text_(next[k])); });\n  const moved = { srcs: 0, logs: 0 };\n  if (!added && cur) {\n    if (tab === '曲') {\n      const o = cur.t + '／' + cur.a, n = next.t + '／' + next.a;\n      moved.srcs = relink_(ss, '音源', '曲（選ぶ）', o, n);\n      moved.logs = relink_(ss, '配信ログ', '曲（選ぶ）', o, n);\n    } else if (tab === '音源') moved.logs = relink_(ss, '配信ログ', '音源（選ぶ）', cur.n, next.n);\n    else if (tab === '提供者') moved.srcs = relink_(ss, '音源', '提供者（選ぶ）', cur.n, next.n);\n  }\n  const now = stamp_(ss), name = idOf(next), log = keys.map(function (k) {\n    return [now, tab, name, T.head[m[k]] || FIELDS_[tab][k], added ? '' : cur[k], next[k], added ? '足した' : '直した', k];\n  });\n  if (moved.srcs || moved.logs) log.push([now, tab, name, 'ほかのタブの付け替え', idOf(cur), name, '付け替え', '', '音源 ' + moved.srcs + '行・配信ログ ' + moved.logs + '行']);\n  hist_(ss, log);\n  next.r = row;\n  return { ok: true, added: added, r: row, rec: next, wrote: keys, moved: moved, at: now };\n}\n\n// 「ラベル一覧」タブと、「曲」タブの「ラベル」列を作る（ないときだけ）\nfunction setup_(ss, p) {\n  const made = { tab: false, col: false };\n  let L = ss.getSheetByName(LABEL_TAB_);\n  if (!L) {\n    L = ss.insertSheet(LABEL_TAB_);\n    L.getRange(1, 1, 1, LABEL_HEAD_.length).setValues([LABEL_HEAD_]).setFontWeight('bold').setFontColor('#ffffff').setBackground('#234c40');\n    L.setFrozenRows(1);\n    const seed = (Array.isArray(p.seed) ? p.seed : []).slice(0, 200).map(function (x) { return [clean_('', x.name).slice(0, 40), clean_('', x.group).slice(0, 40), clean_('', x.mark).slice(0, 8), clean_('', x.memo).slice(0, 300)]; }).filter(function (x) { return x[0] && !/[、,，\\/／\\n]/.test(x[0]); });\n    if (seed.length) L.getRange(2, 1, seed.length, 4).setNumberFormat('@').setValues(seed);\n    made.tab = true;\n  }\n  const S = tab_(ss, '曲');\n  if (S.col('ラベル') < 0) {\n    let c = S.head.length;\n    while (c > 0 && !S.head[c - 1]) c--;\n    if (c + 1 > S.sh.getMaxColumns()) S.sh.insertColumnAfter(S.sh.getMaxColumns());\n    S.sh.getRange(1, 1).copyTo(S.sh.getRange(1, c + 1), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);\n    S.sh.getRange(1, c + 1).setValue('ラベル');\n    made.col = true;\n  }\n  if (made.tab || made.col) hist_(ss, [[stamp_(ss), LABEL_TAB_, '', 'ラベルの準備', '', (made.tab ? '「' + LABEL_TAB_ + '」タブを作った　' : '') + (made.col ? '「曲」タブにラベル列を足した' : ''), '準備', '']]);\n  return { ok: true, made: made };\n}\n\n// p = {base:[シートで見たラベル名], list:[{was, name, group, mark, memo}]}。was は元の名前（新しいラベルは空）\n// 名前を変えたラベル・消したラベルは、「曲」タブのラベル列も同じように直す\nfunction labels_(ss, p) {\n  const L = labelTab_(ss);\n  if (!L) return { ok: false, error: '「' + LABEL_TAB_ + '」タブがありません' };\n  const base = (p.base || []).map(String), now = L.list.map(function (x) { return x.name; });\n  if (base.join('\\n') !== now.join('\\n')) return { ok: false, conflict: true, error: 'シートのほうでラベルが変わっています。読み直してから直してください' };\n  const list = (Array.isArray(p.list) ? p.list : []).slice(0, 300).map(function (x) {\n    return { was: clean_('', x.was), name: clean_('', x.name).slice(0, 40), group: clean_('', x.group).slice(0, 40), mark: clean_('', x.mark).slice(0, 8), memo: clean_('', x.memo).slice(0, 300) };\n  });\n  const seen = {};\n  for (let i = 0; i < list.length; i++) {\n    const n = list[i].name;\n    if (!n) return { ok: false, error: '名前が空のラベルがあります' };\n    if (/[、,，\\/／]/.test(n)) return { ok: false, error: 'ラベル「' + n + '」に「、」「,」「/」は使えません（区切りの記号なので）' };\n    if (seen[n]) return { ok: false, error: 'ラベル「' + n + '」が2つあります' };\n    seen[n] = 1;\n  }\n  const ren = {}, keep = {};\n  list.forEach(function (x) { if (x.was) { keep[x.was] = 1; if (x.was !== x.name) ren[x.was] = x.name; } });\n  const gone = {};\n  now.forEach(function (n) { if (!keep[n]) gone[n] = 1; });\n  // ラベル一覧タブを書き直す\n  const sh = L.sh, old = Math.max(sh.getLastRow() - 1, 0);\n  if (old) sh.getRange(2, 1, old, LABEL_HEAD_.length).clearContent();\n  if (list.length) sh.getRange(2, 1, list.length, 4).setNumberFormat('@').setValues(list.map(function (x) { return [x.name, x.group, x.mark, x.memo]; }));\n  // 曲タブのラベル列\n  let songs = 0;\n  if (Object.keys(ren).length || Object.keys(gone).length) {\n    const S = tab_(ss, '曲'), c = S.col('ラベル');\n    if (c >= 0 && !S.auto[c]) S.body.forEach(function (r, i) {\n      const a = tagSplit_(r[c]);\n      const b = tagSplit_(a.filter(function (t) { return !gone[t]; }).map(function (t) { return ren[t] || t; }).join('、'));\n      if (a.join('、') !== b.join('、')) { const cell = S.sh.getRange(i + 2, c + 1); cell.setNumberFormat('@'); cell.setValue(b.join('、')); songs++; }\n    });\n  }\n  hist_(ss, [[stamp_(ss), LABEL_TAB_, 'ラベル一覧', 'ラベルの並び', base.join('、'), list.map(function (x) { return x.name; }).join('、'), 'ラベル', '',\n    (Object.keys(ren).length ? '名前を変えた ' + Object.keys(ren).map(function (k) { return k + '→' + ren[k]; }).join('、') + '　' : '') + (Object.keys(gone).length ? '消した ' + Object.keys(gone).join('、') + '　' : '') + '曲 ' + songs + '曲を直した']]);\n  return { ok: true, labels: list.map(function (x) { return { name: x.name, group: x.group, mark: x.mark, memo: x.memo }; }), songs: songs };\n}\n\n// ===================== 版3：編集の記録と控え =====================\n\nconst HIST_TAB_ = '編集の記録';\nconst HIST_HEAD_ = ['日時', 'タブ', '行の名前', '項目', '前', '後', '操作', '項目の記号', 'メモ'];\n// 先頭が「=」の文字は、数式にならないよう「'」を付けて入れる（シートには「'」は見えません）\nfunction text_(v) { v = String(v == null ? '' : v); return /^=/.test(v) ? \"'\" + v : v; }\nfunction stamp_(ss) {\n  // 日本の時刻で残す（コピーしたシートは、タイムゾーンが日本以外になっていることがあるため）\n  return Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy/MM/dd HH:mm:ss');\n}\nfunction hist_(ss, rows) {\n  if (!rows || !rows.length) return;\n  let sh = ss.getSheetByName(HIST_TAB_);\n  if (!sh) {\n    sh = ss.insertSheet(HIST_TAB_);\n    sh.getRange(1, 1, 1, HIST_HEAD_.length).setValues([HIST_HEAD_]).setFontWeight('bold').setFontColor('#ffffff').setBackground('#234c40');\n    sh.setFrozenRows(1);\n  }\n  const vals = rows.map(function (r) {\n    const o = [];\n    for (let i = 0; i < HIST_HEAD_.length; i++) o.push(text_(String(r[i] == null ? '' : r[i]).slice(0, 3000)));\n    return o;\n  });\n  const at = sh.getLastRow() + 1;\n  sh.getRange(at, 1, vals.length, HIST_HEAD_.length).setNumberFormat('@').setValues(vals);\n}\n// 新しい順に、最大 p.n 行（既定 120）\nfunction history_(ss, p) {\n  const sh = ss.getSheetByName(HIST_TAB_);\n  if (!sh || sh.getLastRow() < 2) return { ok: true, rows: [] };\n  const n = Math.min(Math.max(Number(p.n) || 120, 1), 500), last = sh.getLastRow(), from = Math.max(2, last - n + 1);\n  const v = sh.getRange(from, 1, last - from + 1, HIST_HEAD_.length).getDisplayValues();\n  const keys = ['at', 'tab', 'id', 'field', 'before', 'after', 'act', 'k', 'memo'];\n  return { ok: true, rows: v.reverse().map(function (r) { const o = {}; keys.forEach(function (k, i) { o[k] = String(r[i] == null ? '' : r[i]); }); return o; }) };\n}\n// 控え：タブをこのシートの中に写して隠す（ほかのファイルは作りません）。戻すときは、シートで控えのタブを表示して写します\nfunction backup_(ss, p) {\n  const now = stamp_(ss), made = [];\n  ['曲', '音源', '提供者', LABEL_TAB_].forEach(function (name) {\n    const sh = ss.getSheetByName(name);\n    if (!sh) return;\n    const c = sh.copyTo(ss);\n    let nm = '控え ' + now.replace(/:\\d\\d$/, '') + ' ' + name, i = 2;\n    while (ss.getSheetByName(nm)) nm = '控え ' + now + ' ' + name + '（' + (i++) + '）';\n    c.setName(nm);\n    c.hideSheet();\n    made.push(nm);\n  });\n  hist_(ss, [[now, '控え', '', '控えのタブ', '', made.join('、'), '控え', '', String(p.why || '').slice(0, 200)]]);\n  return { ok: true, made: made, at: now };\n}\n\n";
+const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps Script・版5）\n * @OnlyCurrentDoc  … このスクリプトが触れられるのは、このスプレッドシートだけです（ドライブのほかのファイルには触れません）\n *\n * 1. 下の OTONOHA_KEY を、自分だけの合言葉に書き換えます（英数字で12文字以上がおすすめ）。\n * 2. デプロイ → 新しいデプロイ → 種類「ウェブアプリ」、次のユーザーとして実行「自分」、アクセスできるユーザー「全員」。\n *    版2・版3から入れ替えるときは、デプロイ → デプロイを管理 → 鉛筆の印 → バージョン「新バージョン」→ デプロイ（URLは変わりません）。\n * 3. 出てきたウェブアプリのURLと合言葉を、オトノハの「歌枠管理シートとつなぐ」に入れます。\n *\n * 書き込むのは、1行目に数式がない列（手で入力する列）だけです。1行目が数式の列（自動の列）には書きません。\n * 版3で足したこと：シートの編集（曲・音源・提供者を足す・直す）、ラベル（「ラベル一覧」タブと「曲」タブのラベル列）、\n *   「編集の記録」タブ（オトノハから直した項目の、前と後の値）、控え（「曲」「音源」「提供者」「ラベル一覧」タブを、このシートの中に写して隠す）。\n * 曲名・アーティスト・音源名・提供者名を直したときは、それを選んでいる「音源」「配信ログ」の行も新しい名前に付け替えます。\n * 版4で足したこと（配信ログへ送るところ）：配信一覧の「配信先」「収益化」「枠タイトル」も書く、\n *   オープニング・エンディング・トーク・企画の行も送る、同じ配信IDを送り直す（その配信IDの配信ログの行を入れ替える）。\n * 版5で足したこと：「提供者」タブの「略称」列（セトリなどで長いチャンネル名の代わりに出す名前）を読み書きする。\n *   列がないときは、ラベルの準備（setup）で「提供者」タブのいちばん右に足します。\n * 曲・音源・提供者の行を消す働きはありません（消すときは、シートで行を選んで消します）。\n */\nconst OTONOHA_KEY = 'ここに合言葉';\nconst GAS_VERSION = 5;\n\nfunction doGet(e) { return out_(handle_((e && e.parameter) || {})); }\nfunction doPost(e) {\n  let body = {};\n  try { body = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return out_({ ok: false, error: '送られた内容が読めません' }); }\n  return out_(handle_(body));\n}\nfunction out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }\n\nfunction handle_(p) {\n  if (!OTONOHA_KEY || OTONOHA_KEY === 'ここに合言葉') return { ok: false, error: 'Apps Script の OTONOHA_KEY に合言葉を書いて、デプロイし直してください' };\n  if (String(p.key || '') !== OTONOHA_KEY) return { ok: false, error: '合言葉が違います' };\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n  try {\n    if (p.op === 'ping') return { ok: true, version: GAS_VERSION, name: ss.getName(), id: ss.getId() };\n    if (p.op === 'read') return read_(ss);\n    if (p.op === 'sheet') return sheet_(ss);\n    if (p.op === 'history') return history_(ss, p);\n    const writers = { log: log_, save: save_, labels: labels_, setup: setup_, backup: backup_ };\n    if (writers[p.op]) {\n      const lock = LockService.getDocumentLock();\n      lock.waitLock(20000);\n      try { return writers[p.op](ss, p); } finally { SpreadsheetApp.flush(); lock.releaseLock(); }\n    }\n    return { ok: false, error: '知らない操作です：' + String(p.op || '') };\n  } catch (err) {\n    return { ok: false, error: String((err && err.message) || err) };\n  }\n}\n\n// 見出しで列を探す（まず見出しと同じ文字、なければ見出しの「始まりの文字」）。auto[i] は1行目が数式の列（自動の列）\nfunction tab_(ss, name) {\n  const sh = ss.getSheetByName(name);\n  if (!sh) throw new Error('「' + name + '」タブが見つかりません');\n  const v = sh.getDataRange().getDisplayValues();\n  const head = (v[0] || []).map(function (h) { return String(h).trim(); });\n  const fx = head.length ? sh.getRange(1, 1, 1, head.length).getFormulas()[0] : [];\n  const auto = fx.map(function (f) { return !!f; });\n  const col = function (prefix) {\n    for (let i = 0; i < head.length; i++) if (head[i] === prefix) return i;\n    for (let i = 0; i < head.length; i++) if (head[i].indexOf(prefix) === 0) return i;\n    return -1;\n  };\n  return { sh: sh, head: head, auto: auto, body: v.slice(1), col: col };\n}\n\nfunction cell_(row, i) { return i < 0 ? '' : String(row[i] == null ? '' : row[i]).trim(); }\n// 列の中で、最後に値が入っている行（1始まり）。数式の空文字は値として数えない\nfunction lastRow_(sh, col) {\n  const n = sh.getMaxRows();\n  if (n < 2) return 1;\n  const v = sh.getRange(2, col, n - 1, 1).getDisplayValues();\n  for (let i = v.length - 1; i >= 0; i--) if (String(v[i][0]).trim() !== '') return i + 2;\n  return 1;\n}\n\nfunction read_(ss) {\n  const S = tab_(ss, '曲'), R = tab_(ss, '音源'), P = tab_(ss, '提供者');\n  const sT = S.col('表示用曲名'), sW = S.col('作品名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用'), sG = S.col('ラベル');\n  const songs = S.body.filter(function (r) { return cell_(r, sT); }).map(function (r) {\n    const o = { t: cell_(r, sT), a: cell_(r, sA), w: cell_(r, sW), k: cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA)) };\n    // 「ラベル」で始まる見出しの列があるときだけ、ラベルも送る（歌枠ルーレットのしぼりこみ用）\n    if (sG >= 0) o.g = cell_(r, sG);\n    return o;\n  });\n  const rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rKey = R.col('キー'), rU2 = R.col('URL（共有IDなし'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）'), rF = R.col('音源ファイルの保存場所'), rKK = R.col('キーの区分'), rLy = R.col('動画内の歌詞表示');\n  const srcs = R.body.filter(function (r) { return cell_(r, rN); }).map(function (r) {\n    return { s: cell_(r, rS), n: cell_(r, rN), kind: cell_(r, rKind), key: cell_(r, rKey), u: cell_(r, rU2) || cell_(r, rU), by: cell_(r, rBy), f: cell_(r, rF), kk: cell_(r, rKK), ly: cell_(r, rLy) };\n  });\n  const pN = P.col('提供者名');\n  const providers = P.body.map(function (r) { return cell_(r, pN); }).filter(String);\n  let accounts = [];\n  try {\n    const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n    accounts = A.body.filter(function (r) { return cell_(r, aI); }).map(function (r) { return { id: cell_(r, aI), name: cell_(r, aN) }; });\n  } catch (err) { }\n  return { ok: true, version: 1, songs: songs, srcs: srcs, providers: providers, accounts: accounts };\n}\n\n// p.stream = {id, date, prof, title, addStream, dest, mon, replace}\n// p.rows = [{n, ts, kind, t, a, k, src:{n, u, by}}]。kind は「曲」（空も曲）か、オープニング・エンディング・トーク・企画\nconst LOG_KINDS_ = { 'オープニング': 1, 'エンディング': 1, 'トーク・企画': 1 };\nfunction log_(ss, p) {\n  const st = p.stream || {}, rows = Array.isArray(p.rows) ? p.rows.slice(0, 300) : [];\n  const id = String(st.id || '').trim().slice(0, 60);\n  if (!id) return { ok: false, error: '配信IDがありません' };\n  if (!rows.length) return { ok: false, error: '送る曲がありません' };\n  let L = tab_(ss, '配信ログ');\n  const lId = L.col('配信ID');\n  const added = { songs: 0, srcs: 0, rows: 0, stream: 0, replaced: 0 };\n  const has = [];\n  L.body.forEach(function (r, i) { if (cell_(r, lId) === id) has.push(i + 2); });\n  if (has.length && !st.replace) return { ok: false, exists: true, error: '配信ログに、配信ID「' + id + '」の行がもうあります' };\n  // 送り直し：その配信IDの行を消してから入れる（下の行から消す）\n  for (let i = has.length - 1; i >= 0; i--) { L.sh.deleteRow(has[i]); added.replaced++; }\n  if (has.length) L = tab_(ss, '配信ログ');\n\n  // 配信一覧：まだない配信IDなら1行足す。配信先・収益化・枠タイトルは、送られてきたものだけ書く（空のものは、いまの値を残す）\n  {\n    const T = tab_(ss, '配信一覧'), tId = T.col('配信ID'), tDate = T.col('配信日'), tAcc = T.col('アカウントID'), tDest = T.col('配信先'), tMon = T.col('収益化'), tTitle = T.col('枠タイトル');\n    let r = 0;\n    T.body.forEach(function (x, i) { if (!r && cell_(x, tId) === id) r = i + 2; });\n    if (!r && st.addStream) {\n      let acc = '';\n      try {\n        const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n        A.body.forEach(function (x) { if (!acc && st.prof && cell_(x, aN) === String(st.prof)) acc = cell_(x, aI); });\n      } catch (err) { }\n      r = lastRow_(T.sh, tId + 1) + 1;\n      T.sh.getRange(r, tId + 1).setValue(id);\n      if (tDate >= 0) { T.sh.getRange(r, tDate + 1).setNumberFormat('@'); T.sh.getRange(r, tDate + 1).setValue(String(st.date || '')); }\n      if (tAcc >= 0 && acc) T.sh.getRange(r, tAcc + 1).setValue(acc);\n      added.stream = 1;\n    }\n    if (r) {\n      const put = function (c, v) { v = String(v == null ? '' : v).trim(); if (c >= 0 && v && !T.auto[c]) T.sh.getRange(r, c + 1).setValue(text_(v.slice(0, 300))); };\n      put(tDest, st.dest); put(tMon, st.mon); put(tTitle, st.title);\n    }\n  }\n  const songRows = rows.filter(function (x) { return !LOG_KINDS_[String(x.kind || '')]; });\n\n  // 曲：シートにない曲は「曲」タブに下書きとして足す（曲名・アーティスト・表記の状態）\n  const S = tab_(ss, '曲'), sT = S.col('表示用曲名'), sA = S.col('表示用アーティスト'), sK = S.col('選択用'), sState = S.col('表記の状態');\n  const songKeys = {};\n  S.body.forEach(function (r) { if (cell_(r, sT)) songKeys[cell_(r, sK) || (cell_(r, sT) + '／' + cell_(r, sA))] = 1; });\n  let sNext = lastRow_(S.sh, sT + 1) + 1;\n  songRows.forEach(function (x) {\n    const k = String(x.k || (String(x.t || '') + '／' + String(x.a || ''))).slice(0, 420);\n    x.k = k;\n    if (songKeys[k] || !x.t) return;\n    S.sh.getRange(sNext, sT + 1).setValue(String(x.t).slice(0, 200));\n    if (sA >= 0) S.sh.getRange(sNext, sA + 1).setValue(String(x.a || '').slice(0, 200));\n    if (sState >= 0) S.sh.getRange(sNext, sState + 1).setValue('下書き・要確認');\n    songKeys[k] = 1; sNext++; added.songs++;\n  });\n\n  // 音源：シートにない音源は「音源」タブに足す（提供者は、提供者タブにある名前のときだけ入れる）\n  const R = tab_(ss, '音源'), rS = R.col('曲（選ぶ）'), rN = R.col('音源名'), rKind = R.col('種類'), rU = R.col('URL（貼り付け'), rBy = R.col('提供者（選ぶ）');\n  const P = tab_(ss, '提供者'), pN = P.col('提供者名');\n  const providers = {};\n  P.body.forEach(function (r) { if (cell_(r, pN)) providers[cell_(r, pN)] = 1; });\n  const srcNames = {};\n  R.body.forEach(function (r) { if (cell_(r, rN)) srcNames[cell_(r, rN)] = 1; });\n  let rNext = lastRow_(R.sh, rN + 1) + 1;\n  songRows.forEach(function (x) {\n    const s = x.src;\n    if (!s || !s.n) return;\n    s.n = String(s.n).slice(0, 200);\n    if (srcNames[s.n]) return;\n    if (rS >= 0) R.sh.getRange(rNext, rS + 1).setValue(x.k);\n    R.sh.getRange(rNext, rN + 1).setValue(s.n);\n    if (rKind >= 0) R.sh.getRange(rNext, rKind + 1).setValue(/youtube\\.com|youtu\\.be/.test(String(s.u || '')) ? 'YouTube動画' : 'その他');\n    if (rU >= 0 && s.u) R.sh.getRange(rNext, rU + 1).setValue(String(s.u).slice(0, 500));\n    if (rBy >= 0 && s.by && providers[s.by]) R.sh.getRange(rNext, rBy + 1).setValue(s.by);\n    srcNames[s.n] = 1; rNext++; added.srcs++;\n  });\n\n  // 配信ログ：配信ID・順番・タイムスタンプ（文字）・区分「曲」・曲・音源\n  const values = rows.map(function (x, i) {\n    const kind = String(x.kind || '');\n    if (LOG_KINDS_[kind]) return [id, Number(x.n) || (i + 1), String(x.ts || ''), kind, '', ''];\n    return [id, Number(x.n) || (i + 1), String(x.ts || ''), '曲', x.k, x.src && x.src.n ? x.src.n : ''];\n  });\n  const start = lastRow_(L.sh, 1) + 1;\n  L.sh.getRange(start, 3, values.length, 1).setNumberFormat('@');\n  L.sh.getRange(start, 1, values.length, 6).setValues(values);\n  added.rows = values.length;\n  return { ok: true, added: added, firstRow: start };\n}\n\n// ===================== 版3：シートの編集 =====================\n\n// 画面の項目 → 見出し（「始まりの文字」で探す）。ここにない列には書きません\nconst FIELDS_ = {\n  '曲': { t: '表示用曲名', w: '作品名', a: '表示用アーティスト', y: '読み', st: '表記の状態', lu: '歌詞ページのURL', org: '管理団体', code: '作品コード', jt: '作品タイトル', ja: 'アーティスト名', ly: '作詞者', cp: '作曲者', memo: 'メモ', rt: '管理団体の登録表記（曲名', ra: '管理団体の登録表記（アーティスト', set: 'セトリでの表記', g: 'ラベル' },\n  '音源': { s: '曲（選ぶ）', n: '音源名', kind: '種類', key: 'キー', u: 'URL（貼り付け', by: '提供者（選ぶ）', yt: '個別：YouTube配信', mon: '個別：収益化配信', oth: '個別：YouTube以外', cond: '個別の利用条件', memo: 'メモ', f: '音源ファイルの保存場所', who: '使える名義', kk: 'キーの区分', lyr: '動画内の歌詞表示' },\n  '提供者': { n: '提供者名', ab: '略称', url: '概要欄に載せるURL', yt: 'YouTube配信で使用', mon: '収益化済み配信で使用', oth: 'YouTube以外の配信', cr: 'クレジット表記の指定', tu: '利用規約・説明のURL', d: '確認日', memo: 'メモ', raw: '規約・説明の原文', y: '読み' }\n};\n// 1行を見分ける項目（曲は「曲名／アーティスト」、音源と提供者は名前）。ほかのタブから、この文字で選ばれています\nconst ID_ = { '曲': ['t', 'a'], '音源': ['n'], '提供者': ['n'] };\nconst LABEL_TAB_ = 'ラベル一覧';\nconst LABEL_HEAD_ = ['ラベル', '分類', '記号', 'メモ'];\n\nfunction cols_(T, tab) {\n  const m = {}, f = FIELDS_[tab];\n  Object.keys(f).forEach(function (k) { const i = T.col(f[k]); if (i >= 0 && !T.auto[i]) m[k] = i; });\n  return m;\n}\nfunction rowObj_(r, m) { const o = {}; Object.keys(m).forEach(function (k) { o[k] = cell_(r, m[k]); }); return o; }\nconst tagSplit_ = function (v) {\n  const seen = {}, out = [];\n  String(v || '').split(/[、,，\\/／\\n]/).forEach(function (x) { x = x.trim(); if (x && !seen[x]) { seen[x] = 1; out.push(x); } });\n  return out;\n};\n// 並べ替えの文字：読み（なければ曲名）。英数字が先、かなが後\nfunction sortKey_(y, t) {\n  const s = String(y || t || '').normalize('NFKC').toLowerCase().replace(/[ァ-ヶ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); });\n  return (/^[a-z0-9]/.test(s) ? '0' : '1') + s;\n}\n// プルダウン（一覧から選ぶ）の選択肢を、2行目の入力規則から読む\nfunction listOpts_(T, i) {\n  if (i < 0) return null;\n  try {\n    const dv = T.sh.getRange(2, i + 1).getDataValidation();\n    if (!dv || dv.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.VALUE_IN_LIST) return null;\n    return (dv.getCriteriaValues()[0] || []).map(String);\n  } catch (err) { return null; }\n}\nfunction labelTab_(ss) {\n  const sh = ss.getSheetByName(LABEL_TAB_);\n  if (!sh) return null;\n  const v = sh.getDataRange().getDisplayValues().slice(1);\n  return { sh: sh, list: v.filter(function (r) { return cell_(r, 0); }).map(function (r) { return { name: cell_(r, 0), group: cell_(r, 1), mark: cell_(r, 2), memo: cell_(r, 3) }; }) };\n}\n\n// 編集画面用に、手で入れる列をすべて読む（r はシートの行番号）\nfunction sheet_(ss) {\n  const out = { ok: true, version: GAS_VERSION, name: ss.getName(), id: ss.getId(), opts: {} };\n  [['曲', 'songs'], ['音源', 'srcs'], ['提供者', 'provs']].forEach(function (x) {\n    const T = tab_(ss, x[0]), m = cols_(T, x[0]), idc = m[ID_[x[0]][0]];\n    out[x[1]] = [];\n    T.body.forEach(function (r, i) { if (cell_(r, idc)) { const o = rowObj_(r, m); o.r = i + 2; out[x[1]].push(o); } });\n    const opts = {};\n    Object.keys(m).forEach(function (k) { const l = listOpts_(T, m[k]); if (l) opts[k] = l; });\n    out.opts[x[0]] = opts;\n    out[x[1] + 'Cols'] = Object.keys(m);\n  });\n  const L = labelTab_(ss);\n  out.labels = L ? L.list : null;\n  try {\n    const A = tab_(ss, '配信アカウント'), aI = A.col('アカウントID'), aN = A.col('名義');\n    out.accounts = A.body.filter(function (r) { return cell_(r, aI); }).map(function (r) { return { id: cell_(r, aI), name: cell_(r, aN) }; });\n  } catch (err) { out.accounts = []; }\n  return out;\n}\n\n// 新しい行の場所：曲・提供者は読みの順の位置に1行差し込む。音源はいちばん下に足す\nfunction newRow_(T, m, tab, f) {\n  const sh = T.sh, idc = m[ID_[tab][0]];\n  const last = lastRow_(sh, idc + 1);\n  let at = last + 1;\n  if (tab !== '音源') {\n    const key = sortKey_(f.y, f[ID_[tab][0]]);\n    for (let i = 0; i < T.body.length && i + 2 <= last; i++) {\n      const r = T.body[i];\n      if (!cell_(r, idc)) continue;\n      if (sortKey_(m.y >= 0 ? cell_(r, m.y) : '', cell_(r, idc)) > key) { at = i + 2; break; }\n    }\n  }\n  const width = sh.getMaxColumns();\n  if (at <= last) {\n    sh.insertRowBefore(at);\n    const from = sh.getRange(at + 1, 1, 1, width), to = sh.getRange(at, 1, 1, width);\n    from.copyTo(to, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);\n    from.copyTo(to, SpreadsheetApp.CopyPasteType.PASTE_DATA_VALIDATION, false);\n  } else {\n    if (at > sh.getMaxRows()) sh.insertRowAfter(sh.getMaxRows());\n    if (last >= 2) {\n      const from = sh.getRange(last, 1, 1, width), to = sh.getRange(at, 1, 1, width);\n      from.copyTo(to, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);\n      from.copyTo(to, SpreadsheetApp.CopyPasteType.PASTE_DATA_VALIDATION, false);\n    }\n  }\n  return at;\n}\n\n// 名前を直したとき、ほかのタブでその名前を選んでいるセルを付け替える\nfunction relink_(ss, tabName, prefix, oldV, newV) {\n  if (!oldV || oldV === newV) return 0;\n  const T = tab_(ss, tabName), c = T.col(prefix);\n  if (c < 0 || T.auto[c]) return 0;\n  let n = 0;\n  T.body.forEach(function (r, i) {\n    if (String(r[c]) === oldV) { const cell = T.sh.getRange(i + 2, c + 1); cell.setNumberFormat('@'); cell.setValue(text_(newV)); n++; }\n  });\n  return n;\n}\n\nconst LIMIT_ = { raw: 45000, cond: 5000, memo: 5000 };\nfunction clean_(k, v) { return String(v == null ? '' : v).replace(/\\r\\n?/g, '\\n').trim().slice(0, LIMIT_[k] || 1000); }\n\n// p = {tab, r, before:{項目:シートで見た値}, f:{項目:新しい値}}。r が 0 なら新しい行\nfunction save_(ss, p) {\n  const tab = String(p.tab || '');\n  if (!FIELDS_[tab]) return { ok: false, error: '知らないタブです：' + tab };\n  const T = tab_(ss, tab), m = cols_(T, tab), ids = ID_[tab];\n  const f = {}, before = p.before || {};\n  Object.keys(p.f || {}).forEach(function (k) {\n    if (!(k in FIELDS_[tab])) throw new Error('知らない項目です：' + k);\n    if (!(k in m)) throw new Error('「' + tab + '」タブに「' + FIELDS_[tab][k] + '」の列が見つからないか、自動の列です');\n    f[k] = clean_(k, p.f[k]);\n  });\n  if (f.g != null) f.g = tagSplit_(f.g).join('、');\n  let row = Number(p.r) || 0, cur = null;\n  if (row) {\n    // シートで見た行と、いまの行が同じかを確かめる（ほかの端末で直した・行がずれた、を見つける）\n    const same = function (r) { return ids.every(function (k) { return cell_(r, m[k]) === String(before[k] == null ? '' : before[k]).trim(); }); };\n    let i = row - 2;\n    if (!(T.body[i] && same(T.body[i]))) { i = T.body.findIndex(same); row = i + 2; }\n    if (i < 0) return { ok: false, conflict: true, error: 'シートのほうで、この行が変わっているか見つかりません。読み直してから直してください' };\n    cur = rowObj_(T.body[i], m);\n    const changed = Object.keys(before).filter(function (k) { return k in m && cur[k] !== String(before[k] == null ? '' : before[k]).trim(); });\n    if (changed.length) return { ok: false, conflict: true, error: 'シートのほうで「' + changed.map(function (k) { return FIELDS_[tab][k]; }).join('」「') + '」が変わっています。読み直してから直してください' };\n  }\n  const next = {};\n  Object.keys(m).forEach(function (k) { next[k] = k in f ? f[k] : (cur ? cur[k] : ''); });\n  if (!next[ids[0]]) return { ok: false, error: '「' + FIELDS_[tab][ids[0]] + '」は空にできません' };\n  const idOf = function (o) { return ids.map(function (k) { return o[k] || ''; }).join('／'); };\n  const nid = idOf(next);\n  const dup = T.body.some(function (r, i) { return i + 2 !== row && cell_(r, m[ids[0]]) && idOf(rowObj_(r, m)) === nid; });\n  if (dup) return { ok: false, error: tab === '曲' ? '同じ曲名・アーティストの曲がもうあります' : '同じ名前の' + tab + 'がもうあります（名前で選ぶので、重ならない名前にしてください）' };\n  if (tab === '音源' && next.s) {\n    const S = tab_(ss, '曲'), k = S.col('選択用');\n    if (k >= 0 && !S.body.some(function (r) { return cell_(r, k) === next.s; })) return { ok: false, error: '「曲」タブに「' + next.s + '」がありません' };\n  }\n  const added = !row;\n  if (added) row = newRow_(T, m, tab, next);\n  const keys = added ? Object.keys(next).filter(function (k) { return next[k] !== ''; }) : Object.keys(f).filter(function (k) { return f[k] !== cur[k]; });\n  keys.forEach(function (k) { const cell = T.sh.getRange(row, m[k] + 1); cell.setNumberFormat('@'); cell.setValue(text_(next[k])); });\n  const moved = { srcs: 0, logs: 0 };\n  if (!added && cur) {\n    if (tab === '曲') {\n      const o = cur.t + '／' + cur.a, n = next.t + '／' + next.a;\n      moved.srcs = relink_(ss, '音源', '曲（選ぶ）', o, n);\n      moved.logs = relink_(ss, '配信ログ', '曲（選ぶ）', o, n);\n    } else if (tab === '音源') moved.logs = relink_(ss, '配信ログ', '音源（選ぶ）', cur.n, next.n);\n    else if (tab === '提供者') moved.srcs = relink_(ss, '音源', '提供者（選ぶ）', cur.n, next.n);\n  }\n  const now = stamp_(ss), name = idOf(next), log = keys.map(function (k) {\n    return [now, tab, name, T.head[m[k]] || FIELDS_[tab][k], added ? '' : cur[k], next[k], added ? '足した' : '直した', k];\n  });\n  if (moved.srcs || moved.logs) log.push([now, tab, name, 'ほかのタブの付け替え', idOf(cur), name, '付け替え', '', '音源 ' + moved.srcs + '行・配信ログ ' + moved.logs + '行']);\n  hist_(ss, log);\n  next.r = row;\n  return { ok: true, added: added, r: row, rec: next, wrote: keys, moved: moved, at: now };\n}\n\n// 「ラベル一覧」タブと、「曲」タブの「ラベル」列を作る（ないときだけ）\nfunction setup_(ss, p) {\n  const made = { tab: false, col: false, ab: false };\n  let L = ss.getSheetByName(LABEL_TAB_);\n  if (!L) {\n    L = ss.insertSheet(LABEL_TAB_);\n    L.getRange(1, 1, 1, LABEL_HEAD_.length).setValues([LABEL_HEAD_]).setFontWeight('bold').setFontColor('#ffffff').setBackground('#234c40');\n    L.setFrozenRows(1);\n    const seed = (Array.isArray(p.seed) ? p.seed : []).slice(0, 200).map(function (x) { return [clean_('', x.name).slice(0, 40), clean_('', x.group).slice(0, 40), clean_('', x.mark).slice(0, 8), clean_('', x.memo).slice(0, 300)]; }).filter(function (x) { return x[0] && !/[、,，\\/／\\n]/.test(x[0]); });\n    if (seed.length) L.getRange(2, 1, seed.length, 4).setNumberFormat('@').setValues(seed);\n    made.tab = true;\n  }\n  const S = tab_(ss, '曲');\n  if (S.col('ラベル') < 0) {\n    let c = S.head.length;\n    while (c > 0 && !S.head[c - 1]) c--;\n    if (c + 1 > S.sh.getMaxColumns()) S.sh.insertColumnAfter(S.sh.getMaxColumns());\n    S.sh.getRange(1, 1).copyTo(S.sh.getRange(1, c + 1), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);\n    S.sh.getRange(1, c + 1).setValue('ラベル');\n    made.col = true;\n  }\n  const P = tab_(ss, '提供者');\n  if (P.col('略称') < 0) {\n    let c = P.head.length;\n    while (c > 0 && !P.head[c - 1]) c--;\n    if (c + 1 > P.sh.getMaxColumns()) P.sh.insertColumnAfter(P.sh.getMaxColumns());\n    P.sh.getRange(1, 1).copyTo(P.sh.getRange(1, c + 1), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);\n    P.sh.getRange(1, c + 1).setValue('略称（セトリ表示用・空欄なら自動）');\n    made.ab = true;\n  }\n  if (made.tab || made.col || made.ab) hist_(ss, [[stamp_(ss), LABEL_TAB_, '', 'ラベルの準備', '', (made.tab ? '「' + LABEL_TAB_ + '」タブを作った　' : '') + (made.col ? '「曲」タブにラベル列を足した　' : '') + (made.ab ? '「提供者」タブに略称の列を足した' : ''), '準備', '']]);\n  return { ok: true, made: made };\n}\n\n// p = {base:[シートで見たラベル名], list:[{was, name, group, mark, memo}]}。was は元の名前（新しいラベルは空）\n// 名前を変えたラベル・消したラベルは、「曲」タブのラベル列も同じように直す\nfunction labels_(ss, p) {\n  const L = labelTab_(ss);\n  if (!L) return { ok: false, error: '「' + LABEL_TAB_ + '」タブがありません' };\n  const base = (p.base || []).map(String), now = L.list.map(function (x) { return x.name; });\n  if (base.join('\\n') !== now.join('\\n')) return { ok: false, conflict: true, error: 'シートのほうでラベルが変わっています。読み直してから直してください' };\n  const list = (Array.isArray(p.list) ? p.list : []).slice(0, 300).map(function (x) {\n    return { was: clean_('', x.was), name: clean_('', x.name).slice(0, 40), group: clean_('', x.group).slice(0, 40), mark: clean_('', x.mark).slice(0, 8), memo: clean_('', x.memo).slice(0, 300) };\n  });\n  const seen = {};\n  for (let i = 0; i < list.length; i++) {\n    const n = list[i].name;\n    if (!n) return { ok: false, error: '名前が空のラベルがあります' };\n    if (/[、,，\\/／]/.test(n)) return { ok: false, error: 'ラベル「' + n + '」に「、」「,」「/」は使えません（区切りの記号なので）' };\n    if (seen[n]) return { ok: false, error: 'ラベル「' + n + '」が2つあります' };\n    seen[n] = 1;\n  }\n  const ren = {}, keep = {};\n  list.forEach(function (x) { if (x.was) { keep[x.was] = 1; if (x.was !== x.name) ren[x.was] = x.name; } });\n  const gone = {};\n  now.forEach(function (n) { if (!keep[n]) gone[n] = 1; });\n  // ラベル一覧タブを書き直す\n  const sh = L.sh, old = Math.max(sh.getLastRow() - 1, 0);\n  if (old) sh.getRange(2, 1, old, LABEL_HEAD_.length).clearContent();\n  if (list.length) sh.getRange(2, 1, list.length, 4).setNumberFormat('@').setValues(list.map(function (x) { return [x.name, x.group, x.mark, x.memo]; }));\n  // 曲タブのラベル列\n  let songs = 0;\n  if (Object.keys(ren).length || Object.keys(gone).length) {\n    const S = tab_(ss, '曲'), c = S.col('ラベル');\n    if (c >= 0 && !S.auto[c]) S.body.forEach(function (r, i) {\n      const a = tagSplit_(r[c]);\n      const b = tagSplit_(a.filter(function (t) { return !gone[t]; }).map(function (t) { return ren[t] || t; }).join('、'));\n      if (a.join('、') !== b.join('、')) { const cell = S.sh.getRange(i + 2, c + 1); cell.setNumberFormat('@'); cell.setValue(b.join('、')); songs++; }\n    });\n  }\n  hist_(ss, [[stamp_(ss), LABEL_TAB_, 'ラベル一覧', 'ラベルの並び', base.join('、'), list.map(function (x) { return x.name; }).join('、'), 'ラベル', '',\n    (Object.keys(ren).length ? '名前を変えた ' + Object.keys(ren).map(function (k) { return k + '→' + ren[k]; }).join('、') + '　' : '') + (Object.keys(gone).length ? '消した ' + Object.keys(gone).join('、') + '　' : '') + '曲 ' + songs + '曲を直した']]);\n  return { ok: true, labels: list.map(function (x) { return { name: x.name, group: x.group, mark: x.mark, memo: x.memo }; }), songs: songs };\n}\n\n// ===================== 版3：編集の記録と控え =====================\n\nconst HIST_TAB_ = '編集の記録';\nconst HIST_HEAD_ = ['日時', 'タブ', '行の名前', '項目', '前', '後', '操作', '項目の記号', 'メモ'];\n// 先頭が「=」の文字は、数式にならないよう「'」を付けて入れる（シートには「'」は見えません）\nfunction text_(v) { v = String(v == null ? '' : v); return /^=/.test(v) ? \"'\" + v : v; }\nfunction stamp_(ss) {\n  // 日本の時刻で残す（コピーしたシートは、タイムゾーンが日本以外になっていることがあるため）\n  return Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy/MM/dd HH:mm:ss');\n}\nfunction hist_(ss, rows) {\n  if (!rows || !rows.length) return;\n  let sh = ss.getSheetByName(HIST_TAB_);\n  if (!sh) {\n    sh = ss.insertSheet(HIST_TAB_);\n    sh.getRange(1, 1, 1, HIST_HEAD_.length).setValues([HIST_HEAD_]).setFontWeight('bold').setFontColor('#ffffff').setBackground('#234c40');\n    sh.setFrozenRows(1);\n  }\n  const vals = rows.map(function (r) {\n    const o = [];\n    for (let i = 0; i < HIST_HEAD_.length; i++) o.push(text_(String(r[i] == null ? '' : r[i]).slice(0, 3000)));\n    return o;\n  });\n  const at = sh.getLastRow() + 1;\n  sh.getRange(at, 1, vals.length, HIST_HEAD_.length).setNumberFormat('@').setValues(vals);\n}\n// 新しい順に、最大 p.n 行（既定 120）\nfunction history_(ss, p) {\n  const sh = ss.getSheetByName(HIST_TAB_);\n  if (!sh || sh.getLastRow() < 2) return { ok: true, rows: [] };\n  const n = Math.min(Math.max(Number(p.n) || 120, 1), 500), last = sh.getLastRow(), from = Math.max(2, last - n + 1);\n  const v = sh.getRange(from, 1, last - from + 1, HIST_HEAD_.length).getDisplayValues();\n  const keys = ['at', 'tab', 'id', 'field', 'before', 'after', 'act', 'k', 'memo'];\n  return { ok: true, rows: v.reverse().map(function (r) { const o = {}; keys.forEach(function (k, i) { o[k] = String(r[i] == null ? '' : r[i]); }); return o; }) };\n}\n// 控え：タブをこのシートの中に写して隠す（ほかのファイルは作りません）。戻すときは、シートで控えのタブを表示して写します\nfunction backup_(ss, p) {\n  const now = stamp_(ss), made = [];\n  ['曲', '音源', '提供者', LABEL_TAB_].forEach(function (name) {\n    const sh = ss.getSheetByName(name);\n    if (!sh) return;\n    const c = sh.copyTo(ss);\n    let nm = '控え ' + now.replace(/:\\d\\d$/, '') + ' ' + name, i = 2;\n    while (ss.getSheetByName(nm)) nm = '控え ' + now + ' ' + name + '（' + (i++) + '）';\n    c.setName(nm);\n    c.hideSheet();\n    made.push(nm);\n  });\n  hist_(ss, [[now, '控え', '', '控えのタブ', '', made.join('、'), '控え', '', String(p.why || '').slice(0, 200)]]);\n  return { ok: true, made: made, at: now };\n}\n\n";
   const SHEET_LS='otonoha-sheet-link';
   // つなぎ先（URLと合言葉）はこのブラウザだけに置く。設定ファイル・書き出しには入れない
   function sheetLink(){try{const v=JSON.parse(localStorage.getItem(SHEET_LS)||'null');return v&&typeof v.url==='string'?v:null}catch(_){return null}}
@@ -10730,7 +11082,7 @@ const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps 
   };
 
   // ---- Apps Script
-  const SHEET_NEED=4;
+  const SHEET_NEED=4,SHEET_NOW=5;
   const sheetOpenUrl=l=>l&&/^[\w-]{5,}$/.test(l.id||'')?'https://docs.google.com/spreadsheets/d/'+l.id+'/edit':'';
   // つなぎ先に、シートの名前・ID・Apps Script の版を覚えておく（つないだとき・確かめたとき）
   function sheetLinkInfo(j){const l=sheetLink();if(!l||!j)return;sheetLinkSet({...l,name:String(j.name||l.name||'').slice(0,200),id:String(j.id||l.id||'').slice(0,80),ver:Number(j.version)||l.ver||0,at:Date.now()})}
@@ -10750,7 +11102,7 @@ const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps 
       say.textContent='📗 歌枠管理シート：まだつないでいません（つなぐと、曲リストで足した曲・音源がシートにも入ります）';
       bar.replaceChildren(say,rowBtn('🔗 つなぐ','',()=>jump('sbSheet')));return
     }
-    say.textContent='📗 歌枠管理シート：'+(l.name||'つないでいます')+(l.ver&&l.ver<SHEET_NEED?'（Apps Script が版'+l.ver+'。版'+SHEET_NEED+'に入れ替えると、配信先・収益化とオープニング・エンディングも送れます）':'');
+    say.textContent='📗 歌枠管理シート：'+(l.name||'つないでいます')+(l.ver&&l.ver<SHEET_NEED?'（Apps Script が版'+l.ver+'。版'+SHEET_NOW+'に入れ替えると、配信先・収益化とオープニング・エンディングも送れます）':l.ver&&l.ver<SHEET_NOW?'（Apps Script が版'+l.ver+'。版'+SHEET_NOW+'に入れ替えると、「提供者」タブの略称も読み込めます）':'');
     const open=sheetOpenUrl(l);
     bar.replaceChildren(say,
       open?rowBtn('シートを開く','',()=>window.open(open,'_blank','noopener'),'Googleスプレッドシートを新しいタブで開きます'):'',
@@ -10766,7 +11118,7 @@ const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps 
     if(key.length<6){sheetSay('sheetInfo','合言葉は6文字以上にしてください（Apps Script の OTONOHA_KEY と同じもの）');return}
     if(!sheetLinkSet({url,key})){sheetSay('sheetInfo','このブラウザに保存できませんでした');return}
     sheetSay('sheetInfo','確かめています…');
-    try{const j=await sheetCall('ping');sheetLinkInfo(j);renderSheet();sheetSay('sheetInfo','つながりました：'+(j.name||'スプレッドシート')+'（Apps Script 版'+(j.version||'?')+'）'+(j.version<SHEET_NEED?'。版'+SHEET_NEED+'に入れ替えると、配信先・収益化とオープニング・エンディングも送れます（下の手順）':''));if(typeof sheetWarm==='function')sheetWarm(true)}
+    try{const j=await sheetCall('ping');sheetLinkInfo(j);renderSheet();sheetSay('sheetInfo','つながりました：'+(j.name||'スプレッドシート')+'（Apps Script 版'+(j.version||'?')+'）'+(j.version<SHEET_NEED?'。版'+SHEET_NOW+'に入れ替えると、配信先・収益化とオープニング・エンディングも送れます（下の手順）':j.version<SHEET_NOW?'。版'+SHEET_NOW+'に入れ替えると、「提供者」タブの略称も読み込めます（下の手順）':''));if(typeof sheetWarm==='function')sheetWarm(true)}
     catch(e){renderSheet();sheetSay('sheetInfo','保存しましたが、つながりませんでした：'+e.message)}
   };
   E('sheetRead').onclick=async()=>{
@@ -10851,7 +11203,7 @@ const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps 
   const SX_NAMES={
     '曲':{t:'曲名',a:'アーティスト',w:'作品名（タイアップ）',y:'読み（並べ替え用）',st:'表記の状態',g:'ラベル',set:'セトリでの表記',lu:'歌詞ページのURL',org:'管理団体',code:'作品コード',jt:'作品タイトル（申請用）',ja:'アーティスト名（申請用）',ly:'作詞者',cp:'作曲者',rt:'管理団体の登録表記（曲名）',ra:'管理団体の登録表記（アーティスト）',memo:'メモ'},
     '音源':{s:'曲',n:'音源名',u:'URL',by:'提供者',kind:'種類',kk:'キーの区分',key:'キー',lyr:'動画内の歌詞表示',who:'使える名義',yt:'個別：YouTube配信',mon:'個別：収益化配信',oth:'個別：YouTube以外',cond:'個別の利用条件・購入メモ',f:'音源ファイルの保存場所',memo:'メモ'},
-    '提供者':{n:'提供者名',url:'概要欄に載せるURL',yt:'YouTube配信で使用',mon:'収益化済み配信で使用',oth:'YouTube以外の配信で使用',cr:'クレジット表記の指定',tu:'利用規約・説明のURL',d:'確認日',memo:'メモ（要点）',raw:'規約・説明の原文',y:'読み（並べ替え用）'}
+    '提供者':{n:'提供者名',ab:'略称（セトリ表示用）',url:'概要欄に載せるURL',yt:'YouTube配信で使用',mon:'収益化済み配信で使用',oth:'YouTube以外の配信で使用',cr:'クレジット表記の指定',tu:'利用規約・説明のURL',d:'確認日',memo:'メモ（要点）',raw:'規約・説明の原文',y:'読み（並べ替え用）'}
   };
   const SX_IDS={'曲':['t','a'],'音源':['n'],'提供者':['n']};
   const SX_ARR={'曲':'songs','音源':'srcs','提供者':'provs'};
@@ -11253,7 +11605,7 @@ const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps 
     const tab='提供者',v=rec||{};
     pane.replaceChildren();
     const I={};
-    I.n=sxInput(v.n,{max:120});I.url=sxInput(v.url,{type:'url',max:500,ph:'メンションの付かないチャンネルURLなど'});
+    I.n=sxInput(v.n,{max:120});I.ab=sxInput(v.ab,{max:40,ph:'空欄なら自動（例：Hiro、BOX、Dagger Hearts）'});I.url=sxInput(v.url,{type:'url',max:500,ph:'メンションの付かないチャンネルURLなど'});
     for(const k of ['yt','mon','oth'])I[k]=sxSelect(v[k]||(!rec?'未確認':''),sxOpts(tab,k));
     I.cr=sxInput(v.cr,{max:300});I.tu=sxInput(v.tu,{type:'url',max:500});I.d=sxInput(v.d,{max:20,ph:'2026/11/12'});
     I.memo=sxInput(v.memo,{area:true,max:5000,rows:3});I.raw=sxInput(v.raw,{area:true,max:45000,rows:4});I.y=sxInput(v.y,{max:120});
@@ -11270,6 +11622,7 @@ const SHEET_GAS="/**\n * 配信処オトノハ ⇄ 歌枠管理シート（Apps 
     },'accent'));
     pane.append(h('div',{class:'sx-head'},sxBtn('← 提供者の一覧へ',()=>{pane.replaceChildren();sxProvList(pane)}),h('b',{text:rec?'提供者を直す':'提供者を足す'})),
       h('div',{class:'studio-inline'},sxField('提供者名（チャンネル名）',I.n),sxField('読み（並べ替え用）',I.y)),
+      sxHas(tab,'ab')?sxField('略称（セトリ・音源のボタンに出す短い名前）',I.ab,'空欄なら、オトノハが自動で短くします（「」の中・絵文字の後ろの名前など）'):sxNote('「提供者」タブに「略称」の列がないか、Apps Script が版4以前のため、略称はここでは直せません（シートに「略称」で始まる見出しの列を足し、Apps Script を版5にすると直せます）。','studio-mini'),
       sxField('概要欄に載せるURL',I.url),
       h('div',{class:'sx-3'},sxField('YouTube配信',I.yt),sxField('収益化した配信',I.mon),sxField('YouTube以外（IRIAM等）',I.oth)),
       h('div',{class:'studio-inline'},sxField('利用規約・説明のURL',I.tu),h('div',null,sxField('確認日',I.d),sxBtn('今日の日付',()=>{I.d.value=sxToday()}))),
@@ -13249,13 +13602,24 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
       return 1050
     }
     if(id==='spark'){
-      // きらめき：頭の上で、細い光の線と星がはじける
-      manpuParts.push({kind:id,at:now,life:1100,ray:1,sz:.75});
-      for(let i=0;i<n;i++){const a=(-160+140*(n===1?.5:i/(n-1))+(Math.random()-.5)*10)*Math.PI/180;manpuParts.push({kind:id,at:now+60+i*50,life:1000,a,r:1.0+Math.random()*.25,sz:.22+Math.random()*.1,rot:Math.random()*.6,out:.2})}
-      return 1500
+      // きらめき（0.11.9）：✧を、頭のまわり（顔の外）に、大きさ・位置・角度をばらばらに散らす。
+      // 弧に沿って等間隔に並べたり、光の線を放射状に出したりはしない（並びが機械的に見えるため）。
+      // 位置は「頭の中心からの向きと距離」をそれぞれ乱数で決め、先に置いた✧と近すぎるときだけ置き直す
+      const pts=[];
+      for(let i=0;i<n;i++){
+        let a=0,r=0;
+        for(let k=0;k<10;k++){
+          a=(-195+210*Math.random())*Math.PI/180;r=1.1+Math.random()*.8;
+          const x=Math.cos(a)*r,y=Math.sin(a)*r;
+          if(pts.every(q=>Math.hypot(q[0]-x,q[1]-y)>.42))break
+        }
+        pts.push([Math.cos(a)*r,Math.sin(a)*r]);
+        manpuParts.push({kind:id,at:now+Math.random()*420,life:800+Math.random()*500,a,r,sz:.12+Math.random()*.28,rot:Math.random()*Math.PI/2,tw:Math.random()*6.3})
+      }
+      return 1100+Math.random()*500
     }
-    // ハート：頭の上の幅いっぱいから、まんべんなく上へ
-    for(let i=0;i<n;i++){const t=n===1?.5:i/(n-1);manpuParts.push({kind:id,at:now+i*160+Math.random()*80,life:1600,hx:(t-.5)*1.3+(Math.random()-.5)*.15,up:1,sz:.24+Math.random()*.06})}
+    // ハート（0.11.9）：頭の左右（顔にかからない所）から出て、止まらずにまっすぐ上へ昇り、画面の上の外へ抜ける
+    for(let i=0;i<n;i++){const side=i%2?1:-1;manpuParts.push({kind:id,at:now+i*170+Math.random()*90,life:2400,hx:side*(.6+Math.random()*.4),up:1,sz:.24+Math.random()*.06,ph:Math.random()*6.3})}
     return 1200
   }
   function drawManpu(now){
@@ -13279,18 +13643,15 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
       const cx0=mc.x/100*hu,cy0=hu*.55+mc.y/100*hu;
       lay[kind]={hu,cx0,cy0}
     }
-    // ハートは頭の上へ昇るので、頭が画面の上の端に近いと、ほとんど画面の外になって見えない（0.11.7）。
-    // 昇る道のりが入りきらない分だけ、出る高さを下げ、顔にかからないよう左右へ広げる（一粒ずつ押し込まず、まとめて決める）
-    {const L=lay.heart,headTop=Math.min(at(L.cx0,L.cy0-L.hu*.5).y,avHead.y),need=L.hu*1.75,room=headTop-H*.03;
-      L.drop=Math.max(0,need-room);L.wide=1+Math.min(1,L.drop/need)*.9}
+    // ハートが昇る道のり：画面の上の外へ抜けきるまで（頭が低いほど長い）。0.11.7 の「出る高さを下げる」処理はやめた（顔にかかって止まって見えたため）
+    const heartRun=Math.max(lay.heart.hu*2.2,avHead.y+lay.heart.hu*1.6);
     for(const p of manpuParts){
       const e=now-p.at;if(e<0)continue;
-      const {hu,cx0,cy0,drop,wide}=lay[p.kind];
-      const t=e/p.life,fade=Math.min(1,(p.life-e)/280);
+      const {hu,cx0,cy0}=lay[p.kind];
+      const t=e/p.life,fade=p.up?1:Math.min(1,(p.life-e)/280);
       g.save();g.globalAlpha=Math.min(1,e/120,fade);
       let lx,ly,rot=0;
-      if(p.up){lx=cx0+p.hx*hu*.5*wide+Math.sin(e/260+p.hx*3)*hu*.06;ly=cy0-hu*.75-easeOut(Math.min(1,t*1.2))*hu*.9+drop}
-      else if(p.ray){lx=cx0;ly=cy0-hu*.95}
+      if(p.up){lx=cx0+p.hx*hu+Math.sin(e/300+p.ph)*hu*.07;ly=cy0-hu*.15-t*heartRun}
       else{
         // 頭の中心から、顔の外（頭の大きさの 0.75 倍くらい）へ。出るときに少し外へ動く
         const r=hu*(.12+.62*(p.r+(p.out||0)*easeOut(Math.min(1,t*1.5))+.06*easeOut(Math.min(1,e/220))));
@@ -13298,16 +13659,9 @@ const MANPU={sweat:{name:'汗',img:'deco-sweat'},spark:{name:'きらめき（笑
         rot=p.a-Math.PI/2   // しずくの先（絵の上）を、頭の中心へ向ける
       }
       const c=at(lx,ly);
-      const size=Math.max(8,p.sz*hu)*(e<200?.4+.6*backOut(e/200):1);
+      const size=Math.max(8,p.sz*hu)*(e<200?.4+.6*backOut(e/200):1)*(p.kind==='spark'?.88+.12*Math.sin(e/90+p.tw):1);
       g.translate(c.x,c.y);g.rotate(avHead.rot);
-      if(p.ray){
-        const r0=hu*.18,r1=r0+p.sz*hu*easeOut(Math.min(1,t*1.6));
-        // 9本の光の線を、1つのグラデーション・1回の線描きで（内側は透明、外側が金色）
-        const gr=g.createRadialGradient(0,0,r0,0,0,r1);gr.addColorStop(0,'rgba(255,246,214,0)');gr.addColorStop(1,'rgba(255,232,170,.9)');
-        g.lineCap='round';g.lineWidth=Math.max(1,hu*.02);g.strokeStyle=gr;g.beginPath();
-        for(let i=0;i<9;i++){const a=-Math.PI+i*Math.PI/8,ca=Math.cos(a),sa=Math.sin(a);g.moveTo(ca*r0,sa*r0);g.lineTo(ca*r1,sa*r1)}
-        g.stroke()
-      }else{
+      {
         g.rotate(p.kind==='sweat'?rot:(p.rot||0));
         if(p.kind==='sweat')decoPaint('deco-sweat',artDrop,size);
         else if(p.kind==='spark')decoPaint('deco-spark',artStar,size);

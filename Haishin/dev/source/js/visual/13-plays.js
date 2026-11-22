@@ -246,12 +246,17 @@
       g.beginPath();g.moveTo(0,0);g.arc(0,0,R,a0,a1);g.closePath();g.fill();
       g.strokeStyle='#fffaf2';g.lineWidth=3*k;g.stroke();
       g.save();g.rotate(a0+seg/2);g.textAlign='right';g.textBaseline='middle';
-      // 項目名は、扇の長さに収まるまで文字を小さくする（最小で14px相当。それでも長いときだけ末尾を省く）
-      const label=r.items[i],room=R*.74;
-      let fs=Math.min(30*k,seg*R*.42);
-      g.font=sceneFontCss(fs,label);
-      const w0=g.measureText(label).width;
-      if(w0>room){fs=Math.max(14*k,fs*room/w0);g.font=sceneFontCss(fs,label)}
+      // 項目名の大きさ（0.11.9）：扇の「長さ」と「幅」の両方に収まる、いちばん大きい文字にする。
+      // 以前は上限が 30px 相当で、1文字の項目はとても小さく見えた。短い項目ほど大きく、長い項目は小さく（最小で14px相当。それでも長いときだけ末尾を省く）
+      const label=r.items[i],room=R*.74,half=Math.min(seg/2,Math.PI/2*.9);
+      let fs=R*.34;
+      for(let it=0;it<3;it++){
+        g.font=sceneFontCss(fs,label);
+        const w=g.measureText(label).width,rc=Math.max(R*.2,R-14*k-w*.5);
+        // 文字の中ほどの位置での扇の幅に、文字の高さが収まるように
+        fs=Math.min(R*.34,fs*room/Math.max(1,w),2*rc*Math.sin(half)*.78)
+      }
+      fs=Math.max(14*k,fs);g.font=sceneFontCss(fs,label)
       g.fillStyle='#2e211c';
       let tx=label;while(tx.length>1&&g.measureText(tx).width>room)tx=tx.slice(0,-1);
       g.fillText(tx===label?tx:tx+'…',R-14*k,0);g.restore()
