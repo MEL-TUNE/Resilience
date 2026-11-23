@@ -504,3 +504,11 @@
 - 作者のシート（MEL-TUNE 直下の「歌枠管理シート」）：「提供者」タブの L 列に見出し「略称（セトリ表示用・空欄なら自動）」と、Hiro・歌っちゃ王・BOX・カラオケ音源ch・Dagger Hearts を書いた（ほかの行は空欄）。作者の Apps Script はまだ版4のはずなので、略称の列が読み込まれるのは版5へ入れ替えたあと。
 - テスト：t0125（漫符・ルーレット・歌枠ノート）。
 - 作者の指摘（同日、PC の狭い窓）：セトリの行がばらばらで見づらい（1行か2行で形を固定してほしい）／歌詞はシートに歌詞URLがあるときだけ、絵文字だけでよい／ガチャの見出しの「でたらめに」「抜き出す」が美しくない。→ セトリ（#songList・#deckSongList）を grid に（狭いとき "sing name name" / "okes okes acts"、container が 760px 以上で1行）。曲名は1行で省略（title に全体）。音源のボタンは 8.8em 固定、📁・🗒️ は .sb-icon（2.5em）。🗒️ は r.lu があるときだけ（歌ネット検索の代わりは外した）。見出しは「🎲 歌枠ガチャ（ラベルでしぼってランダムで1曲・ラベルから選出）」。お題帳の「くじ引きにする」の説明も「ランダムに1つ」に。
+
+## 2026-11-24 追記（STUDIO 0.11.10・軽量化）
+
+- 作者の依頼：パーツ可動立ち絵（ChatGPT の設計依頼書と作画マニュアル）の設計の回答のあと、「本当に低スペックのノートPCでも動くレベルに。これまでの画面描画も軽量化できるなら」。パーツ可動はまだ実装していない（設計の回答のみ。作者の採用判断待ち）。
+- 測り方：Playwright の chromium を --disable-gpu、CDP で CPU を6分の1、作者のデータ（縦長 720×1280・30fps）、Performance.getMetrics の TaskDuration（10秒）。描画の JS は1コマ約3〜4ms（6分の1の CPU で）、ScriptDuration は1割。負荷の大半は (program)＝ページの合成で、#studioCanvas を見えなくすると 94%→24%。opacity:0 なら描画を省き、押す操作は受けたまま。
+- 70-effects-perf.js liteMirror：軽量モードで #studioCanvasLite（見えている大きさ×min(1.5,dpr)）へ125msごとに写す。CSS body[data-light] #studioCanvas{opacity:0}。配信用ウインドウ・アプリ表示・captureStream は本体のまま。
+- 02-mic.js drawMeter・60-frame.js の状態表示：値が変わったときだけ書き換える（meterLast・uiLast）。音声収録の画面で 84%→7%。
+- テスト：t0126。

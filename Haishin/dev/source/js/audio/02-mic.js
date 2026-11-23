@@ -101,18 +101,26 @@ function drawMeter(name,db){
     h.t=now
   }
 
-  const pct=v=>Math.max(0,Math.min(100,(v+60)/60*100));
+  const pct=v=>Math.round(Math.max(0,Math.min(100,(v+60)/60*100))*2)/2;
 
-  $('#'+name+'Meter').style.clipPath=`inset(0 ${100-pct(db)}% 0 0)`;
-  $('#'+name+'Peak').style.left=`calc(${pct(h.v)}% - 2px)`;
+  // 0.11.9：値が変わったときだけ書き換える（無音のあいだは画面を描き直さない。低スペックPCでの負荷を減らす）
+  const m=meterLast[name]||(meterLast[name]={});
+  const a=pct(db),b=pct(h.v);
+  if(m.a!==a){m.a=a;$('#'+name+'Meter').style.clipPath=`inset(0 ${100-a}% 0 0)`}
+  if(m.b!==b){m.b=b;$('#'+name+'Peak').style.left=`calc(${b}% - 2px)`}
 
-  const out=$('#'+name+'Db');
   if(name==='mix'&&db>-0.5)clipUntil=now+1500;
 
   const clip=name==='mix'&&now<clipUntil;
-  out.classList.toggle('clip',clip);
-  out.textContent=clip?'過大':(h.v<=-60?'-∞ dB':h.v.toFixed(1)+' dB');
+  const txt=clip?'過大':(h.v<=-60?'-∞ dB':h.v.toFixed(1)+' dB');
+  if(m.c!==clip||m.t!==txt){
+    const out=$('#'+name+'Db');
+    m.c=clip;m.t=txt;
+    out.classList.toggle('clip',clip);
+    out.textContent=txt
+  }
 }
+const meterLast={};
 
 function meterLoop(){
   if(ctx&&document.body.dataset.app==='radio'){

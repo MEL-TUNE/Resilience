@@ -71,6 +71,7 @@
 
   let previous=0,
     uiTick=0;
+  const uiLast={};
   function flapLen(){
     const lo=state.flapMin,hi=Math.max(lo,state.flapMax);
     return lo+Math.random()*(hi-lo)
@@ -146,13 +147,18 @@
       }
     }
     previewMirror(now);
+    liteMirror(now);
     appCopy(now);
     if(now-uiTick>120){
       uiTick=now;
-      E('studioMeter').style.width=Math.max(0,Math.min(100,(dbLevel+70)/70*100))+'%';
-      E('studioState').textContent=testing?'口パクをテスト中':!ready?'準備中':micLive()?(micMuted?(streamMode()?'口パク停止中':'ミュート中'):`${talking?'発話中':'待機中'} / ${dbLevel<-90?'−∞':dbLevel.toFixed(0)} dB`):'マイク未接続';
-      E('studioMic').textContent=ready&&micLive()?'マイクを再接続':'マイクを接続';
-      if(mediaRecorder&&mediaRecorder.state==='recording'&&!mediaRecorder.__ending)E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
+      // 0.11.9：同じ値なら書き換えない（書き換えるたびに、ページの描き直しが起きるため）
+      const mw=Math.round(Math.max(0,Math.min(100,(dbLevel+70)/70*100)))+'%',ui=uiLast;
+      if(ui.mw!==mw){ui.mw=mw;E('studioMeter').style.width=mw}
+      const st=testing?'口パクをテスト中':!ready?'準備中':micLive()?(micMuted?(streamMode()?'口パク停止中':'ミュート中'):`${talking?'発話中':'待機中'} / ${dbLevel<-90?'−∞':dbLevel.toFixed(0)} dB`):'マイク未接続';
+      if(ui.st!==st){ui.st=st;E('studioState').textContent=st}
+      const mc=ready&&micLive()?'マイクを再接続':'マイクを接続';
+      if(ui.mc!==mc){ui.mc=mc;E('studioMic').textContent=mc}
+      if(mediaRecorder&&mediaRecorder.state==='recording'&&!mediaRecorder.__ending){const rt='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0');if(ui.rt!==rt){ui.rt=rt;E('studioRecTime').textContent=rt}}else ui.rt=''
     }
     {const c=performance.now()-now;perfStat.n++;perfStat.sum+=c;if(c>perfStat.max)perfStat.max=c;perfWatch(c)}
     scheduleFrame()

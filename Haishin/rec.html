@@ -1109,6 +1109,11 @@ ol.deck-setlist>li>.sb-sing{grid-area:sing}
 @container (min-width:640px){
   ol.deck-setlist>li:not(.sb-empty){grid-template-columns:1.6em auto minmax(0,1fr) 24em;grid-template-areas:"no sing name okes"}
 }
+/* 0.11.9：軽量モードのプレビュー。本体の映像は透明にして（押す・ドラッグはそのまま効く）、小さな写しを重ねて見せる */
+.stage-wrap{position:relative}
+#studioCanvasLite{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+body[data-light] #studioCanvas{opacity:0}
+body[data-light] #studioCanvasLite{display:block}
 
 </style>
 <style>
@@ -1476,7 +1481,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.9 / ハート・きらめき・ルーレット・歌枠ノートとシートの連携</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.10 / 低スペックPC向けの軽量化</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>
@@ -1500,7 +1505,7 @@ lookPaint(look);
 <div class="deck" id="deck">
 <aside class="deck-side" id="deckSide" aria-label="映像と、いつも使う操作">
 <div class="stage-preview" id="stagePreview"><div class="stage-head"><small class="stream-only">プレビュー（OBSには「配信用の映像ウインドウ」を取り込みます）</small><small id="studioSizeLabel">1280 × 720 / 30fps</small></div>
-<p class="outwin-note">配信用の映像ウインドウを表示中のため、ここのプレビューは止めています。<button type="button" id="pvToggle">プレビューも表示する</button></p><div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas></div><span id="studioRecTime" role="status" class="rec-time" data-modes="video">未収録</span></div>
+<p class="outwin-note">配信用の映像ウインドウを表示中のため、ここのプレビューは止めています。<button type="button" id="pvToggle">プレビューも表示する</button></p><div id="studioStageWrap" class="stage-wrap"><canvas id="studioCanvas" width="1280" height="720" aria-label="配信映像プレビュー"></canvas><canvas id="studioCanvasLite" aria-hidden="true"></canvas></div><span id="studioRecTime" role="status" class="rec-time" data-modes="video">未収録</span></div>
 <div class="deck-strip" id="deckStrip"><button id="studioRec" class="rec-big rec-start" data-modes="video" type="button">● 収録開始</button><button id="studioStop" class="rec-big rec-stop" data-modes="video" type="button" disabled>■ 停止して保存</button><div class="strip-scene" id="sceneSlotStrip"></div><button id="studioMute" type="button" data-modes="video" aria-pressed="false">マイク：オン</button><button type="button" class="stop-btn stop-all" id="consoleAllStop" title="効果音・ボイス・環境音・BGMをすべて止めます">■ 全音停止</button></div>
 <p class="perf-hint" id="perfHint" hidden>動きが重くなっています。<button type="button" id="perfHintGo">軽くする</button><button type="button" id="perfHintNo">このまま</button></p>
 </aside>
@@ -1923,7 +1928,7 @@ lookPaint(look);
  <section class="panel studio-settings grp-visual" data-modes="stream video" id="studioSettings" aria-label="表情と演出"><div class="ss-grid"><div class="ss-prev"><div class="ss-prev-box"><canvas id="settingsPreview" width="640" height="360" aria-label="映像のプレビュー"></canvas></div><p class="studio-note">配信画面と同じ映像です。右の設定を変えるとここに反映されます。</p></div>
 <aside class="studio-card">
 <p class="studio-kicker">AVATAR & SCENE</p><h2>表情と演出</h2>
-<div class="studio-inline"><label class="studio-field">映像のなめらかさ<select id="studioFps"><option value="30">30fps（なめらか）</option><option value="15">15fps</option><option value="10">10fps（軽い）</option></select></label><label class="studio-field perf-light"><input id="studioLight" type="checkbox"> 軽量モード（低スペックPC向け）</label></div><p class="studio-note">10fpsでは映像を描く回数が30fpsの3分の1になります。収録する動画もこのコマ数になります。軽量モードでは、降らせる演出を最大40個に抑え、画面の飾りのアニメーションと音量メーターの更新を間引きます。</p><label class="studio-field">映像の向き<select id="studioAspect"><option value="landscape">横 16:9（1280×720）</option><option value="portrait">縦 9:16（720×1280・縦型配信／ショート向け）</option><option value="x34" data-not="obs">3:4（960×1280・Xに載せる動画向け）</option></select></label>
+<div class="studio-inline"><label class="studio-field">映像のなめらかさ<select id="studioFps"><option value="30">30fps（なめらか）</option><option value="15">15fps</option><option value="10">10fps（軽い）</option></select></label><label class="studio-field perf-light"><input id="studioLight" type="checkbox"> 軽量モード（低スペックPC向け）</label></div><p class="studio-note">10fpsでは映像を描く回数が30fpsの3分の1になります。収録する動画もこのコマ数になります。軽量モードでは、降らせる演出を最大40個に抑え、画面の飾りのアニメーションと音量メーターの更新を間引きます。この画面のプレビューも1秒に8回の更新にします（グラフィックの弱いPCで、いちばん重いところです。配信用ウインドウ・アプリ表示・収録する動画のなめらかさは変わりません）。</p><label class="studio-field">映像の向き<select id="studioAspect"><option value="landscape">横 16:9（1280×720）</option><option value="portrait">縦 9:16（720×1280・縦型配信／ショート向け）</option><option value="x34" data-not="obs">3:4（960×1280・Xに載せる動画向け）</option></select></label>
 <div class="char-panel">
 <div class="studio-header-line"><strong>名義とキャラクター</strong></div>
 <div class="studio-inline"><label class="studio-field">名義<select id="profileSel"></select></label><label class="studio-field">名義の名前<input id="profileName" type="text" maxlength="40"></label></div>
@@ -3316,18 +3321,26 @@ function drawMeter(name,db){
     h.t=now
   }
 
-  const pct=v=>Math.max(0,Math.min(100,(v+60)/60*100));
+  const pct=v=>Math.round(Math.max(0,Math.min(100,(v+60)/60*100))*2)/2;
 
-  $('#'+name+'Meter').style.clipPath=`inset(0 ${100-pct(db)}% 0 0)`;
-  $('#'+name+'Peak').style.left=`calc(${pct(h.v)}% - 2px)`;
+  // 0.11.9：値が変わったときだけ書き換える（無音のあいだは画面を描き直さない。低スペックPCでの負荷を減らす）
+  const m=meterLast[name]||(meterLast[name]={});
+  const a=pct(db),b=pct(h.v);
+  if(m.a!==a){m.a=a;$('#'+name+'Meter').style.clipPath=`inset(0 ${100-a}% 0 0)`}
+  if(m.b!==b){m.b=b;$('#'+name+'Peak').style.left=`calc(${b}% - 2px)`}
 
-  const out=$('#'+name+'Db');
   if(name==='mix'&&db>-0.5)clipUntil=now+1500;
 
   const clip=name==='mix'&&now<clipUntil;
-  out.classList.toggle('clip',clip);
-  out.textContent=clip?'過大':(h.v<=-60?'-∞ dB':h.v.toFixed(1)+' dB');
+  const txt=clip?'過大':(h.v<=-60?'-∞ dB':h.v.toFixed(1)+' dB');
+  if(m.c!==clip||m.t!==txt){
+    const out=$('#'+name+'Db');
+    m.c=clip;m.t=txt;
+    out.classList.toggle('clip',clip);
+    out.textContent=txt
+  }
 }
+const meterLast={};
 
 function meterLoop(){
   if(ctx&&document.body.dataset.app==='radio'){
@@ -12619,6 +12632,7 @@ let frameToken=0,
 
   let previous=0,
     uiTick=0;
+  const uiLast={};
   function flapLen(){
     const lo=state.flapMin,hi=Math.max(lo,state.flapMax);
     return lo+Math.random()*(hi-lo)
@@ -12694,13 +12708,18 @@ let frameToken=0,
       }
     }
     previewMirror(now);
+    liteMirror(now);
     appCopy(now);
     if(now-uiTick>120){
       uiTick=now;
-      E('studioMeter').style.width=Math.max(0,Math.min(100,(dbLevel+70)/70*100))+'%';
-      E('studioState').textContent=testing?'口パクをテスト中':!ready?'準備中':micLive()?(micMuted?(streamMode()?'口パク停止中':'ミュート中'):`${talking?'発話中':'待機中'} / ${dbLevel<-90?'−∞':dbLevel.toFixed(0)} dB`):'マイク未接続';
-      E('studioMic').textContent=ready&&micLive()?'マイクを再接続':'マイクを接続';
-      if(mediaRecorder&&mediaRecorder.state==='recording'&&!mediaRecorder.__ending)E('studioRecTime').textContent='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0')
+      // 0.11.9：同じ値なら書き換えない（書き換えるたびに、ページの描き直しが起きるため）
+      const mw=Math.round(Math.max(0,Math.min(100,(dbLevel+70)/70*100)))+'%',ui=uiLast;
+      if(ui.mw!==mw){ui.mw=mw;E('studioMeter').style.width=mw}
+      const st=testing?'口パクをテスト中':!ready?'準備中':micLive()?(micMuted?(streamMode()?'口パク停止中':'ミュート中'):`${talking?'発話中':'待機中'} / ${dbLevel<-90?'−∞':dbLevel.toFixed(0)} dB`):'マイク未接続';
+      if(ui.st!==st){ui.st=st;E('studioState').textContent=st}
+      const mc=ready&&micLive()?'マイクを再接続':'マイクを接続';
+      if(ui.mc!==mc){ui.mc=mc;E('studioMic').textContent=mc}
+      if(mediaRecorder&&mediaRecorder.state==='recording'&&!mediaRecorder.__ending){const rt='● 収録中 '+Math.floor((now-recordStart)/60000)+':'+String(Math.floor((now-recordStart)/1000)%60).padStart(2,'0');if(ui.rt!==rt){ui.rt=rt;E('studioRecTime').textContent=rt}}else ui.rt=''
     }
     {const c=performance.now()-now;perfStat.n++;perfStat.sum+=c;if(c>perfStat.max)perfStat.max=c;perfWatch(c)}
     scheduleFrame()
@@ -13499,6 +13518,26 @@ const FXK=['count','speed','fxSize','fxOpacity','imageMotion'],
     applyPerf();
     save()
   };
+
+  // 0.11.9：軽量モードの、この画面のプレビュー。
+  // 大きな映像をページの中で縮めて見せるのは、グラフィックの弱いPCでは描くよりずっと重い（ソフトウェア描画で測ると、ページの負荷の大半）。
+  // そこで軽量モードでは、本体の映像（canvas）は透明にして、見えている大きさの小さな写しを1秒に8回だけ更新する。
+  // 配信用ウインドウ・アプリ表示・内蔵の収録には、本体の映像がそのまま行く（なめらかさは変わらない）
+  let liteAt=0;
+  function liteMirror(now){
+    const m=E('studioCanvasLite');
+    if(!m||!state.light)return;
+    if(now-liteAt<125)return;
+    liteAt=now;
+    const r=canvas.getBoundingClientRect();
+    if(!r.width||!r.height||r.bottom<0||r.top>innerHeight)return;
+    // 枠の中で、縦横の比を崩さずに収まる大きさ（object-fit: contain と同じ）
+    const k=Math.min(r.width/W,r.height/H)*Math.min(1.5,window.devicePixelRatio||1),pw=Math.max(1,Math.round(W*k)),ph=Math.max(1,Math.round(H*k));
+    if(m.width!==pw||m.height!==ph){m.width=pw;m.height=ph}
+    const cx=m.getContext('2d');
+    cx.clearRect(0,0,pw,ph);
+    cx.drawImage(canvas,0,0,pw,ph)
+  }
 
   let pvAt=0;
   function previewMirror(now){
