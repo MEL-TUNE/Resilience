@@ -161,6 +161,26 @@
     save()
   };
 
+  // 0.11.9：軽量モードの、この画面のプレビュー。
+  // 大きな映像をページの中で縮めて見せるのは、グラフィックの弱いPCでは描くよりずっと重い（ソフトウェア描画で測ると、ページの負荷の大半）。
+  // そこで軽量モードでは、本体の映像（canvas）は透明にして、見えている大きさの小さな写しを1秒に8回だけ更新する。
+  // 配信用ウインドウ・アプリ表示・内蔵の収録には、本体の映像がそのまま行く（なめらかさは変わらない）
+  let liteAt=0;
+  function liteMirror(now){
+    const m=E('studioCanvasLite');
+    if(!m||!state.light)return;
+    if(now-liteAt<125)return;
+    liteAt=now;
+    const r=canvas.getBoundingClientRect();
+    if(!r.width||!r.height||r.bottom<0||r.top>innerHeight)return;
+    // 枠の中で、縦横の比を崩さずに収まる大きさ（object-fit: contain と同じ）
+    const k=Math.min(r.width/W,r.height/H)*Math.min(1.5,window.devicePixelRatio||1),pw=Math.max(1,Math.round(W*k)),ph=Math.max(1,Math.round(H*k));
+    if(m.width!==pw||m.height!==ph){m.width=pw;m.height=ph}
+    const cx=m.getContext('2d');
+    cx.clearRect(0,0,pw,ph);
+    cx.drawImage(canvas,0,0,pw,ph)
+  }
+
   let pvAt=0;
   function previewMirror(now){
     if(document.body.dataset.page!=='settings')return;

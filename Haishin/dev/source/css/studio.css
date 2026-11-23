@@ -597,3 +597,8 @@ ol.deck-setlist>li>.sb-sing{grid-area:sing}
 @container (min-width:640px){
   ol.deck-setlist>li:not(.sb-empty){grid-template-columns:1.6em auto minmax(0,1fr) 24em;grid-template-areas:"no sing name okes"}
 }
+/* 0.11.9：軽量モードのプレビュー。本体の映像は透明にして（押す・ドラッグはそのまま効く）、小さな写しを重ねて見せる */
+.stage-wrap{position:relative}
+#studioCanvasLite{display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+body[data-light] #studioCanvas{opacity:0}
+body[data-light] #studioCanvasLite{display:block}
