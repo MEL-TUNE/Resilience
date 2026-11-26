@@ -1394,7 +1394,16 @@ const LOOK_PRESETS={
   mintshake:{name:'ミントシェイク',bg:'#d6f1e5',paper:'#f8fffb',accent:'#1f6e58',decor:'#6b4636'},
   anmitsu:{name:'抹茶あんみつ',bg:'#e0ead0',paper:'#fbfcf4',accent:'#466a2c',decor:'#7a3146'},
   sakuramochi:{name:'桜もち',bg:'#f9dfe6',paper:'#fffafb',accent:'#a8435f',decor:'#5e8a4e'},
-  kinako:{name:'黒蜜きなこ',bg:'#efe2c8',paper:'#fffaf0',accent:'#5a3a22',decor:'#c9a35b'}
+  kinako:{name:'黒蜜きなこ',bg:'#efe2c8',paper:'#fffaf0',accent:'#5a3a22',decor:'#c9a35b'},
+  // 0.11.11：雪見おとの色。衣装の段階（雪の王〜愛王）ごとに、その色の食べ物を割り当てた。看板の文字と差し色の差（コントラスト比）は、どれも4.5以上
+  yk_ou:{name:'ブラックソフトの銀アラザン（雪の王）',bg:'#0b121e',paper:'#152033',accent:'#8fcdf0',decor:'#d3dbe6'},
+  yk_enma:{name:'ラムネのハートゼリー（閻魔アイドル）',bg:'#d8e6fb',paper:'#f7faff',accent:'#2a58b0',decor:'#c48ad6'},
+  yk_shiki:{name:'夜の紫芋モンブラン（紫鬼）',bg:'#1c1230',paper:'#2a1c44',accent:'#dcbcff',decor:'#e8c66a'},
+  yk_kou:{name:'紅いサンザシ飴（紅王）',bg:'#f3d3cd',paper:'#fff7f4',accent:'#b0102a',decor:'#c18a2a'},
+  yk_ten:{name:'練乳ミルク氷（天王）',bg:'#e6eef6',paper:'#fbfdff',accent:'#456d93',decor:'#a9cdea'},
+  yk_ryoku:{name:'ピスタチオのブッシュ・ド・ノエル（緑雪王）',bg:'#0c1f19',paper:'#14302a',accent:'#bde6a6',decor:'#d9b45f'},
+  yk_tei:{name:'粉雪のガトーショコラ（雪魔帝王）',bg:'#09080e',paper:'#16141d',accent:'#c9ccd8',decor:'#8d89e6'},
+  yk_ai:{name:'アプリコットブリュレ（愛王）',bg:'#fbe5cb',paper:'#fffaf2',accent:'#b04e12',decor:'#d9a03a'}
 };
 
 const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];
@@ -1402,7 +1411,8 @@ const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];
 const LOOK_ROOMS=[
   {key:'haishin',name:'配信処の色（洋菓子・ダイナー）',presets:['macaron','cherrycola','mintshake','strawberry','purin','grape']},
   {key:'kissa',name:'純喫茶の色（喫茶の献立）',presets:['kissaten','creamsoda','napolitan','omurice','lemon','bluehawaii','hotchoco','coffeejelly','nightsoda']},
-  {key:'kanmi',name:'甘味処の色（和菓子）',presets:['anmitsu','sakuramochi','kinako']}
+  {key:'kanmi',name:'甘味処の色（和菓子）',presets:['anmitsu','sakuramochi','kinako']},
+  {key:'yukimi',name:'雪見おとの色（雪の王たちの献立）',presets:['yk_ou','yk_enma','yk_shiki','yk_kou','yk_ten','yk_ryoku','yk_tei','yk_ai']}
 ];
 // 部屋の名前（分けたページの看板の上に出す）
 const LOOK_ROOM_OF_TARGET={obs:{name:'配信処',en:'LIVE STAGE'},rec:{name:'純喫茶',en:'RECORDING ROOM'},ai:{name:'甘味処',en:'AI ATELIER'}};
@@ -1480,7 +1490,7 @@ lookPaint(look);
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.10 / 低スペックPC向けの軽量化</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
+<header class="top"><div class="room-plate" aria-hidden="true"></div><div class="shop-eyebrow" id="appEyebrow">LIVE＆RADIO</div><h1 id="appTitle">配信処オトノハ</h1><p><span id="appSub"></span> <span class="ver">STUDIO 0.11.11 / 雪見おとの色（着せ替え8色）</span></p><nav class="pagenav"><button class="pill" type="button" data-goto="main" data-app="live" data-kind="stream" id="navStream" data-not="rec">配信（OBS）</button><button class="pill" type="button" data-goto="main" data-app="live" data-kind="video" id="navLive" data-not="obs">動画（PNGTuber）</button><button class="pill" type="button" data-goto="main" data-app="radio" id="navRadio" data-not="obs">音声（ラジオ）</button><button class="pill" type="button" data-goto="settings" id="navSettings">設定</button></nav></header>
 
 <section class="studio-extension" aria-label="PNGTuberスタジオ">
 <div class="deck-level" id="deckLevel" role="group" aria-label="本番と準備の切り替え"><button type="button" data-level="live" class="selected" aria-pressed="true"><b>▶ 本番</b><small>配信・収録中に押すもの</small></button><button type="button" data-level="prep" aria-pressed="false"><b>🛠 準備</b><small>登録・仕込み・歌枠ノート</small></button></div>

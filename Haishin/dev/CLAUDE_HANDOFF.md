@@ -512,3 +512,8 @@
 - 70-effects-perf.js liteMirror：軽量モードで #studioCanvasLite（見えている大きさ×min(1.5,dpr)）へ125msごとに写す。CSS body[data-light] #studioCanvas{opacity:0}。配信用ウインドウ・アプリ表示・captureStream は本体のまま。
 - 02-mic.js drawMeter・60-frame.js の状態表示：値が変わったときだけ書き換える（meterLast・uiLast）。音声収録の画面で 84%→7%。
 - テスト：t0126。
+
+## 2026-11-26 追記（STUDIO 0.11.11）
+
+- 作者の報告「口パクしなくなった」は、作者側でマスコットに音声が設定されていたため（不具合ではなかった。コードは変えていない）。
+- theme.js：LOOK_PRESETS に yk_ou・yk_enma・yk_shiki・yk_kou・yk_ten・yk_ryoku・yk_tei・yk_ai、LOOK_ROOMS に yukimi（雪見おとの色）。作者の衣装の段階（初期 雪の王＝黒、閻魔系アイドル＝青、紫鬼＝紫、2周年 紅王＝紅・中華ゴシック、3周年 天王＝白、4周年 緑雪王＝緑、5周年 雪魔帝王＝黒・完成、6周年 愛王＝橙）と、作者の添付の背景・武器の色から決めた。accent と paper、accent と文字のコントラスト比はどれも4.5以上。
