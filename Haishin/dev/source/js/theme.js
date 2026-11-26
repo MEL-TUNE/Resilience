@@ -38,7 +38,16 @@ const LOOK_PRESETS={
   mintshake:{name:'ミントシェイク',bg:'#d6f1e5',paper:'#f8fffb',accent:'#1f6e58',decor:'#6b4636'},
   anmitsu:{name:'抹茶あんみつ',bg:'#e0ead0',paper:'#fbfcf4',accent:'#466a2c',decor:'#7a3146'},
   sakuramochi:{name:'桜もち',bg:'#f9dfe6',paper:'#fffafb',accent:'#a8435f',decor:'#5e8a4e'},
-  kinako:{name:'黒蜜きなこ',bg:'#efe2c8',paper:'#fffaf0',accent:'#5a3a22',decor:'#c9a35b'}
+  kinako:{name:'黒蜜きなこ',bg:'#efe2c8',paper:'#fffaf0',accent:'#5a3a22',decor:'#c9a35b'},
+  // 0.11.11：雪見おとの色。衣装の段階（雪の王〜愛王）ごとに、その色の食べ物を割り当てた。看板の文字と差し色の差（コントラスト比）は、どれも4.5以上
+  yk_ou:{name:'ブラックソフトの銀アラザン（雪の王）',bg:'#0b121e',paper:'#152033',accent:'#8fcdf0',decor:'#d3dbe6'},
+  yk_enma:{name:'ラムネのハートゼリー（閻魔アイドル）',bg:'#d8e6fb',paper:'#f7faff',accent:'#2a58b0',decor:'#c48ad6'},
+  yk_shiki:{name:'夜の紫芋モンブラン（紫鬼）',bg:'#1c1230',paper:'#2a1c44',accent:'#dcbcff',decor:'#e8c66a'},
+  yk_kou:{name:'紅いサンザシ飴（紅王）',bg:'#f3d3cd',paper:'#fff7f4',accent:'#b0102a',decor:'#c18a2a'},
+  yk_ten:{name:'練乳ミルク氷（天王）',bg:'#e6eef6',paper:'#fbfdff',accent:'#456d93',decor:'#a9cdea'},
+  yk_ryoku:{name:'ピスタチオのブッシュ・ド・ノエル（緑雪王）',bg:'#0c1f19',paper:'#14302a',accent:'#bde6a6',decor:'#d9b45f'},
+  yk_tei:{name:'粉雪のガトーショコラ（雪魔帝王）',bg:'#09080e',paper:'#16141d',accent:'#c9ccd8',decor:'#8d89e6'},
+  yk_ai:{name:'アプリコットブリュレ（愛王）',bg:'#fbe5cb',paper:'#fffaf2',accent:'#b04e12',decor:'#d9a03a'}
 };
 
 const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];
@@ -46,7 +55,8 @@ const LOOK_COLOR_KEYS=['bg','paper','accent','decor'];
 const LOOK_ROOMS=[
   {key:'haishin',name:'配信処の色（洋菓子・ダイナー）',presets:['macaron','cherrycola','mintshake','strawberry','purin','grape']},
   {key:'kissa',name:'純喫茶の色（喫茶の献立）',presets:['kissaten','creamsoda','napolitan','omurice','lemon','bluehawaii','hotchoco','coffeejelly','nightsoda']},
-  {key:'kanmi',name:'甘味処の色（和菓子）',presets:['anmitsu','sakuramochi','kinako']}
+  {key:'kanmi',name:'甘味処の色（和菓子）',presets:['anmitsu','sakuramochi','kinako']},
+  {key:'yukimi',name:'雪見おとの色（雪の王たちの献立）',presets:['yk_ou','yk_enma','yk_shiki','yk_kou','yk_ten','yk_ryoku','yk_tei','yk_ai']}
 ];
 // 部屋の名前（分けたページの看板の上に出す）
 const LOOK_ROOM_OF_TARGET={obs:{name:'配信処',en:'LIVE STAGE'},rec:{name:'純喫茶',en:'RECORDING ROOM'},ai:{name:'甘味処',en:'AI ATELIER'}};
